@@ -11,7 +11,7 @@ import retrofit2.http.POST;
 /**
  * Teambrella API
  */
-interface TeambrellaAPI {
+public interface TeambrellaAPI {
 
     @POST("me/getTimestamp")
     Call<JsonObject> getTimeStamp();

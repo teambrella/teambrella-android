@@ -7,26 +7,25 @@ public class TeambrellaModel {
 
 
     /*Request*/
-    static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
-    static final String ATTR_REQUEST_SIGNATURE = "Signature";
-    static final String ATTR_REQUEST_PUBLIC_KEY = "PublicKey";
-    static final String ATTR_REQUEST_TEAM_ID = "TeamId";
+    public static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
+    public static final String ATTR_REQUEST_SIGNATURE = "Signature";
+    public static final String ATTR_REQUEST_PUBLIC_KEY = "PublicKey";
+    public static final String ATTR_REQUEST_TEAM_ID = "TeamId";
 
 
     /*Response*/
-    static final String ATTR_STATUS = "Status";
-    static final String ATTR_DATA = "Data";
+    public static final String ATTR_STATUS = "Status";
+    public static final String ATTR_DATA = "Data";
 
 
     /*Status*/
-    static final String ATTR_STATUS_TIMESTAMP = "Timestamp";
-    static final String ATTR_STATUS_RESULT_CODE = "ResultCode";
-    static final String ATTR_STATUS_ERROR_MESSAGE = "ErrorMessage";
+    public static final String ATTR_STATUS_TIMESTAMP = "Timestamp";
+    public static final String ATTR_STATUS_RESULT_CODE = "ResultCode";
+    public static final String ATTR_STATUS_ERROR_MESSAGE = "ErrorMessage";
 
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
     public static final int VALUE_STATUS_RESULT_CODE_FATAL = 1;
     public static final int VALUE_STATUS_RESULT_CODE_AUTH = 2;
-
 
 
     /*Data*/

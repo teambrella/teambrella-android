@@ -5,7 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.gson.JsonObject;
-import com.teambrella.android.api.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaServer;
 
 import org.junit.Assert;
 import org.junit.Test;

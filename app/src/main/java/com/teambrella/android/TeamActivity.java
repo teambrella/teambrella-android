@@ -1,24 +1,56 @@
 package com.teambrella.android;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 
-import com.teambrella.android.ui.TeamFragment;
+import com.google.gson.JsonObject;
+import com.teambrella.android.api.TeambrellaException;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.data.loaders.TeammatesLoader;
+import com.teambrella.android.data.teammates.TeammatesRecyclerAdapter;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TeamActivity extends AppCompatActivity {
 
-    private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
+    @BindView(R.id.list)
+    RecyclerView mListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment contentFragment = fragmentManager.findFragmentById(R.id.activity_content);
-        if (contentFragment == null) {
-            fragmentManager.beginTransaction().replace(R.id.activity_content, new TeamFragment(), UI_FRAGMENT_TAG).commit();
-        }
+        ButterKnife.bind(this);
+        mListView.setLayoutManager(new GridLayoutManager(this, 2));
+        getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Pair<JsonObject, TeambrellaException>>() {
+            @Override
+            public Loader<Pair<JsonObject, TeambrellaException>> onCreateLoader(int id, Bundle args) {
+                return new TeammatesLoader(TeamActivity.this, 1);
+            }
+
+            @Override
+            public void onLoadFinished(Loader<Pair<JsonObject, TeambrellaException>> loader, Pair<JsonObject, TeambrellaException> data) {
+                mListView.setAdapter(new TeammatesRecyclerAdapter(data.first.get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
+            }
+
+            @Override
+            public void onLoaderReset(Loader<Pair<JsonObject, TeambrellaException>> loader) {
+
+            }
+        });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }

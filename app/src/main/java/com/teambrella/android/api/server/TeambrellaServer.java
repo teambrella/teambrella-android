@@ -1,13 +1,19 @@
-package com.teambrella.android.api;
+package com.teambrella.android.api.server;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.annotation.WorkerThread;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.teambrella.android.api.TeambrellaAPI;
+import com.teambrella.android.api.TeambrellaClientException;
+import com.teambrella.android.api.TeambrellaException;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.TeambrellaServerException;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -30,7 +36,7 @@ public class TeambrellaServer {
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String PRIVATE_KEY = "Kxv2gGGa2ZW85b1LXh1uJSP3HLMV6i6qRxxStRhnDsawXDuMJadB";
     private static final String PUBLIC_KEY = "0203ca066905e668d1232a33bf5cce76ee1754b0a24ae9c28d20e13b069274742c";
-    private static final String AUTHORITY = "http://192.168.0.253/";
+    public static final String AUTHORITY = "http://192.168.0.253/";
 
     /**
      * Shared preference
@@ -75,6 +81,45 @@ public class TeambrellaServer {
 
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, PRIVATE_KEY);
         mKey = dpk.getKey();
+    }
+
+
+    public JsonObject execute(Uri uri) throws TeambrellaException {
+        try {
+            return execute(getCallObject(uri, getRequestBody(uri)));
+        } catch (TeambrellaServerException e) {
+            switch (e.getErrorCode()) {
+                case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
+                    return execute(uri);
+                default:
+                    throw e;
+
+            }
+        }
+    }
+
+
+    private JsonObject getRequestBody(Uri uri) {
+        final JsonObject requestBody = createBaseRequestBody();
+        switch (TeambrellaUris.sUriMatcher.match(uri)) {
+            case TeambrellaUris.TEAMMATES_LIST: {
+                int teamId = TeambrellaUris.getTeamId(uri);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
+            }
+            break;
+            default:
+                throw new RuntimeException("unknown uri:" + uri);
+        }
+        return requestBody;
+    }
+
+    private Call<JsonObject> getCallObject(Uri uri, JsonObject requestBody) {
+        switch (TeambrellaUris.sUriMatcher.match(uri)) {
+            case TeambrellaUris.TEAMMATES_LIST:
+                return mAPI.getTeammateList(requestBody);
+            default:
+                throw new RuntimeException("unknown uri:" + uri);
+        }
     }
 
 
