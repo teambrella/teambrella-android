@@ -3,7 +3,7 @@ package com.teambrella.android.api.server;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.annotation.WorkerThread;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -107,6 +107,12 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
             }
             break;
+            case TeambrellaUris.TEAMMATES_ONE: {
+                Pair<Integer, String> ids = TeambrellaUris.getTeamAndTeammateId(uri);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, ids.first);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, ids.second);
+            }
+            break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
@@ -117,36 +123,12 @@ public class TeambrellaServer {
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
                 return mAPI.getTeammateList(requestBody);
+            case TeambrellaUris.TEAMMATES_ONE:
+                return mAPI.getTeammateOne(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
     }
-
-
-    /**
-     * Get Teammate list
-     *
-     * @param teamID team ID
-     * @return result
-     */
-    @WorkerThread
-    public JsonObject getTeammateList(long teamID) throws TeambrellaException {
-        getTimestamp();
-        final JsonObject requestBody = createBaseRequestBody();
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamID);
-        Call<JsonObject> call = mAPI.getTeammateList(requestBody);
-        try {
-            return execute(call);
-        } catch (TeambrellaServerException e) {
-            switch (e.getErrorCode()) {
-                case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
-                    return execute(mAPI.getTeammateList(updateRequestBody(requestBody)));
-                default:
-                    throw e;
-            }
-        }
-    }
-
 
     /**
      * Create base request body
@@ -170,14 +152,6 @@ public class TeambrellaServer {
         requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, mKey.signMessage(Long.toString(timestamp)));
         return requestBody;
     }
-
-
-    private void getTimestamp() throws TeambrellaException {
-        if (!mPreferences.contains(TIMESTAMP_KEY)) {
-            execute(mAPI.getTimeStamp());
-        }
-    }
-
 
     /**
      * Execute request

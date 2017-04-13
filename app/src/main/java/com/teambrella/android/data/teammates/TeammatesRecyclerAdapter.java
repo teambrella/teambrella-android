@@ -1,5 +1,6 @@
 package com.teambrella.android.data.teammates;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
+import com.teambrella.android.TeammateActivity;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 
@@ -40,13 +42,21 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<TeammatesRecy
     }
 
     @Override
-    public void onBindViewHolder(TeammatesViewHolder holder, int position) {
-        JsonObject item = mArray.get(position).getAsJsonObject();
-        Picasso.with(holder.itemView.getContext()).load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+    public void onBindViewHolder(final TeammatesViewHolder holder, final int position) {
+        final Context context = holder.itemView.getContext();
+        final JsonObject item = mArray.get(position).getAsJsonObject();
+
+        Picasso.with(context).load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                 .into(holder.mIcon);
         holder.mTitle.setText(item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
-    }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(TeammateActivity.getIntent(context, null));
+            }
+        });
 
+    }
 
 
     @Override

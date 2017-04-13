@@ -2,25 +2,25 @@ package com.teambrella.android.data.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Pair;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.api.server.TeambrellaUris;
 
 /**
  * Teammates loader
  */
-public class TeammatesLoader extends AsyncTaskLoader<Pair<JsonObject, TeambrellaException>> {
+public class TeambrellaUriLoader extends AsyncTaskLoader<Pair<JsonObject, TeambrellaException>> {
 
     private final TeambrellaServer mServer;
-    private final int mTeamId;
+    private final Uri mUri;
 
-    public TeammatesLoader(Context context, int teamId) {
+    public TeambrellaUriLoader(Context context, Uri uri) {
         super(context);
         mServer = new TeambrellaServer(context);
-        mTeamId = teamId;
+        mUri = uri;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class TeammatesLoader extends AsyncTaskLoader<Pair<JsonObject, Teambrella
     @Override
     public Pair<JsonObject, TeambrellaException> loadInBackground() {
         try {
-            return new Pair<>(mServer.execute(TeambrellaUris.getTeammatesUri(mTeamId)), null);
+            return new Pair<>(mServer.execute(mUri), null);
         } catch (TeambrellaException e) {
             return new Pair<>(null, e);
         }
