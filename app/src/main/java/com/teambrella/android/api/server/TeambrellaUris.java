@@ -13,18 +13,21 @@ public class TeambrellaUris {
 
     private static final String AUTHORITY = "teambrella";
     private static final String SEGMENT_TEAM = "team";
+    private static final String SEGMENT_ME = "me";
     private static final String SEGMENT_LIST = "list";
     private static final String SEGMENT_ONE = "one";
-
+    private static final String SEGMENT_UPDATES = "updates";
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static final int TEAMMATES_LIST = 1;
     static final int TEAMMATES_ONE = 2;
+    static final int ME_UPDATES = 3;
 
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_ONE + "/#", TEAMMATES_ONE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_UPDATES, ME_UPDATES);
     }
 
 
@@ -51,6 +54,16 @@ public class TeambrellaUris {
         return new Uri.Builder().authority(AUTHORITY).appendEncodedPath(SEGMENT_TEAM).
                 appendEncodedPath(Integer.toString(teamId)).appendEncodedPath(SEGMENT_ONE)
                 .appendEncodedPath(userId).build();
+    }
+
+    /**
+     * Get updates Uri
+     *
+     * @return uri
+     */
+    public static Uri getUpdates() {
+        return new Uri.Builder().authority(AUTHORITY).appendEncodedPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_UPDATES).build();
     }
 
     static int getTeamId(Uri uri) {

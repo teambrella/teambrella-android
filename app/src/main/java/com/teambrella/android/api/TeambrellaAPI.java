@@ -23,4 +23,8 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("teammate/getList")
     Call<JsonObject> getTeammateList(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("me/GetUpdates")
+    Call<JsonObject> getUpdates(@Body JsonElement body);
 }

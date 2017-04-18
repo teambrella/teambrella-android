@@ -38,6 +38,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_USER_ID = "UserId";
     public static final String ATTR_DATA_AVATAR = "Avatar";
     public static final String ATTR_DATA_NAME = "Name";
+    public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
     public static final String ATTR_DATA_YEAR = "Year";
     public static final String ATTR_DATA_UNREAD = "Unread";
@@ -48,4 +49,19 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_IS_JOINING = "IsJoining";
     public static final String ATTR_DATA_IS_VOTING = "IsVoting";
     public static final String ATTR_DATA_CLAIMS_COUNT = "ClaimsCount";
+    public static final String ATTR_DATA_TEST_NET = "Testnet";
+    public static final String ATTR_DATA_PUBLIC_KEY = "PublicKey";
+    public static final String ATTR_DATA_ADDRESS = "Address";
+    public static final String ATTR_DATA_TEAMMATE_ID = "TeammateId";
+    public static final String ATTR_DATA_STATUS = "Status";
+    public static final String ATTR_DATA_DATE_CREATED = "DateCreated";
+    public static final String ATTR_DATA_KEY_ORDER = "KeyOrder";
+    public static final String ATTR_DATA_BTC_AMOUNT = "AmountBTC";
+    public static final String ATTR_DATA_CLAIM_ID = "ClaimId";
+    public static final String ATTR_DATA_CLAIM_TEAMMATE_ID = "ClaimTeammateId";
+    public static final String ATTR_DATA_KIND = "kind";
+    public static final String ATTR_DATA_STATE = "state";
+    public static final String ATTR_DATA_INITIATED_TIME = "InitiatedTime";
+
+
 }

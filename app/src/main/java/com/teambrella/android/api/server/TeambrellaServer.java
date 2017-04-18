@@ -113,6 +113,8 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, ids.second);
             }
             break;
+            case TeambrellaUris.ME_UPDATES:
+                break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
@@ -125,6 +127,8 @@ public class TeambrellaServer {
                 return mAPI.getTeammateList(requestBody);
             case TeambrellaUris.TEAMMATES_ONE:
                 return mAPI.getTeammateOne(requestBody);
+            case TeambrellaUris.ME_UPDATES:
+                return mAPI.getUpdates(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
