@@ -36,7 +36,7 @@ public class TeambrellaServer {
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String PRIVATE_KEY = "Kxv2gGGa2ZW85b1LXh1uJSP3HLMV6i6qRxxStRhnDsawXDuMJadB";
     private static final String PUBLIC_KEY = "0203ca066905e668d1232a33bf5cce76ee1754b0a24ae9c28d20e13b069274742c";
-    public static final String AUTHORITY = "http://192.168.0.253/";
+    public static final String AUTHORITY = "http://94.72.4.72/";
 
     /**
      * Shared preference

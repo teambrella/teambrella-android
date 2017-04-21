@@ -18,6 +18,9 @@ public class TeambrellaRepository {
     static final String TEAMMATE_TABLE = "Teammate";
     static final String TEAM_TABLE = "Team";
     static final String TX_TABLE = "Tx";
+    static final String TX_INPUT_TABLE = "TxInput";
+    static final String TX_OUTPUT_TABLE = "TxOutput";
+    static final String TX_SIGNATURE_TABLE = "TxSignature";
 
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -29,6 +32,10 @@ public class TeambrellaRepository {
     static final int PAY_TO = 4;
     static final int TEAMMATE = 5;
     static final int TEAM = 6;
+    static final int TX = 7;
+    static final int TX_INPUT = 8;
+    static final int TX_OUTPUT = 9;
+    static final int TX_SIGNATURE = 10;
 
 
     static {
@@ -38,6 +45,11 @@ public class TeambrellaRepository {
         sUriMatcher.addURI(AUTHORITY, PAY_TO_TABLE, PAY_TO);
         sUriMatcher.addURI(AUTHORITY, TEAMMATE_TABLE, TEAMMATE);
         sUriMatcher.addURI(AUTHORITY, TEAM_TABLE, TEAM);
+        sUriMatcher.addURI(AUTHORITY, TX_TABLE, TX);
+        sUriMatcher.addURI(AUTHORITY, TX_INPUT_TABLE, TX_INPUT);
+        sUriMatcher.addURI(AUTHORITY, TX_OUTPUT_TABLE, TX_OUTPUT);
+        sUriMatcher.addURI(AUTHORITY, TX_SIGNATURE_TABLE, TX_SIGNATURE);
+
     }
 
     public static final class BTCAddress {
@@ -47,7 +59,7 @@ public class TeambrellaRepository {
         public static final String ADDRESS = "Address";
         public static final String TEAMMATE_ID = "TeammateID";
         public static final String STATUS = "Status";
-        public static final String DATE_CREATED = "DataCreated";
+        public static final String DATE_CREATED = "DateCreated";
 
 
     }
@@ -110,6 +122,35 @@ public class TeambrellaRepository {
         public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
         public static final String RESOLUTION = "Resolution";
         public static final String CLIENT_RESOLUTION_TIME = "ClientResolutionTime";
+    }
+
+    public static final class TXInput {
+        public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(TX_INPUT_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TX_ID = "TxId";
+        public static final String PREV_TX_ID = "PrevTxId";
+        public static final String PREV_TX_INDEX = "PrevTxIndex";
+        public static final String AMMOUNT_BTC = "AmountBTC";
+    }
+
+    public static final class TXOutput {
+        public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(TX_OUTPUT_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TX_ID = "TxId";
+        public static final String PAY_TO_ID = "PayToId";
+        public static final String AMOUNT_BTC = "AmountBTC";
+    }
+
+    public static final class TXSignature {
+        public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(TX_SIGNATURE_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TX_INPUT_ID = "TxInputId";
+        public static final String TEAMMATE_ID = "TeammateId";
+        public static final String SIGNATURE = "Signature";
+        public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
     }
 
     public static class Team {

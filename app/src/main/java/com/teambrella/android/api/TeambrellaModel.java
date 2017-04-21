@@ -121,4 +121,11 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_PAY_TOS = "PayTos";
     public static final String ATTR_DATA_BTC_ADDRESSES = "BTCAddresses";
     public static final String ATTR_DATA_COSIGNERS = "Cosigners";
+    public static final String ATTR_DATA_WITHDRAW_REQ_ID = "WithdrawReqId";
+    public static final String ATTR_DATA_TXS = "Txs";
+    public static final String ATTR_DATA_TX_ID = "TxId";
+    public static final String ATTR_DATA_PREVIOUS_TX_ID = "PreviousTxId";
+    public static final String ATTR_DATA_PREVIOUS_TX_INDEX = "PreviousTxIndex";
+    public static final String ATTR_DATA_PAY_TO_ID = "PayToId";
+    public static final String ATTR_DATA_SIGNATURE = "Signature";
 }

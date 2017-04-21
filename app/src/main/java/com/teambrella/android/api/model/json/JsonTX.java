@@ -39,6 +39,11 @@ public class JsonTX extends JsonWrapper implements ITx {
     }
 
     @Override
+    public long getWithdrawReqId() {
+        return getLong(TeambrellaModel.ATTR_DATA_WITHDRAW_REQ_ID, -1);
+    }
+
+    @Override
     public int getKind() {
         return getInt(TeambrellaModel.ATTR_DATA_KIND, -1);
     }

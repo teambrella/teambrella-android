@@ -97,6 +97,14 @@ public class TeambrellaContentProvider extends ContentProvider {
                 return TeambrellaRepository.TEAM_TABLE;
             case TeambrellaRepository.TEAMMATE:
                 return TeambrellaRepository.TEAMMATE_TABLE;
+            case TeambrellaRepository.TX:
+                return TeambrellaRepository.TX_TABLE;
+            case TeambrellaRepository.TX_INPUT:
+                return TeambrellaRepository.TX_INPUT_TABLE;
+            case TeambrellaRepository.TX_OUTPUT:
+                return TeambrellaRepository.TX_OUTPUT_TABLE;
+            case TeambrellaRepository.TX_SIGNATURE:
+                return TeambrellaRepository.TX_SIGNATURE_TABLE;
             default:
                 throw new RuntimeException("Unknown uri ->" + uri);
         }

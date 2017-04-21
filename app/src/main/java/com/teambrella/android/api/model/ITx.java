@@ -10,6 +10,8 @@ public interface ITx {
 
     long getClaimId();
 
+    long getWithdrawReqId();
+
     long getClaimTeammateId();
 
     int getKind();
@@ -17,4 +19,6 @@ public interface ITx {
     int getState();
 
     String getInitiatedTime();
+
+
 }

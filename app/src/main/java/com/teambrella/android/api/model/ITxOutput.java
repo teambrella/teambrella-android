@@ -5,7 +5,7 @@ package com.teambrella.android.api.model;
  */
 public interface ITxOutput {
 
-    long getId();
+    String getId();
 
     String getTxId();
 

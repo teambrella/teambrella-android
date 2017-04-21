@@ -2,14 +2,14 @@ package com.teambrella.android.api.model.json;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.api.model.ITxOutput;
+import com.teambrella.android.api.model.ITxSignature;
 
 /**
- * Json TX OutPut
+ * Json Signature
  */
-public class JsonTxOutput extends JsonWrapper implements ITxOutput {
+public class JsonTxSignature extends JsonWrapper implements ITxSignature {
 
-    public JsonTxOutput(JsonObject object) {
+    public JsonTxSignature(JsonObject object) {
         super(object);
     }
 
@@ -24,12 +24,12 @@ public class JsonTxOutput extends JsonWrapper implements ITxOutput {
     }
 
     @Override
-    public String getPayToId() {
-        return getString(TeambrellaModel.ATTR_DATA_PAY_TO_ID);
+    public long getTeammateId() {
+        return getLong(TeambrellaModel.ATTR_DATA_TEAMMATE_ID, 0);
     }
 
     @Override
-    public float getBTCAmount() {
-        return getFloat(TeambrellaModel.ATTR_DATA_BTC_AMOUNT, -1);
+    public String getSignature() {
+        return getString(TeambrellaModel.ATTR_DATA_SIGNATURE);
     }
 }

@@ -5,13 +5,13 @@ package com.teambrella.android.api.model;
  */
 public interface ITxInput {
 
-    long getId();
+    String getId();
 
-    long getTxId();
+    String getTxId();
 
     float getBTCAmount();
 
     String getPreviousTxId();
 
-    int getPreviosTxIndex();
+    int getPreviousTxIndex();
 }

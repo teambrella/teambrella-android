@@ -1,10 +1,11 @@
 package com.teambrella.android.api.model.json;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.ITxInput;
 
 /**
- * Tx Input
+ * Json Tx Input
  */
 public class JsonTxInput extends JsonWrapper implements ITxInput {
 
@@ -13,27 +14,27 @@ public class JsonTxInput extends JsonWrapper implements ITxInput {
     }
 
     @Override
-    public long getId() {
-        return 0;
+    public String getId() {
+        return getString(TeambrellaModel.ATTR_DATA_ID);
     }
 
     @Override
-    public long getTxId() {
-        return 0;
+    public String getTxId() {
+        return getString(TeambrellaModel.ATTR_DATA_TX_ID);
     }
 
     @Override
     public float getBTCAmount() {
-        return 0;
+        return getFloat(TeambrellaModel.ATTR_DATA_BTC_AMOUNT, 0f);
     }
 
     @Override
     public String getPreviousTxId() {
-        return null;
+        return getString(TeambrellaModel.ATTR_DATA_PREVIOUS_TX_ID);
     }
 
     @Override
-    public int getPreviosTxIndex() {
-        return 0;
+    public int getPreviousTxIndex() {
+        return getInt(TeambrellaModel.ATTR_DATA_PREVIOUS_TX_INDEX, -1);
     }
 }
