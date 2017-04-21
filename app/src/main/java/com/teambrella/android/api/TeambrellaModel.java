@@ -5,6 +5,59 @@ package com.teambrella.android.api;
  */
 public class TeambrellaModel {
 
+    /*
+     * Tx  Kind
+     */
+    public static final int TX_KIND_PAYOUT = 0;
+    public static final int TX_KIND_WITHDRAW = 1;
+    public static final int TX_KIND_MOVE_TO_NEXT_WALLET = 2;
+    public static final int TX_KIND_SAVE_FROM_PREV_WALLLET = 3;
+
+
+    /*
+     * Tx State
+     */
+    public static final int TX_STATE_CREATED = 0;
+    public static final int TX_STATE_APPROVED_MASTER = 1;
+    public static final int TX_STATE_APPROVED_COSIGNERS = 2;
+    public static final int TX_STATE_APPREOVED_ALL = 3;
+    public static final int TX_STATE_BLOCKED_MASTER = 4;
+    public static final int TX_STATE_BLOCKED_COSIGNERS = 5;
+    public static final int TX_STATE_SELECTED_FOR_COSIGNING = 6;
+    public static final int TX_STATE_BEING_COSIGNED = 7;
+    public static final int TX_STATE_COSIGNED = 8;
+    public static final int TX_STATE_PUBLISHED = 9;
+    public static final int TX_STATE_CONFIRMED = 10;
+    public static final int TX_STATE_ERROR_COSIGNERS_TIMEOUT = 100;
+    public static final int TX_STATE_ERROR_SUBMIT_TO_BLOCKCHAIN = 101;
+    public static final int TX_STATE_ERROR_BAD_REQUEST = 102;
+    public static final int TX_STATE_ERROR_OUT_OF_FOUNDS = 103;
+    public static final int TX_STATE_ERROR_TOO_MANY_UTXOS = 104;
+
+
+    /*
+     *  Client resolution
+     */
+    public static final int TX_CLIENT_RESOLUTION_NONE = 0;
+    public static final int TX_CLIENT_RESOLUTION_RECEIVED = 1;
+    public static final int TX_CLIENT_RESOLUTON_APPROVED = 2;
+    public static final int TX_CLIENT_RESOLUTION_BLOCKED = 3;
+    public static final int TX_CLIENT_RESOLUTION_SIGNED = 4;
+    public static final int TX_CLIENT_RESOLUTION_PUBLISHED = 5;
+    public static final int TX_CLIENT_RESOLUTION_ERROR_COSIGNERS_TIMEOUT = 100;
+    public static final int TX_CLIENT_RESOLUTION_ERROR_SUBMITT_TO_BLOCKCHAIN = 101;
+    public static final int TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST = 102;
+    public static final int TX_CLIENT_RESOLUTION_ERROR_OUT_OF_FUNDS = 103;
+
+
+    /* Tx signing state*/
+    public static final int TX_SIGNING_STATE_CREATED = 0;
+    public static final int TX_SIGNING_STATE_TAKEN_FOR_APPROVAL = 1;
+    public static final int TX_SIGNING_STATE_APPROVED = 2;
+    public static final int TX_SIGNING_STATE_BLOCKED = 3;
+    public static final int TX_SIGNING_STATE_NEEDS_SIGNING = 4;
+    public static final int TX_SIGNING_STATE_SIGNED = 5;
+
 
     /*Request*/
     public static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
@@ -62,6 +115,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_KIND = "kind";
     public static final String ATTR_DATA_STATE = "state";
     public static final String ATTR_DATA_INITIATED_TIME = "InitiatedTime";
-
-
+    public static final String ATTR_DATA_TEAMS = "Teams";
+    public static final String ATTR_DATA_KNOWN_SINCE = "KnownSince";
+    public static final String ATTR_DATA_IS_DEFAULT = "IsDefault";
+    public static final String ATTR_DATA_PAY_TOS = "PayTos";
+    public static final String ATTR_DATA_BTC_ADDRESSES = "BTCAddresses";
+    public static final String ATTR_DATA_COSIGNERS = "Cosigners";
 }

@@ -17,6 +17,7 @@ public class TeambrellaRepository {
     static final String PAY_TO_TABLE = "PayTo";
     static final String TEAMMATE_TABLE = "Teammate";
     static final String TEAM_TABLE = "Team";
+    static final String TX_TABLE = "Tx";
 
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -44,6 +45,7 @@ public class TeambrellaRepository {
                 .encodedPath(BTC_ADDRESS_TABLE).build();
 
         public static final String ADDRESS = "Address";
+        public static final String TEAMMATE_ID = "TeammateID";
         public static final String STATUS = "Status";
         public static final String DATE_CREATED = "DataCreated";
 
@@ -53,6 +55,7 @@ public class TeambrellaRepository {
     public static final class Connection {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(CONNECTION_TABLE).build();
+        public static final String ID = "Id";
         public static final String LAST_CONNECTED = "LastConnected";
         public static final String LAST_UPDATED = "LastUpdated";
     }
@@ -60,6 +63,8 @@ public class TeambrellaRepository {
     public static class Cosigner {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(COSIGNER_TABLE).build();
+        public static final String ADDRESS_ID = "AddressId";
+        public static final String TEAMMATE_ID = "TeammateId";
         public static final String KEY_ORDER = "KeyOrder";
     }
 
@@ -67,6 +72,8 @@ public class TeambrellaRepository {
     public static class PayTo {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(PAY_TO_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TEAMMATE_ID = "TeammateId";
         public static final String KNOWN_SINCE = "KnownSince";
         public static final String ADDRESS = "Address";
         public static final String IS_DEFAULT = "IsDefault";
@@ -75,15 +82,42 @@ public class TeambrellaRepository {
     public static class Teammate {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(TEAMMATE_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TEAM_ID = "TeamId";
         public static final String NAME = "Name";
         public static final String FB_NAME = "FBName";
         public static final String PUBLIC_KEY = "PublicKey";
     }
 
+    public static class Tx {
+        public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(TX_TABLE).build();
+        public static final String ID = "Id";
+        public static final String TEAMMATE_ID = "TeammateId";
+        public static final String AMOUNT_BTC = "AmountBTC";
+        public static final String FEE_BTC = "FeeBTC";
+        public static final String CLAIM_ID = "ClaimId";
+        public static final String CLAIM_TEAMMATE_ID = "ClaimTeammateId";
+        public static final String WITHDRAW_REQ_ID = "WithdrawReqId";
+        public static final String KIND = "Kind";
+        public static final String STATE = "State";
+        public static final String INITIATED_TIME = "InitiatedTime";
+        public static final String MOVE_TO_ADDRESS_ID = "MoveToAddressId";
+        public static final String UPDATE_TIME = "UpdateTime";
+        public static final String RECEIVED_TIME = "ReceivedTime";
+        public static final String RESOLUTION_TIME = "ResolutionTime";
+        public static final String PROCESSED_TIME = "ProcessedTime";
+        public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
+        public static final String RESOLUTION = "Resolution";
+        public static final String CLIENT_RESOLUTION_TIME = "ClientResolutionTime";
+    }
+
     public static class Team {
+
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(TEAM_TABLE).build();
 
+        public static final String ID = "Id";
         public static final String NAME = "Name";
         public static final String TESTNET = "Testnet";
 

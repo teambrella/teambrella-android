@@ -1,14 +1,19 @@
 package com.teambrella.android.content;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
 
 /**
  * Teambrella Content Provider
@@ -30,8 +35,8 @@ public class TeambrellaContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        mDbHelper.getReadableDatabase();
-        return null;
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     @Nullable
@@ -43,17 +48,39 @@ public class TeambrellaContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long rowId;
+        switch (TeambrellaRepository.sUriMatcher.match(uri)) {
+            case TeambrellaRepository.TEAMMATE:
+                rowId = db.insertWithOnConflict(TeambrellaRepository.TEAMMATE_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                break;
+            case TeambrellaRepository.BTC_ADDRESS:
+                rowId = db.insertOrThrow(TeambrellaRepository.BTC_ADDRESS_TABLE, null, values);
+                break;
+            default:
+                rowId = db.insertOrThrow(getTableName(uri), null, values);
+                break;
+        }
+        return Uri.withAppendedPath(uri, Long.toString(rowId));
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        return db.delete(getTableName(uri), selection, selectionArgs);
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        return db.update(getTableName(uri), values, selection, selectionArgs);
+    }
+
+
+    @NonNull
+    @Override
+    public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
+        return super.applyBatch(operations);
     }
 
     private String getTableName(Uri uri) {
@@ -137,6 +164,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "FBName TEXT, " +
                     "PublicKey TEXT" +
                     ")");
+
 
             db.execSQL("CREATE TABLE [Tx] ( " +
                     "[Id] varchar PRIMARY KEY NOT NULL, " +
