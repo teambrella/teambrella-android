@@ -19,7 +19,7 @@ public class JsonTxSignature extends JsonWrapper implements ITxSignature {
     }
 
     @Override
-    public String getTxId() {
+    public String getTxInputId() {
         return getString(TeambrellaModel.ATTR_DATA_TX_ID);
     }
 

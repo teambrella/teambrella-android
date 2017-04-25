@@ -128,4 +128,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_PREVIOUS_TX_INDEX = "PreviousTxIndex";
     public static final String ATTR_DATA_PAY_TO_ID = "PayToId";
     public static final String ATTR_DATA_SIGNATURE = "Signature";
+    public static final String ATTR_DATA_TX_INPUTS = "TxInputs";
+    public static final String ATTR_DATA_TX_OUTPUTS = "TxOutputs";
+    public static final String ATTR_DATA_TX_SIGNATURES = "TxSignatures";
 }

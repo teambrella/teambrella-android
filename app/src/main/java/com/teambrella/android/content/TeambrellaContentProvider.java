@@ -80,7 +80,16 @@ public class TeambrellaContentProvider extends ContentProvider {
     @NonNull
     @Override
     public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
-        return super.applyBatch(operations);
+        ContentProviderResult[] results = null;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+            results = super.applyBatch(operations);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return results;
     }
 
     private String getTableName(Uri uri) {

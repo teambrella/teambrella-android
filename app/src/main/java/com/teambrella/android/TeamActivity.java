@@ -33,7 +33,7 @@ public class TeamActivity extends AppCompatActivity {
         getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Pair<JsonObject, TeambrellaException>>() {
             @Override
             public Loader<Pair<JsonObject, TeambrellaException>> onCreateLoader(int id, Bundle args) {
-                return new TeambrellaUriLoader(TeamActivity.this, TeambrellaUris.getTeamUri(1));
+                return new TeambrellaUriLoader(TeamActivity.this, TeambrellaUris.getTeamUri(2003));
             }
 
             @Override

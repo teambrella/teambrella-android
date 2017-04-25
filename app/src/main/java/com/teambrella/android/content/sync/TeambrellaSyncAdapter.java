@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.JsonElement;
@@ -33,6 +35,9 @@ import com.teambrella.android.api.model.json.JsonPayTo;
 import com.teambrella.android.api.model.json.JsonTX;
 import com.teambrella.android.api.model.json.JsonTeam;
 import com.teambrella.android.api.model.json.JsonTeammate;
+import com.teambrella.android.api.model.json.JsonTxInput;
+import com.teambrella.android.api.model.json.JsonTxOutput;
+import com.teambrella.android.api.model.json.JsonTxSignature;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.content.TeambrellaRepository;
@@ -48,6 +53,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
 
 /**
  * Teambrella Sync Adapter
@@ -119,8 +127,34 @@ class TeambrellaSyncAdapter extends AbstractThreadedSyncAdapter {
                 ITx[] txs = txsElement != null && !txsElement.isJsonNull() ?
                         Factory.fromArray(txsElement.getAsJsonArray(), JsonTX.class) : null;
                 if (txs != null) {
-                    insertTx(provider, txs);
+                    operations.addAll(insertTx(provider, txs));
                 }
+
+                JsonElement txInputsElement = result.get(TeambrellaModel.ATTR_DATA_TX_INPUTS);
+                ITxInput[] txInputs = txInputsElement != null && !txInputsElement.isJsonNull() ?
+                        Factory.fromArray(txInputsElement.getAsJsonArray(), JsonTxInput.class) : null;
+
+                if (txInputs != null) {
+                    operations.addAll(insertTXInputs(provider, txs, txInputs));
+                }
+
+
+                JsonElement txOutputsElement = result.get(TeambrellaModel.ATTR_DATA_TX_OUTPUTS);
+                ITxOutput[] txOutputs = txOutputsElement != null && !txOutputsElement.isJsonNull() ?
+                        Factory.fromArray(txOutputsElement.getAsJsonArray(), JsonTxOutput.class) : null;
+
+                JsonElement txSignaturesElement = result.get(TeambrellaModel.ATTR_DATA_TX_SIGNATURES);
+                ITxSignature[] txSignatures = txSignaturesElement != null && !txSignaturesElement.isJsonNull() ?
+                        Factory.fromArray(txSignaturesElement.getAsJsonArray(), JsonTxSignature.class) : null;
+
+                if (txSignatures != null) {
+                    operations.addAll(insertTXSignatures(provider, txInputs, txSignatures));
+                }
+
+                if (txOutputs != null) {
+                    operations.addAll(insertTXOutputs(provider, txs, txOutputs));
+                }
+
 
                 provider.applyBatch(operations);
             }
@@ -148,12 +182,26 @@ class TeambrellaSyncAdapter extends AbstractThreadedSyncAdapter {
     private List<ContentProviderOperation> insertTeams(ContentProviderClient provider, ITeam[] teams) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
         for (ITeam team : teams) {
-            ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Team.ID, team.getId());
-            cv.put(TeambrellaRepository.Team.NAME, team.getName());
-            cv.put(TeambrellaRepository.Team.TESTNET, team.isTestNet());
-            list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Team.CONTENT_URI)
-                    .withValues(cv).build());
+            Cursor cursor = provider.query(TeambrellaRepository.Team.CONTENT_URI, new String[]{TeambrellaRepository.Team.NAME},
+                    TeambrellaRepository.Team.ID + "=?", new String[]{Long.toString(team.getId())}, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Team.CONTENT_URI)
+                        .withValue(TeambrellaRepository.Team.NAME, team.getName()).build());
+                cursor.close();
+            } else {
+                if (cursor != null) {
+                    cursor.close();
+                }
+                ContentValues cv = new ContentValues();
+                cv.put(TeambrellaRepository.Team.ID, team.getId());
+                cv.put(TeambrellaRepository.Team.NAME, team.getName());
+                cv.put(TeambrellaRepository.Team.TESTNET, team.isTestNet());
+                list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Team.CONTENT_URI)
+                        .withValues(cv).build());
+            }
+
+
         }
         return list;
     }
@@ -244,19 +292,123 @@ class TeambrellaSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
 
-    private void insertTXInputs(ContentProviderClient client, ITx[] txs, ITxInput[] txInputs) {
+    private List<ContentProviderOperation> insertTXInputs(ContentProviderClient client, ITx[] txs, ITxInput[] txInputs) throws RemoteException {
+        List<ContentProviderOperation> list = new LinkedList<>();
 
+        for (final ITxInput txInput : txInputs) {
+            Cursor cursor = client.query(TeambrellaRepository.TXInput.CONTENT_URI, new String[]{TeambrellaRepository.TXInput.ID}, TeambrellaRepository.TXInput.ID + "=?",
+                    new String[]{txInput.getId()}, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                cursor.close();
+                continue;
+            }
+
+            if (cursor != null) {
+                cursor.close();
+            }
+
+            long count = Observable.fromArray(txs).filter(new Predicate<ITx>() {
+                @Override
+                public boolean test(ITx iTx) throws Exception {
+                    return iTx.getId().equals(txInput.getId());
+                }
+            }).count().blockingGet();
+
+
+            if (count > 0) {
+                list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXInput.CONTENT_URI)
+                        .withValue(TeambrellaRepository.TXInput.ID, txInput.getId())
+                        .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.getTxId())
+                        .withValue(TeambrellaRepository.TXInput.AMMOUNT_BTC, txInput.getBTCAmount())
+                        .withValue(TeambrellaRepository.TXInput.PREV_TX_ID, txInput.getPreviousTxId())
+                        .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.getPreviousTxIndex())
+                        .build());
+            }
+
+        }
+
+
+        return list;
     }
 
-    private void insertTXOutputs(ContentProviderClient client, ITx[] txs, ITxOutput[] txOutputs) {
+    private List<ContentProviderOperation> insertTXOutputs(ContentProviderClient client, ITx[] txs, ITxOutput[] txOutputs) throws RemoteException {
+        List<ContentProviderOperation> list = new LinkedList<>();
+        for (final ITxOutput txOutput : txOutputs) {
+            Cursor cursor = client.query(TeambrellaRepository.TXOutput.CONTENT_URI, new String[]{TeambrellaRepository.TXOutput.ID}, TeambrellaRepository.TXOutput.ID + "=?",
+                    new String[]{txOutput.getId()}, null);
 
+            if (cursor != null && cursor.moveToFirst()) {
+                cursor.close();
+                continue;
+            }
+
+            if (cursor != null) {
+                cursor.close();
+
+            }
+
+            long count = Observable.fromArray(txs).filter(new Predicate<ITx>() {
+                @Override
+                public boolean test(ITx iTx) throws Exception {
+                    return iTx.getId().equals(txOutput.getId());
+                }
+            }).count().blockingGet();
+
+            if (count > 0) {
+                list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
+                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.getId())
+                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.getTxId())
+                        .withValue(TeambrellaRepository.TXOutput.AMOUNT_BTC, txOutput.getBTCAmount())
+                        .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.getPayToId())
+                        .build());
+            }
+
+        }
+
+        return list;
     }
 
-    private void insertTXSignatures(ContentProviderClient client, ITxInput[] txInputs, ITxSignature[] txSignatures) {
+    private List<ContentProviderOperation> insertTXSignatures(ContentProviderClient client, ITxInput[] txInputs, ITxSignature[] txSignatures) throws RemoteException {
+        List<ContentProviderOperation> list = new LinkedList<>();
 
+        for (final ITxSignature txSignature : txSignatures) {
+            if (hasRecord(client, TeambrellaRepository.TXSignature.CONTENT_URI, new String[]{TeambrellaRepository.TXSignature.TX_INPUT_ID, TeambrellaRepository.TXSignature.TEAMMATE_ID},
+                    new String[]{txSignature.getTxInputId(), Long.toString(txSignature.getTeammateId())})) {
+                continue;
+            }
+
+            if (!hasRecord(client, TeambrellaRepository.TXInput.CONTENT_URI, new String[]{TeambrellaRepository.TXInput.ID},
+                    new String[]{txSignature.getTxInputId()})) {
+                long count = Observable.fromArray(txInputs).filter(new Predicate<ITxInput>() {
+                    @Override
+                    public boolean test(ITxInput iTxInput) throws Exception {
+                        return iTxInput.getId().equals(txSignature.getTxInputId());
+                    }
+                }).count().blockingGet();
+
+                if (count == 0) {
+                    continue;
+                }
+            }
+
+            list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXSignature.CONTENT_URI)
+                    .withValue(TeambrellaRepository.TXSignature.ID, txSignature.getId())
+                    .withValue(TeambrellaRepository.TXSignature.TEAMMATE_ID, txSignature.getTeammateId())
+                    .withValue(TeambrellaRepository.TXSignature.TX_INPUT_ID, txSignature.getTxInputId())
+                    .withValue(TeambrellaRepository.TXSignature.SIGNATURE, Base64.decode(txSignature.getSignature(), Base64.DEFAULT))
+                    .withValue(TeambrellaRepository.TXSignature.NEED_UPDATE_SERVER, false)
+                    .build());
+
+
+        }
+
+
+        return list;
     }
 
-    private List<ContentProviderOperation> insertTx(ContentProviderClient client, ITx[] txs) throws RemoteException {
+    private List<ContentProviderOperation> insertTx(ContentProviderClient client, ITx[] txs) throws
+            RemoteException {
 
         List<ContentProviderOperation> list = new LinkedList<>();
 
@@ -281,6 +433,9 @@ class TeambrellaSyncAdapter extends AbstractThreadedSyncAdapter {
                 cv.put(TeambrellaRepository.Tx.KIND, tx.getKind());
                 cv.put(TeambrellaRepository.Tx.INITIATED_TIME, tx.getInitiatedTime());
                 cv.put(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, false);
+                cv.put(TeambrellaRepository.Tx.RECEIVED_TIME, mSDF.format(new Date()));
+                cv.put(TeambrellaRepository.Tx.UPDATE_TIME, mSDF.format(new Date()));
+                cv.put(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_NONE);
                 cv.putNull(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME);
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Tx.CONTENT_URI)
                         .withValues(cv).build());
@@ -320,5 +475,24 @@ class TeambrellaSyncAdapter extends AbstractThreadedSyncAdapter {
             }
             cursor.close();
         }
+    }
+
+    private static boolean hasRecord(ContentProviderClient client, Uri uri, String[] fields, String[] values) throws RemoteException {
+        boolean result = false;
+        String selection = "";
+        for (int i = 0; i < fields.length; i++) {
+            selection += (fields[i] + "=?");
+            if (i != fields.length - 1) {
+                selection += " AND ";
+            }
+        }
+        Cursor cursor = client.query(uri, null, selection, values, null);
+
+        if (cursor != null) {
+            result = cursor.moveToFirst();
+            cursor.close();
+        }
+
+        return result;
     }
 }

@@ -7,7 +7,7 @@ public interface ITxSignature {
 
     String getId();
 
-    String getTxId();
+    String getTxInputId();
 
     long getTeammateId();
 
