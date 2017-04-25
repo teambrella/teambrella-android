@@ -131,4 +131,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TX_INPUTS = "TxInputs";
     public static final String ATTR_DATA_TX_OUTPUTS = "TxOutputs";
     public static final String ATTR_DATA_TX_SIGNATURES = "TxSignatures";
+    public static final String ATTR_DATA_LAST_UPDATED = "LastUpdated";
+    public static final String ATTR_DATA_RESOLUTION = "Resolution";
+    public static final String ATTR_DATA_RESOLUTION_TIME = "ResolutionTime";
+    public static final String ATTR_DATA_TX_INFOS = "TxInfos";
+    public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
+
 }

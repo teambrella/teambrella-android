@@ -33,12 +33,13 @@ public class TeamActivity extends AppCompatActivity {
         getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Pair<JsonObject, TeambrellaException>>() {
             @Override
             public Loader<Pair<JsonObject, TeambrellaException>> onCreateLoader(int id, Bundle args) {
-                return new TeambrellaUriLoader(TeamActivity.this, TeambrellaUris.getTeamUri(2003));
+                return new TeambrellaUriLoader(TeamActivity.this, TeambrellaUris.getTeamUri(2006));
             }
 
             @Override
             public void onLoadFinished(Loader<Pair<JsonObject, TeambrellaException>> loader, Pair<JsonObject, TeambrellaException> data) {
-                mListView.setAdapter(new TeammatesRecyclerAdapter(data.first.get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
+                mListView.setAdapter(new TeammatesRecyclerAdapter(data.first.get(TeambrellaModel.ATTR_DATA)
+                        .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
             }
 
             @Override

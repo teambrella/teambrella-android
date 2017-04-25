@@ -143,7 +143,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             db.execSQL("CREATE TABLE Connection (" +
                     "Id INTEGER PRIMARY KEY, " +
                     "LastConnected DATETIME, " +
-                    "LastUpdated DATETIME, " +
+                    "LastUpdated TEXT, " +
                     "NeedShowBrowser BOOL" +
                     ")");
 

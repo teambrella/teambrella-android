@@ -34,8 +34,7 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String PRIVATE_KEY = "Kxv2gGGa2ZW85b1LXh1uJSP3HLMV6i6qRxxStRhnDsawXDuMJadB";
-    private static final String PUBLIC_KEY = "0203ca066905e668d1232a33bf5cce76ee1754b0a24ae9c28d20e13b069274742c";
+    private static final String PRIVATE_KEY = "cNqQ7aZWitJCk1o9dNhr1o9k3UKdeW92CDYrvDHHLuwFuEnfcBXo";
     //public static final String AUTHORITY = "http://94.72.4.72/";
     public static final String AUTHORITY = "http://192.168.0.222/";
 
@@ -79,19 +78,18 @@ public class TeambrellaServer {
                 .build();
 
         mAPI = retrofit.create(TeambrellaAPI.class);
-
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, PRIVATE_KEY);
         mKey = dpk.getKey();
     }
 
 
-    public JsonObject execute(Uri uri) throws TeambrellaException {
+    public JsonObject execute(Uri uri, JsonObject requestData) throws TeambrellaException {
         try {
-            return execute(getCallObject(uri, getRequestBody(uri)));
+            return execute(getCallObject(uri, getRequestBody(uri, requestData)));
         } catch (TeambrellaServerException e) {
             switch (e.getErrorCode()) {
                 case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
-                    return execute(uri);
+                    return execute(uri, requestData);
                 default:
                     throw e;
 
@@ -100,8 +98,8 @@ public class TeambrellaServer {
     }
 
 
-    private JsonObject getRequestBody(Uri uri) {
-        final JsonObject requestBody = createBaseRequestBody();
+    private JsonObject getRequestBody(Uri uri, JsonObject body) {
+        JsonObject requestBody = createBaseRequestBody(body);
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST: {
                 int teamId = TeambrellaUris.getTeamId(uri);
@@ -140,8 +138,8 @@ public class TeambrellaServer {
      *
      * @return request object
      */
-    private JsonObject createBaseRequestBody() {
-        return updateRequestBody(new JsonObject());
+    private JsonObject createBaseRequestBody(JsonObject requestBody) {
+        return updateRequestBody(requestBody != null ? requestBody : new JsonObject());
     }
 
 
@@ -153,7 +151,7 @@ public class TeambrellaServer {
     private JsonObject updateRequestBody(JsonObject requestBody) {
         long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TIMESTAMP, timestamp);
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, PUBLIC_KEY);
+        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, mKey.getPublicKeyAsHex());
         requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, mKey.signMessage(Long.toString(timestamp)));
         return requestBody;
     }
@@ -176,8 +174,7 @@ public class TeambrellaServer {
 
         JsonObject responseBody = response.body();
         if (checkStatus(responseBody)) {
-            JsonElement dataElement = responseBody.get(TeambrellaModel.ATTR_DATA);
-            return dataElement.isJsonNull() ? null : dataElement.getAsJsonObject();
+            return responseBody;
         }
         return null;
     }

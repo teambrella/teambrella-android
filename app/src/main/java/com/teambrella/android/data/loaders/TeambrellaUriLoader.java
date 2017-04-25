@@ -32,7 +32,7 @@ public class TeambrellaUriLoader extends AsyncTaskLoader<Pair<JsonObject, Teambr
     @Override
     public Pair<JsonObject, TeambrellaException> loadInBackground() {
         try {
-            return new Pair<>(mServer.execute(mUri), null);
+            return new Pair<>(mServer.execute(mUri, null), null);
         } catch (TeambrellaException e) {
             return new Pair<>(null, e);
         }
