@@ -36,7 +36,13 @@ public class TeambrellaContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
+        switch (TeambrellaRepository.sUriMatcher.match(uri)) {
+            case TeambrellaRepository.TX_OUTPUT:
+                return db.rawQuery("SELECT * FROM " + TeambrellaRepository.TX_OUTPUT_TABLE + "INNER JOIN " + TeambrellaRepository.PAY_TO_TABLE +
+                        " ON " + TeambrellaRepository.TXOutput.PAY_TO_ID + "=" + TeambrellaRepository.PayTo.ID + " WHERE " + selection, selectionArgs);
+            default:
+                return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
+        }
     }
 
     @Nullable

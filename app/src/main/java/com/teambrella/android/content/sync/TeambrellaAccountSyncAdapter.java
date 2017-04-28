@@ -20,11 +20,13 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
+import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Updates;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -97,6 +99,11 @@ class TeambrellaAccountSyncAdapter {
                 provider.applyBatch(operations);
 
                 setLastUpdatedTime(provider, timestamp);
+
+                List<Teammate> list = client.queryList(TeambrellaRepository.Teammate.CONTENT_URI, null, null, Teammate.class);
+                for (Teammate teammate : list) {
+                    Log.e("TEST", teammate.name + " " + teammate.publicKey);
+                }
             }
 
         } catch (TeambrellaException | RemoteException | OperationApplicationException e) {
