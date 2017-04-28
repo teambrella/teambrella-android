@@ -9,15 +9,15 @@ import android.os.RemoteException;
 import android.util.Base64;
 
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.api.model.IBTCAddress;
-import com.teambrella.android.api.model.ICosigner;
-import com.teambrella.android.api.model.IPayTo;
-import com.teambrella.android.api.model.ITeam;
-import com.teambrella.android.api.model.ITeammate;
-import com.teambrella.android.api.model.ITx;
-import com.teambrella.android.api.model.ITxInput;
-import com.teambrella.android.api.model.ITxOutput;
-import com.teambrella.android.api.model.ITxSignature;
+import com.teambrella.android.content.model.BTCAddress;
+import com.teambrella.android.content.model.Cosigner;
+import com.teambrella.android.content.model.PayTo;
+import com.teambrella.android.content.model.TXSignature;
+import com.teambrella.android.content.model.Team;
+import com.teambrella.android.content.model.Teammate;
+import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.content.model.TxInput;
+import com.teambrella.android.content.model.TxOutput;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,24 +46,24 @@ public class TeambrellaContentProviderClient {
      * @param teams list of teams
      * @return a list of operations to apply
      */
-    public List<ContentProviderOperation> insertTeams(ITeam[] teams) throws RemoteException {
+    public List<ContentProviderOperation> insertTeams(Team[] teams) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
-        for (ITeam team : teams) {
+        for (Team team : teams) {
             Cursor cursor = mClient.query(TeambrellaRepository.Team.CONTENT_URI, new String[]{TeambrellaRepository.Team.NAME},
-                    TeambrellaRepository.Team.ID + "=?", new String[]{Long.toString(team.getId())}, null);
+                    TeambrellaRepository.Team.ID + "=?", new String[]{Long.toString(team.id)}, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Team.CONTENT_URI)
-                        .withValue(TeambrellaRepository.Team.NAME, team.getName()).build());
+                        .withValue(TeambrellaRepository.Team.NAME, team.name).build());
                 cursor.close();
             } else {
                 if (cursor != null) {
                     cursor.close();
                 }
                 ContentValues cv = new ContentValues();
-                cv.put(TeambrellaRepository.Team.ID, team.getId());
-                cv.put(TeambrellaRepository.Team.NAME, team.getName());
-                cv.put(TeambrellaRepository.Team.TESTNET, team.isTestNet());
+                cv.put(TeambrellaRepository.Team.ID, team.id);
+                cv.put(TeambrellaRepository.Team.NAME, team.name);
+                cv.put(TeambrellaRepository.Team.TESTNET, team.testNet);
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Team.CONTENT_URI)
                         .withValues(cv).build());
             }
@@ -77,38 +77,38 @@ public class TeambrellaContentProviderClient {
      * @param teammates list of teammates
      * @return a list of operations to apply
      */
-    public List<ContentProviderOperation> insertTeammates(ITeammate[] teammates) {
+    public List<ContentProviderOperation> insertTeammates(Teammate[] teammates) {
         List<ContentProviderOperation> list = new LinkedList<>();
-        for (ITeammate teammate : teammates) {
+        for (Teammate teammate : teammates) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Teammate.ID, teammate.getId());
-            cv.put(TeambrellaRepository.Teammate.TEAM_ID, teammate.getId());
-            cv.put(TeambrellaRepository.Teammate.NAME, teammate.getName());
-            cv.put(TeambrellaRepository.Teammate.FB_NAME, teammate.getFacebookName());
-            cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY, teammate.getPublicKey());
+            cv.put(TeambrellaRepository.Teammate.ID, teammate.id);
+            cv.put(TeambrellaRepository.Teammate.TEAM_ID, teammate.teamId);
+            cv.put(TeambrellaRepository.Teammate.NAME, teammate.name);
+            cv.put(TeambrellaRepository.Teammate.FB_NAME, teammate.facebookName);
+            cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY, teammate.publicKey);
             list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Teammate.CONTENT_URI).withValues(cv).build());
         }
         return list;
     }
 
 
-    public List<ContentProviderOperation> insertPayTos(IPayTo[] payTos) throws RemoteException {
+    public List<ContentProviderOperation> insertPayTos(PayTo[] payTos) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
-        for (IPayTo payTo : payTos) {
+        for (PayTo payTo : payTos) {
             Cursor cursor = mClient.query(TeambrellaRepository.PayTo.CONTENT_URI, null, TeambrellaRepository.PayTo.ID + "=? AND " +
-                    TeambrellaRepository.PayTo.TEAMMATE_ID + "= ?", new String[]{payTo.getId(), Long.toString(payTo.getTeamId())}, null);
-            boolean isDefault = payTo.isDefault();
-            String address = payTo.getAddress();
+                    TeambrellaRepository.PayTo.TEAMMATE_ID + "= ?", new String[]{payTo.id, Long.toString(payTo.teammateId)}, null);
+            boolean isDefault = payTo.isDefault;
+            String address = payTo.address;
             if (cursor != null && cursor.moveToFirst()) {
                 isDefault = cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.PayTo.IS_DEFAULT)) > 0;
                 address = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.PayTo.ADDRESS));
             } else {
                 ContentValues cv = new ContentValues();
-                cv.put(TeambrellaRepository.PayTo.ID, payTo.getId());
-                cv.put(TeambrellaRepository.PayTo.TEAMMATE_ID, payTo.getTeamId());
-                cv.put(TeambrellaRepository.PayTo.ADDRESS, payTo.getAddress());
+                cv.put(TeambrellaRepository.PayTo.ID, payTo.id);
+                cv.put(TeambrellaRepository.PayTo.TEAMMATE_ID, payTo.teammateId);
+                cv.put(TeambrellaRepository.PayTo.ADDRESS, payTo.address);
                 //cv.put(TeambrellaRepository.PayTo.KNOWN_SINCE, mSDF.format(new Date()));
-                cv.put(TeambrellaRepository.PayTo.IS_DEFAULT, payTo.isDefault());
+                cv.put(TeambrellaRepository.PayTo.IS_DEFAULT, payTo.isDefault);
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.PayTo.CONTENT_URI).withValues(cv).build());
             }
 
@@ -121,7 +121,7 @@ public class TeambrellaContentProviderClient {
                 cv.put(TeambrellaRepository.PayTo.IS_DEFAULT, false);
                 list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.PayTo.CONTENT_URI).withValues(cv)
                         .withSelection(TeambrellaRepository.PayTo.TEAMMATE_ID + "=? AND "
-                                + TeambrellaRepository.PayTo.ADDRESS + "!=?", new String[]{Long.toString(payTo.getTeamId()), address}).build());
+                                + TeambrellaRepository.PayTo.ADDRESS + "!=?", new String[]{Long.toString(payTo.teammateId), address}).build());
             }
         }
         return list;
@@ -134,14 +134,14 @@ public class TeambrellaContentProviderClient {
      * @param cosigners list of cosigners
      * @return a list of operations to apply
      */
-    public List<ContentProviderOperation> insertCosigners(ICosigner[] cosigners) throws RemoteException {
+    public List<ContentProviderOperation> insertCosigners(Cosigner[] cosigners) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
-        HashMap<String, Set<ICosigner>> cosignersMap = new HashMap<>();
-        for (ICosigner cosigner : cosigners) {
-            Set<ICosigner> set = cosignersMap.get(cosigner.getAddressId());
+        HashMap<String, Set<Cosigner>> cosignersMap = new HashMap<>();
+        for (Cosigner cosigner : cosigners) {
+            Set<Cosigner> set = cosignersMap.get(cosigner.addressId);
             if (set == null) {
                 set = new HashSet<>();
-                cosignersMap.put(cosigner.getAddressId(), set);
+                cosignersMap.put(cosigner.addressId, set);
             }
             set.add(cosigner);
         }
@@ -150,11 +150,11 @@ public class TeambrellaContentProviderClient {
             Cursor cursor = mClient.query(TeambrellaRepository.Cosigner.CONTENT_URI, null, TeambrellaRepository.Cosigner.ADDRESS_ID + "=?",
                     new String[]{addressId}, null, null);
             if (cursor == null || !cursor.moveToNext()) {
-                for (ICosigner cosigner : cosignersMap.get(addressId)) {
+                for (Cosigner cosigner : cosignersMap.get(addressId)) {
                     ContentValues cv = new ContentValues();
-                    cv.put(TeambrellaRepository.Cosigner.ADDRESS_ID, cosigner.getAddressId());
-                    cv.put(TeambrellaRepository.Cosigner.TEAMMATE_ID, cosigner.getTeammateId());
-                    cv.put(TeambrellaRepository.Cosigner.KEY_ORDER, cosigner.getKeyOrder());
+                    cv.put(TeambrellaRepository.Cosigner.ADDRESS_ID, cosigner.addressId);
+                    cv.put(TeambrellaRepository.Cosigner.TEAMMATE_ID, cosigner.teammateId);
+                    cv.put(TeambrellaRepository.Cosigner.KEY_ORDER, cosigner.keyOrder);
                     list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Cosigner.CONTENT_URI)
                             .withValues(cv).build());
                 }
@@ -176,12 +176,12 @@ public class TeambrellaContentProviderClient {
      * @param txInputs inputs
      * @return a list of operations to apply
      */
-    public List<ContentProviderOperation> insertTXInputs(ITx[] txs, ITxInput[] txInputs) throws RemoteException {
+    public List<ContentProviderOperation> insertTXInputs(Tx[] txs, TxInput[] txInputs) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
 
-        for (final ITxInput txInput : txInputs) {
+        for (final TxInput txInput : txInputs) {
             Cursor cursor = mClient.query(TeambrellaRepository.TXInput.CONTENT_URI, new String[]{TeambrellaRepository.TXInput.ID}, TeambrellaRepository.TXInput.ID + "=?",
-                    new String[]{txInput.getId()}, null);
+                    new String[]{txInput.id}, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 cursor.close();
@@ -192,21 +192,21 @@ public class TeambrellaContentProviderClient {
                 cursor.close();
             }
 
-            long count = Observable.fromArray(txs).filter(new Predicate<ITx>() {
+            long count = Observable.fromArray(txs).filter(new Predicate<Tx>() {
                 @Override
-                public boolean test(ITx iTx) throws Exception {
-                    return iTx.getId().equals(txInput.getId());
+                public boolean test(Tx iTx) throws Exception {
+                    return iTx.id.equals(txInput.id);
                 }
             }).count().blockingGet();
 
 
             if (count > 0) {
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXInput.CONTENT_URI)
-                        .withValue(TeambrellaRepository.TXInput.ID, txInput.getId())
-                        .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.getTxId())
-                        .withValue(TeambrellaRepository.TXInput.AMMOUNT_BTC, txInput.getBTCAmount())
-                        .withValue(TeambrellaRepository.TXInput.PREV_TX_ID, txInput.getPreviousTxId())
-                        .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.getPreviousTxIndex())
+                        .withValue(TeambrellaRepository.TXInput.ID, txInput.id)
+                        .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.txId)
+                        .withValue(TeambrellaRepository.TXInput.AMMOUNT_BTC, txInput.btcAmount)
+                        .withValue(TeambrellaRepository.TXInput.PREV_TX_ID, txInput.previousTxId)
+                        .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.previousTxId)
                         .build());
             }
 
@@ -221,11 +221,11 @@ public class TeambrellaContentProviderClient {
      * @param txOutputs outputs
      * @return list of operations to apply
      */
-    public List<ContentProviderOperation> insertTXOutputs(ITx[] txs, ITxOutput[] txOutputs) throws RemoteException {
+    public List<ContentProviderOperation> insertTXOutputs(Tx[] txs, TxOutput[] txOutputs) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
-        for (final ITxOutput txOutput : txOutputs) {
+        for (final TxOutput txOutput : txOutputs) {
             Cursor cursor = mClient.query(TeambrellaRepository.TXOutput.CONTENT_URI, new String[]{TeambrellaRepository.TXOutput.ID}, TeambrellaRepository.TXOutput.ID + "=?",
-                    new String[]{txOutput.getId()}, null);
+                    new String[]{txOutput.id}, null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 cursor.close();
@@ -237,19 +237,19 @@ public class TeambrellaContentProviderClient {
 
             }
 
-            long count = Observable.fromArray(txs).filter(new Predicate<ITx>() {
+            long count = Observable.fromArray(txs).filter(new Predicate<Tx>() {
                 @Override
-                public boolean test(ITx iTx) throws Exception {
-                    return iTx.getId().equals(txOutput.getId());
+                public boolean test(Tx iTx) throws Exception {
+                    return iTx.id.equals(txOutput.txId);
                 }
             }).count().blockingGet();
 
             if (count > 0) {
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
-                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.getId())
-                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.getTxId())
-                        .withValue(TeambrellaRepository.TXOutput.AMOUNT_BTC, txOutput.getBTCAmount())
-                        .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.getPayToId())
+                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id)
+                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId)
+                        .withValue(TeambrellaRepository.TXOutput.AMOUNT_BTC, txOutput.btcAmount)
+                        .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.payToId)
                         .build());
             }
 
@@ -264,36 +264,36 @@ public class TeambrellaContentProviderClient {
      * @param btcAddresses addresses
      * @return a list of operations
      */
-    public List<ContentProviderOperation> insertBTCAddresses(IBTCAddress[] btcAddresses) throws RemoteException {
+    public List<ContentProviderOperation> insertBTCAddresses(BTCAddress[] btcAddresses) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
 
-        for (IBTCAddress btcAddress : btcAddresses) {
+        for (BTCAddress btcAddress : btcAddresses) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.BTCAddress.ADDRESS, btcAddress.getAddress());
-            cv.put(TeambrellaRepository.BTCAddress.TEAMMATE_ID, btcAddress.getTeammateId());
-            cv.put(TeambrellaRepository.BTCAddress.DATE_CREATED, btcAddress.getCreatedDate());
-            cv.put(TeambrellaRepository.BTCAddress.STATUS, btcAddress.getStatus());
+            cv.put(TeambrellaRepository.BTCAddress.ADDRESS, btcAddress.address);
+            cv.put(TeambrellaRepository.BTCAddress.TEAMMATE_ID, btcAddress.teamateId);
+            cv.put(TeambrellaRepository.BTCAddress.DATE_CREATED, btcAddress.dateCreated);
+            cv.put(TeambrellaRepository.BTCAddress.STATUS, btcAddress.status);
             list.add(ContentProviderOperation.newInsert(TeambrellaRepository.BTCAddress.CONTENT_URI).withValues(cv).build());
         }
         return list;
     }
 
 
-    public List<ContentProviderOperation> insertTXSignatures(ITxInput[] txInputs, ITxSignature[] txSignatures) throws RemoteException {
+    public List<ContentProviderOperation> insertTXSignatures(TxInput[] txInputs, TXSignature[] txSignatures) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
 
-        for (final ITxSignature txSignature : txSignatures) {
+        for (final TXSignature txSignature : txSignatures) {
             if (hasRecord(mClient, TeambrellaRepository.TXSignature.CONTENT_URI, new String[]{TeambrellaRepository.TXSignature.TX_INPUT_ID, TeambrellaRepository.TXSignature.TEAMMATE_ID},
-                    new String[]{txSignature.getTxInputId(), Long.toString(txSignature.getTeammateId())})) {
+                    new String[]{txSignature.txInputId, Long.toString(txSignature.teammateId)})) {
                 continue;
             }
 
             if (!hasRecord(mClient, TeambrellaRepository.TXInput.CONTENT_URI, new String[]{TeambrellaRepository.TXInput.ID},
-                    new String[]{txSignature.getTxInputId()})) {
-                long count = Observable.fromArray(txInputs).filter(new Predicate<ITxInput>() {
+                    new String[]{txSignature.txInputId})) {
+                long count = Observable.fromArray(txInputs).filter(new Predicate<TxInput>() {
                     @Override
-                    public boolean test(ITxInput iTxInput) throws Exception {
-                        return iTxInput.getId().equals(txSignature.getTxInputId());
+                    public boolean test(TxInput iTxInput) throws Exception {
+                        return iTxInput.id.equals(txSignature.txInputId);
                     }
                 }).count().blockingGet();
 
@@ -303,10 +303,10 @@ public class TeambrellaContentProviderClient {
             }
 
             list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXSignature.CONTENT_URI)
-                    .withValue(TeambrellaRepository.TXSignature.ID, txSignature.getId())
-                    .withValue(TeambrellaRepository.TXSignature.TEAMMATE_ID, txSignature.getTeammateId())
-                    .withValue(TeambrellaRepository.TXSignature.TX_INPUT_ID, txSignature.getTxInputId())
-                    .withValue(TeambrellaRepository.TXSignature.SIGNATURE, Base64.decode(txSignature.getSignature(), Base64.DEFAULT))
+                    .withValue(TeambrellaRepository.TXSignature.ID, txSignature.id)
+                    .withValue(TeambrellaRepository.TXSignature.TEAMMATE_ID, txSignature.teammateId)
+                    .withValue(TeambrellaRepository.TXSignature.TX_INPUT_ID, txSignature.txInputId)
+                    .withValue(TeambrellaRepository.TXSignature.SIGNATURE, Base64.decode(txSignature.signature, Base64.DEFAULT))
                     .withValue(TeambrellaRepository.TXSignature.NEED_UPDATE_SERVER, false)
                     .build());
 
@@ -317,31 +317,31 @@ public class TeambrellaContentProviderClient {
         return list;
     }
 
-    public List<ContentProviderOperation> insertTx(ITx[] txs) throws
+    public List<ContentProviderOperation> insertTx(Tx[] txs) throws
             RemoteException {
 
         List<ContentProviderOperation> list = new LinkedList<>();
 
-        for (ITx tx : txs) {
+        for (Tx tx : txs) {
             Cursor cursor = mClient.query(TeambrellaRepository.Tx.CONTENT_URI, null, TeambrellaRepository.Tx.ID + "=?",
-                    new String[]{tx.getId()}, null, null);
+                    new String[]{tx.id}, null, null);
 
             if (cursor != null && cursor.moveToNext()) {
                 ContentValues cv = new ContentValues();
-                cv.put(TeambrellaRepository.Tx.STATE, tx.getState());
+                cv.put(TeambrellaRepository.Tx.STATE, tx.state);
                 list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI).withValues(cv).withSelection(TeambrellaRepository.Tx.ID + "=?",
-                        new String[]{tx.getId()}).build());
+                        new String[]{tx.id}).build());
             } else {
                 ContentValues cv = new ContentValues();
-                cv.put(TeambrellaRepository.Tx.ID, tx.getId());
-                cv.put(TeambrellaRepository.Tx.TEAMMATE_ID, tx.getTeammateId());
-                cv.put(TeambrellaRepository.Tx.AMOUNT_BTC, tx.getBTCAmount());
-                cv.put(TeambrellaRepository.Tx.CLAIM_ID, tx.getClaimId());
-                cv.put(TeambrellaRepository.Tx.CLAIM_TEAMMATE_ID, tx.getClaimTeammateId());
-                cv.put(TeambrellaRepository.Tx.WITHDRAW_REQ_ID, tx.getClaimTeammateId());
-                cv.put(TeambrellaRepository.Tx.STATE, tx.getState());
-                cv.put(TeambrellaRepository.Tx.KIND, tx.getKind());
-                cv.put(TeambrellaRepository.Tx.INITIATED_TIME, tx.getInitiatedTime());
+                cv.put(TeambrellaRepository.Tx.ID, tx.id);
+                cv.put(TeambrellaRepository.Tx.TEAMMATE_ID, tx.teammateId);
+                cv.put(TeambrellaRepository.Tx.AMOUNT_BTC, tx.btcAmount);
+                cv.put(TeambrellaRepository.Tx.CLAIM_ID, tx.claimId);
+                cv.put(TeambrellaRepository.Tx.CLAIM_TEAMMATE_ID, tx.claimTeammateId);
+                cv.put(TeambrellaRepository.Tx.WITHDRAW_REQ_ID, tx.withdrawReqId);
+                cv.put(TeambrellaRepository.Tx.STATE, tx.state);
+                cv.put(TeambrellaRepository.Tx.KIND, tx.kind);
+                cv.put(TeambrellaRepository.Tx.INITIATED_TIME, tx.initiatedTime);
                 cv.put(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, false);
 //                cv.put(TeambrellaRepository.Tx.RECEIVED_TIME, mSDF.format(new Date()));
 //                cv.put(TeambrellaRepository.Tx.UPDATE_TIME, mSDF.format(new Date()));

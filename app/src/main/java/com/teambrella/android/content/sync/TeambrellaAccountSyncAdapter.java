@@ -10,35 +10,17 @@ import android.os.RemoteException;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.api.model.IBTCAddress;
-import com.teambrella.android.api.model.ICosigner;
-import com.teambrella.android.api.model.IPayTo;
-import com.teambrella.android.api.model.ITeam;
-import com.teambrella.android.api.model.ITeammate;
-import com.teambrella.android.api.model.ITx;
-import com.teambrella.android.api.model.ITxInput;
-import com.teambrella.android.api.model.ITxOutput;
-import com.teambrella.android.api.model.ITxSignature;
-import com.teambrella.android.api.model.json.Factory;
-import com.teambrella.android.api.model.json.JsonBTCAddress;
-import com.teambrella.android.api.model.json.JsonCosigner;
-import com.teambrella.android.api.model.json.JsonPayTo;
-import com.teambrella.android.api.model.json.JsonTX;
-import com.teambrella.android.api.model.json.JsonTeam;
-import com.teambrella.android.api.model.json.JsonTeammate;
-import com.teambrella.android.api.model.json.JsonTxInput;
-import com.teambrella.android.api.model.json.JsonTxOutput;
-import com.teambrella.android.api.model.json.JsonTxSignature;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
+import com.teambrella.android.content.model.Updates;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +37,6 @@ class TeambrellaAccountSyncAdapter {
     private SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
     void onPerformSync(Context context, ContentProviderClient provider) {
-
         final TeambrellaServer server = new TeambrellaServer(context);
         final TeambrellaContentProviderClient client = new TeambrellaContentProviderClient(provider);
         try {
@@ -72,77 +53,45 @@ class TeambrellaAccountSyncAdapter {
                 JsonObject data = result.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
 
 
+                Updates updates = new Gson().fromJson(data, Updates.class);
+
+
                 ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-                JsonElement teammatesElement = data.get(TeambrellaModel.ATTR_DATA_TEAMMATES);
-                ITeammate[] teammates = teammatesElement != null && !teammatesElement.isJsonNull() ?
-                        Factory.fromArray(teammatesElement.getAsJsonArray(), JsonTeammate.class) : null;
 
-                if (teammates != null) {
-                    operations.addAll(client.insertTeammates(teammates));
+                if (updates.teammates != null) {
+                    operations.addAll(client.insertTeammates(updates.teammates));
                 }
 
-                JsonElement teamsElement = data.get(TeambrellaModel.ATTR_DATA_TEAMS);
-                ITeam[] teams = teamsElement != null && !teamsElement.isJsonNull() ?
-                        Factory.fromArray(teamsElement.getAsJsonArray(), JsonTeam.class) : null;
-
-                if (teams != null) {
-                    operations.addAll(client.insertTeams(teams));
+                if (updates.teams != null) {
+                    operations.addAll(client.insertTeams(updates.teams));
                 }
 
-                JsonElement payTosElement = data.get(TeambrellaModel.ATTR_DATA_PAY_TOS);
-                IPayTo[] payTos = payTosElement != null && !payTosElement.isJsonNull() ?
-                        Factory.fromArray(payTosElement.getAsJsonArray(), JsonPayTo.class) : null;
-
-                if (payTosElement != null) {
-                    operations.addAll(client.insertPayTos(payTos));
+                if (updates.payTos != null) {
+                    operations.addAll(client.insertPayTos(updates.payTos));
                 }
 
-                JsonElement btcAddressesElement = data.get(TeambrellaModel.ATTR_DATA_BTC_ADDRESSES);
-                IBTCAddress[] btcAddresses = btcAddressesElement != null && !btcAddressesElement.isJsonNull() ?
-                        Factory.fromArray(btcAddressesElement.getAsJsonArray(), JsonBTCAddress.class) : null;
-
-                if (btcAddresses != null) {
-                    operations.addAll(client.insertBTCAddresses(btcAddresses));
+                if (updates.btcAddresses != null) {
+                    operations.addAll(client.insertBTCAddresses(updates.btcAddresses));
                 }
 
-                JsonElement cosignersElement = data.get(TeambrellaModel.ATTR_DATA_COSIGNERS);
-                ICosigner[] cosigners = cosignersElement != null && !cosignersElement.isJsonNull() ?
-                        Factory.fromArray(cosignersElement.getAsJsonArray(), JsonCosigner.class) : null;
-
-                if (cosigners != null) {
-                    operations.addAll(client.insertCosigners(cosigners));
+                if (updates.cosigners != null) {
+                    operations.addAll(client.insertCosigners(updates.cosigners));
                 }
 
-                JsonElement txsElement = data.get(TeambrellaModel.ATTR_DATA_TXS);
-                ITx[] txs = txsElement != null && !txsElement.isJsonNull() ?
-                        Factory.fromArray(txsElement.getAsJsonArray(), JsonTX.class) : null;
-                if (txs != null) {
-                    operations.addAll(client.insertTx(txs));
+                if (updates.txs != null) {
+                    operations.addAll(client.insertTx(updates.txs));
                 }
 
-                JsonElement txInputsElement = data.get(TeambrellaModel.ATTR_DATA_TX_INPUTS);
-                ITxInput[] txInputs = txInputsElement != null && !txInputsElement.isJsonNull() ?
-                        Factory.fromArray(txInputsElement.getAsJsonArray(), JsonTxInput.class) : null;
-
-                if (txInputs != null) {
-                    operations.addAll(client.insertTXInputs(txs, txInputs));
+                if (updates.txInputs != null) {
+                    operations.addAll(client.insertTXInputs(updates.txs, updates.txInputs));
                 }
 
-
-                JsonElement txOutputsElement = data.get(TeambrellaModel.ATTR_DATA_TX_OUTPUTS);
-                ITxOutput[] txOutputs = txOutputsElement != null && !txOutputsElement.isJsonNull() ?
-                        Factory.fromArray(txOutputsElement.getAsJsonArray(), JsonTxOutput.class) : null;
-
-                if (txOutputs != null) {
-                    operations.addAll(client.insertTXOutputs(txs, txOutputs));
+                if (updates.txOutputs != null) {
+                    operations.addAll(client.insertTXOutputs(updates.txs, updates.txOutputs));
                 }
 
-                JsonElement txSignaturesElement = data.get(TeambrellaModel.ATTR_DATA_TX_SIGNATURES);
-                ITxSignature[] txSignatures = txSignaturesElement != null && !txSignaturesElement.isJsonNull() ?
-                        Factory.fromArray(txSignaturesElement.getAsJsonArray(), JsonTxSignature.class) : null;
-
-                if (txSignatures != null) {
-                    operations.addAll(client.insertTXSignatures(txInputs, txSignatures));
+                if (updates.txSignatures != null) {
+                    operations.addAll(client.insertTXSignatures(updates.txInputs, updates.txSignatures));
                 }
 
                 provider.applyBatch(operations);

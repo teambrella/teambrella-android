@@ -105,6 +105,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEST_NET = "Testnet";
     public static final String ATTR_DATA_PUBLIC_KEY = "PublicKey";
     public static final String ATTR_DATA_ADDRESS = "Address";
+    public static final String ATTR_DATA_ADDRESS_ID = "AddressId";
     public static final String ATTR_DATA_TEAMMATE_ID = "TeammateId";
     public static final String ATTR_DATA_STATUS = "Status";
     public static final String ATTR_DATA_DATE_CREATED = "DateCreated";

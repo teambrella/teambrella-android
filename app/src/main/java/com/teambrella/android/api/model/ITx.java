@@ -20,5 +20,7 @@ public interface ITx {
 
     String getInitiatedTime();
 
+    ITxInput[] getInputs();
 
+    ITxOutput[] getOutputs();
 }

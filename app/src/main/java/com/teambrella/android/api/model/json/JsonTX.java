@@ -1,8 +1,11 @@
 package com.teambrella.android.api.model.json;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.ITx;
+import com.teambrella.android.api.model.ITxInput;
+import com.teambrella.android.api.model.ITxOutput;
 
 /**
  * Json Transaction
@@ -56,5 +59,19 @@ public class JsonTX extends JsonWrapper implements ITx {
     @Override
     public String getInitiatedTime() {
         return getString(TeambrellaModel.ATTR_DATA_INITIATED_TIME);
+    }
+
+    @Override
+    public ITxInput[] getInputs() {
+        JsonElement inputsElement = mObject.get(TeambrellaModel.ATTR_DATA_TX_INPUTS);
+        return inputsElement != null && !inputsElement.isJsonNull() ?
+                Factory.fromArray(inputsElement.getAsJsonArray(), JsonTxInput.class) : null;
+    }
+
+    @Override
+    public ITxOutput[] getOutputs() {
+        JsonElement outputsElement = mObject.get(TeambrellaModel.ATTR_DATA_TX_OUTPUTS);
+        return outputsElement != null && !outputsElement.isJsonNull() ?
+                Factory.fromArray(outputsElement.getAsJsonArray(), JsonTxOutput.class) : null;
     }
 }

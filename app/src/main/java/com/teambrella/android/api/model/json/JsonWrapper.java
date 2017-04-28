@@ -11,7 +11,7 @@ class JsonWrapper {
     /**
      * Data object
      */
-    private final JsonObject mObject;
+    protected final JsonObject mObject;
 
     JsonWrapper(JsonObject object) {
         this.mObject = object;
