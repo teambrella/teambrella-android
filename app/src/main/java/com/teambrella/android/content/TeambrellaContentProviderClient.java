@@ -22,10 +22,13 @@ import com.teambrella.android.content.model.TxOutput;
 import org.chalup.microorm.MicroOrm;
 import org.chalup.microorm.TypeAdapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,6 +39,8 @@ import io.reactivex.functions.Predicate;
  * Teambrella Content Provider Client
  */
 public class TeambrellaContentProviderClient {
+
+    private SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 
     private static MicroOrm sMicroOrm = new MicroOrm.Builder().registerTypeAdapter(UUID.class, new TypeAdapter<UUID>() {
@@ -125,7 +130,7 @@ public class TeambrellaContentProviderClient {
                 cv.put(TeambrellaRepository.PayTo.ID, payTo.id);
                 cv.put(TeambrellaRepository.PayTo.TEAMMATE_ID, payTo.teammateId);
                 cv.put(TeambrellaRepository.PayTo.ADDRESS, payTo.address);
-                //cv.put(TeambrellaRepository.PayTo.KNOWN_SINCE, mSDF.format(new Date()));
+                cv.put(TeambrellaRepository.PayTo.KNOWN_SINCE, mSDF.format(new Date()));
                 cv.put(TeambrellaRepository.PayTo.IS_DEFAULT, payTo.isDefault);
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.PayTo.CONTENT_URI).withValues(cv).build());
             }
@@ -242,7 +247,7 @@ public class TeambrellaContentProviderClient {
     public List<ContentProviderOperation> insertTXOutputs(Tx[] txs, TxOutput[] txOutputs) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
         for (final TxOutput txOutput : txOutputs) {
-            Cursor cursor = mClient.query(TeambrellaRepository.TXOutput.CONTENT_URI, new String[]{TeambrellaRepository.TXOutput.ID}, TeambrellaRepository.TXOutput.ID + "=?",
+            Cursor cursor = mClient.query(TeambrellaRepository.TXOutput.CONTENT_URI, new String[]{TeambrellaRepository.TXOutput.ID}, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
                     new String[]{txOutput.id.toString()}, null);
 
             if (cursor != null && cursor.moveToFirst()) {
@@ -264,8 +269,8 @@ public class TeambrellaContentProviderClient {
 
             if (count > 0) {
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
-                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id)
-                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId)
+                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id.toString())
+                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId.toString())
                         .withValue(TeambrellaRepository.TXOutput.AMOUNT_BTC, txOutput.btcAmount)
                         .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.payToId)
                         .build());
@@ -361,8 +366,8 @@ public class TeambrellaContentProviderClient {
                 cv.put(TeambrellaRepository.Tx.KIND, tx.kind);
                 cv.put(TeambrellaRepository.Tx.INITIATED_TIME, tx.initiatedTime);
                 cv.put(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, false);
-//                cv.put(TeambrellaRepository.Tx.RECEIVED_TIME, mSDF.format(new Date()));
-//                cv.put(TeambrellaRepository.Tx.UPDATE_TIME, mSDF.format(new Date()));
+                cv.put(TeambrellaRepository.Tx.RECEIVED_TIME, mSDF.format(new Date()));
+                cv.put(TeambrellaRepository.Tx.UPDATE_TIME, mSDF.format(new Date()));
                 cv.put(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_NONE);
                 cv.putNull(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME);
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Tx.CONTENT_URI)

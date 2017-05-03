@@ -32,4 +32,39 @@ public class Teammate {
     public String publicKey;
 
     public List<BTCAddress> addresses;
+
+
+    public BTCAddress getCurrentAddress() {
+        if (this.addresses != null) {
+            for (BTCAddress address : this.addresses) {
+                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_CURRENT) {
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
+
+    public BTCAddress getNextAddress() {
+        if (this.addresses != null) {
+            for (BTCAddress address : this.addresses) {
+                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_NEXT) {
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public BTCAddress getPreviousAddress() {
+        if (this.addresses != null) {
+            for (BTCAddress address : this.addresses) {
+                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_PREVIOUS) {
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
 }

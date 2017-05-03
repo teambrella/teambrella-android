@@ -23,4 +23,14 @@ public class BTCAddress {
     @Column(TeambrellaRepository.BTCAddress.DATE_CREATED)
     @SerializedName(TeambrellaModel.ATTR_DATA_DATE_CREATED)
     public String dateCreated;
+
+    @Column(TeambrellaRepository.Teammate.NAME)
+    public String teammateName;
+
+    @Column(TeambrellaRepository.Teammate.PUBLIC_KEY)
+    public String teammatePublicKey;
+
+    @Column(TeambrellaRepository.Teammate.TEAM_ID)
+    public String teamId;
+
 }

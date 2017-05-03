@@ -22,4 +22,8 @@ public class Cosigner {
     @Column(TeambrellaRepository.Cosigner.KEY_ORDER)
     @SerializedName(TeambrellaModel.ATTR_DATA_KEY_ORDER)
     public int keyOrder;
+
+    @Column(TeambrellaRepository.Teammate.PUBLIC_KEY)
+    public String publicKey;
+
 }

@@ -59,6 +59,14 @@ public class TeambrellaModel {
     public static final int TX_SIGNING_STATE_SIGNED = 5;
 
 
+    /* User address status*/
+    public static final int USER_ADDRESS_STATUS_PREVIOUS = 0;
+    public static final int USER_ADDRESS_STATUS_CURRENT = 1;
+    public static final int USER_ADDRESS_STATUS_NEXT = 3;
+    public static final int USER_ADDRESS_STATUS_ARCHIVE = 4;
+
+
+
     /*Request*/
     public static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
     public static final String ATTR_REQUEST_SIGNATURE = "Signature";

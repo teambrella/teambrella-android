@@ -58,4 +58,10 @@ public class Tx {
 
     public List<TxOutput> txOutOut;
 
+
+    public BTCAddress getFromAddress(){
+        return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getPreviousAddress() :
+                this.teammate.getCurrentAddress();
+    }
+
 }
