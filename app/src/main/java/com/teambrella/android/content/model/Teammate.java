@@ -34,6 +34,22 @@ public class Teammate {
     public List<BTCAddress> addresses;
 
 
+    @Column(TeambrellaRepository.Team.PAY_TO_ADDRESS_OK_AGE)
+    public int payToAddressOkAge;
+
+    @Column(TeambrellaRepository.Team.AUTO_APPROVAL_MY_GODD_ADDRESS)
+    public int autoApprovalMyGoodAddress;
+
+    @Column(TeambrellaRepository.Team.AUTO_APPROVAL_MY_NEW_ADDRESS)
+    public int autoApprovalMyNewAddress;
+
+    @Column(TeambrellaRepository.Team.AUTO_APPROVAL_COSIGN_NEW_ADDRESS)
+    public int autoApprovalCosignNewAddress;
+
+    @Column(TeambrellaRepository.Team.AUTO_APPROVAL_COSIGN_GOOD_ADDRESS)
+    public int getAutoApprovalCosignGoodAddress;
+
+
     public BTCAddress getCurrentAddress() {
         if (this.addresses != null) {
             for (BTCAddress address : this.addresses) {

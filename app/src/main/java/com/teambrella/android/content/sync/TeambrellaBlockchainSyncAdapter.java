@@ -91,7 +91,7 @@ class TeambrellaBlockchainSyncAdapter {
 
     private void piblishApprovedAndCosignedTxs(ContentProviderClient client) throws RemoteException, OperationApplicationException {
         TeambrellaContentProviderClient tbClient = new TeambrellaContentProviderClient(client);
-        List<Tx> txs = getApprovedAndcosignedTxs(tbClient);
+        List<Tx> txs = getApprovedAndCosignedTxs(tbClient);
         for (Tx tx : txs) {
             Transaction transaction = getTransaction(tx);
             BTCAddress fromAddress = tx.getFromAddress();
@@ -143,7 +143,7 @@ class TeambrellaBlockchainSyncAdapter {
             }
 
             if (tx.kind == TeambrellaModel.TX_KIND_PAYOUT || tx.kind == TeambrellaModel.TX_KIND_WITHDRAW) {
-                Collections.sort(tx.txOutOut, new Comparator<TxOutput>() {
+                Collections.sort(tx.txOutputs, new Comparator<TxOutput>() {
                     @Override
                     public int compare(TxOutput o1, TxOutput o2) {
                         return o1.id.compareTo(o2.id);
@@ -152,7 +152,7 @@ class TeambrellaBlockchainSyncAdapter {
 
                 float outputSum = 0f;
 
-                for (TxOutput txOutput : tx.txOutOut) {
+                for (TxOutput txOutput : tx.txOutputs) {
                     Address address = Address.fromBase58(params, txOutput.address);
                     transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Float.toString(txOutput.btcAmount)), address));
                     outputSum += txOutput.btcAmount;
@@ -188,7 +188,7 @@ class TeambrellaBlockchainSyncAdapter {
 
     private static List<Tx> getCosinableTx(TeambrellaContentProviderClient client) throws RemoteException {
         List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
-                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTON_APPROVED),
+                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
                 Integer.toString(TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING)}, Tx.class);
         Iterator<Tx> iterator = list != null ? list.iterator() : null;
         if (iterator != null) {
@@ -198,7 +198,7 @@ class TeambrellaBlockchainSyncAdapter {
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
                     iterator.remove();
                 } else {
-                    tx.txOutOut = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                    tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                     tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                             TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
@@ -212,9 +212,9 @@ class TeambrellaBlockchainSyncAdapter {
         return list;
     }
 
-    private static List<Tx> getApprovedAndcosignedTxs(TeambrellaContentProviderClient client) throws RemoteException {
+    private static List<Tx> getApprovedAndCosignedTxs(TeambrellaContentProviderClient client) throws RemoteException {
         List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
-                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTON_APPROVED),
+                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
                 Integer.toString(TeambrellaModel.TX_STATE_COSIGNED)}, Tx.class);
         Iterator<Tx> iterator = list != null ? list.iterator() : null;
         if (iterator != null) {
@@ -224,7 +224,7 @@ class TeambrellaBlockchainSyncAdapter {
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
                     iterator.remove();
                 } else {
-                    tx.txOutOut = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                    tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                     tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                             TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);

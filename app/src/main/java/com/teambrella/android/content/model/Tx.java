@@ -50,16 +50,19 @@ public class Tx {
     @SerializedName(TeambrellaModel.ATTR_DATA_INITIATED_TIME)
     public String initiatedTime;
 
+    @Column(TeambrellaRepository.Tx.RECEIVED_TIME)
+    public String receivedTime;
+
     public Teammate teammate;
 
     public Teammate claimTeammate;
 
     public List<TxInput> txInputs;
 
-    public List<TxOutput> txOutOut;
+    public List<TxOutput> txOutputs;
 
 
-    public BTCAddress getFromAddress(){
+    public BTCAddress getFromAddress() {
         return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getPreviousAddress() :
                 this.teammate.getCurrentAddress();
     }

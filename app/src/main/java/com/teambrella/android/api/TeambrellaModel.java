@@ -40,7 +40,7 @@ public class TeambrellaModel {
      */
     public static final int TX_CLIENT_RESOLUTION_NONE = 0;
     public static final int TX_CLIENT_RESOLUTION_RECEIVED = 1;
-    public static final int TX_CLIENT_RESOLUTON_APPROVED = 2;
+    public static final int TX_CLIENT_RESOLUTION_APPROVED = 2;
     public static final int TX_CLIENT_RESOLUTION_BLOCKED = 3;
     public static final int TX_CLIENT_RESOLUTION_SIGNED = 4;
     public static final int TX_CLIENT_RESOLUTION_PUBLISHED = 5;

@@ -316,7 +316,7 @@ public class TeambrellaContentProviderClient {
                 long count = Observable.fromArray(txInputs).filter(new Predicate<TxInput>() {
                     @Override
                     public boolean test(TxInput iTxInput) throws Exception {
-                        return iTxInput.id.equals(txSignature.txInputId);
+                        return iTxInput.id.toString().equals(txSignature.txInputId);
                     }
                 }).count().blockingGet();
 

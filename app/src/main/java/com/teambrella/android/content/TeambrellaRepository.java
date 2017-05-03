@@ -162,6 +162,12 @@ public class TeambrellaRepository {
         public static final String NAME = "Name";
         public static final String TESTNET = "Testnet";
 
+        public static final String AUTO_APPROVAL_MY_GODD_ADDRESS = "AutoApprovalMyGoodAddress";
+        public static final String AUTO_APPROVAL_MY_NEW_ADDRESS = "AudioApprovalMyNewAddress";
+        public static final String AUTO_APPROVAL_COSIGN_GOOD_ADDRESS = "AutoApprovalCosignGoodAddress";
+        public static final String AUTO_APPROVAL_COSIGN_NEW_ADDRESS = "AutoApprovalCosignNewAddress";
+        public static final String PAY_TO_ADDRESS_OK_AGE = "PayToAddressOkAge";
+
     }
 
 }

@@ -21,13 +21,22 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.Teammate;
+import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Updates;
 
+import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.ECKey;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Account Sync Adapter
@@ -35,13 +44,27 @@ import java.util.Locale;
 class TeambrellaAccountSyncAdapter {
 
     private static final String LOG_TAG = TeambrellaAccountSyncAdapter.class.getSimpleName();
+    private static final String PRIVATE_KEY = "cNqQ7aZWitJCk1o9dNhr1o9k3UKdeW92CDYrvDHHLuwFuEnfcBXo";
+    /**
+     * Key
+     */
+    private final ECKey mKey;
+
 
     private SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+
+    {
+        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        mKey = DumpedPrivateKey.fromBase58(null, PRIVATE_KEY).getKey();
+    }
 
     void onPerformSync(Context context, ContentProviderClient provider) {
         final TeambrellaServer server = new TeambrellaServer(context);
         final TeambrellaContentProviderClient client = new TeambrellaContentProviderClient(provider);
         try {
+
+
+            autoApproveTxs(client);
 
             updateConnectionTime(provider);
 
@@ -111,6 +134,50 @@ class TeambrellaAccountSyncAdapter {
         }
     }
 
+
+    private List<ContentProviderOperation> autoApproveTxs(TeambrellaContentProviderClient client) throws RemoteException {
+        List<ContentProviderOperation> operations = new LinkedList<>();
+        List<Tx> txs = getTxToApprove(client);
+        for (Tx tx : txs) {
+            if (getDaysToApproval(tx, mKey.getPublicKeyAsHex().equals(tx.teammate.publicKey)) <= 0) {
+                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED).build());
+            }
+        }
+        return operations;
+    }
+
+
+    private int getDaysToApproval(Tx tx, boolean isClientTx) {
+        boolean isPayToAddressNew = false;
+        for (TxOutput txOutput : tx.txOutputs) {
+            isPayToAddressNew |= isPayToAddressNew(txOutput, tx.teammate.payToAddressOkAge);
+        }
+        int daysPassed = getDaysPassed(tx.receivedTime);
+        int daysToApproval = isClientTx ? isPayToAddressNew ? tx.teammate.autoApprovalMyNewAddress : tx.teammate.autoApprovalMyGoodAddress
+                : isPayToAddressNew ? tx.teammate.autoApprovalCosignNewAddress : tx.teammate.getAutoApprovalCosignGoodAddress;
+        return (daysToApproval - daysPassed);
+    }
+
+
+    private boolean isPayToAddressNew(TxOutput txOutput, int payToAddressOkAge) {
+        return getDaysPassed(txOutput.knownSince) > payToAddressOkAge;
+    }
+
+    private int getDaysPassed(String dateString) {
+        try {
+            return getDays(new Date().getTime() - mSDF.parse(dateString).getTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private int getDays(long time) {
+        return (int) (time / (1000 * 60 * 60 * 24));
+    }
+
+
     private void updateConnectionTime(ContentProviderClient provider) throws RemoteException {
         Cursor cursor = provider.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
@@ -137,6 +204,23 @@ class TeambrellaAccountSyncAdapter {
             }
             cursor.close();
         }
+    }
+
+
+    private List<Tx> getTxToApprove(TeambrellaContentProviderClient client) throws RemoteException {
+        List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=?",
+                new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_RECEIVED)}, Tx.class);
+        Iterator<Tx> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                Tx tx = iterator.next();
+                tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                        TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
+                        TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+            }
+        }
+        return list;
     }
 
 
