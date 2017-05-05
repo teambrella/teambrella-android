@@ -53,6 +53,9 @@ public class Tx {
     @Column(TeambrellaRepository.Tx.RECEIVED_TIME)
     public String receivedTime;
 
+    @Column(TeambrellaRepository.Tx.RESOLUTION)
+    public int resolution;
+
     public Teammate teammate;
 
     public Teammate claimTeammate;

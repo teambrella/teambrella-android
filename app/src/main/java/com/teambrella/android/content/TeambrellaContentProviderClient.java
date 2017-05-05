@@ -218,15 +218,15 @@ public class TeambrellaContentProviderClient {
             long count = Observable.fromArray(txs).filter(new Predicate<Tx>() {
                 @Override
                 public boolean test(Tx iTx) throws Exception {
-                    return iTx.id.equals(txInput.id);
+                    return iTx.id.equals(txInput.txId);
                 }
             }).count().blockingGet();
 
 
             if (count > 0) {
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXInput.CONTENT_URI)
-                        .withValue(TeambrellaRepository.TXInput.ID, txInput.id)
-                        .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.txId)
+                        .withValue(TeambrellaRepository.TXInput.ID, txInput.id.toString())
+                        .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.txId.toString())
                         .withValue(TeambrellaRepository.TXInput.AMMOUNT_BTC, txInput.btcAmount)
                         .withValue(TeambrellaRepository.TXInput.PREV_TX_ID, txInput.previousTxId)
                         .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.previousTxId)
@@ -280,6 +280,44 @@ public class TeambrellaContentProviderClient {
 
         return list;
     }
+
+
+    public List<ContentProviderOperation> checkArrivingTx(Tx[] arrivingTxs) throws RemoteException {
+        List<ContentProviderOperation> operations = new LinkedList<>();
+        for (Tx arrivingTx : arrivingTxs) {
+            Tx tx = queryOne(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.ID + "=?", new String[]{arrivingTx.id.toString()}, Tx.class);
+//            boolean isWalletMove = tx.kind == TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET || tx.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET;
+//            List<TxOutput> outputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI, TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+//            if (!isWalletMove && outputs.isEmpty()) {
+//                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+//                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
+//                        .build());
+//                continue;
+//            }
+//
+//            float totalAmount = 0f;
+//
+//            for (TxOutput txOutput : outputs) {
+//                totalAmount += txOutput.btcAmount;
+//            }
+//
+//            if (!isWalletMove && Math.abs(totalAmount - tx.btcAmount) > 0.000001f) {
+//                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+//                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
+//                        .build());
+//                continue;
+//            }
+
+            if (tx.resolution == TeambrellaModel.TX_CLIENT_RESOLUTION_NONE) {
+                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_RECEIVED)
+                        .build());
+            }
+        }
+
+        return operations;
+    }
+
 
     /**
      * Insert BTC Addresses

@@ -46,6 +46,9 @@ public class TeambrellaContentProvider extends ContentProvider {
             case TeambrellaRepository.COSIGNER:
                 return db.rawQuery("SELECT * FROM " + TeambrellaRepository.COSIGNER_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
                         " ON " + TeambrellaRepository.Cosigner.TEAMMATE_ID + "=" + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
+            case TeambrellaRepository.TEAMMATE:
+                return db.rawQuery("SELECT * FROM " + TeambrellaRepository.TEAMMATE_TABLE + " INNER JOIN " + TeambrellaRepository.TEAM_TABLE +
+                        " ON " + TeambrellaRepository.Teammate.TEAM_ID + "=" + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             default:
                 return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
         }
@@ -67,10 +70,13 @@ public class TeambrellaContentProvider extends ContentProvider {
                 rowId = db.insertWithOnConflict(TeambrellaRepository.TEAMMATE_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 break;
             case TeambrellaRepository.BTC_ADDRESS:
-                rowId = db.insertOrThrow(TeambrellaRepository.BTC_ADDRESS_TABLE, null, values);
+                rowId = db.insertWithOnConflict(TeambrellaRepository.BTC_ADDRESS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                break;
+            case TeambrellaRepository.TX_INPUT:
+                rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
                 break;
             default:
-                rowId = db.insertOrThrow(getTableName(uri), null, values);
+                rowId = db.insertWithOnConflict(getTableName(uri), null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 break;
         }
         return Uri.withAppendedPath(uri, Long.toString(rowId));
@@ -85,7 +91,7 @@ public class TeambrellaContentProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        return db.update(getTableName(uri), values, selection, selectionArgs);
+        return db.updateWithOnConflict(getTableName(uri), values, selection, selectionArgs, SQLiteDatabase.CONFLICT_FAIL);
     }
 
 

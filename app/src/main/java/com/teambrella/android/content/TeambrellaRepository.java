@@ -15,7 +15,7 @@ public class TeambrellaRepository {
     static final String CONNECTION_TABLE = "Connection";
     static final String COSIGNER_TABLE = "Cosigner";
     static final String PAY_TO_TABLE = "PayTo";
-    static final String TEAMMATE_TABLE = "Teammate";
+    public static final String TEAMMATE_TABLE = "Teammate";
     static final String TEAM_TABLE = "Team";
     static final String TX_TABLE = "Tx";
     static final String TX_INPUT_TABLE = "TxInput";
@@ -163,7 +163,7 @@ public class TeambrellaRepository {
         public static final String TESTNET = "Testnet";
 
         public static final String AUTO_APPROVAL_MY_GODD_ADDRESS = "AutoApprovalMyGoodAddress";
-        public static final String AUTO_APPROVAL_MY_NEW_ADDRESS = "AudioApprovalMyNewAddress";
+        public static final String AUTO_APPROVAL_MY_NEW_ADDRESS = "AutoApprovalMyNewAddress";
         public static final String AUTO_APPROVAL_COSIGN_GOOD_ADDRESS = "AutoApprovalCosignGoodAddress";
         public static final String AUTO_APPROVAL_COSIGN_NEW_ADDRESS = "AutoApprovalCosignNewAddress";
         public static final String PAY_TO_ADDRESS_OK_AGE = "PayToAddressOkAge";

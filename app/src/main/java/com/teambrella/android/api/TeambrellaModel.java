@@ -66,7 +66,6 @@ public class TeambrellaModel {
     public static final int USER_ADDRESS_STATUS_ARCHIVE = 4;
 
 
-
     /*Request*/
     public static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
     public static final String ATTR_REQUEST_SIGNATURE = "Signature";
@@ -121,8 +120,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_BTC_AMOUNT = "AmountBTC";
     public static final String ATTR_DATA_CLAIM_ID = "ClaimId";
     public static final String ATTR_DATA_CLAIM_TEAMMATE_ID = "ClaimTeammateId";
-    public static final String ATTR_DATA_KIND = "kind";
-    public static final String ATTR_DATA_STATE = "state";
+    public static final String ATTR_DATA_KIND = "Kind";
+    public static final String ATTR_DATA_STATE = "State";
     public static final String ATTR_DATA_INITIATED_TIME = "InitiatedTime";
     public static final String ATTR_DATA_TEAMS = "Teams";
     public static final String ATTR_DATA_KNOWN_SINCE = "KnownSince";
@@ -133,14 +132,14 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_WITHDRAW_REQ_ID = "WithdrawReqId";
     public static final String ATTR_DATA_TXS = "Txs";
     public static final String ATTR_DATA_TX_ID = "TxId";
-    public static final String ATTR_DATA_PREVIOUS_TX_ID = "PreviousTxId";
-    public static final String ATTR_DATA_PREVIOUS_TX_INDEX = "PreviousTxIndex";
+    public static final String ATTR_DATA_PREVIOUS_TX_ID = "PrevTxId";
+    public static final String ATTR_DATA_PREVIOUS_TX_INDEX = "PrevTxIndex";
     public static final String ATTR_DATA_PAY_TO_ID = "PayToId";
     public static final String ATTR_DATA_SIGNATURE = "Signature";
     public static final String ATTR_DATA_TX_INPUTS = "TxInputs";
     public static final String ATTR_DATA_TX_OUTPUTS = "TxOutputs";
     public static final String ATTR_DATA_TX_SIGNATURES = "TxSignatures";
-    public static final String ATTR_DATA_LAST_UPDATED = "LastUpdated";
+    public static final String ATTR_DATA_LAST_UPDATED = "Since";
     public static final String ATTR_DATA_RESOLUTION = "Resolution";
     public static final String ATTR_DATA_RESOLUTION_TIME = "ResolutionTime";
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";

@@ -5,7 +5,6 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.subgraph.orchid.encoders.Hex;
 import com.teambrella.android.api.TeambrellaModel;
@@ -34,11 +33,15 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -48,12 +51,18 @@ class TeambrellaBlockchainSyncAdapter {
 
     private static final String LOG_TAG = TeambrellaBlockchainSyncAdapter.class.getSimpleName();
 
+    private SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+
+    {
+        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
 
     void onPerformSync(Context context, ContentProviderClient provider) {
         try {
             cosignApprovedTransactions(provider);
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -133,7 +142,8 @@ class TeambrellaBlockchainSyncAdapter {
                 totalBTCAmount += txInput.btcAmount;
                 TransactionOutPoint outpoint = new TransactionOutPoint(params, txInput.previousTxIndex,
                         Sha256Hash.wrap(txInput.previousTxId));
-                transaction.addInput(new TransactionInput(params, transaction, null, outpoint));
+                transaction.addInput(new TransactionInput(params, transaction, new byte[0], outpoint))
+                ;
             }
 
             //totalBTCAmount -= tx.FeeBtc ?? NormalFeeBTC;
@@ -188,7 +198,7 @@ class TeambrellaBlockchainSyncAdapter {
 
     private static List<Tx> getCosinableTx(TeambrellaContentProviderClient client) throws RemoteException {
         List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
-                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
+                + TeambrellaRepository.Tx.STATE + "=?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
                 Integer.toString(TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING)}, Tx.class);
         Iterator<Tx> iterator = list != null ? list.iterator() : null;
         if (iterator != null) {
@@ -201,7 +211,7 @@ class TeambrellaBlockchainSyncAdapter {
                     tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                     tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
-                            TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
                     if (tx.teammate != null) {
                         tx.teammate.addresses = client.queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
                                 , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
@@ -285,9 +295,12 @@ class TeambrellaBlockchainSyncAdapter {
                 .build();
     }
 
-    private static ContentProviderOperation setTxSigned(Tx tx) {
+    private ContentProviderOperation setTxSigned(Tx tx) {
         return ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
                 .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_SIGNED)
+                .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, true)
+                .withValue(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME, mSDF.format(new Date()))
+                .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
                 .build();
     }
 }

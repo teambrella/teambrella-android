@@ -60,11 +60,18 @@ class TeambrellaAccountSyncAdapter {
 
     void onPerformSync(Context context, ContentProviderClient provider) {
         final TeambrellaServer server = new TeambrellaServer(context);
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         final TeambrellaContentProviderClient client = new TeambrellaContentProviderClient(provider);
         try {
 
 
-            autoApproveTxs(client);
+            operations.addAll(autoApproveTxs(client));
+
+            if (!operations.isEmpty()) {
+                provider.applyBatch(operations);
+                operations.clear();
+            }
+
 
             updateConnectionTime(provider);
 
@@ -78,10 +85,10 @@ class TeambrellaAccountSyncAdapter {
                 JsonObject data = result.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
 
 
+                operations.addAll(clearNeedUpdateServerFlag());
+
+
                 Updates updates = new Gson().fromJson(data, Updates.class);
-
-
-                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
                 if (updates.teammates != null) {
                     operations.addAll(client.insertTeammates(updates.teammates));
@@ -119,14 +126,24 @@ class TeambrellaAccountSyncAdapter {
                     operations.addAll(client.insertTXSignatures(updates.txInputs, updates.txSignatures));
                 }
 
-                provider.applyBatch(operations);
+                if (!operations.isEmpty()) {
+                    provider.applyBatch(operations);
+                }
+
+
+                operations.clear();
+
+                if (updates.txs != null) {
+                    operations.addAll(client.checkArrivingTx(updates.txs));
+                }
+
+                if (!operations.isEmpty()) {
+                    provider.applyBatch(operations);
+                }
+
 
                 setLastUpdatedTime(provider, timestamp);
 
-                List<Teammate> list = client.queryList(TeambrellaRepository.Teammate.CONTENT_URI, null, null, Teammate.class);
-                for (Teammate teammate : list) {
-                    Log.e("TEST", teammate.name + " " + teammate.publicKey);
-                }
             }
 
         } catch (TeambrellaException | RemoteException | OperationApplicationException e) {
@@ -139,10 +156,14 @@ class TeambrellaAccountSyncAdapter {
         List<ContentProviderOperation> operations = new LinkedList<>();
         List<Tx> txs = getTxToApprove(client);
         for (Tx tx : txs) {
-            if (getDaysToApproval(tx, mKey.getPublicKeyAsHex().equals(tx.teammate.publicKey)) <= 0) {
-                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
-                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED).build());
-            }
+            //if (getDaysToApproval(tx, mKey.getPublicKeyAsHex().equals(tx.teammate.publicKey)) <= 0) {
+            operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+                    .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED)
+                    .withValue(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME, mSDF.format(new Date()))
+                    .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, true)
+                    .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
+                    .build());
+            //}
         }
         return operations;
     }
@@ -217,7 +238,7 @@ class TeambrellaAccountSyncAdapter {
                 tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                         TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                 tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
-                        TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                        TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
             }
         }
         return list;
@@ -270,7 +291,7 @@ class TeambrellaAccountSyncAdapter {
                 JsonObject signature = new JsonObject();
                 signature.add(TeambrellaModel.ATTR_DATA_SIGNATURE, new JsonPrimitive(Base64.encodeToString(cursor.getBlob(cursor.getColumnIndex(TeambrellaRepository.TXSignature.SIGNATURE)), Base64.DEFAULT)));
                 signature.add(TeambrellaModel.ATTR_DATA_TEAMMATE_ID, new JsonPrimitive(cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.TXSignature.TEAMMATE_ID))));
-                signature.add(TeambrellaModel.ATTR_DATA_TX_INPUT_ID, new JsonPrimitive(cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.TXSignature.TX_INPUT_ID))));
+                signature.add(TeambrellaModel.ATTR_DATA_TX_INPUT_ID, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.TXSignature.TX_INPUT_ID))));
                 signaturesArray.add(signature);
             } while (cursor.moveToNext());
 
@@ -284,4 +305,21 @@ class TeambrellaAccountSyncAdapter {
 
         return body;
     }
+
+
+    private List<ContentProviderOperation> clearNeedUpdateServerFlag() {
+        List<ContentProviderOperation> operations = new LinkedList<>();
+        operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+                .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, false)
+                .withSelection(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, null).build());
+
+        operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.TXSignature.CONTENT_URI)
+                .withValue(TeambrellaRepository.TXSignature.NEED_UPDATE_SERVER, false)
+                .withSelection(TeambrellaRepository.TXSignature.NEED_UPDATE_SERVER, null)
+                .build());
+
+        return operations;
+    }
+
+
 }
