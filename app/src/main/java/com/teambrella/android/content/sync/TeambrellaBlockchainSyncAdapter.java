@@ -32,7 +32,6 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -255,9 +254,9 @@ class TeambrellaBlockchainSyncAdapter {
     }
 
 
-    private static Script getRedeemScript(BTCAddress btcAddress, List<Cosigner> cosigners) {
+    static Script getRedeemScript(BTCAddress btcAddress, List<Cosigner> cosigners) {
         ScriptBuilder builder = new ScriptBuilder();
-        builder.data(Hex.decode(btcAddress.teammatePublicKey)).op(ScriptOpCodes.OP_CHECKMULTISIGVERIFY);
+        builder.data(Hex.decode(btcAddress.teammatePublicKey)).op(ScriptOpCodes.OP_CHECKSIGVERIFY);
         int size = cosigners.size();
         if (size > 6) {
             builder.op(ScriptOpCodes.OP_3);
@@ -273,7 +272,7 @@ class TeambrellaBlockchainSyncAdapter {
         }
         builder.op(ScriptOpCodes.OP_RESERVED + size);
         builder.op(ScriptOpCodes.OP_CHECKMULTISIG);
-        builder.data(new BigInteger(btcAddress.teamId).toByteArray());
+        builder.number(Long.parseLong(btcAddress.teamId));
         builder.op(ScriptOpCodes.OP_DROP);
         return builder.build();
     }
