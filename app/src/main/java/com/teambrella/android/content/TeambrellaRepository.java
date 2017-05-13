@@ -9,7 +9,7 @@ import android.net.Uri;
 public class TeambrellaRepository {
 
 
-    static String AUTHORITY = "com.teambrella.android.provider";
+    public static String AUTHORITY = "com.teambrella.android.provider";
 
     static final String BTC_ADDRESS_TABLE = "BTCAddress";
     static final String CONNECTION_TABLE = "Connection";
@@ -57,7 +57,7 @@ public class TeambrellaRepository {
                 .encodedPath(BTC_ADDRESS_TABLE).build();
 
         public static final String ADDRESS = "Address";
-        public static final String TEAMMATE_ID = "TeammateID";
+        public static final String TEAMMATE_ID = "TeammateId";
         public static final String STATUS = "Status";
         public static final String DATE_CREATED = "DateCreated";
 
@@ -99,6 +99,7 @@ public class TeambrellaRepository {
         public static final String NAME = "Name";
         public static final String FB_NAME = "FBName";
         public static final String PUBLIC_KEY = "PublicKey";
+        public static final String TEAM_NAME = "TeamName";
     }
 
     public static class Tx {

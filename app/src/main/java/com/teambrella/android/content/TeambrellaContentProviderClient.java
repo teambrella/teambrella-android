@@ -229,7 +229,7 @@ public class TeambrellaContentProviderClient {
                         .withValue(TeambrellaRepository.TXInput.TX_ID, txInput.txId.toString())
                         .withValue(TeambrellaRepository.TXInput.AMMOUNT_BTC, txInput.btcAmount)
                         .withValue(TeambrellaRepository.TXInput.PREV_TX_ID, txInput.previousTxId)
-                        .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.previousTxId)
+                        .withValue(TeambrellaRepository.TXInput.PREV_TX_INDEX, txInput.previousTxIndex)
                         .build());
             }
 

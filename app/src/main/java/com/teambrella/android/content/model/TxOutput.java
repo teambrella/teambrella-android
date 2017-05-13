@@ -24,7 +24,7 @@ public class TxOutput {
     public String payToId;
     @Column(TeambrellaRepository.TXOutput.AMOUNT_BTC)
     @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public float btcAmount;
+    public String btcAmount;
 
     @Column(TeambrellaRepository.PayTo.TEAMMATE_ID)
     public long teammateId;

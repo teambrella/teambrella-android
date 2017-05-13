@@ -21,7 +21,7 @@ public class TxInput {
     public UUID txId;
     @Column(TeambrellaRepository.TXInput.AMMOUNT_BTC)
     @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public float btcAmount;
+    public String btcAmount;
     @Column(TeambrellaRepository.TXInput.PREV_TX_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_PREVIOUS_TX_ID)
     public String previousTxId;

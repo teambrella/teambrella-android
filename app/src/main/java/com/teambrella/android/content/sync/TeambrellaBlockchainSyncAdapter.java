@@ -125,7 +125,7 @@ class TeambrellaBlockchainSyncAdapter {
     private Transaction getTransaction(final Tx tx) {
         NetworkParameters params = new TestNet3Params();
         final float normalFeeBTC = 0.0001f;
-        float totalBTCAmount = 0f;
+        double totalBTCAmount = 0f;
         Transaction transaction = null;
         if (tx.txInputs != null) {
             Collections.sort(tx.txInputs, new Comparator<TxInput>() {
@@ -138,7 +138,7 @@ class TeambrellaBlockchainSyncAdapter {
             transaction = new Transaction(params);
 
             for (TxInput txInput : tx.txInputs) {
-                totalBTCAmount += txInput.btcAmount;
+                totalBTCAmount += Double.parseDouble(txInput.btcAmount);
                 TransactionOutPoint outpoint = new TransactionOutPoint(params, txInput.previousTxIndex,
                         Sha256Hash.wrap(txInput.previousTxId));
                 transaction.addInput(new TransactionInput(params, transaction, new byte[0], outpoint))
@@ -147,7 +147,7 @@ class TeambrellaBlockchainSyncAdapter {
 
             //totalBTCAmount -= tx.FeeBtc ?? NormalFeeBTC;
 
-            if (totalBTCAmount < tx.btcAmount) {
+            if (totalBTCAmount < Double.parseDouble(tx.btcAmount)) {
                 return null;
             }
 
@@ -163,28 +163,28 @@ class TeambrellaBlockchainSyncAdapter {
 
                 for (TxOutput txOutput : tx.txOutputs) {
                     Address address = Address.fromBase58(params, txOutput.address);
-                    transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Float.toString(txOutput.btcAmount)), address));
-                    outputSum += txOutput.btcAmount;
+                    transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(txOutput.btcAmount), address));
+                    outputSum += Double.parseDouble(txOutput.btcAmount);
                 }
 
-                float changeAmount = totalBTCAmount - outputSum;
+                double changeAmount = totalBTCAmount - outputSum;
 
                 if (changeAmount > normalFeeBTC) {
                     BTCAddress current = tx.teammate.getCurrentAddress();
                     if (current != null) {
-                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Float.toString(changeAmount)),
+                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Double.toString(changeAmount)),
                                 Address.fromBase58(params, current.address)));
                     }
                 } else if (tx.kind == TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET) {
                     BTCAddress next = tx.teammate.getNextAddress();
                     if (next != null) {
-                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Float.toString(totalBTCAmount)),
+                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Double.toString(totalBTCAmount)),
                                 Address.fromBase58(params, next.address)));
                     }
                 } else if (tx.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET) {
                     BTCAddress current = tx.teammate.getCurrentAddress();
                     if (current != null) {
-                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Float.toString(totalBTCAmount)),
+                        transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(Double.toString(totalBTCAmount)),
                                 Address.fromBase58(params, current.address)));
                     }
                 }

@@ -38,8 +38,16 @@ public class TeambrellaContentProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         switch (TeambrellaRepository.sUriMatcher.match(uri)) {
             case TeambrellaRepository.TX_OUTPUT:
-                return db.rawQuery("SELECT * FROM " + TeambrellaRepository.TX_OUTPUT_TABLE + " INNER JOIN " + TeambrellaRepository.PAY_TO_TABLE +
-                        " ON " + TeambrellaRepository.TXOutput.PAY_TO_ID + "=" + TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.PayTo.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
+                return db.rawQuery("SELECT " + TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + " AS " + TeambrellaRepository.TXOutput.ID + ","
+                        + TeambrellaRepository.TXOutput.TX_ID + ","
+                        + TeambrellaRepository.TXOutput.AMOUNT_BTC + ","
+                        + TeambrellaRepository.PayTo.ADDRESS + ","
+                        + TeambrellaRepository.PayTo.IS_DEFAULT + ","
+                        + TeambrellaRepository.PayTo.TEAMMATE_ID + ","
+                        + TeambrellaRepository.PAY_TO_TABLE + "." + TeambrellaRepository.PayTo.ID + " AS " + TeambrellaRepository.TXOutput.PAY_TO_ID + ","
+                        + TeambrellaRepository.PayTo.KNOWN_SINCE
+                        + " FROM " + TeambrellaRepository.TX_OUTPUT_TABLE + " INNER JOIN " + TeambrellaRepository.PAY_TO_TABLE +
+                        " ON " + TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.PAY_TO_ID + "=" + TeambrellaRepository.PAY_TO_TABLE + "." + TeambrellaRepository.PayTo.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             case TeambrellaRepository.BTC_ADDRESS:
                 return db.rawQuery("SELECT * FROM " + TeambrellaRepository.BTC_ADDRESS_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
                         " ON " + TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=" + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
@@ -47,7 +55,19 @@ public class TeambrellaContentProvider extends ContentProvider {
                 return db.rawQuery("SELECT * FROM " + TeambrellaRepository.COSIGNER_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
                         " ON " + TeambrellaRepository.Cosigner.TEAMMATE_ID + "=" + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             case TeambrellaRepository.TEAMMATE:
-                return db.rawQuery("SELECT * FROM " + TeambrellaRepository.TEAMMATE_TABLE + " INNER JOIN " + TeambrellaRepository.TEAM_TABLE +
+                return db.rawQuery("SELECT " +
+                        TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + " AS " + TeambrellaRepository.Teammate.ID + ","
+                        + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.NAME + " AS " + TeambrellaRepository.Teammate.NAME + ","
+                        + TeambrellaRepository.Teammate.PUBLIC_KEY + ","
+                        + TeambrellaRepository.Teammate.FB_NAME + ","
+                        + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + " AS " + TeambrellaRepository.Teammate.TEAM_ID + ","
+                        + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.NAME + " AS " + "TeamName" + ","
+                        + TeambrellaRepository.Team.AUTO_APPROVAL_COSIGN_NEW_ADDRESS + ","
+                        + TeambrellaRepository.Team.AUTO_APPROVAL_COSIGN_GOOD_ADDRESS + ","
+                        + TeambrellaRepository.Team.AUTO_APPROVAL_MY_NEW_ADDRESS + ","
+                        + TeambrellaRepository.Team.AUTO_APPROVAL_MY_GODD_ADDRESS + ","
+                        + TeambrellaRepository.Team.PAY_TO_ADDRESS_OK_AGE
+                        + " FROM " + TeambrellaRepository.TEAMMATE_TABLE + " INNER JOIN " + TeambrellaRepository.TEAM_TABLE +
                         " ON " + TeambrellaRepository.Teammate.TEAM_ID + "=" + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             default:
                 return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);

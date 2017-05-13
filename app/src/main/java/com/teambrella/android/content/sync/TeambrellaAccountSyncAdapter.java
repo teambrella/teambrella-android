@@ -4,7 +4,6 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.util.Base64;
@@ -14,23 +13,29 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
+import com.teambrella.android.content.model.BTCAddress;
+import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Updates;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Utils;
+import org.bitcoinj.params.TestNet3Params;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -59,11 +64,11 @@ class TeambrellaAccountSyncAdapter {
     }
 
     void onPerformSync(Context context, ContentProviderClient provider) {
+
         final TeambrellaServer server = new TeambrellaServer(context);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         final TeambrellaContentProviderClient client = new TeambrellaContentProviderClient(provider);
         try {
-
 
             operations.addAll(autoApproveTxs(client));
 
@@ -141,13 +146,14 @@ class TeambrellaAccountSyncAdapter {
                     provider.applyBatch(operations);
                 }
 
-
                 setLastUpdatedTime(provider, timestamp);
+
+                checkAddresses(client, updates.btcAddresses);
 
             }
 
-        } catch (TeambrellaException | RemoteException | OperationApplicationException e) {
-            Log.e(LOG_TAG, e.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -245,6 +251,39 @@ class TeambrellaAccountSyncAdapter {
     }
 
 
+    private void checkAddresses(TeambrellaContentProviderClient client, BTCAddress[] btcAddresses) throws RemoteException {
+        for (BTCAddress btcAddress : btcAddresses) {
+            BTCAddress savedBtcAddress = client.queryOne(TeambrellaRepository.BTCAddress.CONTENT_URI,
+                    TeambrellaRepository.BTCAddress.ADDRESS + "=?", new String[]{btcAddress.address}, BTCAddress.class);
+            List<Cosigner> cosigners = getCosigners(client, savedBtcAddress);
+            String address = generateStringAddress(savedBtcAddress, cosigners);
+            if (!btcAddress.address.equals(generateStringAddress(savedBtcAddress, cosigners))) {
+                Log.e("TEST", btcAddress.address + " not " + address);
+            }
+        }
+    }
+
+    private String generateStringAddress(BTCAddress btcAddress, List<Cosigner> cosigners) throws RemoteException {
+        byte art[] = TeambrellaBlockchainSyncAdapter.getRedeemScript(btcAddress, cosigners).getProgram();
+        return Address.fromP2SHHash(new TestNet3Params(), Utils.sha256hash160(art)).toString();
+    }
+
+    private static List<Cosigner> getCosigners(TeambrellaContentProviderClient client, BTCAddress btcAddress) throws RemoteException {
+        List<Cosigner> list = client.queryList(TeambrellaRepository.Cosigner.CONTENT_URI, TeambrellaRepository.Cosigner.ADDRESS_ID + "=?",
+                new String[]{btcAddress.address}, Cosigner.class);
+
+        Collections.sort(list, new Comparator<Cosigner>() {
+            @Override
+            public int compare(Cosigner o1, Cosigner o2) {
+                return o1.keyOrder > o2.keyOrder ? 1 :
+                        o1.keyOrder < o2.keyOrder ? -1
+                                : 0;
+            }
+        });
+        return list;
+    }
+
+
     private static JsonObject getRequestBody(ContentProviderClient client) throws RemoteException {
         JsonObject body = new JsonObject();
         Cursor cursor = client.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
@@ -254,9 +293,9 @@ class TeambrellaAccountSyncAdapter {
             if (value != null) {
                 lastUpdated = Long.parseLong(value);
             }
-            if (lastUpdated > 0) {
-                body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
-            }
+//            if (lastUpdated > 0) {
+//                body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
+//            }
         }
         if (cursor != null) {
             cursor.close();
@@ -275,7 +314,7 @@ class TeambrellaAccountSyncAdapter {
                 txArray.add(info);
             } while (cursor.moveToNext());
 
-            body.add(TeambrellaModel.ATTR_DATA_TX_INFOS, txArray);
+            //body.add(TeambrellaModel.ATTR_DATA_TX_INFOS, txArray);
         }
 
         if (cursor != null) {
@@ -295,13 +334,12 @@ class TeambrellaAccountSyncAdapter {
                 signaturesArray.add(signature);
             } while (cursor.moveToNext());
 
-            body.add(TeambrellaModel.ATTR_DATA_TX_SIGNATURES, signaturesArray);
+            //body.add(TeambrellaModel.ATTR_DATA_TX_SIGNATURES, signaturesArray);
         }
 
         if (cursor != null) {
             cursor.close();
         }
-
 
         return body;
     }

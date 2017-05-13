@@ -43,6 +43,12 @@
                 android:resource="@xml/sync_adapter" />
         </service>
 
+
+        <service
+            android:name=".util.TeambrellaUtilService"
+            android:exported="true" />
+
+
         <service
             android:name=".account.TeambrellaAuthenticationService"
             android:exported="false">

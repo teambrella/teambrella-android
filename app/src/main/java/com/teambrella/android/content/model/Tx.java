@@ -24,7 +24,7 @@ public class Tx {
 
     @Column(TeambrellaRepository.Tx.AMOUNT_BTC)
     @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public float btcAmount;
+    public String btcAmount;
 
     @Column(TeambrellaRepository.Tx.CLAIM_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_CLAIM_ID)
