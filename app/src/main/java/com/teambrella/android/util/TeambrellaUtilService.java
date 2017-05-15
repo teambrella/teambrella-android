@@ -21,10 +21,12 @@ import com.subgraph.orchid.encoders.Hex;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.blockchain.BlockchainServer;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.Cosigner;
+import com.teambrella.android.content.model.TXSignature;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
@@ -44,9 +46,11 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptChunk;
 import org.bitcoinj.script.ScriptOpCodes;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +76,7 @@ public class TeambrellaUtilService extends IntentService {
     private final static String ACTION_UPDATE = "update";
     private final static String ACTION_APPROVE = "approve";
     private final static String ACTION_COSING = "cosign";
+    private final static String ACTION_PUBLISH = "publish";
     private final static String SHOW = "show";
 
 
@@ -110,21 +115,6 @@ public class TeambrellaUtilService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         String action = intent != null ? intent.getAction() : null;
-
-        byte[] a = Base64.decode("AQAAAAF9A0yuixaEbAuoTx+rNVoIvlgi1d+H4ipWptX0NWbJIxcAAACOIQKNAhKjg8BaEYquSBB0HyLSS8Nw2TuaaZNN5Ck9Lb//3a1RQQQa0YPv7W7dmhJjJ67/h7hXlS7K4xqpPHQj5hGOi9RFO6vmiXCkI7u+NIXIqhfA7nQSY3mz9dAnNlc/g2zGkfLrIQKaly+Osh3991bVdyEt7Ij9AYw" +
-                "jr16MEEfzi/DyXv11nlKuAtYHdf////8C3cYKAAAAAAAZdqkUrBnT/RdxDmuaMxAi/pLGk/32ZZWIrON0PAMAAAAAF6kUMvdzLcXKZe3VaRaNH0UTUuHak1iHAAAAAAEAAAA=", 0);
-        byte[] b = Base64.decode("AQAAAAF9A0yuixaEbAuoTx+rNVoIvlgi1d+H4ipWptX0NWbJIwAAAACOIQKNAhKjg8BaEYquSBB0HyLSS8Nw2T" +
-                "uaaZNN5Ck9Lb//3a1RQQQa0YPv7W7dmhJjJ67/h7hXlS7K4xqpPHQj5hGOi9RFO6vmiXCkI7u+NIXIqhfA7nQSY3mz9dAnNlc/g2zGkfLrIQKaly+Osh3991bVdyEt7Ij9AYwjr16MEEfzi/DyXv11nlKuAtYHdf////" +
-                "8C3cYKAAAAAAAZdqkUrBnT/RdxDmuaMxAi/pLGk/32ZZWIrNNNPAMAAAAAF6kUMvdzLcXKZe3VaRaNH0UTUuHak1iHAAAAAAEAAAA=", 0);
-
-
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != b[i]) {
-                Log.e(LOG_TAG, "" + i + " " + a[i] + " " + b[i]);
-            }
-        }
-
-
         if (action != null) {
             switch (action) {
                 case ACTION_UPDATE:
@@ -150,6 +140,13 @@ public class TeambrellaUtilService extends IntentService {
                     try {
                         show(Uri.parse(intent.getStringExtra(EXTRA_URI)));
                     } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case ACTION_PUBLISH:
+                    try {
+                        publishApprovedAndCosignedTxs(mClient);
+                    } catch (RemoteException | OperationApplicationException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -250,6 +247,8 @@ public class TeambrellaUtilService extends IntentService {
             for (Tx tx : list) {
                 Transaction transaction = getTransaction(tx);
                 if (transaction != null) {
+                    Log.e(LOG_TAG, tx.id.toString());
+                    Log.d(LOG_TAG, transaction.toString());
                     BTCAddress address = tx.getFromAddress();
                     if (address != null) {
                         List<Cosigner> cosigners = getCosigners(tbClient, address);
@@ -269,13 +268,13 @@ public class TeambrellaUtilService extends IntentService {
                 operations.add(setTxSigned(tx));
             }
         }
-        client.applyBatch(operations);
+        //client.applyBatch(operations);
     }
 
     private Transaction getTransaction(final Tx tx) {
         NetworkParameters params = new TestNet3Params();
         final float normalFeeBTC = 0.0001f;
-        BigDecimal totalBTCAmount = new BigDecimal(0);
+        BigDecimal totalBTCAmount = new BigDecimal(0, MathContext.UNLIMITED);
         Transaction transaction = null;
         if (tx.txInputs != null) {
             Collections.sort(tx.txInputs, new Comparator<TxInput>() {
@@ -288,14 +287,14 @@ public class TeambrellaUtilService extends IntentService {
             transaction = new Transaction(params);
 
             for (TxInput txInput : tx.txInputs) {
-                totalBTCAmount = totalBTCAmount.add(new BigDecimal(txInput.btcAmount));
+                totalBTCAmount = totalBTCAmount.add(new BigDecimal(txInput.btcAmount, MathContext.UNLIMITED));
                 TransactionOutPoint outpoint = new TransactionOutPoint(params, txInput.previousTxIndex,
                         Sha256Hash.wrap(txInput.previousTxId));
                 transaction.addInput(new TransactionInput(params, transaction, new byte[0], outpoint))
                 ;
             }
 
-            totalBTCAmount = totalBTCAmount.subtract(new BigDecimal("0.0001"));
+            totalBTCAmount = totalBTCAmount.subtract(new BigDecimal("0.0001", MathContext.UNLIMITED));
 
             if (totalBTCAmount.compareTo(new BigDecimal(tx.btcAmount)) == -1) {
                 return null;
@@ -309,7 +308,7 @@ public class TeambrellaUtilService extends IntentService {
                     }
                 });
 
-                BigDecimal outputSum = new BigDecimal(0f);
+                BigDecimal outputSum = new BigDecimal(0f, MathContext.UNLIMITED);
 
                 for (TxOutput txOutput : tx.txOutputs) {
                     Address address = Address.fromBase58(params, txOutput.address);
@@ -319,7 +318,7 @@ public class TeambrellaUtilService extends IntentService {
 
                 BigDecimal changeAmount = totalBTCAmount.subtract(outputSum);
 
-                if (changeAmount.compareTo(new BigDecimal("0.0001")) == 1) {
+                if (changeAmount.compareTo(new BigDecimal("0.0001", MathContext.UNLIMITED)) == 1) {
                     BTCAddress current = tx.teammate.getCurrentAddress();
                     if (current != null) {
                         transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(changeAmount.toString()),
@@ -373,6 +372,15 @@ public class TeambrellaUtilService extends IntentService {
     private ContentProviderOperation setTxSigned(Tx tx) {
         return ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
                 .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_SIGNED)
+                .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, true)
+                .withValue(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME, mSDF.format(new Date()))
+                .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
+                .build();
+    }
+
+    private ContentProviderOperation setTxPublished(Tx tx) {
+        return ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
+                .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_PUBLISHED)
                 .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, true)
                 .withValue(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME, mSDF.format(new Date()))
                 .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
@@ -548,7 +556,7 @@ public class TeambrellaUtilService extends IntentService {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, mSDF.format(new Date()));
+            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, new Date().getTime());
             if (cursor.moveToFirst()) {
                 mClient.update(TeambrellaRepository.Connection.CONTENT_URI, cv, TeambrellaRepository.Connection.ID + "=?",
                         new String[]{cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.ID))});
@@ -589,5 +597,103 @@ public class TeambrellaUtilService extends IntentService {
         if (cursor != null) {
             cursor.close();
         }
+    }
+
+
+    private void publishApprovedAndCosignedTxs(ContentProviderClient client) throws RemoteException, OperationApplicationException {
+
+        BlockchainServer server = new BlockchainServer(true);
+
+        TeambrellaContentProviderClient tbClient = new TeambrellaContentProviderClient(client);
+        List<Tx> txs = getApprovedAndCosignedTxs(tbClient);
+        for (Tx tx : txs) {
+            Transaction transaction = getTransaction(tx);
+
+            if (transaction == null) {
+                continue;
+            }
+
+            BTCAddress fromAddress = tx.getFromAddress();
+            List<Cosigner> cosigners = getCosigners(tbClient, fromAddress);
+            Collections.sort(cosigners, new Comparator<Cosigner>() {
+                @Override
+                public int compare(Cosigner o1, Cosigner o2) {
+                    return Integer.valueOf(o1.keyOrder).compareTo(o2.keyOrder);
+                }
+            });
+            Script script = getRedeemScript(tx.getFromAddress(), cosigners);
+            ScriptBuilder[] ops = new ScriptBuilder[tx.txInputs.size()];
+
+            for (Cosigner cosigner : cosigners) {
+                for (int i = 0; i < tx.txInputs.size(); i++) {
+                    TxInput txInput = tx.txInputs.get(i);
+                    TXSignature signature = tbClient.queryOne(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=? AND "
+                            + TeambrellaRepository.TXSignature.TEAMMATE_ID + "=?", new String[]{txInput.id.toString(), Long.toString(cosigner.teammateId)}, TXSignature.class);
+
+                    if (signature == null) {
+                        break;
+                    }
+
+                    if (ops[i] == null) {
+                        ScriptBuilder builder = new ScriptBuilder();
+                        builder.addChunk(new ScriptChunk(ScriptOpCodes.OP_0, null));
+                        ops[i] = builder;
+                    }
+
+
+                    byte[] data = new byte[signature.bSignature.length + 1];
+                    System.arraycopy(signature.bSignature, 0, data, 0, signature.bSignature.length);
+                    data[signature.bSignature.length] = Transaction.SigHash.ALL.byteValue();
+                    ops[i].data(data);
+                }
+            }
+
+            for (int i = 0; i < tx.txInputs.size(); i++) {
+                byte[] signature = cosign(script, transaction, i);
+                addSignature(tx.txInputs.get(i).id.toString(), tx.teammateId, signature);
+                byte[] vSignature = new byte[signature.length + 1];
+                System.arraycopy(signature, 0, vSignature, 0, signature.length);
+                vSignature[signature.length] = Transaction.SigHash.ALL.byteValue();
+                ops[i].data(vSignature);
+                ops[i].data(script.getProgram());
+                transaction.getInput(i).setScriptSig(ops[i].build());
+            }
+
+            if (server.checkTransaction(transaction.getHashAsString()) || server.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
+                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+                operations.add(setTxPublished(tx));
+                client.applyBatch(operations);
+            } else {
+                throw new RuntimeException("unable to publish");
+            }
+
+        }
+    }
+
+
+    private static List<Tx> getApprovedAndCosignedTxs(TeambrellaContentProviderClient client) throws RemoteException {
+        List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
+                + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
+                Integer.toString(TeambrellaModel.TX_STATE_COSIGNED)}, Tx.class);
+        Iterator<Tx> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                Tx tx = iterator.next();
+                tx.txInputs = client.queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
+                if (tx.txInputs == null || tx.txInputs.isEmpty()) {
+                    iterator.remove();
+                } else {
+                    tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                    tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
+                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                    if (tx.teammate != null) {
+                        tx.teammate.addresses = client.queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
+                                , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
+                    }
+                }
+            }
+        }
+        return list;
     }
 }

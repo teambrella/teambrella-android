@@ -24,4 +24,8 @@ public interface BlockchainAPI {
     @POST("api/tx/send")
     Call<ExplorerTxResult> pushTransaction(@Body JsonObject body);
 
+    @GET("api/tx/{txid}")
+    Call<JsonObject> checkTx(@Path("txid") String txid);
+
+
 }

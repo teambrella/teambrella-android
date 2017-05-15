@@ -68,7 +68,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                         + TeambrellaRepository.Team.AUTO_APPROVAL_MY_GODD_ADDRESS + ","
                         + TeambrellaRepository.Team.PAY_TO_ADDRESS_OK_AGE
                         + " FROM " + TeambrellaRepository.TEAMMATE_TABLE + " INNER JOIN " + TeambrellaRepository.TEAM_TABLE +
-                        " ON " + TeambrellaRepository.Teammate.TEAM_ID + "=" + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
+                        " ON " + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.TEAM_ID + "=" + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             default:
                 return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
         }
@@ -95,6 +95,10 @@ public class TeambrellaContentProvider extends ContentProvider {
             case TeambrellaRepository.TX_INPUT:
                 rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
                 break;
+            case TeambrellaRepository.TX_SIGNATURE:
+                rowId = db.insertOrThrow(TeambrellaRepository.TX_SIGNATURE_TABLE, null, values);
+                break;
+
             default:
                 rowId = db.insertWithOnConflict(getTableName(uri), null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 break;
@@ -180,7 +184,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
             db.execSQL("CREATE TABLE Connection (" +
                     "Id INTEGER PRIMARY KEY, " +
-                    "LastConnected DATETIME, " +
+                    "LastConnected TEXT, " +
                     "LastUpdated TEXT, " +
                     "NeedShowBrowser BOOL" +
                     ")");
@@ -224,8 +228,8 @@ public class TeambrellaContentProvider extends ContentProvider {
             db.execSQL("CREATE TABLE [Tx] ( " +
                     "[Id] varchar PRIMARY KEY NOT NULL, " +
                     "[TeammateId] integer NOT NULL, " +
-                    "[AmountBTC] decimal, " +
-                    "[FeeBTC] decimal, " +
+                    "[AmountBTC] TEXT, " +
+                    "[FeeBTC] TEXT, " +
                     "[WithdrawReqId] integer, " +
                     "[ClaimId] integer, " +
                     "[ClaimTeammateId] integer, " +
@@ -250,14 +254,14 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "TxId VARCHAR NOT NULL REFERENCES Tx (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "PrevTxId TEXT NOT NULL, " +
                     "PrevTxIndex INTEGER NOT NULL, " +
-                    "AmountBTC DECIMAL NOT NULL" +
+                    "AmountBTC TEXT NOT NULL" +
                     ")");
 
             db.execSQL("CREATE TABLE TxOutput (" +
                     "Id VARCHAR PRIMARY KEY UNIQUE NOT NULL, " +
                     "TxId VARCHAR NOT NULL REFERENCES Tx (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "PayToId VARCHAR NOT NULL REFERENCES PayTo (Id) DEFERRABLE INITIALLY DEFERRED, " +
-                    "AmountBTC DECIMAL NOT NULL" +
+                    "AmountBTC TEXT NOT NULL" +
                     ")");
 
             db.execSQL("CREATE TABLE TxSignature (" +

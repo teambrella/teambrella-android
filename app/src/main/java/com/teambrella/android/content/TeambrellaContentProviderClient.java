@@ -53,6 +53,16 @@ public class TeambrellaContentProviderClient {
         public void toContentValues(ContentValues values, String columnName, UUID object) {
             values.put(columnName, object.toString());
         }
+    }).registerTypeAdapter(byte[].class, new TypeAdapter<byte[]>() {
+        @Override
+        public byte[] fromCursor(Cursor c, String columnName) {
+            return c.getBlob(c.getColumnIndex(columnName));
+        }
+
+        @Override
+        public void toContentValues(ContentValues values, String columnName, byte[] object) {
+            values.put(columnName, object);
+        }
     }).build();
 
 
@@ -364,10 +374,10 @@ public class TeambrellaContentProviderClient {
             }
 
             list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXSignature.CONTENT_URI)
-                    .withValue(TeambrellaRepository.TXSignature.ID, txSignature.id)
+                    .withValue(TeambrellaRepository.TXSignature.ID, UUID.randomUUID().toString())
                     .withValue(TeambrellaRepository.TXSignature.TEAMMATE_ID, txSignature.teammateId)
                     .withValue(TeambrellaRepository.TXSignature.TX_INPUT_ID, txSignature.txInputId)
-                    .withValue(TeambrellaRepository.TXSignature.SIGNATURE, Base64.decode(txSignature.signature, Base64.DEFAULT))
+                    .withValue(TeambrellaRepository.TXSignature.SIGNATURE, Base64.decode(txSignature.signature, Base64.NO_WRAP))
                     .withValue(TeambrellaRepository.TXSignature.NEED_UPDATE_SERVER, false)
                     .build());
 

@@ -5,6 +5,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
+import android.util.Base64;
 
 import com.subgraph.orchid.encoders.Hex;
 import com.teambrella.android.api.TeambrellaModel;
@@ -12,6 +13,7 @@ import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.Cosigner;
+import com.teambrella.android.content.model.TXSignature;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
@@ -111,13 +113,43 @@ class TeambrellaBlockchainSyncAdapter {
                 }
             });
             Script script = getRedeemScript(tx.getFromAddress(), cosigners);
-            ArrayList<ScriptBuilder> ops = new ArrayList<>();
+            ScriptBuilder[] ops = new ScriptBuilder[tx.txInputs.size()];
+
+            for (Cosigner cosigner : cosigners) {
+                for (int i = 0; i < tx.txInputs.size(); i++) {
+                    TxInput txInput = tx.txInputs.get(i);
+                    TXSignature signature = tbClient.queryOne(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=? AND "
+                            + TeambrellaRepository.TXSignature.TEAMMATE_ID + "=?", new String[]{txInput.id.toString(), Long.toString(cosigner.teammateId)}, TXSignature.class);
+                    if (signature == null) {
+                        break;
+                    }
+                    if (ops[i] == null) {
+                        ScriptBuilder builder = new ScriptBuilder();
+                        builder.op(ScriptOpCodes.OP_0);
+                        ops[i] = builder;
+                    }
+
+                    List<Byte> sig = new ArrayList<>();
+                    byte[] bSignature = Base64.decode(signature.signature, Base64.NO_WRAP);
+                    for (byte bite : bSignature) {
+                        sig.add(bite);
+                    }
+                    sig.add(Transaction.SigHash.ALL.byteValue());
+
+
+                    byte[] data = new byte[sig.size()];
+                    for (int k = 0; i < data.length; k++) {
+                        data[k] = sig.get(k);
+                    }
+                    ops[i].data(data);
+                }
+            }
 
             for (int i = 0; i < tx.txInputs.size(); i++) {
-                ScriptBuilder builder = new ScriptBuilder();
-                builder.op(ScriptOpCodes.OP_0);
-                ops.add(builder);
+
             }
+
+
         }
     }
 

@@ -83,8 +83,24 @@ public class BlockchainServer {
                 break;
             }
         }
+        return result != null;
+    }
 
-
+    public boolean checkTransaction(String id) {
+        JsonObject result = null;
+        for (BlockchainAPI api : mBlockchainAPIs) {
+            try {
+                Response<JsonObject> response = api.checkTx(id).execute();
+                if (response.isSuccessful()) {
+                    result = response.body();
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, e.toString());
+            }
+            if (result != null) {
+                break;
+            }
+        }
         return result != null;
     }
 }

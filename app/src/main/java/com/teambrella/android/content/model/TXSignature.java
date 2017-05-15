@@ -19,7 +19,8 @@ public class TXSignature {
     @Column(TeambrellaRepository.TXSignature.TEAMMATE_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_TEAMMATE_ID)
     public long teammateId;
-    @Column(TeambrellaRepository.TXSignature.SIGNATURE)
     @SerializedName(TeambrellaModel.ATTR_DATA_SIGNATURE)
     public String signature;
+    @Column(TeambrellaRepository.TXSignature.SIGNATURE)
+    public byte[] bSignature;
 }
