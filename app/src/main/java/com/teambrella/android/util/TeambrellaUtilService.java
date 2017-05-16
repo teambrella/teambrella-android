@@ -247,8 +247,6 @@ public class TeambrellaUtilService extends IntentService {
             for (Tx tx : list) {
                 Transaction transaction = getTransaction(tx);
                 if (transaction != null) {
-                    Log.e(LOG_TAG, tx.id.toString());
-                    Log.d(LOG_TAG, transaction.toString());
                     BTCAddress address = tx.getFromAddress();
                     if (address != null) {
                         List<Cosigner> cosigners = getCosigners(tbClient, address);
@@ -268,12 +266,11 @@ public class TeambrellaUtilService extends IntentService {
                 operations.add(setTxSigned(tx));
             }
         }
-        //client.applyBatch(operations);
+        client.applyBatch(operations);
     }
 
     private Transaction getTransaction(final Tx tx) {
         NetworkParameters params = new TestNet3Params();
-        final float normalFeeBTC = 0.0001f;
         BigDecimal totalBTCAmount = new BigDecimal(0, MathContext.UNLIMITED);
         Transaction transaction = null;
         if (tx.txInputs != null) {
@@ -603,7 +600,7 @@ public class TeambrellaUtilService extends IntentService {
     private void publishApprovedAndCosignedTxs(ContentProviderClient client) throws RemoteException, OperationApplicationException {
 
         BlockchainServer server = new BlockchainServer(true);
-
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         TeambrellaContentProviderClient tbClient = new TeambrellaContentProviderClient(client);
         List<Tx> txs = getApprovedAndCosignedTxs(tbClient);
         for (Tx tx : txs) {
@@ -650,7 +647,7 @@ public class TeambrellaUtilService extends IntentService {
 
             for (int i = 0; i < tx.txInputs.size(); i++) {
                 byte[] signature = cosign(script, transaction, i);
-                addSignature(tx.txInputs.get(i).id.toString(), tx.teammateId, signature);
+                operations.add(addSignature(tx.txInputs.get(i).id.toString(), tx.teammateId, signature));
                 byte[] vSignature = new byte[signature.length + 1];
                 System.arraycopy(signature, 0, vSignature, 0, signature.length);
                 vSignature[signature.length] = Transaction.SigHash.ALL.byteValue();
@@ -659,8 +656,8 @@ public class TeambrellaUtilService extends IntentService {
                 transaction.getInput(i).setScriptSig(ops[i].build());
             }
 
+
             if (server.checkTransaction(transaction.getHashAsString()) || server.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
-                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
                 operations.add(setTxPublished(tx));
                 client.applyBatch(operations);
             } else {
