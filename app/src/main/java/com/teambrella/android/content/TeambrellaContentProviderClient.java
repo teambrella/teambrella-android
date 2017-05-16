@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -427,6 +428,33 @@ public class TeambrellaContentProviderClient {
             }
         }
 
+        return list;
+    }
+
+
+    public List<Tx> getCosinableTx() throws RemoteException {
+        List<Tx> list = queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
+                + TeambrellaRepository.Tx.STATE + "=?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
+                Integer.toString(TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING)}, Tx.class);
+        Iterator<Tx> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                Tx tx = iterator.next();
+                tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
+                if (tx.txInputs == null || tx.txInputs.isEmpty()) {
+                    iterator.remove();
+                } else {
+                    tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                    tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
+                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                    if (tx.teammate != null) {
+                        tx.teammate.addresses = queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
+                                , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
+                    }
+                }
+            }
+        }
         return list;
     }
 

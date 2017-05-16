@@ -80,9 +80,6 @@ public class TeambrellaUtilService extends IntentService {
     private final static String SHOW = "show";
 
 
-    public final long NORMAL_FEE_BTC = 10000L;
-
-
     private static final String PRIVATE_KEY = "cNqQ7aZWitJCk1o9dNhr1o9k3UKdeW92CDYrvDHHLuwFuEnfcBXo";
     private TeambrellaServer mServer;
     private ContentProviderClient mClient;
@@ -241,7 +238,7 @@ public class TeambrellaUtilService extends IntentService {
 
     private void cosignApprovedTransactions(ContentProviderClient client) throws RemoteException, OperationApplicationException {
         TeambrellaContentProviderClient tbClient = new TeambrellaContentProviderClient(client);
-        List<Tx> list = getCosinableTx(tbClient);
+        List<Tx> list = tbClient.getCosinableTx();
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
@@ -414,34 +411,6 @@ public class TeambrellaUtilService extends IntentService {
         Sha256Hash hash = transaction.hashForSignature(inputNum, redeemScript, Transaction.SigHash.ALL, false);
         return key.sign(hash).encodeToDER();
     }
-
-
-    private static List<Tx> getCosinableTx(TeambrellaContentProviderClient client) throws RemoteException {
-        List<Tx> list = client.queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
-                + TeambrellaRepository.Tx.STATE + "=?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
-                Integer.toString(TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING)}, Tx.class);
-        Iterator<Tx> iterator = list != null ? list.iterator() : null;
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                Tx tx = iterator.next();
-                tx.txInputs = client.queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
-                if (tx.txInputs == null || tx.txInputs.isEmpty()) {
-                    iterator.remove();
-                } else {
-                    tx.txOutputs = client.queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
-                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
-                    tx.teammate = client.queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
-                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
-                    if (tx.teammate != null) {
-                        tx.teammate.addresses = client.queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
-                                , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
-                    }
-                }
-            }
-        }
-        return list;
-    }
-
 
     private JsonObject getRequestBody() throws RemoteException {
         JsonObject body = new JsonObject();
