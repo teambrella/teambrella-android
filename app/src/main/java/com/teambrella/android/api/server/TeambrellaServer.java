@@ -60,7 +60,9 @@ public class TeambrellaServer {
      *
      * @param context to use
      */
-    public TeambrellaServer(Context context) {
+    public TeambrellaServer(Context context, String password) {
+
+
         mPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
         Gson gson = new GsonBuilder()
@@ -78,7 +80,7 @@ public class TeambrellaServer {
                 .build();
 
         mAPI = retrofit.create(TeambrellaAPI.class);
-        DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, PRIVATE_KEY);
+        DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, password);
         mKey = dpk.getKey();
     }
 

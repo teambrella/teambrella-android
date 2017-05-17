@@ -64,6 +64,8 @@ public class Tx {
 
     public List<TxOutput> txOutputs;
 
+    public List<Cosigner> cosigners;
+
 
     public BTCAddress getFromAddress() {
         return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getPreviousAddress() :

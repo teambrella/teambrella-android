@@ -6,6 +6,7 @@ import com.teambrella.android.content.TeambrellaRepository;
 
 import org.chalup.microorm.annotations.Column;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -28,5 +29,10 @@ public class TxInput {
     @Column(TeambrellaRepository.TXInput.PREV_TX_INDEX)
     @SerializedName(TeambrellaModel.ATTR_DATA_PREVIOUS_TX_INDEX)
     public int previousTxIndex;
+
+    /**
+     * Signatures
+     */
+    public Map<Long, TXSignature> signatures;
 
 }

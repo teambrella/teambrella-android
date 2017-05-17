@@ -6,7 +6,7 @@ import com.teambrella.android.api.TeambrellaModel;
 /**
  * Single update from server
  */
-public class Updates {
+public class ServerUpdates {
 
     @SerializedName(TeambrellaModel.ATTR_DATA_BTC_ADDRESSES)
     public BTCAddress[] btcAddresses;

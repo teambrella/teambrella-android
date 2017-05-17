@@ -1,5 +1,7 @@
 package com.teambrella.android.content.sync;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
@@ -13,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.teambrella.android.TeambrellaApplication;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -23,7 +26,7 @@ import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxOutput;
-import com.teambrella.android.content.model.Updates;
+import com.teambrella.android.content.model.ServerUpdates;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -64,8 +67,21 @@ class TeambrellaAccountSyncAdapter {
     }
 
     void onPerformSync(Context context, ContentProviderClient provider) {
+        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        Account[] accounts = accountManager.getAccountsByTypeForPackage(TeambrellaApplication.ACCOUNT_TYPE, context.getPackageName());
+        Account account = accounts.length > 0 ? accounts[0] : null;
+        String privateKey = null;
+        if (account != null) {
+            privateKey = accountManager.getPassword(account);
+        }
+        final TeambrellaServer server;
+        if (privateKey != null) {
+            server = new TeambrellaServer(context, privateKey);
+        } else {
+            throw new RuntimeException("Missing private key");
+        }
 
-        final TeambrellaServer server = new TeambrellaServer(context);
+
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         final TeambrellaContentProviderClient client = new TeambrellaContentProviderClient(provider);
         try {
@@ -93,42 +109,42 @@ class TeambrellaAccountSyncAdapter {
                 operations.addAll(clearNeedUpdateServerFlag());
 
 
-                Updates updates = new Gson().fromJson(data, Updates.class);
+                ServerUpdates serverUpdates = new Gson().fromJson(data, ServerUpdates.class);
 
-                if (updates.teammates != null) {
-                    operations.addAll(client.insertTeammates(updates.teammates));
+                if (serverUpdates.teammates != null) {
+                    operations.addAll(client.insertTeammates(serverUpdates.teammates));
                 }
 
-                if (updates.teams != null) {
-                    operations.addAll(client.insertTeams(updates.teams));
+                if (serverUpdates.teams != null) {
+                    operations.addAll(client.insertTeams(serverUpdates.teams));
                 }
 
-                if (updates.payTos != null) {
-                    operations.addAll(client.insertPayTos(updates.payTos));
+                if (serverUpdates.payTos != null) {
+                    operations.addAll(client.insertPayTos(serverUpdates.payTos));
                 }
 
-                if (updates.btcAddresses != null) {
-                    operations.addAll(client.insertBTCAddresses(updates.btcAddresses));
+                if (serverUpdates.btcAddresses != null) {
+                    operations.addAll(client.insertBTCAddresses(serverUpdates.btcAddresses));
                 }
 
-                if (updates.cosigners != null) {
-                    operations.addAll(client.insertCosigners(updates.cosigners));
+                if (serverUpdates.cosigners != null) {
+                    operations.addAll(client.insertCosigners(serverUpdates.cosigners));
                 }
 
-                if (updates.txs != null) {
-                    operations.addAll(client.insertTx(updates.txs));
+                if (serverUpdates.txs != null) {
+                    operations.addAll(client.insertTx(serverUpdates.txs));
                 }
 
-                if (updates.txInputs != null) {
-                    operations.addAll(client.insertTXInputs(updates.txs, updates.txInputs));
+                if (serverUpdates.txInputs != null) {
+                    operations.addAll(client.insertTXInputs(serverUpdates.txs, serverUpdates.txInputs));
                 }
 
-                if (updates.txOutputs != null) {
-                    operations.addAll(client.insertTXOutputs(updates.txs, updates.txOutputs));
+                if (serverUpdates.txOutputs != null) {
+                    operations.addAll(client.insertTXOutputs(serverUpdates.txs, serverUpdates.txOutputs));
                 }
 
-                if (updates.txSignatures != null) {
-                    operations.addAll(client.insertTXSignatures(updates.txInputs, updates.txSignatures));
+                if (serverUpdates.txSignatures != null) {
+                    operations.addAll(client.insertTXSignatures(serverUpdates.txInputs, serverUpdates.txSignatures));
                 }
 
                 if (!operations.isEmpty()) {
@@ -138,8 +154,8 @@ class TeambrellaAccountSyncAdapter {
 
                 operations.clear();
 
-                if (updates.txs != null) {
-                    operations.addAll(client.checkArrivingTx(updates.txs));
+                if (serverUpdates.txs != null) {
+                    operations.addAll(client.checkArrivingTx(serverUpdates.txs));
                 }
 
                 if (!operations.isEmpty()) {
@@ -148,7 +164,7 @@ class TeambrellaAccountSyncAdapter {
 
                 setLastUpdatedTime(provider, timestamp);
 
-                checkAddresses(client, updates.btcAddresses);
+                checkAddresses(client, serverUpdates.btcAddresses);
 
             }
 
