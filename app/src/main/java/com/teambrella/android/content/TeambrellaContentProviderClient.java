@@ -28,7 +28,6 @@ import org.chalup.microorm.TypeAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -315,7 +314,7 @@ public class TeambrellaContentProviderClient {
 //                        .build());
 //                continue;
 //            }
-//
+////
 //            float totalAmount = 0f;
 //
 //            for (TxOutput txOutput : outputs) {
@@ -455,14 +454,11 @@ public class TeambrellaContentProviderClient {
                     iterator.remove();
                 } else {
 
+                    Collections.sort(tx.txInputs);
+
                     tx.cosigners = getCosigners(tx.getFromAddress());
 
-                    Collections.sort(tx.cosigners, new Comparator<Cosigner>() {
-                        @Override
-                        public int compare(Cosigner o1, Cosigner o2) {
-                            return Integer.valueOf(o1.keyOrder).compareTo(o2.keyOrder);
-                        }
-                    });
+                    Collections.sort(tx.cosigners);
 
                     tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
@@ -524,15 +520,7 @@ public class TeambrellaContentProviderClient {
     private List<Cosigner> getCosigners(BTCAddress btcAddress) throws RemoteException {
         List<Cosigner> list = queryList(TeambrellaRepository.Cosigner.CONTENT_URI, TeambrellaRepository.Cosigner.ADDRESS_ID + "=?",
                 new String[]{btcAddress.address}, Cosigner.class);
-
-        Collections.sort(list, new Comparator<Cosigner>() {
-            @Override
-            public int compare(Cosigner o1, Cosigner o2) {
-                return o1.keyOrder > o2.keyOrder ? 1 :
-                        o1.keyOrder < o2.keyOrder ? -1
-                                : 0;
-            }
-        });
+        Collections.sort(list);
         return list;
     }
 
@@ -548,16 +536,9 @@ public class TeambrellaContentProviderClient {
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
                     iterator.remove();
                 } else {
-
+                    Collections.sort(tx.txInputs);
                     tx.cosigners = getCosigners(tx.getFromAddress());
-
-                    Collections.sort(tx.cosigners, new Comparator<Cosigner>() {
-                        @Override
-                        public int compare(Cosigner o1, Cosigner o2) {
-                            return Integer.valueOf(o1.keyOrder).compareTo(o2.keyOrder);
-                        }
-                    });
-
+                    Collections.sort(tx.cosigners);
                     for (TxInput txInput : tx.txInputs) {
                         List<TXSignature> signatures = queryList(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=?",
                                 new String[]{txInput.id.toString()}, TXSignature.class);
@@ -701,6 +682,12 @@ public class TeambrellaContentProviderClient {
             }
             cursor.close();
         }
+    }
+
+
+    public Teammate getTeammate(String publicKey) throws RemoteException {
+        return queryOne(TeambrellaRepository.Teammate.CONTENT_URI, TeambrellaRepository.Teammate.PUBLIC_KEY + "=?",
+                new String[]{publicKey}, Teammate.class);
     }
 
     public JsonObject getClientUpdates() throws RemoteException {

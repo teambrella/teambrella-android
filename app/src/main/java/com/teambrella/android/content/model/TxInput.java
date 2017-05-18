@@ -1,5 +1,7 @@
 package com.teambrella.android.content.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.TeambrellaRepository;
@@ -12,7 +14,7 @@ import java.util.UUID;
 /**
  * Tx Input
  */
-public class TxInput {
+public class TxInput implements Comparable<TxInput> {
 
     @Column(TeambrellaRepository.TXInput.ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_ID)
@@ -35,4 +37,9 @@ public class TxInput {
      */
     public Map<Long, TXSignature> signatures;
 
+
+    @Override
+    public int compareTo(@NonNull TxInput o) {
+        return id.compareTo(o.id);
+    }
 }

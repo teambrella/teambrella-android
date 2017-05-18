@@ -16,6 +16,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.TeambrellaApplication;
+import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -24,8 +25,8 @@ import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.ServerUpdates;
+import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
-import com.teambrella.android.content.model.TxInput;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -34,8 +35,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.script.Script;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +54,7 @@ public class TeambrellaUtilService extends IntentService {
     private final static String ACTION_PUBLISH = "publish";
     private final static String ACTION_MASTER_SIGNATURE = "master_signature";
     private final static String SHOW = "show";
+    private final static String ACTION_SYNC = "sync";
 
     private TeambrellaServer mServer;
     private ContentProviderClient mClient;
@@ -63,11 +63,17 @@ public class TeambrellaUtilService extends IntentService {
     /**
      * Key
      */
-    private final ECKey mKey;
+    private ECKey mKey;
 
 
     public TeambrellaUtilService() {
         super("Util Service");
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] accounts = accountManager.getAccountsByTypeForPackage(TeambrellaApplication.ACCOUNT_TYPE, getPackageName());
         Account account = accounts.length > 0 ? accounts[0] : null;
@@ -89,6 +95,14 @@ public class TeambrellaUtilService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        try {
+            processIntent(intent);
+        } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void processIntent(Intent intent) throws RemoteException, OperationApplicationException, TeambrellaException {
         String action = intent != null ? intent.getAction() : null;
         if (action != null) {
             switch (action) {
@@ -96,41 +110,22 @@ public class TeambrellaUtilService extends IntentService {
                     update();
                     break;
                 case ACTION_APPROVE:
-                    try {
-                        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-                        operations.addAll(mTeambrellaClient.autoApproveTxs());
-                        mClient.applyBatch(operations);
-                    } catch (RemoteException | OperationApplicationException e) {
-                        e.printStackTrace();
-                    }
+                    autoApproveTxs();
                     break;
                 case ACTION_COSING:
-                    try {
-                        cosignApprovedTransactions();
-                    } catch (RemoteException | OperationApplicationException e) {
-                        e.printStackTrace();
-                    }
+                    cosignApprovedTransactions();
                     break;
                 case SHOW:
-                    try {
-                        show(Uri.parse(intent.getStringExtra(EXTRA_URI)));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    show(Uri.parse(intent.getStringExtra(EXTRA_URI)));
                     break;
                 case ACTION_PUBLISH:
-                    try {
-                        publishApprovedAndCosignedTxs();
-                    } catch (RemoteException | OperationApplicationException e) {
-                        e.printStackTrace();
-                    }
+                    publishApprovedAndCosignedTxs();
                     break;
                 case ACTION_MASTER_SIGNATURE:
-                    try {
-                        masterSign();
-                    } catch (RemoteException | OperationApplicationException e) {
-                        e.printStackTrace();
-                    }
+                    masterSign();
+                    break;
+                case ACTION_SYNC:
+                    sync();
                     break;
                 default:
                     Log.e(LOG_TAG, "unknown action " + action);
@@ -140,49 +135,53 @@ public class TeambrellaUtilService extends IntentService {
         }
     }
 
-    private void update() {
+    private boolean update() throws RemoteException, OperationApplicationException, TeambrellaException {
+        boolean result = false;
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        try {
 
-            mTeambrellaClient.updateConnectionTime(new Date().getTime());
+        mTeambrellaClient.updateConnectionTime(new Date().getTime());
 
-            JsonObject result = mServer.execute(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates());
+        JsonObject response = mServer.execute(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates());
 
-            if (result != null) {
-                JsonObject status = result.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();
-                long timestamp = status.get(TeambrellaModel.ATTR_STATUS_TIMESTAMP).getAsLong();
+        if (response != null) {
+            JsonObject status = response.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();
+            long timestamp = status.get(TeambrellaModel.ATTR_STATUS_TIMESTAMP).getAsLong();
 
-                JsonObject data = result.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
+            JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
+
+            ServerUpdates serverUpdates = new Gson().fromJson(data, ServerUpdates.class);
+
+            operations.addAll(mTeambrellaClient.applyUpdates(serverUpdates));
 
 
-                operations.addAll(TeambrellaContentProviderClient.clearNeedUpdateServerFlag());
+            result = !operations.isEmpty();
 
+            operations.addAll(TeambrellaContentProviderClient.clearNeedUpdateServerFlag());
+            mClient.applyBatch(operations);
+            operations.clear();
 
-                ServerUpdates serverUpdates = new Gson().fromJson(data, ServerUpdates.class);
-
-                operations.addAll(mTeambrellaClient.applyUpdates(serverUpdates));
-
-                if (!operations.isEmpty()) {
-                    mClient.applyBatch(operations);
-                }
-
-                operations.clear();
-
-                if (serverUpdates.txs != null) {
-                    operations.addAll(mTeambrellaClient.checkArrivingTx(serverUpdates.txs));
-                }
-
-                if (!operations.isEmpty()) {
-                    mClient.applyBatch(operations);
-                }
-
-                mTeambrellaClient.setLastUpdatedTime(timestamp);
-
+            if (serverUpdates.txs != null) {
+                operations.addAll(mTeambrellaClient.checkArrivingTx(serverUpdates.txs));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (!operations.isEmpty()) {
+                mClient.applyBatch(operations);
+            }
+
+            mTeambrellaClient.setLastUpdatedTime(timestamp);
+
         }
+        return result;
+    }
+
+
+    private boolean autoApproveTxs() throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.addAll(mTeambrellaClient.autoApproveTxs());
+        if (!operations.isEmpty()) {
+            mClient.applyBatch(operations);
+        }
+        return !operations.isEmpty();
     }
 
 
@@ -192,51 +191,49 @@ public class TeambrellaUtilService extends IntentService {
      * @param tx transaction
      * @return list of operations to apply
      */
-    private List<ContentProviderOperation> cosignTransaction(Tx tx) {
+    private List<ContentProviderOperation> cosignTransaction(Tx tx, long userId) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         Transaction transaction = SignHelper.getTransaction(tx);
         if (transaction != null) {
             BTCAddress address = tx.getFromAddress();
             if (address != null) {
                 Script redeemScript = SignHelper.getRedeemScript(address, tx.cosigners);
-                Collections.sort(tx.txInputs, new Comparator<TxInput>() {
-                    @Override
-                    public int compare(TxInput o1, TxInput o2) {
-                        return o1.id.compareTo(o2.id);
-                    }
-                });
                 for (int i = 0; i < tx.txInputs.size(); i++) {
                     byte[] signature = cosign(redeemScript, transaction, i);
-                    operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), 2275, signature));
+                    operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), userId, signature));
                 }
             }
         }
         return operations;
     }
 
-    private void cosignApprovedTransactions() throws RemoteException, OperationApplicationException {
+    private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException {
         List<Tx> list = mTeambrellaClient.getCosinableTx();
+        Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
-                operations.addAll(cosignTransaction(tx));
+                operations.addAll(cosignTransaction(tx, user.id));
                 operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
             }
         }
         mClient.applyBatch(operations);
+        return !operations.isEmpty();
     }
 
 
-    private void masterSign() throws RemoteException, OperationApplicationException {
+    private boolean masterSign() throws RemoteException, OperationApplicationException {
         List<Tx> list = mTeambrellaClient.getApprovedAndCosignedTxs();
+        Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
-                operations.addAll(cosignTransaction(tx));
+                operations.addAll(cosignTransaction(tx, user.id));
                 operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
             }
         }
         mClient.applyBatch(operations);
+        return !operations.isEmpty();
     }
 
 
@@ -265,7 +262,7 @@ public class TeambrellaUtilService extends IntentService {
     }
 
 
-    private void publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException {
+    private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException {
         BlockchainServer server = new BlockchainServer(true);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
@@ -274,10 +271,19 @@ public class TeambrellaUtilService extends IntentService {
             if (transaction != null && server.checkTransaction(transaction.getHashAsString()) || server.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
                 operations.add(TeambrellaContentProviderClient.setTxPublished(tx));
                 mClient.applyBatch(operations);
-            } else {
-                throw new RuntimeException("unable to publish");
             }
-
         }
+
+        return !operations.isEmpty();
+    }
+
+    private void sync() throws RemoteException, OperationApplicationException, TeambrellaException {
+        Log.v(LOG_TAG, "start syncing...");
+        do {
+            autoApproveTxs();
+            cosignApprovedTransactions();
+            masterSign();
+            publishApprovedAndCosignedTxs();
+        } while (update());
     }
 }
