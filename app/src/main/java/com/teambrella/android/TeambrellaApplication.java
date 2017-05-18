@@ -11,7 +11,6 @@ public class TeambrellaApplication extends MultiDexApplication {
 
     public static final String ACCOUNT = "com.teambrella.android";
     public static final String ACCOUNT_TYPE = "com.teambrella.android.teammate";
-    private static final String PRIVATE_KEY = "cNqQ7aZWitJCk1o9dNhr1o9k3UKdeW92CDYrvDHHLuwFuEnfcBXo";
 
     @Override
     public void onCreate() {
@@ -35,7 +34,7 @@ public class TeambrellaApplication extends MultiDexApplication {
         Account accounts[] = accountManager.getAccountsByTypeForPackage(ACCOUNT_TYPE, getPackageName());
 
         if (accounts.length == 0) {
-            accountManager.addAccountExplicitly(account, PRIVATE_KEY, null);
+            accountManager.addAccountExplicitly(account, BuildConfig.PRIVATE_KEY, null);
         }
 
 

@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    Properties keyProperties = new Properties()
+    keyProperties.load(new FileInputStream(file(project.property("KeyProperties"))))
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -11,6 +15,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        buildConfigField "String", "PRIVATE_KEY", "\"" + keyProperties.getProperty("MyPrivateKey") + "\""
     }
     buildTypes {
         release {
