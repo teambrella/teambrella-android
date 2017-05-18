@@ -8,6 +8,7 @@ import com.teambrella.android.content.TeambrellaRepository;
 
 import org.chalup.microorm.annotations.Column;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class TxInput implements Comparable<TxInput> {
     /**
      * Signatures
      */
-    public Map<Long, TXSignature> signatures;
+    public Map<Long, TXSignature> signatures = new HashMap<>();
 
 
     @Override

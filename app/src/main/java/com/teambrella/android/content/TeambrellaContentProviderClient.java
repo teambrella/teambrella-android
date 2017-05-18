@@ -456,18 +456,20 @@ public class TeambrellaContentProviderClient {
 
                     Collections.sort(tx.txInputs);
 
-                    tx.cosigners = getCosigners(tx.getFromAddress());
-
-                    Collections.sort(tx.cosigners);
-
-                    tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
-                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                     tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                             TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
                     if (tx.teammate != null) {
                         tx.teammate.addresses = queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
                                 , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
                     }
+
+
+                    tx.cosigners = getCosigners(tx.getFromAddress());
+
+                    Collections.sort(tx.cosigners);
+
+                    tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
                 }
             }
         }
@@ -537,6 +539,14 @@ public class TeambrellaContentProviderClient {
                     iterator.remove();
                 } else {
                     Collections.sort(tx.txInputs);
+
+                    tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
+                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                    if (tx.teammate != null) {
+                        tx.teammate.addresses = queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
+                                , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
+                    }
+
                     tx.cosigners = getCosigners(tx.getFromAddress());
                     Collections.sort(tx.cosigners);
                     for (TxInput txInput : tx.txInputs) {
@@ -550,12 +560,6 @@ public class TeambrellaContentProviderClient {
 
                     tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
-                    tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
-                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
-                    if (tx.teammate != null) {
-                        tx.teammate.addresses = queryList(TeambrellaRepository.BTCAddress.CONTENT_URI, TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=?"
-                                , new String[]{Long.toString(tx.teammate.id)}, BTCAddress.class);
-                    }
                 }
             }
         }
