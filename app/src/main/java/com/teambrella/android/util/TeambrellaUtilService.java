@@ -1,6 +1,5 @@
 package com.teambrella.android.util;
 
-import android.app.IntentService;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Intent;
@@ -8,9 +7,11 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.TeambrellaUser;
@@ -40,7 +41,7 @@ import java.util.List;
 /**
  * Teambrella util service
  */
-public class TeambrellaUtilService extends IntentService {
+public class TeambrellaUtilService extends GcmTaskService {
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
@@ -64,9 +65,9 @@ public class TeambrellaUtilService extends IntentService {
     private ECKey mKey;
 
 
-    public TeambrellaUtilService() {
-        super("Util Service");
-    }
+//    public TeambrellaUtilService() {
+//        super("Util Service");
+//    }
 
 
     @Override
@@ -84,13 +85,24 @@ public class TeambrellaUtilService extends IntentService {
         mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
     }
 
+//    @Override
+//    protected void onHandleIntent(@Nullable Intent intent) {
+//        try {
+//            processIntent(intent);
+//        } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public int onRunTask(TaskParams taskParams) {
         try {
-            processIntent(intent);
-        } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
+            sync();
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return GcmNetworkManager.RESULT_SUCCESS;
     }
 
     private void processIntent(Intent intent) throws RemoteException, OperationApplicationException, TeambrellaException {

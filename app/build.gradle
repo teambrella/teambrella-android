@@ -62,6 +62,8 @@ dependencies {
     /* *Facebook SDK*/
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
 
+    compile 'com.google.android.gms:play-services-gcm:10.2.6'
+
     /* Test */
     testCompile 'junit:junit:4.12'
 }
