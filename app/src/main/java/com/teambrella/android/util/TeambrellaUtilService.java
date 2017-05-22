@@ -1,7 +1,5 @@
 package com.teambrella.android.util;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -15,7 +13,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.teambrella.android.TeambrellaApplication;
+import com.teambrella.android.TeambrellaUser;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -74,14 +72,7 @@ public class TeambrellaUtilService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        Account[] accounts = accountManager.getAccountsByTypeForPackage(TeambrellaApplication.ACCOUNT_TYPE, getPackageName());
-        Account account = accounts.length > 0 ? accounts[0] : null;
-        String privateKey = null;
-        if (account != null) {
-            privateKey = accountManager.getPassword(account);
-        }
-
+        String privateKey = TeambrellaUser.get(this).getPrivateKey();
         if (privateKey != null) {
             mServer = new TeambrellaServer(this, privateKey);
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();

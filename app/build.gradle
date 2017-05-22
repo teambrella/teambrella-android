@@ -15,7 +15,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        buildConfigField "String", "PRIVATE_KEY", "\"" + keyProperties.getProperty("MyPrivateKey") + "\""
+        buildConfigField "String", "DENIS_PRIVATE_KEY", "\"" + keyProperties.getProperty("DenisPrivateKey") + "\""
+        buildConfigField "String", "KATE_PRIVATE_KEY", "\"" + keyProperties.getProperty("KatePrivateKey") + "\""
+        buildConfigField "String", "THORAX_PRIVATE_KEY", "\"" + keyProperties.getProperty("ThoraxPrivateKey") + "\""
     }
     buildTypes {
         release {
@@ -32,7 +34,6 @@ dependencies {
     })
 
     /* Support */
-    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -57,6 +58,9 @@ dependencies {
 
     /*Image Loader*/
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    /* *Facebook SDK*/
+    compile 'com.facebook.android:facebook-android-sdk:4.22.1'
 
     /* Test */
     testCompile 'junit:junit:4.12'
