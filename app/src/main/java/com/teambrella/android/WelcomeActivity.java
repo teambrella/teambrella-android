@@ -1,6 +1,7 @@
 package com.teambrella.android;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,13 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.teambrella.android.api.TeambrellaException;
+import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
+
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.KeyChain;
+import org.bitcoinj.wallet.Wallet;
 
 import java.util.LinkedList;
 
@@ -44,8 +52,9 @@ public class WelcomeActivity extends AppCompatActivity {
         loginButton.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.v(LOG_TAG, "onSuccess");
-                Log.v(LOG_TAG, loginResult.getAccessToken().getToken());
+                String key = new Wallet(new MainNetParams())
+                        .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(new MainNetParams());
+                new RegisterKeyTask(key, loginResult.getAccessToken().getToken()).execute();
             }
 
             @Override
@@ -91,4 +100,39 @@ public class WelcomeActivity extends AppCompatActivity {
             finish();
         }
     };
+
+    private class RegisterKeyTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mKey;
+        private final String mFacebookToken;
+
+        public RegisterKeyTask(String key, String facebookToken) {
+            mKey = key;
+            mFacebookToken = facebookToken;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            TeambrellaServer server = new TeambrellaServer(WelcomeActivity.this, mKey);
+
+            try {
+                server.execute(TeambrellaUris.getRegisterUri(mFacebookToken), null);
+            } catch (TeambrellaException e) {
+                Log.e(LOG_TAG, e.toString());
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(mKey);
+                finish();
+            }
+        }
+    }
+
 }

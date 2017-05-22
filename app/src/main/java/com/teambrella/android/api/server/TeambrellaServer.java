@@ -115,6 +115,7 @@ public class TeambrellaServer {
             }
             break;
             case TeambrellaUris.ME_UPDATES:
+            case TeambrellaUris.ME_REGISTER_KEY:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -123,6 +124,9 @@ public class TeambrellaServer {
     }
 
     private Call<JsonObject> getCallObject(Uri uri, JsonObject requestBody) {
+        Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
+        String publicKey = mKey.getPublicKeyAsHex();
+        String signature = mKey.signMessage(Long.toString(timestamp));
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
                 return mAPI.getTeammateList(requestBody);
@@ -130,6 +134,9 @@ public class TeambrellaServer {
                 return mAPI.getTeammateOne(requestBody);
             case TeambrellaUris.ME_UPDATES:
                 return mAPI.getUpdates(requestBody);
+            case TeambrellaUris.ME_REGISTER_KEY:
+                String facebookToken = uri.getQueryParameter(TeambrellaUris.KET_FACEBOOK_TOKEN);
+                return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
