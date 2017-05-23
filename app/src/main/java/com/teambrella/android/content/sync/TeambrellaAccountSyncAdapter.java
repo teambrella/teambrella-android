@@ -23,10 +23,10 @@ import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.Cosigner;
+import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxOutput;
-import com.teambrella.android.content.model.ServerUpdates;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -97,7 +97,7 @@ class TeambrellaAccountSyncAdapter {
             updateConnectionTime(provider);
 
 
-            JsonObject result = server.execute(TeambrellaUris.getUpdates(), getRequestBody(provider));
+            JsonObject result = server.requestObservable(TeambrellaUris.getUpdates(), getRequestBody(provider)).blockingFirst();
 
             if (result != null) {
                 JsonObject status = result.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();

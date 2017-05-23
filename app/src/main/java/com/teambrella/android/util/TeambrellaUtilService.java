@@ -144,7 +144,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         mTeambrellaClient.updateConnectionTime(new Date().getTime());
 
-        JsonObject response = mServer.execute(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates());
+        JsonObject response = mServer.requestObservable(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates())
+                .blockingFirst();
 
         if (response != null) {
             JsonObject status = response.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();

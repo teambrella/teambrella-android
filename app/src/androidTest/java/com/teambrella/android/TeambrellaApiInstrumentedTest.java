@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Instrumentation test, which will execute on an Android device.
+ * Instrumentation test, which will requestObservable on an Android device.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */

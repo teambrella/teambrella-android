@@ -10,21 +10,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaAPI;
-import com.teambrella.android.api.TeambrellaClientException;
-import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 
-import java.io.IOException;
-
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -34,7 +30,6 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String PRIVATE_KEY = "cNqQ7aZWitJCk1o9dNhr1o9k3UKdeW92CDYrvDHHLuwFuEnfcBXo";
     //public static final String AUTHORITY = "http://94.72.4.72/";
     public static final String AUTHORITY = "http://192.168.0.222/";
 
@@ -75,6 +70,7 @@ public class TeambrellaServer {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AUTHORITY)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build();
@@ -85,18 +81,8 @@ public class TeambrellaServer {
     }
 
 
-    public JsonObject execute(Uri uri, JsonObject requestData) throws TeambrellaException {
-        try {
-            return execute(getCallObject(uri, getRequestBody(uri, requestData)));
-        } catch (TeambrellaServerException e) {
-            switch (e.getErrorCode()) {
-                case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
-                    return execute(uri, requestData);
-                default:
-                    throw e;
-
-            }
-        }
+    public Observable<JsonObject> requestObservable(Uri uri, JsonObject requestData) {
+        return getObservableObject(uri, getRequestBody(uri, requestData)).doOnNext(this::checkStatus);
     }
 
 
@@ -123,17 +109,17 @@ public class TeambrellaServer {
         return requestBody;
     }
 
-    private Call<JsonObject> getCallObject(Uri uri, JsonObject requestBody) {
+    private Observable<JsonObject> getObservableObject(Uri uri, JsonObject requestBody) {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = mKey.getPublicKeyAsHex();
         String signature = mKey.signMessage(Long.toString(timestamp));
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
-                return mAPI.getTeammateList(requestBody);
+                return mAPI.getTeammateList(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.TEAMMATES_ONE:
-                return mAPI.getTeammateOne(requestBody);
+                return mAPI.getTeammateOne(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.ME_UPDATES:
-                return mAPI.getUpdates(requestBody);
+                return mAPI.getUpdates(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.ME_REGISTER_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KET_FACEBOOK_TOKEN);
                 return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
@@ -163,29 +149,6 @@ public class TeambrellaServer {
         requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, mKey.getPublicKeyAsHex());
         requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, mKey.signMessage(Long.toString(timestamp)));
         return requestBody;
-    }
-
-    /**
-     * Execute request
-     *
-     * @param call
-     * @return data object
-     * @throws IOException
-     */
-    private JsonObject execute(Call<JsonObject> call) throws TeambrellaException {
-        Response<JsonObject> response;
-
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            throw new TeambrellaClientException("Unable to execute request", e);
-        }
-
-        JsonObject responseBody = response.body();
-        if (checkStatus(responseBody)) {
-            return responseBody;
-        }
-        return null;
     }
 
     private boolean checkStatus(JsonObject responseBody) throws TeambrellaServerException {

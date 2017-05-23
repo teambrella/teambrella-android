@@ -3,7 +3,7 @@ package com.teambrella.android.api;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -16,24 +16,35 @@ import retrofit2.http.Query;
 public interface TeambrellaAPI {
 
     @POST("me/getTimestamp")
-    Call<JsonObject> getTimeStamp();
+    Observable<JsonObject> getTimeStamp(@Header("t") long timestamp,
+                                        @Header("key") String publicKey,
+                                        @Header("sig") String signature);
 
     @Headers("Content-Type: application/json")
     @POST("teammate/getOne")
-    Call<JsonObject> getTeammateOne(@Body JsonElement body);
+    Observable<JsonObject> getTeammateOne(@Header("t") long timestamp,
+                                          @Header("key") String publicKey,
+                                          @Header("sig") String signature,
+                                          @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
     @POST("teammate/getList")
-    Call<JsonObject> getTeammateList(@Body JsonElement body);
+    Observable<JsonObject> getTeammateList(@Header("t") long timestamp,
+                                           @Header("key") String publicKey,
+                                           @Header("sig") String signature,
+                                           @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
     @POST("me/GetUpdates")
-    Call<JsonObject> getUpdates(@Body JsonElement body);
+    Observable<JsonObject> getUpdates(@Header("t") long timestamp,
+                                      @Header("key") String publicKey,
+                                      @Header("sig") String signature,
+                                      @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
     @POST("me/registerKey")
-    Call<JsonObject> registerKey(@Header("t") long timestamp,
-                                 @Header("key") String publicKey,
-                                 @Header("sig") String signature,
-                                 @Query("facebookToken") String facebookToken);
+    Observable<JsonObject> registerKey(@Header("t") long timestamp,
+                                       @Header("key") String publicKey,
+                                       @Header("sig") String signature,
+                                       @Query("facebookToken") String facebookToken);
 }

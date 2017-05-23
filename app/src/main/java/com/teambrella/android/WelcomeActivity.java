@@ -15,7 +15,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
-import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.util.TeambrellaUtilService;
@@ -41,6 +40,13 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (TeambrellaUser.get(this).getPrivateKey() != null) {
+            PeriodicTask task = new PeriodicTask.Builder()
+                    .setService(TeambrellaUtilService.class)
+                    .setTag("account_task")
+                    .setPeriod(10L)
+                    .build();
+
+            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
             startActivity(new Intent(this, TeamActivity.class));
             finish();
         }
@@ -100,15 +106,6 @@ public class WelcomeActivity extends AppCompatActivity {
             }
 
 
-            PeriodicTask task = new PeriodicTask.Builder()
-                    .setService(TeambrellaUtilService.class)
-                    .setTag("account_task")
-                    .setPeriod(10L)
-                    .build();
-
-            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
-
-
             startActivity(new Intent(WelcomeActivity.this, TeamActivity.class));
             finish();
         }
@@ -128,12 +125,12 @@ public class WelcomeActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
             TeambrellaServer server = new TeambrellaServer(WelcomeActivity.this, mKey);
 
-            try {
-                server.execute(TeambrellaUris.getRegisterUri(mFacebookToken), null);
-            } catch (TeambrellaException e) {
-                Log.e(LOG_TAG, e.toString());
-                return false;
-            }
+            //try {
+            server.requestObservable(TeambrellaUris.getRegisterUri(mFacebookToken), null);
+            //} catch (TeambrellaException e) {
+            //    Log.e(LOG_TAG, e.toString());
+            //    return false;
+            //}
 
             return true;
         }

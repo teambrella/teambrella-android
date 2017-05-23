@@ -11,12 +11,15 @@ import android.util.Pair;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.loaders.TeambrellaUriLoader;
 import com.teambrella.android.data.teammates.TeammatesRecyclerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class TeamActivity extends AppCompatActivity {
 
@@ -29,6 +32,12 @@ public class TeamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
         ButterKnife.bind(this);
+        TeambrellaServer server = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey());
+        server.requestObservable(TeambrellaUris.getTeamUri(2006), null)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(response ->
+                mListView.setAdapter(new TeammatesRecyclerAdapter(response.get(TeambrellaModel.ATTR_DATA)
+                        .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray())));
+
         mListView.setLayoutManager(new GridLayoutManager(this, 2));
         getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Pair<JsonObject, TeambrellaException>>() {
             @Override
