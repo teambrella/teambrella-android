@@ -703,9 +703,7 @@ public class TeambrellaContentProviderClient {
             if (value != null) {
                 lastUpdated = Long.parseLong(value);
             }
-            if (lastUpdated > 0) {
-                body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
-            }
+            body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
         }
         if (cursor != null) {
             cursor.close();

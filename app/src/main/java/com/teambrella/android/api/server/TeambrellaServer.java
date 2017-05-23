@@ -82,12 +82,23 @@ public class TeambrellaServer {
 
 
     public Observable<JsonObject> requestObservable(Uri uri, JsonObject requestData) {
-        return getObservableObject(uri, getRequestBody(uri, requestData)).doOnNext(this::checkStatus);
+        return getObservableObject(uri, getRequestBody(uri, requestData))
+                .doOnNext(this::checkStatus)
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof TeambrellaServerException) {
+                        if (((TeambrellaServerException) throwable).getErrorCode() == TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH) {
+                            return getObservableObject(uri, getRequestBody(uri, requestData))
+                                    .doOnNext(TeambrellaServer.this::checkStatus);
+                        }
+                    }
+                    return Observable.error(throwable);
+                });
     }
 
 
     private JsonObject getRequestBody(Uri uri, JsonObject body) {
-        JsonObject requestBody = createBaseRequestBody(body);
+
+        JsonObject requestBody = body != null ? body : new JsonObject();
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST: {
                 int teamId = TeambrellaUris.getTeamId(uri);
@@ -119,6 +130,9 @@ public class TeambrellaServer {
             case TeambrellaUris.TEAMMATES_ONE:
                 return mAPI.getTeammateOne(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.ME_UPDATES:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TIMESTAMP, timestamp);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, publicKey);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, signature);
                 return mAPI.getUpdates(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.ME_REGISTER_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KET_FACEBOOK_TOKEN);
@@ -126,29 +140,6 @@ public class TeambrellaServer {
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
-    }
-
-    /**
-     * Create base request body
-     *
-     * @return request object
-     */
-    private JsonObject createBaseRequestBody(JsonObject requestBody) {
-        return updateRequestBody(requestBody != null ? requestBody : new JsonObject());
-    }
-
-
-    /**
-     * Create base request body
-     *
-     * @return request object
-     */
-    private JsonObject updateRequestBody(JsonObject requestBody) {
-        long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TIMESTAMP, timestamp);
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, mKey.getPublicKeyAsHex());
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, mKey.signMessage(Long.toString(timestamp)));
-        return requestBody;
     }
 
     private boolean checkStatus(JsonObject responseBody) throws TeambrellaServerException {
