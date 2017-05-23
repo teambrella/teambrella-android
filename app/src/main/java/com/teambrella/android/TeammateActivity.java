@@ -8,10 +8,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.teambrella.android.api.server.TeambrellaServer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Teammate screen.
@@ -51,6 +57,22 @@ public class TeammateActivity extends AppCompatActivity {
         setContentView(R.layout.activiity_teammate);
         mUri = getIntent().getParcelableExtra(TEAMMATE_URI);
         mUnbinder = ButterKnife.bind(this);
+        new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey()).requestObservable(mUri, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onResult, this::onError, this::onComplete);
+    }
+
+    private void onResult(JsonObject response) {
+
+    }
+
+    private void onError(Throwable e) {
+        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+    }
+
+    private void onComplete() {
+
     }
 
 

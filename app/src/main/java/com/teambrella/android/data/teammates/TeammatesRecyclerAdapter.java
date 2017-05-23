@@ -15,6 +15,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.TeammateActivity;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +50,9 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<TeammatesRecy
         Picasso.with(context).load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                 .into(holder.mIcon);
         holder.mTitle.setText(item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
-        holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, null)));
+        holder.itemView.setOnClickListener(v ->
+                context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2006,
+                        item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()))));
 
     }
 
