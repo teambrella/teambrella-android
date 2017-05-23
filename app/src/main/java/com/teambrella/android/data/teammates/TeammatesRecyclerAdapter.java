@@ -49,12 +49,7 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<TeammatesRecy
         Picasso.with(context).load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                 .into(holder.mIcon);
         holder.mTitle.setText(item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(TeammateActivity.getIntent(context, null));
-            }
-        });
+        holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, null)));
 
     }
 

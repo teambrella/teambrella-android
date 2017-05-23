@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -28,29 +30,26 @@ public class TeamActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         TeambrellaServer server = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey());
         server.requestObservable(TeambrellaUris.getTeamUri(2006), null)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(response ->
-                mListView.setAdapter(new TeammatesRecyclerAdapter(response.get(TeambrellaModel.ATTR_DATA)
-                        .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray())));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onResult, this::onError, this::onComplete);
 
-        mListView.setLayoutManager(new GridLayoutManager(this, 2));
-//        getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Pair<JsonObject, TeambrellaException>>() {
-//            @Override
-//            public Loader<Pair<JsonObject, TeambrellaException>> onCreateLoader(int id, Bundle args) {
-//                return new TeambrellaUriLoader(TeamActivity.this, TeambrellaUris.getTeamUri(2006));
-//            }
-//
-//            @Override
-//            public void onLoadFinished(Loader<Pair<JsonObject, TeambrellaException>> loader, Pair<JsonObject, TeambrellaException> data) {
-//                mListView.setAdapter(new TeammatesRecyclerAdapter(data.first.get(TeambrellaModel.ATTR_DATA)
-//                        .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
-//            }
-//
-//            @Override
-//            public void onLoaderReset(Loader<Pair<JsonObject, TeambrellaException>> loader) {
-//
-//            }
-//        });
-   }
+        mListView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
+
+
+    private void onResult(JsonObject response) {
+        mListView.setAdapter(new TeammatesRecyclerAdapter(response.get(TeambrellaModel.ATTR_DATA)
+                .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
+    }
+
+    private void onError(Throwable e) {
+        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+    }
+
+    private void onComplete() {
+
+    }
 
 
     @Override

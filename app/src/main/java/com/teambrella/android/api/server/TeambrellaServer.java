@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaAPI;
+import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 
@@ -19,6 +20,7 @@ import org.bitcoinj.core.ECKey;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -83,11 +85,13 @@ public class TeambrellaServer {
 
     public Observable<JsonObject> requestObservable(Uri uri, JsonObject requestData) {
         return getObservableObject(uri, getRequestBody(uri, requestData))
+                .map(this::checkResponse)
                 .doOnNext(this::checkStatus)
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof TeambrellaServerException) {
                         if (((TeambrellaServerException) throwable).getErrorCode() == TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH) {
                             return getObservableObject(uri, getRequestBody(uri, requestData))
+                                    .map(this::checkResponse)
                                     .doOnNext(TeambrellaServer.this::checkStatus);
                         }
                     }
@@ -120,7 +124,7 @@ public class TeambrellaServer {
         return requestBody;
     }
 
-    private Observable<JsonObject> getObservableObject(Uri uri, JsonObject requestBody) {
+    private Observable<Response<JsonObject>> getObservableObject(Uri uri, JsonObject requestBody) {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = mKey.getPublicKeyAsHex();
         String signature = mKey.signMessage(Long.toString(timestamp));
@@ -140,6 +144,14 @@ public class TeambrellaServer {
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
+    }
+
+
+    private JsonObject checkResponse(Response<JsonObject> response) throws TeambrellaException {
+        if (response.isSuccessful()) {
+            return response.body();
+        }
+        throw new TeambrellaException();
     }
 
     private boolean checkStatus(JsonObject responseBody) throws TeambrellaServerException {
