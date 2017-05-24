@@ -14,7 +14,6 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -26,6 +25,7 @@ import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.ui.TeambrellaUser;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -78,7 +78,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             mServer = new TeambrellaServer(this, privateKey);
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
         } else {
-            throw new RuntimeException("Missing private key");
+            //throw new RuntimeException("Missing private key");
         }
         mServer = new TeambrellaServer(this, privateKey);
         mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);

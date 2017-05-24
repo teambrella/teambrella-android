@@ -8,4 +8,9 @@
     <string name="bottom_navigation_proxies">Proxies</string>
     <string name="bottom_navigation_me">Me</string>
 
+    <!-- Team's tab -->
+    <string name="team_feed">Feed</string>
+    <string name="team_members">Members</string>
+    <string name="team_claims">Claims</string>
+
 </resources>

@@ -33,18 +33,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String PROFILE_TAG = "profile";
 
 
-    private BottomNavigationView mNavigationView;
     private int mSelectedItemId = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationViewHelper.removeShiftMode(mNavigationView = (BottomNavigationView) findViewById(R.id.bottom_bar));
+        BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottom_bar);
+        BottomNavigationViewHelper.removeShiftMode(navigationView);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG).commit();
         mSelectedItemId = R.id.bottom_navigation_home;
-        mNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+        navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
 
