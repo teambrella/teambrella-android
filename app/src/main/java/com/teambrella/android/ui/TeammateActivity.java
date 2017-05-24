@@ -1,4 +1,4 @@
-package com.teambrella.android;
+package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaServer;
 
 import butterknife.BindView;

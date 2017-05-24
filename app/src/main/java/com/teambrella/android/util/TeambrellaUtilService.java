@@ -14,7 +14,7 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.teambrella.android.TeambrellaUser;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;

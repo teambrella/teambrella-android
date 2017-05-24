@@ -1,4 +1,4 @@
-package com.teambrella.android;
+package com.teambrella.android.ui;
 
 import android.support.multidex.MultiDexApplication;
 

@@ -10,6 +10,6 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.teambrella.android.TeamActivity" />
+        tools:context="com.teambrella.android.ui.TeamActivity" />
 
 </android.support.v4.widget.SwipeRefreshLayout>

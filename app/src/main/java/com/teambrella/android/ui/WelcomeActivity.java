@@ -1,4 +1,4 @@
-package com.teambrella.android;
+package com.teambrella.android.ui;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -15,6 +15,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.teambrella.android.BuildConfig;
+import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.util.TeambrellaUtilService;

@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.util.Pair;
 
 import com.google.gson.JsonObject;
-import com.teambrella.android.TeambrellaUser;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.server.TeambrellaServer;
 

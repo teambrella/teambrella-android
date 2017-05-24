@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/bottom_navigation_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_menu_home"
+        android:title="@string/bottom_navigation_home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/bottom_navigation_team"
+        android:enabled="true"
+        android:icon="@drawable/ic_menu_team"
+        android:title="@string/bottom_navigation_team"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/bottom_navigation_proxies"
+        android:enabled="true"
+        android:icon="@drawable/ic_menu_proxies"
+        android:title="@string/bottom_navigation_proxies"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/bottom_navigation_me"
+        android:enabled="true"
+        android:icon="@drawable/ic_menu_me"
+        android:title="@string/bottom_navigation_me"
+        app:showAsAction="ifRoom" />
+
+</menu>
