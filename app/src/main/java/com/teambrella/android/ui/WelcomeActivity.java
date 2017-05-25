@@ -13,13 +13,10 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.util.TeambrellaUtilService;
 
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
@@ -42,14 +39,14 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (TeambrellaUser.get(this).getPrivateKey() != null) {
-            PeriodicTask task = new PeriodicTask.Builder()
-                    .setService(TeambrellaUtilService.class)
-                    .setTag("account_task")
-                    .setPeriod(10L)
-                    .build();
-
-            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
-            startActivity(new Intent(this, TeamActivity.class));
+//            PeriodicTask task = new PeriodicTask.Builder()
+//                    .setService(TeambrellaUtilService.class)
+//                    .setTag("account_task")
+//                    .setPeriod(10L)
+//                    .build();
+//
+//            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
+            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             finish();
         }
 
@@ -108,7 +105,7 @@ public class WelcomeActivity extends AppCompatActivity {
             }
 
 
-            startActivity(new Intent(WelcomeActivity.this, TeamActivity.class));
+            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             finish();
         }
     };

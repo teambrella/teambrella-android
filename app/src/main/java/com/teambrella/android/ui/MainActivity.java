@@ -13,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.data.MainDataFragment;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
@@ -21,16 +23,19 @@ import com.teambrella.android.ui.team.TeamFragment;
 
 import java.lang.reflect.Field;
 
+import io.reactivex.Observable;
+
 
 /**
  * Main Activity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainDataHost {
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
     private static final String PROXIES_TAG = "proxies";
     private static final String PROFILE_TAG = "profile";
+    private static final String DATA_PROVIDER_TAG = "data_provider";
 
 
     private int mSelectedItemId = 0;
@@ -39,10 +44,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottom_bar);
         BottomNavigationViewHelper.removeShiftMode(navigationView);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG).commit();
+
+        fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
+                .add(new MainDataFragment(), DATA_PROVIDER_TAG).commit();
+
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -101,6 +110,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void requestTeamList(int teamID) {
+        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
+        dataFragment.requestTeamList(teamID);
+    }
+
+    @Override
+    public Observable<JsonObject> getTeamListObservable() {
+        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
+        return dataFragment.getTeamListObservable();
+    }
 }
 
 class BottomNavigationViewHelper {

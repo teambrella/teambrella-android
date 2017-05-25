@@ -23,7 +23,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,8 +34,9 @@
         </activity>
 
         <activity
-            android:name=".ui.WelcomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".ui.TeamActivity" />
         <activity android:name=".ui.TeammateActivity" />

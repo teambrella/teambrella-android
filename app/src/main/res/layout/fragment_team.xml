@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="enterAlways"
             app:tabBackground="@color/colorPrimary"
             app:tabIndicatorColor="#35abd9"
             app:tabSelectedTextColor="@android:color/white"
