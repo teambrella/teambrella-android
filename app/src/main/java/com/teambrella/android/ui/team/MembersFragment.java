@@ -41,7 +41,6 @@ public class MembersFragment extends ProgressFragment {
         View view = inflater.inflate(R.layout.fragment_team_members, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        ;
 
         if (savedInstanceState == null) {
             mDataHost.requestTeamList(2006);

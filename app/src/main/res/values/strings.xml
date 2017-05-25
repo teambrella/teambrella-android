@@ -13,4 +13,8 @@
     <string name="team_members">Members</string>
     <string name="team_claims">Claims</string>
 
+
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> $%d]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> $%d]]></string>
+    <string name="teammate_net_format_string_zero">$0</string>
 </resources>
