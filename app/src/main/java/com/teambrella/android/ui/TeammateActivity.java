@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,8 @@ import io.reactivex.disposables.Disposable;
 public class TeammateActivity extends AppCompatActivity {
 
     private static final String TEAMMATE_URI = "teammate_uri";
+    private static final String TEAMMATE_NAME = "teammate_name";
+    private static final String TEAMMATE_PICTURE = "teammate_picture";
 
     private static final String DATA_FRAGMENT = "data";
 
@@ -55,8 +58,11 @@ public class TeammateActivity extends AppCompatActivity {
      * @param uri     teammate uri
      * @return intent to start activity
      */
-    public static Intent getIntent(Context context, Uri uri) {
-        return new Intent(context, TeammateActivity.class).putExtra(TEAMMATE_URI, uri);
+    public static Intent getIntent(Context context, Uri uri, String name, String userPictureUri) {
+        return new Intent(context, TeammateActivity.class)
+                .putExtra(TEAMMATE_URI, uri)
+                .putExtra(TEAMMATE_NAME, name)
+                .putExtra(TEAMMATE_URI, uri);
     }
 
     @Override
@@ -67,6 +73,17 @@ public class TeammateActivity extends AppCompatActivity {
         mUnbinder = ButterKnife.bind(this);
         getSupportFragmentManager().beginTransaction()
                 .add(TeambrellaDataFragment.getInstance(mUri), DATA_FRAGMENT).commit();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Picasso.with(this).setLoggingEnabled(true);
+        Picasso.with(this).load(getIntent().getStringExtra(TEAMMATE_PICTURE))
+                .into(mUserPicture);
+
+        mUserName.setText(getIntent().getStringExtra(TEAMMATE_NAME));
+        setTitle(getIntent().getStringExtra(TEAMMATE_NAME));
+        supportPostponeEnterTransition();
+
+        mUserName.postDelayed(this::supportStartPostponedEnterTransition, 300);
     }
 
     @Override
@@ -96,6 +113,16 @@ public class TeammateActivity extends AppCompatActivity {
         if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            supportFinishAfterTransition();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void onResult(JsonObject response) {
