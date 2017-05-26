@@ -11,14 +11,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.data.base.TeambrellaDataFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Teammate screen.
@@ -26,6 +28,8 @@ import io.reactivex.schedulers.Schedulers;
 public class TeammateActivity extends AppCompatActivity {
 
     private static final String TEAMMATE_URI = "teammate_uri";
+
+    private static final String DATA_FRAGMENT = "data";
 
 
     @BindView(R.id.user_picture)
@@ -39,6 +43,9 @@ public class TeammateActivity extends AppCompatActivity {
 
 
     private Unbinder mUnbinder;
+
+
+    private Disposable mDisposable;
 
 
     /**
@@ -58,14 +65,43 @@ public class TeammateActivity extends AppCompatActivity {
         setContentView(R.layout.activiity_teammate);
         mUri = getIntent().getParcelableExtra(TEAMMATE_URI);
         mUnbinder = ButterKnife.bind(this);
-        new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey()).requestObservable(mUri, null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onResult, this::onError, this::onComplete);
+        getSupportFragmentManager().beginTransaction()
+                .add(TeambrellaDataFragment.getInstance(mUri), DATA_FRAGMENT).commit();
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            TeambrellaDataFragment fragment = (TeambrellaDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_FRAGMENT);
+            if (fragment != null) {
+                fragment.load();
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        TeambrellaDataFragment fragment = (TeambrellaDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_FRAGMENT);
+        if (fragment != null) {
+            mDisposable = fragment.getObservable().subscribe(this::onResult, this::onError, this::onComplete);
+        }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 
     private void onResult(JsonObject response) {
-
+        JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
+        Picasso.with(this).load(TeambrellaServer.AUTHORITY + data.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+                .into((ImageView) findViewById(R.id.user_picture));
     }
 
     private void onError(Throwable e) {
@@ -75,7 +111,6 @@ public class TeammateActivity extends AppCompatActivity {
     private void onComplete() {
 
     }
-
 
     @Override
     protected void onDestroy() {
