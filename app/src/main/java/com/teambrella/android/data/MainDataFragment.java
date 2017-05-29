@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataLoader;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 
 /**
@@ -25,7 +26,7 @@ public class MainDataFragment extends Fragment {
     }
 
 
-    public Observable<JsonObject> getTeamListObservable() {
+    public Observable<Notification<JsonObject>> getTeamListObservable() {
         return mTeamListDataLoader.getObservable();
     }
 

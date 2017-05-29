@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observables.ConnectableObservable;
@@ -18,8 +19,8 @@ import io.reactivex.subjects.PublishSubject;
  */
 public class TeambrellaDataLoader {
 
-    private ConnectableObservable<JsonObject> mConnectableObservable;
-    private PublishSubject<JsonObject> mPublisher = PublishSubject.create();
+    private ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
+    private PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
     private TeambrellaServer mServer;
 
 
@@ -30,7 +31,7 @@ public class TeambrellaDataLoader {
     }
 
 
-    public Observable<JsonObject> getObservable() {
+    public Observable<Notification<JsonObject>> getObservable() {
         return mConnectableObservable;
     }
 
@@ -44,11 +45,11 @@ public class TeambrellaDataLoader {
 
 
     private void onNext(JsonObject data) {
-        mPublisher.onNext(data);
+        mPublisher.onNext(Notification.createOnNext(data));
     }
 
     private void onError(Throwable throwable) {
-        mPublisher.onError(throwable);
+        mPublisher.onNext(Notification.createOnError(throwable));
     }
 
     private void onComplete() {

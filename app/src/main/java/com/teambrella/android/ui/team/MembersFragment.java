@@ -17,6 +17,7 @@ import com.teambrella.android.data.teammates.TeammatesRecyclerAdapter;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ProgressFragment;
 
+import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -47,19 +48,18 @@ public class MembersFragment extends ProgressFragment {
         }
 
         mDisposable = mDataHost.getTeamListObservable()
-                .subscribe(this::onDataUpdated, this::onError);
+                .subscribe(this::onDataUpdated);
 
         return view;
     }
 
-    private void onDataUpdated(JsonObject data) {
-        mList.setAdapter(new TeammatesRecyclerAdapter(data.get(TeambrellaModel.ATTR_DATA)
-                .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
-        setContentShown(true);
-    }
-
-    private void onError(Throwable e) {
-        Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+    private void onDataUpdated(Notification<JsonObject> notification) {
+        if (notification.isOnNext()) {
+            mList.setAdapter(new TeammatesRecyclerAdapter(notification.getValue().get(TeambrellaModel.ATTR_DATA)
+                    .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
+        } else {
+            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+        }
         setContentShown(true);
     }
 

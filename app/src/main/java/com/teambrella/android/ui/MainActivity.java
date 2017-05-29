@@ -23,6 +23,7 @@ import com.teambrella.android.ui.team.TeamFragment;
 
 import java.lang.reflect.Field;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 
 
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
     }
 
     @Override
-    public Observable<JsonObject> getTeamListObservable() {
+    public Observable<Notification<JsonObject>> getTeamListObservable() {
         MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
         return dataFragment.getTeamListObservable();
     }

@@ -18,7 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.TeammateActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

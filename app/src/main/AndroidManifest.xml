@@ -39,7 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".ui.TeamActivity" />
-        <activity android:name=".ui.TeammateActivity" />
+        <activity android:name=".ui.teammate.TeammateActivity" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"

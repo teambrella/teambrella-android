@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonObject;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 
 /**
@@ -43,7 +44,7 @@ public class TeambrellaDataFragment extends Fragment {
     }
 
 
-    public Observable<JsonObject> getObservable() {
+    public Observable<Notification<JsonObject>> getObservable() {
         return mLoader.getObservable();
     }
 }

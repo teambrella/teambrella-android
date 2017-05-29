@@ -2,6 +2,7 @@ package com.teambrella.android.ui;
 
 import com.google.gson.JsonObject;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 
 /**
@@ -11,6 +12,6 @@ public interface IMainDataHost {
 
     void requestTeamList(int teamID);
 
-    Observable<JsonObject> getTeamListObservable();
+    Observable<Notification<JsonObject>> getTeamListObservable();
 
 }
