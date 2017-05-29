@@ -21,6 +21,13 @@
             android:textSize="36sp" />
 
         <Button
+            android:id="@+id/masterUser"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Master" />
+
+        <Button
             android:id="@+id/denis"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

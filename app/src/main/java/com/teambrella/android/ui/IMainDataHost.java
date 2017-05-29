@@ -10,7 +10,7 @@ import io.reactivex.Observable;
  */
 public interface IMainDataHost {
 
-    void requestTeamList(int teamID);
+    void requestTeamList(int teamID, int offset, int limit);
 
     Observable<Notification<JsonObject>> getTeamListObservable();
 

@@ -11,7 +11,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.teammates.TeammatesRecyclerAdapter;
+import com.teambrella.android.ui.team.TeammatesRecyclerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +30,7 @@ public class TeamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_team);
         ButterKnife.bind(this);
         TeambrellaServer server = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey());
-        server.requestObservable(TeambrellaUris.getTeamUri(2006), null)
+        server.requestObservable(TeambrellaUris.getTeamUri(2006, 0, 0), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onResult, this::onError, this::onComplete);

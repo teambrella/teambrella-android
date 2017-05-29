@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
 
 
     @Override
-    public void requestTeamList(int teamID) {
+    public void requestTeamList(int teamID, int offset, int limit) {
         MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
-        dataFragment.requestTeamList(teamID);
+        dataFragment.requestTeamList(teamID, offset, limit);
     }
 
     @Override

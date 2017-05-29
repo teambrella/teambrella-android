@@ -1,8 +1,6 @@
-package com.teambrella.android.data.teammates;
+package com.teambrella.android.ui.team;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -63,9 +61,8 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<TeammatesRecy
             holder.mNet.setText(context.getString(R.string.teammate_net_format_string_zero));
         }
         holder.itemView.setOnClickListener(v -> {
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, (View) holder.mIcon, "profile");
-            context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2006,
-                    item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri), options.toBundle());
+            context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
+                    item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri));
         });
 
     }

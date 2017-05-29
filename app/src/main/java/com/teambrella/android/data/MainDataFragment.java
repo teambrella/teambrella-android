@@ -30,7 +30,7 @@ public class MainDataFragment extends Fragment {
         return mTeamListDataLoader.getObservable();
     }
 
-    public void requestTeamList(int teamId) {
-        mTeamListDataLoader.load(TeambrellaUris.getTeamUri(teamId), null);
+    public void requestTeamList(int teamId, int offset, int limit) {
+        mTeamListDataLoader.load(TeambrellaUris.getTeamUri(teamId, offset, limit), null);
     }
 }

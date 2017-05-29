@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.data.teammates.TeammatesRecyclerAdapter;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ProgressFragment;
 
@@ -44,7 +43,7 @@ public class MembersFragment extends ProgressFragment {
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         if (savedInstanceState == null) {
-            mDataHost.requestTeamList(2006);
+            mDataHost.requestTeamList(2, 0, 10);
         }
 
         mDisposable = mDataHost.getTeamListObservable()

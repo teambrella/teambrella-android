@@ -79,6 +79,7 @@ public class WelcomeActivity extends AppCompatActivity {
         findViewById(R.id.denis).setOnClickListener(mClickListener);
         findViewById(R.id.kate).setOnClickListener(mClickListener);
         findViewById(R.id.thorax).setOnClickListener(mClickListener);
+        findViewById(R.id.masterUser).setOnClickListener(mClickListener);
 
     }
 
@@ -88,26 +89,26 @@ public class WelcomeActivity extends AppCompatActivity {
         mCallBackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private View.OnClickListener mClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            TeambrellaUser user = TeambrellaUser.get(WelcomeActivity.this);
-            switch (v.getId()) {
-                case R.id.denis:
-                    user.setPrivateKey(BuildConfig.DENIS_PRIVATE_KEY);
-                    break;
-                case R.id.kate:
-                    user.setPrivateKey(BuildConfig.KATE_PRIVATE_KEY);
-                    break;
-                case R.id.thorax:
-                    user.setPrivateKey(BuildConfig.THORAX_PRIVATE_KEY);
-                    break;
-            }
-
-
-            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
-            finish();
+    private View.OnClickListener mClickListener = v -> {
+        TeambrellaUser user = TeambrellaUser.get(WelcomeActivity.this);
+        switch (v.getId()) {
+            case R.id.denis:
+                user.setPrivateKey(BuildConfig.DENIS_PRIVATE_KEY);
+                break;
+            case R.id.kate:
+                user.setPrivateKey(BuildConfig.KATE_PRIVATE_KEY);
+                break;
+            case R.id.thorax:
+                user.setPrivateKey(BuildConfig.THORAX_PRIVATE_KEY);
+                break;
+            case R.id.masterUser:
+                user.setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);
+                break;
         }
+
+        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+        finish();
+
     };
 
     private class RegisterKeyTask extends AsyncTask<Void, Void, Boolean> {

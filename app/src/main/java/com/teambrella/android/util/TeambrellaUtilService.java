@@ -20,14 +20,11 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.BlockchainServer;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
-import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.BTCAddress;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
-import com.teambrella.android.ui.TeambrellaUser;
 
-import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
@@ -73,16 +70,16 @@ public class TeambrellaUtilService extends GcmTaskService {
     @Override
     public void onCreate() {
         super.onCreate();
-        String privateKey = TeambrellaUser.get(this).getPrivateKey();
-        if (privateKey != null) {
-            mServer = new TeambrellaServer(this, privateKey);
-            mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-        } else {
-            //throw new RuntimeException("Missing private key");
-        }
-        mServer = new TeambrellaServer(this, privateKey);
-        mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
-        mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
+//        String privateKey = TeambrellaUser.get(this).getPrivateKey();
+//        if (privateKey != null) {
+//            mServer = new TeambrellaServer(this, privateKey);
+//            mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
+//        } else {
+//            //throw new RuntimeException("Missing private key");
+//        }
+//        mServer = new TeambrellaServer(this, privateKey);
+//        mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
+//        mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
     }
 
 //    @Override
@@ -98,7 +95,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     @Override
     public int onRunTask(TaskParams taskParams) {
         try {
-            sync();
+            //sync();
         } catch (Exception e) {
             e.printStackTrace();
         }

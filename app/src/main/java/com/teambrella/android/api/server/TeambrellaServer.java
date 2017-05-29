@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.teambrella.android.api.TeambrellaAPI;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
@@ -130,6 +131,8 @@ public class TeambrellaServer {
         String signature = mKey.signMessage(Long.toString(timestamp));
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
+                requestBody.add(TeambrellaModel.ATTR_REQUEST_OFFSET, new JsonPrimitive(Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET))));
+                requestBody.add(TeambrellaModel.ATTR_REQUEST_LIMIT, new JsonPrimitive(Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT))));
                 return mAPI.getTeammateList(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.TEAMMATES_ONE:
                 return mAPI.getTeammateOne(timestamp, publicKey, signature, requestBody);
@@ -139,7 +142,7 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, signature);
                 return mAPI.getUpdates(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.ME_REGISTER_KEY:
-                String facebookToken = uri.getQueryParameter(TeambrellaUris.KET_FACEBOOK_TOKEN);
+                String facebookToken = uri.getQueryParameter(TeambrellaUris.KEY_FACEBOOK_TOKEN);
                 return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
             default:
                 throw new RuntimeException("unknown uri:" + uri);

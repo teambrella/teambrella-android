@@ -72,6 +72,8 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_PUBLIC_KEY = "PublicKey";
     public static final String ATTR_REQUEST_TEAM_ID = "TeamId";
     public static final String ATTR_REQUEST_USER_ID = "UserId";
+    public static final String ATTR_REQUEST_OFFSET = "Offset";
+    public static final String ATTR_REQUEST_LIMIT = "Count";
 
 
     /*Response*/
