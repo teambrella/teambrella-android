@@ -51,10 +51,9 @@ public class TeammateFragment extends ProgressFragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
         if (savedInstanceState == null) {
             mTeammateDataHost.loadTeammate();
+            setContentShown(false);
         }
-
         mSwipeRefreshLayout.setOnRefreshListener(this::onRefresh);
-
         return view;
     }
 

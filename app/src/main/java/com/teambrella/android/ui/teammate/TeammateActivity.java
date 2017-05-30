@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -65,6 +66,16 @@ public class TeammateActivity extends AppCompatActivity implements ITeammateData
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         setTitle(getIntent().getStringExtra(TEAMMATE_NAME));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Teambrella" />
+
+    <style name="Teambrella.TextAppearence">
+        <item name="android:fontFamily">@string/roboto_regular</item>
+    </style>
+
+    <style name="Teambrella.ListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
+    <style name="Teambrella.ListItem.Icon" parent="Teambrella">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="Teambrella.TextAppearence.ListItem" />
+
+    <style name="Teambrella.TextAppearence.ListItem.Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#2c3948</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Teambrella.TextAppearence.ListItem.Subtitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#7b8d9a</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Teambrella.TextAppearence.ListItem.Value">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#2c3948</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+
+</resources>
