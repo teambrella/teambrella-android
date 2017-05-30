@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import com.teambrella.android.R;
-import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ProgressFragment;
 
@@ -29,6 +29,7 @@ public class MembersFragment extends ProgressFragment {
     private IMainDataHost mDataHost;
     private Disposable mDisposable;
     private RecyclerView mList;
+    private TeammatesRecyclerAdapter mAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -41,21 +42,31 @@ public class MembersFragment extends ProgressFragment {
         View view = inflater.inflate(R.layout.fragment_team_members, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mAdapter = new TeammatesRecyclerAdapter(mDataHost.getTeamListPager());
+        mList.setAdapter(mAdapter);
 
-        if (savedInstanceState == null) {
-            mDataHost.requestTeamList(2, 0, 10);
-        }
-
-        mDisposable = mDataHost.getTeamListObservable()
+        IDataPager<JsonArray> pager = mDataHost.getTeamListPager();
+        mDisposable = pager.getObservable()
                 .subscribe(this::onDataUpdated);
-
         return view;
     }
 
-    private void onDataUpdated(Notification<JsonObject> notification) {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        IDataPager<JsonArray> pager = mDataHost.getTeamListPager();
+        if (pager.getLoadedData().size() == 0 && pager.hasNext()) {
+            pager.loadNext();
+            setContentShown(false);
+        } else {
+            setContentShown(true);
+        }
+
+    }
+
+    private void onDataUpdated(Notification<JsonArray> notification) {
         if (notification.isOnNext()) {
-            mList.setAdapter(new TeammatesRecyclerAdapter(notification.getValue().get(TeambrellaModel.ATTR_DATA)
-                    .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray()));
+
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
         }
@@ -69,6 +80,7 @@ public class MembersFragment extends ProgressFragment {
         if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
+        mAdapter.destroy();
         mList = null;
     }
 

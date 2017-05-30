@@ -44,14 +44,12 @@ public class TeambrellaUris {
      * @param teamId team ID
      * @return uri
      */
-    public static Uri getTeamUri(int teamId, int offset, int limit) {
+    public static Uri getTeamUri(int teamId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_TEAM)
                 .appendEncodedPath(Integer.toString(teamId))
                 .appendEncodedPath(SEGMENT_LIST)
-                .appendQueryParameter(KEY_OFFSET, Integer.toString(offset))
-                .appendQueryParameter(KEY_LIMIT, Integer.toString(limit))
                 .build();
     }
 
@@ -59,6 +57,13 @@ public class TeambrellaUris {
     public static Uri getRegisterUri(String facebookToken) {
         return new Uri.Builder().authority(AUTHORITY).appendEncodedPath(SEGMENT_ME)
                 .appendEncodedPath(SEGMENT_REGISTER).appendQueryParameter(KEY_FACEBOOK_TOKEN, facebookToken).build();
+    }
+
+    public static Uri appendPagination(Uri uri, int offset, int limit) {
+        return uri.buildUpon()
+                .appendQueryParameter(KEY_OFFSET, Integer.toString(offset))
+                .appendQueryParameter(KEY_LIMIT, Integer.toString(limit))
+                .build();
     }
 
 

@@ -1,17 +1,13 @@
 package com.teambrella.android.ui;
 
-import com.google.gson.JsonObject;
-
-import io.reactivex.Notification;
-import io.reactivex.Observable;
+import com.google.gson.JsonArray;
+import com.teambrella.android.data.base.IDataPager;
 
 /**
  * Main Data Host
  */
 public interface IMainDataHost {
 
-    void requestTeamList(int teamID, int offset, int limit);
-
-    Observable<Notification<JsonObject>> getTeamListObservable();
+    IDataPager<JsonArray> getTeamListPager();
 
 }

@@ -13,18 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import com.teambrella.android.R;
 import com.teambrella.android.data.MainDataFragment;
+import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
 
 import java.lang.reflect.Field;
-
-import io.reactivex.Notification;
-import io.reactivex.Observable;
 
 
 /**
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
-                .add(new MainDataFragment(), DATA_PROVIDER_TAG).commit();
+                .add(MainDataFragment.getInstance(2), DATA_PROVIDER_TAG).commit();
 
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -110,17 +108,10 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         }
     }
 
-
     @Override
-    public void requestTeamList(int teamID, int offset, int limit) {
+    public IDataPager<JsonArray> getTeamListPager() {
         MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
-        dataFragment.requestTeamList(teamID, offset, limit);
-    }
-
-    @Override
-    public Observable<Notification<JsonObject>> getTeamListObservable() {
-        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
-        return dataFragment.getTeamListObservable();
+        return dataFragment.getTeamListPager();
     }
 }
 
