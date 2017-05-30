@@ -17,67 +17,41 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Teammates Recycler Adapter
  */
-public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final int VIEW_TYPE_LOADING = 1;
-    private static final int VIEW_TYPE_ERROR = 2;
-    private static final int VIEW_TYPE_REGULAR = 3;
-    private IDataPager<JsonArray> mPager;
-    private Disposable mDisposal;
+public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
     /**
      * Constructor.
      */
-    public TeammatesRecyclerAdapter(IDataPager<JsonArray> pager) {
-        mPager = pager;
-        mDisposal = mPager.getObservable().subscribe(d -> notifyDataSetChanged());
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        int size = mPager.getLoadedData().size();
-        if (position == size) {
-            if (mPager.hasError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isLoading()) {
-                return VIEW_TYPE_LOADING;
-            } else {
-                throw new RuntimeException();
-            }
-        }
-
-        return VIEW_TYPE_REGULAR;
+    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager) {
+        super(pager);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        switch (viewType) {
-            case VIEW_TYPE_LOADING:
-                return new LoadingViewHolder(inflater.inflate(R.layout.list_item_loading, parent, false));
-            case VIEW_TYPE_ERROR:
-                return new LoadingViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
+        RecyclerView.ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+        if (viewHolder == null) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            switch (viewType) {
+                case VIEW_TYPE_REGULAR:
+                    viewHolder = new TeammatesViewHolder(inflater.inflate(R.layout.teammate_list_item, parent, false));
+                    break;
+            }
         }
-        return new TeammatesViewHolder(inflater.inflate(R.layout.teammate_list_item, parent, false));
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-
-        if (mPager.hasNext() && !mPager.isLoading() && position == mPager.getLoadedData().size()) {
-            mPager.loadNext();
-        }
-
+        super.onBindViewHolder(holder, position);
         if (holder instanceof TeammatesViewHolder) {
             TeammatesViewHolder tholder = (TeammatesViewHolder) holder;
             final Context context = holder.itemView.getContext();
@@ -95,24 +69,8 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             } else {
                 tholder.mNet.setText(context.getString(R.string.teammate_net_format_string_zero));
             }
-            holder.itemView.setOnClickListener(v -> {
-                context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
-                        item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri));
-            });
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return mPager.getLoadedData().size() + (mPager.hasError() || mPager.isLoading() || mPager.hasNext() ? 1 : 0);
-    }
-
-    /**
-     * Destroy.
-     */
-    public void destroy() {
-        if (mDisposal != null && !mDisposal.isDisposed()) {
-            mDisposal.dispose();
+            holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
+                    item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
     }
 
@@ -130,18 +88,6 @@ public class TeammatesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         TeammatesViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-        }
-    }
-
-    static class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public LoadingViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    static class ErrorViewHolder extends RecyclerView.ViewHolder {
-        public ErrorViewHolder(View itemView) {
-            super(itemView);
         }
     }
 }
