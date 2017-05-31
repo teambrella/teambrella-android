@@ -73,7 +73,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TEAM_ID = "TeamId";
     public static final String ATTR_REQUEST_USER_ID = "UserId";
     public static final String ATTR_REQUEST_OFFSET = "Offset";
-    public static final String ATTR_REQUEST_LIMIT = "Count";
+    public static final String ATTR_REQUEST_LIMIT = "Limit";
 
 
     /*Response*/
@@ -99,9 +99,11 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_VER = "Ver";
     public static final String ATTR_DATA_USER_ID = "UserId";
     public static final String ATTR_DATA_AVATAR = "Avatar";
+    public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
+    public static final String ATTR_DATA_CLAIM_AMOUNT = "ClaimAmount";
     public static final String ATTR_DATA_YEAR = "Year";
     public static final String ATTR_DATA_UNREAD = "Unread";
     public static final String ATTR_DATA_CLAIM_LIMIT = "ClaimLimit";

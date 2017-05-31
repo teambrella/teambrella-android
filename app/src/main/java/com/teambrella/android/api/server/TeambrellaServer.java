@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.teambrella.android.api.TeambrellaAPI;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
@@ -108,6 +107,8 @@ public class TeambrellaServer {
             case TeambrellaUris.TEAMMATES_LIST: {
                 int teamId = TeambrellaUris.getTeamId(uri);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             }
             break;
             case TeambrellaUris.TEAMMATES_ONE: {
@@ -116,6 +117,11 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, ids.second);
             }
             break;
+            case TeambrellaUris.CLAIMS_LIST:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
                 break;
@@ -131,8 +137,6 @@ public class TeambrellaServer {
         String signature = mKey.signMessage(Long.toString(timestamp));
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
-                requestBody.add(TeambrellaModel.ATTR_REQUEST_OFFSET, new JsonPrimitive(Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET))));
-                requestBody.add(TeambrellaModel.ATTR_REQUEST_LIMIT, new JsonPrimitive(Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT))));
                 return mAPI.getTeammateList(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.TEAMMATES_ONE:
                 return mAPI.getTeammateOne(timestamp, publicKey, signature, requestBody);
@@ -144,6 +148,8 @@ public class TeambrellaServer {
             case TeambrellaUris.ME_REGISTER_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KEY_FACEBOOK_TOKEN);
                 return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
+            case TeambrellaUris.CLAIMS_LIST:
+                return mAPI.getClaimsList(timestamp, publicKey, signature, requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
@@ -163,7 +169,7 @@ public class TeambrellaServer {
             JsonElement resultCodeElement = status.get(TeambrellaModel.ATTR_STATUS_RESULT_CODE);
             int resultCode = !resultCodeElement.isJsonNull() ? resultCodeElement.getAsInt() : TeambrellaModel.VALUE_STATUS_RESULT_CODE_FATAL;
             JsonElement errorMessageElement = status.get(TeambrellaModel.ATTR_STATUS_ERROR_MESSAGE);
-            String errorMessage = errorMessageElement.isJsonNull() ? null : errorMessageElement.getAsString();
+            String errorMessage = errorMessageElement == null || errorMessageElement.isJsonNull() ? null : errorMessageElement.getAsString();
             JsonElement timestampElement = status.get(TeambrellaModel.ATTR_STATUS_TIMESTAMP);
             long timestamp = timestampElement.isJsonNull() ? 0 : timestampElement.getAsLong();
 

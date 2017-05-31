@@ -42,7 +42,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
                 case VIEW_TYPE_REGULAR:
-                    viewHolder = new TeammatesViewHolder(inflater.inflate(R.layout.teammate_list_item, parent, false));
+                    viewHolder = new TeammatesViewHolder(inflater.inflate(R.layout.list_item_teammate, parent, false));
                     break;
             }
         }

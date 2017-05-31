@@ -84,8 +84,16 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     }
 
     private void onNext(JsonObject data) {
-        JsonArray newData = data.get(TeambrellaModel.ATTR_DATA)
-                .getAsJsonObject().get(mProperty).getAsJsonArray();
+
+        JsonArray newData;
+
+        if (mProperty == null) {
+            newData = data.get(TeambrellaModel.ATTR_DATA).getAsJsonArray();
+        } else {
+            newData = data.get(TeambrellaModel.ATTR_DATA)
+                    .getAsJsonObject().get(mProperty).getAsJsonArray();
+        }
+
         mArray.addAll(newData);
         mHasNext = newData.size() == LIMIT;
         mIsLoading = false;

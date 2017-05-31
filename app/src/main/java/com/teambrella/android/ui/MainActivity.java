@@ -1,5 +1,6 @@
 package com.teambrella.android.ui;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
@@ -43,13 +47,15 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/AkkuratPro-Bold.otf");
 
         BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottom_bar);
         BottomNavigationViewHelper.removeShiftMode(navigationView);
+        setTypeface(navigationView, typeface);
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
-                .add(MainDataFragment.getInstance(2), DATA_PROVIDER_TAG).commit();
+                .add(MainDataFragment.getInstance(2006), DATA_PROVIDER_TAG).commit();
 
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -112,6 +118,24 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
     public IDataPager<JsonArray> getTeamListPager() {
         MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
         return dataFragment.getTeamListPager();
+    }
+
+    @Override
+    public IDataPager<JsonArray> getClaimsListPager() {
+        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
+        return dataFragment.getClaimsListPager();
+    }
+
+
+    private void setTypeface(ViewGroup viewGroup, Typeface typeface) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View view = viewGroup.getChildAt(i);
+            if (view instanceof TextView) {
+                ((TextView) view).setTypeface(typeface);
+            } else if (view instanceof ViewGroup) {
+                setTypeface((ViewGroup) view, typeface);
+            }
+        }
     }
 }
 

@@ -10,4 +10,6 @@ public interface IMainDataHost {
 
     IDataPager<JsonArray> getTeamListPager();
 
+    IDataPager<JsonArray> getClaimsListPager();
+
 }

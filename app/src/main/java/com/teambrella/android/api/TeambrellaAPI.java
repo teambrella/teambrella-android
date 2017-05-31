@@ -36,6 +36,14 @@ public interface TeambrellaAPI {
                                                      @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
+    @POST("claim/getList")
+    Observable<Response<JsonObject>> getClaimsList(@Header("t") long timestamp,
+                                                   @Header("key") String publicKey,
+                                                   @Header("sig") String signature,
+                                                   @Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
     @POST("me/GetUpdates")
     Observable<Response<JsonObject>> getUpdates(@Header("t") long timestamp,
                                                 @Header("key") String publicKey,

@@ -18,6 +18,7 @@ public class MainDataFragment extends Fragment {
     private static final String EXTRA_TEAM_ID = "teamId";
 
     private TeambrellaDataPagerLoader mTeamListDataLoader;
+    private TeambrellaDataPagerLoader mClaimListDataLoder;
 
     public static MainDataFragment getInstance(int teamId) {
         MainDataFragment fragment = new MainDataFragment();
@@ -35,9 +36,18 @@ public class MainDataFragment extends Fragment {
         mTeamListDataLoader = new TeambrellaDataPagerLoader(getContext(),
                 TeambrellaUris.getTeamUri(args.getInt(EXTRA_TEAM_ID)),
                 TeambrellaModel.ATTR_DATA_TEAMMATES);
+
+        mClaimListDataLoder = new TeambrellaDataPagerLoader(getContext(),
+                TeambrellaUris.getClaimsUri(args.getInt(EXTRA_TEAM_ID)),
+                null);
+
     }
 
     public IDataPager<JsonArray> getTeamListPager() {
         return mTeamListDataLoader;
+    }
+
+    public IDataPager<JsonArray> getClaimsListPager() {
+        return mClaimListDataLoder;
     }
 }

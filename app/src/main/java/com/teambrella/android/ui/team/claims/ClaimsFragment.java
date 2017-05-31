@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.team;
+package com.teambrella.android.ui.team.claims;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,15 +18,15 @@ import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Members fragment
+ * Claims fragment
  */
-public class MembersFragment extends MainProgressFragment {
+public class ClaimsFragment extends MainProgressFragment {
 
-    private static final String LOG_TAG = MembersFragment.class.getSimpleName();
+    private static final String LOG_TAG = ClaimsFragment.class.getSimpleName();
 
     private Disposable mDisposable;
     private RecyclerView mList;
-    private TeammatesRecyclerAdapter mAdapter;
+    private ClaimsAdapter mAdapter;
 
 
     @Override
@@ -34,10 +34,10 @@ public class MembersFragment extends MainProgressFragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mAdapter = new TeammatesRecyclerAdapter(mDataHost.getTeamListPager());
+        mAdapter = new ClaimsAdapter(mDataHost.getClaimsListPager());
         mList.setAdapter(mAdapter);
 
-        IDataPager<JsonArray> pager = mDataHost.getTeamListPager();
+        IDataPager<JsonArray> pager = mDataHost.getClaimsListPager();
         mDisposable = pager.getObservable()
                 .subscribe(this::onDataUpdated);
         return view;
@@ -46,7 +46,7 @@ public class MembersFragment extends MainProgressFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        IDataPager<JsonArray> pager = mDataHost.getTeamListPager();
+        IDataPager<JsonArray> pager = mDataHost.getClaimsListPager();
         if (pager.getLoadedData().size() == 0 && pager.hasNext()) {
             pager.loadNext();
             setContentShown(false);
