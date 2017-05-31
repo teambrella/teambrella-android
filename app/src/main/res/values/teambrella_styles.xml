@@ -46,4 +46,11 @@
     </style>
 
 
+    <style name="Teambrella.TextAppearence.Tab" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
 </resources>

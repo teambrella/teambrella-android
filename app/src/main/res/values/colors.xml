@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/warmBlue</color>
+    <color name="colorPrimaryDark">@color/frenchBlue</color>
+    <color name="colorAccent">@color/lipstick</color>
+
+    <color name="darkSkyBlue">#35abd9</color>
+    <color name="lightBlue">#4ec4f2</color>
+    <color name="frenchBlue">#424eb6</color>
+    <color name="warmBlue">#515edd</color>
+    <color name="lipstick">#dc2459</color>
+    <color name="tealish">#1fc0b6</color>
+    <color name="cornFlowerBlue">#5e69dc</color>
+    <color name="blueBlue">#2e3dcb</color>
+    <color name="blurple">#3745ce</color>
+    <color name="paleLilac">#e1e3ff</color>
+    <color name="blueGrey">#95a5b1</color>
+    <color name="robinEggBlue">#91e1ff</color>
+    <color name="dark">#2c3948</color>
+    <color name="bluishGrey">#7b8d9a</color>
+    <color name="lightGold">#ffd152</color>
+    <color name="lightBlueGrey">#dee6f3</color>
+    <color name="charcoalGrey">#3c4753</color>
+    <color name="divider">#d3d3d3</color>
+    <color name="blueWithAHintOfPurple">#414ecc</color>
 </resources>
