@@ -15,6 +15,22 @@
             android:layout_centerVertical="true" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/icon"
+            android:layout_alignTop="@+id/icon"
+            android:background="@drawable/teammate_indicator_background"
+            android:paddingBottom="1dp"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:paddingTop="1dp"
+            android:textColor="@android:color/white"
+            android:textSize="9sp"
+            android:translationX="8dp"
+            android:translationY="-4dp" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/net"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
