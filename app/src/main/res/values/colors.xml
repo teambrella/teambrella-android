@@ -23,4 +23,6 @@
     <color name="charcoalGrey">#3c4753</color>
     <color name="divider">#d3d3d3</color>
     <color name="blueWithAHintOfPurple">#414ecc</color>
+    <color name="listBackgroundColor">#F8FAFD</color>
+    <color name="listItemBackground">#FDFEFF</color>
 </resources>

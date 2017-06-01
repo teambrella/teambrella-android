@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:paddingBottom="7dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp">
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/teammates"
+        android:textAllCaps="true"
+        android:textSize="12sp" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/net"
+        android:textAllCaps="true"
+        android:textSize="10sp" />
+
+
+</RelativeLayout>
