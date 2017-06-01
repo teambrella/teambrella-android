@@ -22,4 +22,6 @@
 
     <string name="teammates">Teammates</string>
     <string name="net">Net</string>
+    <string name="cover_me">Cover me</string>
+    <string name="cover_them">Cover them</string>
 </resources>

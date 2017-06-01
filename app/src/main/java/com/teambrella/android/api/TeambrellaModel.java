@@ -149,4 +149,11 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";
     public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
 
+
+    public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
+    public static final String ATTR_DATA_ONE_BASIC = "BasicPart";
+    public static final String ATTR_DATA_ONE_DISCUSSION = "DiscussionPart";
+    public static final String ATTR_DATA_ONE_OBJECT = "ObjectPart";
+    public static final String ATTR_DATA_ONE_STATS = "StatsPart";
+
 }

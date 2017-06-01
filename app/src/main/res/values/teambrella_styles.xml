@@ -20,6 +20,15 @@
         <item name="android:layout_height">40dp</item>
     </style>
 
+    <style name="Teambrella.TextAppearence.ListItem.Indicator">
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingTop">1dp</item>
+    </style>
+
     <style name="Teambrella.TextAppearence.ListItem" />
 
     <style name="Teambrella.TextAppearence.ListItem.Title">
@@ -51,6 +60,37 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+
+    <style name="Teambrella.ListDivider">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:background">@color/paleGrey</item>
+    </style>
+
+    <style name="Teambrella.Teammate" />
+
+    <style name="Teambrella.Teammate.HeaderView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">210dp</item>
+        <item name="android:background">@drawable/user_profile_background</item>
+    </style>
+
+    <style name="Teambrella.Teammate.Avatar">
+        <item name="android:layout_height">88dp</item>
+        <item name="android:layout_width">88dp</item>
+    </style>
+
+    <style name="Teambrella.Teammate.HeaderView.TextAppearence" />
+
+    <style name="Teambrella.Teammate.HeaderView.TextAppearence.Subtitle" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/blueGrey</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 

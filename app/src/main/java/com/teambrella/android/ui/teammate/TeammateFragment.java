@@ -90,7 +90,7 @@ public class TeammateFragment extends ProgressFragment {
     private void onResult(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonObject data = notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + data.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+            Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                     .into(mUserPicture);
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
