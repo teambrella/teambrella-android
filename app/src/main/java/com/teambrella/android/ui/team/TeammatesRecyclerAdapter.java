@@ -28,6 +28,8 @@ import butterknife.ButterKnife;
  */
 public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
+    private static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 1;
+
     /**
      * Constructor.
      */
@@ -44,9 +46,40 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_REGULAR:
                     viewHolder = new TeammatesViewHolder(inflater.inflate(R.layout.list_item_teammate, parent, false));
                     break;
+                case VIEW_TYPE_HEADER_TEAMMATES:
+                    viewHolder = new RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_teammates_header, parent, false)) {
+                    };
             }
         }
         return viewHolder;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == 0) {
+            return VIEW_TYPE_HEADER_TEAMMATES;
+        }
+
+        int size = mPager.getLoadedData().size() + 1;
+
+        if (position == size) {
+            if (mPager.hasError()) {
+                return VIEW_TYPE_ERROR;
+            } else if (mPager.hasNext() || mPager.isLoading()) {
+                return VIEW_TYPE_LOADING;
+            } else {
+                throw new RuntimeException();
+            }
+        }
+
+        return VIEW_TYPE_REGULAR;
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
     }
 
     @Override
@@ -55,7 +88,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof TeammatesViewHolder) {
             TeammatesViewHolder tholder = (TeammatesViewHolder) holder;
             final Context context = holder.itemView.getContext();
-            final JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
+            final JsonObject item = mPager.getLoadedData().get(position - 1).getAsJsonObject();
 
             final String userPictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
             Picasso.with(context).load(userPictureUri).into(tholder.mIcon);
@@ -69,6 +102,11 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             } else {
                 tholder.mNet.setText(context.getString(R.string.teammate_net_format_string_zero));
             }
+
+            if (position == mPager.getLoadedData().size()) {
+                tholder.mDivider.setVisibility(View.INVISIBLE);
+            }
+
             holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
                     item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
@@ -84,6 +122,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         TextView mObject;
         @BindView(R.id.net)
         TextView mNet;
+        @BindView(R.id.divider)
+        View mDivider;
 
         TeammatesViewHolder(View itemView) {
             super(itemView);
