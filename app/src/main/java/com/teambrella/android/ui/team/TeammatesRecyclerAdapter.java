@@ -107,6 +107,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                 tholder.mDivider.setVisibility(View.INVISIBLE);
             }
 
+            tholder.mRisk.setText(context.getString(R.string.risk_format_string, item.get(TeambrellaModel.ATTR_DATA_RISK).getAsFloat()));
+
             holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
                     item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
@@ -124,6 +126,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         TextView mNet;
         @BindView(R.id.divider)
         View mDivider;
+        @BindView(R.id.indicator)
+        TextView mRisk;
 
         TeammatesViewHolder(View itemView) {
             super(itemView);
