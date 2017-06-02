@@ -85,12 +85,65 @@
 
     <style name="Teambrella.Teammate.HeaderView.TextAppearence" />
 
-    <style name="Teambrella.Teammate.HeaderView.TextAppearence.Subtitle" parent="TextAppearance.AppCompat">
+    <style name="Teambrella.Teammate.Section" />
+
+    <style name="Teambrella.Teammate.Section.TextAppearence" />
+
+
+    <style name="Teambrella.Teammate.Section.TextAppearence.Normal">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/charcoalGrey</item>
+    </style>
+
+
+    <style name="Teambrella.Teammate.Section.TextAppearence.Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/charcoalGrey</item>
+    </style>
+
+    <style name="Teambrella.Teammate.Section.TextAppearence.Info">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/blueGrey</item>
+    </style>
+
+    <style name="Teambrella.Teammate.Section.TextAppearence.Header">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/darkSkyBlue</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Teambrella.Teammate.HeaderView.TextAppearence.CoverTitle" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">@color/blueGrey</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Teambrella.Teammate.HeaderView.TextAppearence.CoverValue" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Teambrella.Teammate.HeaderView.TextAppearence.CoverCurrency" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@color/darkSkyBlue</item>
+        <item name="android:text">USD</item>
+        <item name="android:gravity">center</item>
     </style>
 
 

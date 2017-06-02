@@ -99,6 +99,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_VER = "Ver";
     public static final String ATTR_DATA_USER_ID = "UserId";
     public static final String ATTR_DATA_AVATAR = "Avatar";
+    public static final String ATTR_DATA_COVER_ME = "TheyCoverMeAmount";
+    public static final String ATTR_DATA_COVER_THEM = "ICoverThemAmount";
+    public static final String ATTR_DATA_SMALL_PHOTOS = "SmallPhotos";
     public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
     public static final String ATTR_DATA_FB_NAME = "FBName";
@@ -110,6 +113,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RISK = "Risk";
     public static final String ATTR_DATA_RISK_VOTED = "RiskVoted";
     public static final String ATTR_DATA_TOTALLY_PAID = "TotallyPaid";
+    public static final String ATTR_DATA_TOTALLY_PAID_AMOUNT = "TotallyPaidAmount";
     public static final String ATTR_DATA_IS_JOINING = "IsJoining";
     public static final String ATTR_DATA_IS_VOTING = "IsVoting";
     public static final String ATTR_DATA_CLAIMS_COUNT = "ClaimsCount";
