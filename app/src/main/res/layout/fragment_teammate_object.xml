@@ -37,7 +37,7 @@
         android:layout_marginStart="24dp"
         app:layout_constraintStart_toEndOf="@id/object_picture"
         app:layout_constraintTop_toTopOf="@+id/object_picture"
-        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteX="120dp"
         tools:text="Audi A6, 2007" />
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -47,7 +47,8 @@
         android:layout_height="wrap_content"
         android:text="@string/collision_deductible"
         app:layout_constraintBottom_toBottomOf="@+id/object_picture"
-        app:layout_constraintStart_toStartOf="@id/model" />
+        app:layout_constraintStart_toStartOf="@id/model"
+        tools:layout_editor_absoluteX="120dp" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
@@ -56,9 +57,10 @@
         android:text="@string/coverage_type"
         app:layout_constraintBottom_toTopOf="@+id/coverage_type"
         app:layout_constraintStart_toStartOf="@id/model"
-        tools:layout_editor_absoluteX="96dp" />
+        tools:layout_editor_absoluteX="120dp" />
 
     <LinearLayout
+        android:id="@+id/stats"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -127,6 +129,19 @@
 
 
     </LinearLayout>
+
+
+    <Button
+        android:id="@+id/see_claims"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/see_claims"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stats"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>

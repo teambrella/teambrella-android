@@ -32,4 +32,11 @@
 
     <string name="limit">Limit</string>
     <string name="risk_factor">Risk Factor</string>
+    <string name="see_claims">See Claims</string>
+    <string name="voting_stats">Voting Stats</string>
+    <string name="weight">Weight</string>
+    <string name="proxy_rank">Proxy Rank</string>
+
+    <string name="decisions">Decisions</string>
+
 </resources>

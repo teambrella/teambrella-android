@@ -5,100 +5,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/listBackgroundColor"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            style="@style/Teambrella.Teammate.HeaderView"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/listBackgroundColor"
             android:orientation="vertical">
 
+            <LinearLayout
+                style="@style/Teambrella.Teammate.HeaderView"
+                android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="88dp"
-                android:layout_marginTop="42dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_picture"
-                    style="@style/Teambrella.Teammate.Avatar"
-                    android:layout_centerInParent="true" />
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@id/user_picture"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_height="88dp"
+                    android:layout_marginTop="42dp">
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverTitle"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="bottom|center_horizontal"
-                        android:text="@string/cover_me" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_picture"
+                        style="@style/Teambrella.Teammate.Avatar"
+                        android:layout_centerInParent="true" />
 
-                    <com.teambrella.android.ui.widget.AmountWidget
-                        android:id="@+id/cover_me"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="6dp"
-                        android:layout_weight="1" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/user_picture"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                </LinearLayout>
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverTitle"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="bottom|center_horizontal"
+                            android:text="@string/cover_me" />
+
+                        <com.teambrella.android.ui.widget.AmountWidget
+                            android:id="@+id/cover_me"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
 
 
-                <LinearLayout
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/user_picture"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverTitle"
+                            android:layout_height="0dp"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal|bottom"
+                            android:text="@string/cover_them" />
+
+
+                        <com.teambrella.android.ui.widget.AmountWidget
+                            android:id="@+id/cover_them"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/user_name"
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.Title"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_toEndOf="@id/user_picture"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14sp"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    tools:text="Denis Vasilin" />
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverTitle"
-                        android:layout_height="0dp"
-                        android:layout_gravity="bottom"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal|bottom"
-                        android:text="@string/cover_them" />
+            </LinearLayout>
 
-
-                    <com.teambrella.android.ui.widget.AmountWidget
-                        android:id="@+id/cover_them"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="6dp"
-                        android:layout_weight="1" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/user_name"
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Title"
+            <fragment
+                android:name="com.teambrella.android.ui.teammate.TeammateObjectFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14sp"
-                android:gravity="center"
-                tools:text="Denis Vasilin" />
+                android:layout_margin="16dp"
+                android:tag="teammate_object" />
+
+            <fragment
+                android:name="com.teambrella.android.ui.teammate.TeammateVotingStatsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:tag="teammate_voting_stats" />
+
 
         </LinearLayout>
 
-        <fragment
-            android:name="com.teambrella.android.ui.teammate.TeammateObjectFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:tag="teammate_object" />
 
-
-    </LinearLayout>
+    </ScrollView>
 
 
 </android.support.v4.widget.SwipeRefreshLayout>

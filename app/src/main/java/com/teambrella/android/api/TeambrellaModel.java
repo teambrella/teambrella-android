@@ -104,6 +104,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_SMALL_PHOTOS = "SmallPhotos";
     public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
+    public static final String ATTR_DATA_WEIGHT = "Weight";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
     public static final String ATTR_DATA_CLAIM_AMOUNT = "ClaimAmount";
@@ -111,6 +112,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_UNREAD = "Unread";
     public static final String ATTR_DATA_CLAIM_LIMIT = "ClaimLimit";
     public static final String ATTR_DATA_RISK = "Risk";
+    public static final String ATTR_DATA_PROXY_RANK = "ProxyRank";
     public static final String ATTR_DATA_RISK_VOTED = "RiskVoted";
     public static final String ATTR_DATA_TOTALLY_PAID = "TotallyPaid";
     public static final String ATTR_DATA_TOTALLY_PAID_AMOUNT = "TotallyPaidAmount";

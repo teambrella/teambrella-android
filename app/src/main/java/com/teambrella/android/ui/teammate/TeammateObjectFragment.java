@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -38,6 +39,7 @@ public class TeammateObjectFragment extends ATeammateFragment {
         mLimit = (AmountWidget) view.findViewById(R.id.limit);
         mNet = (AmountWidget) view.findViewById(R.id.net);
         mRisk = (TextView) view.findViewById(R.id.risk);
+        view.findViewById(R.id.see_claims).setOnClickListener(v -> Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show());
         return view;
     }
 
