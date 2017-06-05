@@ -18,6 +18,7 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import io.reactivex.Notification;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Teammate Object Fragment
@@ -53,7 +54,9 @@ public class TeammateObjectFragment extends ATeammateFragment {
             if (objectData != null) {
                 JsonArray photos = objectData.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
                 if (photos != null && photos.size() > 0) {
-                    Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
+                    Picasso.with(getContext())
+                            .load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
+                            .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                             .into(mObjectPicture);
                 }
                 mObjectModel.setText(objectData.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());

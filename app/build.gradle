@@ -69,6 +69,7 @@ dependencies {
     /*Image Loader*/
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'jp.wasabeef:picasso-transformations:2.1.2'
 
     /* *Facebook SDK*/
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
