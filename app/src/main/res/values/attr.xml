@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PercentageWidget">
+        <attr name="percentageDrawable" format="integer" />
+    </declare-styleable>
+
+</resources>
