@@ -82,40 +82,11 @@
             android:layout_weight="1"
             android:text="@string/decisions" />
 
-        <android.support.constraint.ConstraintLayout
+        <com.teambrella.android.ui.widget.PercentageWidget
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <ProgressBar
-                android:id="@+id/decision_progress"
-                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="4dp"
-                android:layout_weight="1"
-                android:progress="50"
-                android:progressDrawable="@drawable/decisions_progress_drawable"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="50%"
-                app:layout_constraintBottom_toTopOf="@id/decision_progress"
-                app:layout_constraintStart_toStartOf="@id/decision_progress" />
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="mild"
-                app:layout_constraintBottom_toTopOf="@id/decision_progress"
-                app:layout_constraintEnd_toEndOf="@id/decision_progress" />
-
-        </android.support.constraint.ConstraintLayout>
+            android:layout_weight="1"
+            app:percentageDrawable="@drawable/decisions_progress_drawable" />
 
 
     </LinearLayout>

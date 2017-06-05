@@ -24,7 +24,7 @@ public class TeammateVotingStatsFragment extends ATeammateFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmnt_teammate_voting_stats, container, false);
+        View view = inflater.inflate(R.layout.fragment_teammate_voting_stats, container, false);
         mWeight = (TextView) view.findViewById(R.id.weight);
         mProxyRank = (TextView) view.findViewById(R.id.proxy_rank);
         return view;
