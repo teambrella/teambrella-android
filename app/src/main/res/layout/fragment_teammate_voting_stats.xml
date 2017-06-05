@@ -92,4 +92,57 @@
     </LinearLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/discussions" />
+
+        <com.teambrella.android.ui.widget.PercentageWidget
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:percentageDrawable="@drawable/discussions_progress_drawable" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/voting_frequency" />
+
+        <com.teambrella.android.ui.widget.PercentageWidget
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:percentageDrawable="@drawable/voting_frequency_progress_drawable" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add_to_proxies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/add_to_my_proxies"
+        android:textColor="@color/lightBlue" />
+
 </LinearLayout>
