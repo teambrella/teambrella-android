@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import io.reactivex.Notification;
@@ -23,13 +26,22 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Teammate Object Fragment
  */
-public class TeammateObjectFragment extends ATeammateFragment {
+public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
     private ImageView mObjectPicture;
     private TextView mObjectModel;
     private AmountWidget mLimit;
     private AmountWidget mNet;
     private TextView mRisk;
+
+
+    public static TeammateObjectFragment getInstance(String dataTag) {
+        TeammateObjectFragment fragment = new TeammateObjectFragment();
+        Bundle args = new Bundle();
+        args.putString(EXTRA_DATA_FRAGMENT_TAG, dataTag);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -53,9 +65,13 @@ public class TeammateObjectFragment extends ATeammateFragment {
             JsonObject objectBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
             if (objectData != null) {
                 JsonArray photos = objectData.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
+                Resources resources = getContext().getResources();
                 if (photos != null && photos.size() > 0) {
                     Picasso.with(getContext())
                             .load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
+                            .resize(resources.getDimensionPixelSize(R.dimen.teammate_object_picture_width)
+                                    , resources.getDimensionPixelSize(R.dimen.teammate_object_picture_height))
+                            .centerCrop()
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                             .into(mObjectPicture);
                 }

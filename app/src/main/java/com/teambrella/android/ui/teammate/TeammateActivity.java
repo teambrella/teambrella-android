@@ -7,20 +7,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
-
-import io.reactivex.Notification;
-import io.reactivex.Observable;
+import com.teambrella.android.ui.base.ADataHostActivity;
 
 /**
  * Teammate screen.
  */
-public class TeammateActivity extends AppCompatActivity implements ITeammateDataHost {
+public class TeammateActivity extends ADataHostActivity {
 
     private static final String TEAMMATE_URI = "teammate_uri";
     private static final String TEAMMATE_NAME = "teammate_name";
@@ -48,16 +44,10 @@ public class TeammateActivity extends AppCompatActivity implements ITeammateData
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentManager.findFragmentByTag(DATA_FRAGMENT) == null) {
-            fragmentManager.beginTransaction()
-                    .add(TeambrellaDataFragment
-                            .getInstance(getIntent().getParcelableExtra(TEAMMATE_URI)), DATA_FRAGMENT)
-                    .commit();
-        }
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, new TeammateFragment(), UI_FRAGMENT)
+                    .add(R.id.container, TeammateFragment.getInstance(DATA_FRAGMENT), UI_FRAGMENT)
                     .commit();
         }
 
@@ -78,17 +68,19 @@ public class TeammateActivity extends AppCompatActivity implements ITeammateData
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public Observable<Notification<JsonObject>> getTeammateObservable() {
-        TeambrellaDataFragment fragment = (TeambrellaDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_FRAGMENT);
-        return fragment != null ? fragment.getObservable() : null;
+    protected String[] getDataTag() {
+        return new String[]{DATA_FRAGMENT};
     }
 
     @Override
-    public void loadTeammate() {
-        TeambrellaDataFragment fragment = (TeambrellaDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_FRAGMENT);
-        if (fragment != null) {
-            fragment.load();
+    protected TeambrellaDataFragment getDataFragment(String tag) {
+        switch (tag) {
+            case DATA_FRAGMENT:
+                return TeambrellaDataFragment
+                        .getInstance(getIntent().getParcelableExtra(TEAMMATE_URI));
         }
+        return null;
     }
 }

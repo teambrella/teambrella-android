@@ -94,19 +94,17 @@
 
             </LinearLayout>
 
-            <fragment
-                android:name="com.teambrella.android.ui.teammate.TeammateObjectFragment"
+            <FrameLayout
+                android:id="@+id/object_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:tag="teammate_object" />
+                android:layout_margin="16dp" />
 
-            <fragment
-                android:name="com.teambrella.android.ui.teammate.TeammateVotingStatsFragment"
+            <FrameLayout
+                android:id="@+id/voting_statistics_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:tag="teammate_voting_stats" />
+                android:layout_margin="16dp" />
 
 
         </LinearLayout>

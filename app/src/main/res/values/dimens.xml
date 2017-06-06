@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="teammate_object_picture_width">96dp</dimen>
+    <dimen name="teammate_object_picture_height">80dp</dimen>
+
+</resources>

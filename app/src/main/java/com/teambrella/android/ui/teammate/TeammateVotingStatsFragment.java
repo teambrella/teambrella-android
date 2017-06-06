@@ -10,16 +10,28 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.base.ADataFragment;
 
 import io.reactivex.Notification;
 
 /**
  * Voting statistics
  */
-public class TeammateVotingStatsFragment extends ATeammateFragment {
+public class TeammateVotingStatsFragment extends ADataFragment<IDataHost> {
 
     private TextView mWeight;
     private TextView mProxyRank;
+
+
+    public static TeammateVotingStatsFragment getInstance(String dataTag) {
+        TeammateVotingStatsFragment fragment = new TeammateVotingStatsFragment();
+        Bundle args = new Bundle();
+        args.putString(EXTRA_DATA_FRAGMENT_TAG, dataTag);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Nullable
     @Override

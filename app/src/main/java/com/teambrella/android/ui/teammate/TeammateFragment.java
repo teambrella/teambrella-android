@@ -2,6 +2,8 @@ package com.teambrella.android.ui.teammate;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,8 @@ import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import io.reactivex.Notification;
@@ -22,7 +26,11 @@ import io.reactivex.Notification;
 /**
  * Teammate fragment.
  */
-public class TeammateFragment extends ATeammateProgressFragment {
+public class TeammateFragment extends ADataProgressFragment<IDataHost> {
+
+    private static final String OBJECT_FRAGMENT_TAG = "object_tag";
+    private static final String VOTING_STATS_FRAGMENT_TAG = "voting_stats_tag";
+
 
     private ImageView mUserPicture;
 
@@ -34,6 +42,15 @@ public class TeammateFragment extends ATeammateProgressFragment {
 
     private AmountWidget mCoverThem;
 
+    public static TeammateFragment getInstance(String dataTag) {
+        TeammateFragment fragment = new TeammateFragment();
+        Bundle args = new Bundle();
+        args.putString(EXTRA_DATA_FRAGMENT_TAG, dataTag);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_teammate, container, false);
@@ -43,15 +60,33 @@ public class TeammateFragment extends ATeammateProgressFragment {
         mCoverThem = (AmountWidget) view.findViewById(R.id.cover_them);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
         if (savedInstanceState == null) {
-            mTeammateDataHost.loadTeammate();
+            mDataHost.load(mTag);
             setContentShown(false);
         }
         mSwipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        if (fragmentManager.findFragmentByTag(OBJECT_FRAGMENT_TAG) == null) {
+            transaction.add(R.id.object_info_container, TeammateObjectFragment.getInstance(mTag), OBJECT_FRAGMENT_TAG);
+        }
+
+        if (fragmentManager.findFragmentByTag(VOTING_STATS_FRAGMENT_TAG) == null) {
+            transaction.add(R.id.voting_statistics_container, TeammateVotingStatsFragment.getInstance(mTag), OBJECT_FRAGMENT_TAG);
+        }
+
+        if (!transaction.isEmpty()) {
+            transaction.commit();
+        }
+    }
+
     private void onRefresh() {
-        mTeammateDataHost.loadTeammate();
+        mDataHost.load(mTag);
     }
 
     @Override
