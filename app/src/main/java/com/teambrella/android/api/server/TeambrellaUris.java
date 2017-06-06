@@ -24,6 +24,7 @@ public class TeambrellaUris {
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
+    static final String KEY_ID = "Id";
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static final int TEAMMATES_LIST = 1;
@@ -31,6 +32,7 @@ public class TeambrellaUris {
     static final int ME_UPDATES = 3;
     static final int ME_REGISTER_KEY = 4;
     static final int CLAIMS_LIST = 5;
+    static final int CLAIMS_ONE = 6;
 
 
     static {
@@ -39,6 +41,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_UPDATES, ME_UPDATES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER, ME_REGISTER_KEY);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_LIST, CLAIMS_LIST);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_ONE, CLAIMS_ONE);
     }
 
 
@@ -64,6 +67,15 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_LIST)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getClaimUri(int claimId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_ONE)
+                .appendQueryParameter(KEY_ID, Integer.toString(claimId))
                 .build();
     }
 

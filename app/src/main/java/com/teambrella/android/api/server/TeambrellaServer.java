@@ -122,6 +122,8 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
+            case TeambrellaUris.CLAIMS_ONE:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
                 break;
@@ -150,6 +152,8 @@ public class TeambrellaServer {
                 return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
             case TeambrellaUris.CLAIMS_LIST:
                 return mAPI.getClaimsList(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.CLAIMS_ONE:
+                return mAPI.getClaim(timestamp, publicKey, signature, requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

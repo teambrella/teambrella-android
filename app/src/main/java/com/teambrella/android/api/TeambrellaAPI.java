@@ -42,6 +42,13 @@ public interface TeambrellaAPI {
                                                    @Header("sig") String signature,
                                                    @Body JsonElement body);
 
+    @Headers("Content-Type: application/json")
+    @POST("claim/getOne")
+    Observable<Response<JsonObject>> getClaim(@Header("t") long timestamp,
+                                              @Header("key") String publicKey,
+                                              @Header("sig") String signature,
+                                              @Body JsonElement body);
+
 
     @Headers("Content-Type: application/json")
     @POST("me/GetUpdates")
@@ -56,4 +63,5 @@ public interface TeambrellaAPI {
                                                  @Header("key") String publicKey,
                                                  @Header("sig") String signature,
                                                  @Query("facebookToken") String facebookToken);
+
 }
