@@ -103,11 +103,14 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_COVER_ME = "TheyCoverMeAmount";
     public static final String ATTR_DATA_COVER_THEM = "ICoverThemAmount";
     public static final String ATTR_DATA_SMALL_PHOTOS = "SmallPhotos";
+    public static final String ATTR_DATA_BIG_PHOTOS = "BigPhotos";
     public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
     public static final String ATTR_DATA_WEIGHT = "Weight";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
+    public static final String ATTR_DATA_ORIGINAL_POST_TEXT = "OriginalPostText";
+    public static final String ATTR_DATA_UNREAD_COUNT = "UnreadCount";
     public static final String ATTR_DATA_CLAIM_AMOUNT = "ClaimAmount";
     public static final String ATTR_DATA_YEAR = "Year";
     public static final String ATTR_DATA_UNREAD = "Unread";

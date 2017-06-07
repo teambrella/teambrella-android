@@ -146,5 +146,15 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="Teambrella.TextAppearence.MessageTitle">
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Teambrella.TextAppearence.MessageText">
+        <item name="android:textColor">@color/bluishGrey</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 
 </resources>

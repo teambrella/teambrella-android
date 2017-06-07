@@ -42,4 +42,7 @@
     <string name="voting_frequency">Voting Frequency</string>
     <string name="add_to_my_proxies">Add to my proxy voters</string>
 
+
+    <string name="claim_title_format_string">Claim %d</string>
+
 </resources>

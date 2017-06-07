@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
-                .add(MainDataFragment.getInstance(2), DATA_PROVIDER_TAG).commit();
+                .add(MainDataFragment.getInstance(2006), DATA_PROVIDER_TAG).commit();
 
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
