@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 
 import io.reactivex.Notification;
@@ -82,14 +82,15 @@ public class ClaimFragment extends ADataProgressFragment<IDataHost> {
             if (claimBasic != null) {
                 JsonArray photos = claimBasic.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
                 if (photos != null && photos.size() > 0) {
-                    Picasso.with(getContext())
+                    TeambrellaImageLoader.getInstance(getContext()).getPicasso()
                             .load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
                             .into(mClaimPicture);
                 }
 
                 String avatar = claimBasic.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
                 if (avatar != null) {
-                    Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + avatar).into(mTeammatePicture);
+                    TeambrellaImageLoader.getInstance(getContext()).getPicasso()
+                            .load(TeambrellaServer.AUTHORITY + avatar).into(mTeammatePicture);
                 }
             }
 

@@ -17,8 +17,12 @@ import com.teambrella.android.api.TeambrellaServerException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 
+import java.io.IOException;
+
 import io.reactivex.Observable;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -97,6 +101,10 @@ public class TeambrellaServer {
                     }
                     return Observable.error(throwable);
                 });
+    }
+
+    public OkHttpClient getHttpClient() {
+       return new OkHttpClient.Builder().addInterceptor(new HeaderInterceptor()).build();
     }
 
 
@@ -191,6 +199,22 @@ public class TeambrellaServer {
 
     private void updateTimestamp(long timestamp) {
         mPreferences.edit().putLong(TIMESTAMP_KEY, timestamp).apply();
+    }
+
+
+    private class HeaderInterceptor implements Interceptor {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
+            Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
+            String publicKey = mKey.getPublicKeyAsHex();
+            String signature = mKey.signMessage(Long.toString(timestamp));
+            Request newRequest = chain.request().newBuilder()
+                    .addHeader("t", Long.toString(timestamp))
+                    .addHeader("key", publicKey)
+                    .addHeader("sig", signature)
+                    .build();
+            return chain.proceed(newRequest);
+        }
     }
 
 

@@ -51,7 +51,7 @@ public class ClaimDetailsFragment extends ADataFragment<IDataHost> {
             JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
             JsonObject basic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
             mClaimAmount.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble())));
-            mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES).getAsDouble())));
+            //mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES).getAsDouble())));
             mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_DETUCTIBLE).getAsDouble())));
             mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_COVERAGE).getAsDouble() * 100)));
         }
