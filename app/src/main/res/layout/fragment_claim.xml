@@ -24,6 +24,7 @@
                     android:id="@+id/claim_picture"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:scaleType="centerCrop"
                     app:layout_constraintDimensionRatio="H,375:184"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

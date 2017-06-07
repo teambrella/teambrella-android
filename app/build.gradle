@@ -70,6 +70,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'jp.wasabeef:picasso-transformations:2.1.2'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
     /* *Facebook SDK*/
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
