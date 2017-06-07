@@ -24,6 +24,21 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
 
     protected String mTag;
 
+
+    public static <T extends ADataFragment> T getInstance(String tag, Class<T> clazz) {
+        T fragment;
+        try {
+            fragment = clazz.newInstance();
+        } catch (java.lang.InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("unable to create fragment");
+        }
+
+        Bundle args = new Bundle();
+        args.putString(EXTRA_DATA_FRAGMENT_TAG, tag);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

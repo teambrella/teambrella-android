@@ -2,6 +2,7 @@ package com.teambrella.android.ui.claim;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import io.reactivex.Notification;
  * Claim fragment
  */
 public class ClaimFragment extends ADataProgressFragment<IDataHost> {
+
+    private static final String DETAILS_FRAGMENT_TAG = "details";
 
     private ImageView mClaimPicture;
     private ImageView mTeammatePicture;
@@ -48,6 +51,26 @@ public class ClaimFragment extends ADataProgressFragment<IDataHost> {
             setContentShown(false);
         }
         return view;
+    }
+
+    /**
+     * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
+     * has returned, but before any saved state has been restored in to the view.
+     * This gives subclasses a chance to initialize themselves once
+     * they know their view hierarchy has been completely created.  The fragment's
+     * view hierarchy is not however attached to its parent at this point.
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     */
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        if (fragmentManager.findFragmentByTag(DETAILS_FRAGMENT_TAG) == null) {
+            fragmentManager.beginTransaction().add(R.id.details_container, ClaimDetailsFragment.getInstance(mTag), DETAILS_FRAGMENT_TAG)
+                    .commit();
+        }
     }
 
     @Override

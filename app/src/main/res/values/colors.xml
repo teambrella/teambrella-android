@@ -26,4 +26,5 @@
     <color name="listBackgroundColor">#F8FAFD</color>
     <color name="listItemBackground">#FDFEFF</color>
     <color name="paleGrey">#e8edf2</color>
+    <color name="battleshipGrey">#66737d</color>
 </resources>

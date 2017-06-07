@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/claim_details" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/claim_amount" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/claim_amount"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/battleshipGrey" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/estimated_expenses" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/estimated_expenses"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/battleshipGrey" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/deductible" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/deductible"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/battleshipGrey" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/coverage" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/coverage"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/battleshipGrey" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/incident_date" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/incident_date"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="24 June 2016"
+            android:textColor="@color/battleshipGrey" />
+
+    </LinearLayout>
+
+</LinearLayout>
