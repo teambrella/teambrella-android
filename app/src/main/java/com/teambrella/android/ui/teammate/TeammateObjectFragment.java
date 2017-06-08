@@ -3,6 +3,7 @@ package com.teambrella.android.ui.teammate;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,10 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.image.ImageViewerActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
+
+import java.util.ArrayList;
 
 import io.reactivex.Notification;
 import jp.wasabeef.picasso.transformations.MaskTransformation;
@@ -74,6 +78,16 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                             .centerCrop()
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                             .into(mObjectPicture);
+
+                    final ArrayList<String> uris = new ArrayList<>();
+                    for (int i = 0; i < photos.size(); i++) {
+                        uris.add(TeambrellaServer.AUTHORITY + photos.get(i).getAsString());
+                    }
+
+                    mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), uris),
+                            ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation(getActivity(), mObjectPicture, TeambrellaServer.AUTHORITY + photos.get(0).getAsString()).toBundle()));
+
                 }
                 mObjectModel.setText(objectData.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());
                 mLimit.setAmount(Math.round(objectData.get(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT).getAsFloat()));

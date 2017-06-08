@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 
@@ -37,6 +38,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
+        supportPostponeEnterTransition();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         final ArrayList<String> uris = getIntent().getStringArrayListExtra(EXTRA_URIS);
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -69,7 +71,18 @@ public class ImageViewerActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
+            imageView.setTransitionName(getArguments().getString(EXTRA_URI));
+            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView, new Callback() {
+                @Override
+                public void onSuccess() {
+                    getActivity().supportStartPostponedEnterTransition();
+                }
+
+                @Override
+                public void onError() {
+                    getActivity().supportStartPostponedEnterTransition();
+                }
+            });
             return imageView;
         }
     }
