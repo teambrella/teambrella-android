@@ -22,6 +22,7 @@
         android:layout_width="@dimen/teammate_object_picture_width"
         android:layout_height="@dimen/teammate_object_picture_height"
         android:layout_marginTop="41dp"
+        android:transitionName="image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
