@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
@@ -34,6 +36,22 @@ public class ClaimActivity extends ADataHostActivity {
         if (fragmentManager.findFragmentByTag(UI_TAG) == null) {
             fragmentManager.beginTransaction().add(R.id.container, ClaimFragment.getInstance(DATA_TAG), UI_TAG).commit();
         }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

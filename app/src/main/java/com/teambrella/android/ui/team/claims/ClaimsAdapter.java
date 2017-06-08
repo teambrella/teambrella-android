@@ -16,6 +16,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 
@@ -58,8 +59,10 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
             final String objectPictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTO).getAsString();
             final String teammatePictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
-            Picasso.with(context).load(objectPictureUri).into(claimViewHolder.mIcon);
-            Picasso.with(context).load(teammatePictureUri).into(claimViewHolder.mTeammateIcon);
+            Picasso picasso = TeambrellaImageLoader.getInstance(context).getPicasso();
+
+            picasso.load(objectPictureUri).into(claimViewHolder.mIcon);
+            picasso.load(teammatePictureUri).into(claimViewHolder.mTeammateIcon);
             claimViewHolder.mTitle.setText(item.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());
             claimViewHolder.mObject.setText(item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
             claimViewHolder.mNet.setText("$" + Math.round(item.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble()));

@@ -36,8 +36,8 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    public static final String AUTHORITY = "http://94.72.4.72/";
-    //public static final String AUTHORITY = "http://192.168.0.222/";
+    //public static final String AUTHORITY = "http://94.72.4.72/";
+    public static final String AUTHORITY = "http://192.168.0.222/";
 
     /**
      * Shared preference
@@ -104,7 +104,7 @@ public class TeambrellaServer {
     }
 
     public OkHttpClient getHttpClient() {
-       return new OkHttpClient.Builder().addInterceptor(new HeaderInterceptor()).build();
+        return new OkHttpClient.Builder().addInterceptor(new HeaderInterceptor()).build();
     }
 
 
@@ -145,6 +145,7 @@ public class TeambrellaServer {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = mKey.getPublicKeyAsHex();
         String signature = mKey.signMessage(Long.toString(timestamp));
+        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AVATAR_SIZE, 256);
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
                 return mAPI.getTeammateList(timestamp, publicKey, signature, requestBody);

@@ -43,6 +43,10 @@
             android:name=".ui.claim.ClaimActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.image.ImageViewerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="com.teambrella.android.provider"
