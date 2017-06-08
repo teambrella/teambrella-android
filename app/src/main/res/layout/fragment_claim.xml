@@ -20,8 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/claim_picture"
+                <com.teambrella.android.ui.widget.ImagePager
+                    android:id="@+id/image_pager"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
@@ -43,7 +43,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:layout_editor_absoluteX="16dp" />
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
