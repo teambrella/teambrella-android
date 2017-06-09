@@ -3,5 +3,6 @@
 
     <dimen name="teammate_object_picture_width">96dp</dimen>
     <dimen name="teammate_object_picture_height">80dp</dimen>
-
+    <dimen name="claim_object_picture_height">40dp</dimen>
+    <dimen name="claim_object_picture_with">40dp</dimen>
 </resources>

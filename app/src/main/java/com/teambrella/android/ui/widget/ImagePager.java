@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 public class ImagePager extends FrameLayout {
 
     private ViewPager mPager;
+    private LinearLayout mIndicator;
 
     public ImagePager(@NonNull Context context) {
         super(context);
@@ -48,6 +50,7 @@ public class ImagePager extends FrameLayout {
     private void init() {
         inflate(getContext(), R.layout.widget_image_pager, this);
         mPager = (ViewPager) findViewById(R.id.pager);
+        mIndicator = (LinearLayout) findViewById(R.id.indicator);
     }
 
 
@@ -63,8 +66,42 @@ public class ImagePager extends FrameLayout {
                 return uris.size();
             }
         });
-    }
 
+        if (uris.size() > 1) {
+
+            mIndicator.removeAllViews();
+            mPager.clearOnPageChangeListeners();
+
+            for (int i = 0; i < uris.size(); i++) {
+                inflate(getContext(), R.layout.image_pager_indicator, mIndicator);
+            }
+
+            mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    for (int i = 0; i < mIndicator.getChildCount(); i++) {
+                        mIndicator.getChildAt(i).setSelected(false);
+                    }
+                    mIndicator.getChildAt(position).setSelected(true);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+            mIndicator.setVisibility(View.VISIBLE);
+            mIndicator.getChildAt(0).setSelected(true);
+        } else {
+            mIndicator.setVisibility(View.GONE);
+        }
+
+    }
 
     public static final class ImageFragment extends Fragment {
 
@@ -86,7 +123,7 @@ public class ImagePager extends FrameLayout {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image, container, false);
             TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
-            imageView.setOnClickListener(v-> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), getArguments().getStringArrayList(EXTRA_URIS))));
+            imageView.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), getArguments().getStringArrayList(EXTRA_URIS))));
             return imageView;
         }
     }

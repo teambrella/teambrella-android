@@ -7,24 +7,36 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
+
+import io.reactivex.Notification;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Claim Activity
  */
-public class ClaimActivity extends ADataHostActivity {
+public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     private static final String DATA_TAG = "data";
     private static final String UI_TAG = "ui";
     private static final String EXTRA_URI = "uri";
+    private static final String EXTRA_MODEL = "model";
 
 
-    public static Intent getLaunchIntent(Context context, Uri uri) {
-        return new Intent(context, ClaimActivity.class).putExtra(EXTRA_URI, uri);
+    private Disposable mDisposal;
+
+
+    public static Intent getLaunchIntent(Context context, Uri uri, String model) {
+        return new Intent(context, ClaimActivity.class).putExtra(EXTRA_URI, uri).putExtra(EXTRA_MODEL, model);
     }
 
 
@@ -41,17 +53,24 @@ public class ClaimActivity extends ADataHostActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        findViewById(R.id.back).setOnClickListener(v -> finish());
+        ((TextView) findViewById(R.id.title)).setText(getIntent().getStringExtra(EXTRA_MODEL));
     }
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+    protected void onStart() {
+        super.onStart();
+        mDisposal = getObservable(DATA_TAG).subscribe(this::onDataUpdated);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDisposal != null && !mDisposal.isDisposed()) {
+            mDisposal.dispose();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -62,5 +81,30 @@ public class ClaimActivity extends ADataHostActivity {
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
         return TeambrellaDataFragment.getInstance(getIntent().getParcelableExtra(EXTRA_URI));
+    }
+
+    @Override
+    public void setTitle(String title) {
+        ((TextView) findViewById(R.id.title)).setText(title);
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        ((TextView) findViewById(R.id.subtitle)).setText(subtitle);
+    }
+
+    protected void onDataUpdated(Notification<JsonObject> notification) {
+        if (notification.isOnNext()) {
+            JsonObject response = notification.getValue();
+            JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
+            JsonObject claimBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
+            if (claimBasic != null) {
+                String avatar = claimBasic.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
+                if (avatar != null) {
+                    TeambrellaImageLoader.getInstance(this).getPicasso()
+                            .load(TeambrellaServer.AUTHORITY + avatar).into((ImageView) findViewById(R.id.teammate_picture));
+                }
+            }
+        }
     }
 }

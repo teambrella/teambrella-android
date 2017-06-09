@@ -1,105 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_to_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/listBackgroundColor"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.teambrella.android.ui.widget.ImagePager
-                    android:id="@+id/image_pager"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintDimensionRatio="H,375:184"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="0dp" />
-            </android.support.constraint.ConstraintLayout>
-
-            <android.support.constraint.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:padding="16dp">
+                android:background="@color/listBackgroundColor"
+                android:orientation="vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/teammate_picture"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="16dp" />
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                    android:id="@+id/message_title"
-                    style="@style/Teambrella.TextAppearence.MessageTitle"
-                    android:layout_width="wrap_content"
+                    <com.teambrella.android.ui.widget.ImagePager
+                        android:id="@+id/image_pager"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintDimensionRatio="H,375:184"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="0dp" />
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintStart_toEndOf="@+id/teammate_picture"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="72dp"
-                    tools:layout_editor_absoluteY="97dp" />
+                    android:background="@android:color/white"
+                    android:padding="16dp">
 
-                <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                    android:id="@+id/unread"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:background="@drawable/unread_message_count_background"
-                    android:gravity="center"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:text="9"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/message_title"
-                    app:layout_constraintVertical_bias="0.67"
-                    tools:layout_editor_absoluteX="180dp" />
+                    <ImageView
+                        android:id="@+id/object_picture"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="16dp" />
 
-                <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                    android:id="@+id/message_text"
-                    android:layout_width="0dp"
+                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                        android:id="@+id/message_title"
+                        style="@style/Teambrella.TextAppearence.MessageTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintStart_toEndOf="@+id/object_picture"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="72dp"
+                        tools:layout_editor_absoluteY="97dp" />
+
+                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                        android:id="@+id/unread"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:background="@drawable/unread_message_count_background"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:text="9"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/message_title"
+                        app:layout_constraintVertical_bias="0.67"
+                        tools:layout_editor_absoluteX="180dp" />
+
+                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                        android:id="@+id/message_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:ellipsize="end"
+                        android:lineSpacingExtra="5dp"
+                        android:lines="3"
+                        android:paddingEnd="16dp"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@id/unread"
+                        app:layout_constraintEnd_toStartOf="@id/unread"
+                        app:layout_constraintStart_toStartOf="@id/message_title"
+                        app:layout_constraintTop_toBottomOf="@+id/message_title"
+                        tools:layout_editor_absoluteX="72dp" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <FrameLayout
+                    android:id="@+id/details_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:lineSpacingExtra="10dp"
-                    android:lines="3"
-                    android:paddingEnd="16dp"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@id/unread"
-                    app:layout_constraintEnd_toStartOf="@id/unread"
-                    app:layout_constraintStart_toStartOf="@id/message_title"
-                    app:layout_constraintTop_toBottomOf="@+id/message_title"
-                    tools:layout_editor_absoluteX="72dp" />
+                    android:layout_margin="16dp" />
 
-            </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/details_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp" />
+        </ScrollView>
 
-        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-    </ScrollView>
-
-</android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>

@@ -10,15 +10,18 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import io.reactivex.Notification;
 
 /**
  * Claims Details Fragment
  */
-public class ClaimDetailsFragment extends ADataFragment<IDataHost> {
+public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
 
 
     private TextView mClaimAmount;
@@ -26,6 +29,8 @@ public class ClaimDetailsFragment extends ADataFragment<IDataHost> {
     private TextView mDeductible;
     private TextView mCoverage;
     private TextView mInsidentDate;
+    private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL YYYY", Locale.getDefault());
+    private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 
     public static ClaimDetailsFragment getInstance(String dataTag) {
@@ -51,9 +56,15 @@ public class ClaimDetailsFragment extends ADataFragment<IDataHost> {
             JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
             JsonObject basic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
             mClaimAmount.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble())));
-            //mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES).getAsDouble())));
-            mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_DETUCTIBLE).getAsDouble())));
+            mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES).getAsDouble())));
+            mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_DEDUCTIBLE).getAsDouble())));
             mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_COVERAGE).getAsDouble() * 100)));
+
+            try {
+                mDataHost.setSubtitle(mDateFormat.format(mSDF.parse(basic.get(TeambrellaModel.ATTR_DATA_INCIDENT_DATE).getAsString())));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

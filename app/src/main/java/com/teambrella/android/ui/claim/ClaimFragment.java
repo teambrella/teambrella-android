@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.claim;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +16,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.ImagePager;
@@ -23,16 +23,17 @@ import com.teambrella.android.ui.widget.ImagePager;
 import java.util.ArrayList;
 
 import io.reactivex.Notification;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claim fragment
  */
-public class ClaimFragment extends ADataProgressFragment<IDataHost> {
+public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
     private static final String DETAILS_FRAGMENT_TAG = "details";
 
     private ImagePager mClaimPictures;
-    private ImageView mTeammatePicture;
+    private ImageView mOriginalObjectPicture;
     private TextView mMessageTitle;
     private TextView mMessageText;
     private TextView mUnreadCount;
@@ -45,7 +46,7 @@ public class ClaimFragment extends ADataProgressFragment<IDataHost> {
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim, container, false);
         mClaimPictures = (ImagePager) view.findViewById(R.id.image_pager);
-        mTeammatePicture = (ImageView) view.findViewById(R.id.teammate_picture);
+        mOriginalObjectPicture = (ImageView) view.findViewById(R.id.object_picture);
         mMessageTitle = (TextView) view.findViewById(R.id.message_title);
         mMessageText = (TextView) view.findViewById(R.id.message_text);
         mUnreadCount = (TextView) view.findViewById(R.id.unread);
@@ -95,12 +96,6 @@ public class ClaimFragment extends ADataProgressFragment<IDataHost> {
                     mClaimPictures.init(getChildFragmentManager(), list);
                 }
 
-                String avatar = claimBasic.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
-                if (avatar != null) {
-                    TeambrellaImageLoader.getInstance(getContext()).getPicasso()
-                            .load(TeambrellaServer.AUTHORITY + avatar).into(mTeammatePicture);
-                }
-
                 getActivity().setTitle(claimBasic.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());
             }
 
@@ -109,6 +104,14 @@ public class ClaimFragment extends ADataProgressFragment<IDataHost> {
                 mMessageTitle.setText(getString(R.string.claim_title_format_string, data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt()));
                 mMessageText.setText(claimDiscussion.get(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT).getAsString());
                 mUnreadCount.setText(Integer.toString(claimDiscussion.get(TeambrellaModel.ATTR_DATA_UNREAD_COUNT).getAsInt()));
+
+                String objectPhoto = claimDiscussion.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTO).getAsString();
+                if (objectPhoto != null) {
+                    Resources resources = getResources();
+                    TeambrellaImageLoader.getInstance(getContext()).getPicasso()
+                            .load(TeambrellaServer.AUTHORITY + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
+                            .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
+                }
             }
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

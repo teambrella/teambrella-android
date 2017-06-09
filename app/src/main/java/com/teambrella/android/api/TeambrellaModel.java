@@ -167,8 +167,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ONE_OBJECT = "ObjectPart";
     public static final String ATTR_DATA_ONE_STATS = "StatsPart";
 
-    public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpences";
-    public static final String ATTR_DATA_DETUCTIBLE = "Deductible";
+    public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpenses";
+    public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";
     public static final String ATTR_DATA_COVERAGE = "Coverage";
-    public static final String ATTR_DATA_INCIDENT_DATE = "IncidentData";
+    public static final String ATTR_DATA_INCIDENT_DATE = "IncidentDate";
 }
