@@ -14,9 +14,11 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -101,8 +103,14 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             if (claimBasic != null) {
                 String avatar = claimBasic.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
                 if (avatar != null) {
+                    ImageView teammatePicture = (ImageView) findViewById(R.id.teammate_picture);
+                    String pictureUri = TeambrellaServer.AUTHORITY + avatar;
                     TeambrellaImageLoader.getInstance(this).getPicasso()
-                            .load(TeambrellaServer.AUTHORITY + avatar).into((ImageView) findViewById(R.id.teammate_picture));
+                            .load(pictureUri).into(teammatePicture);
+                    teammatePicture.setOnClickListener(v ->
+                            startActivity(TeammateActivity.getIntent(ClaimActivity.this, TeambrellaUris.getTeammateUri(2, claimBasic.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString())
+                                    , claimBasic.get(TeambrellaModel.ATTR_DATA_NAME).getAsString()
+                                    , pictureUri)));
                 }
             }
         }

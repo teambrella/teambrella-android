@@ -30,6 +30,8 @@ public class ImagePager extends FrameLayout {
 
     private ViewPager mPager;
     private LinearLayout mIndicator;
+    private ImagePagerAdapter mAdapter;
+    private ArrayList<String> mUris = new ArrayList<>();
 
     public ImagePager(@NonNull Context context) {
         super(context);
@@ -55,53 +57,71 @@ public class ImagePager extends FrameLayout {
 
 
     public void init(FragmentManager fragmentManager, final ArrayList<String> uris) {
-        mPager.setAdapter(new FragmentPagerAdapter(fragmentManager) {
-            @Override
-            public Fragment getItem(int position) {
-                return ImageFragment.getInstance(uris.get(position), uris);
-            }
-
-            @Override
-            public int getCount() {
-                return uris.size();
-            }
-        });
-
-        if (uris.size() > 1) {
-
-            mIndicator.removeAllViews();
+        mUris = uris;
+        if (mAdapter == null) {
+            mPager.setAdapter(mAdapter = new ImagePagerAdapter(fragmentManager));
             mPager.clearOnPageChangeListeners();
+            mPager.addOnPageChangeListener(mAdapter);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 
-            for (int i = 0; i < uris.size(); i++) {
-                inflate(getContext(), R.layout.image_pager_indicator, mIndicator);
-            }
+    private class ImagePagerAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener {
 
-            mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        private int mCurentPosition = 0;
 
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    for (int i = 0; i < mIndicator.getChildCount(); i++) {
-                        mIndicator.getChildAt(i).setSelected(false);
-                    }
-                    mIndicator.getChildAt(position).setSelected(true);
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-            mIndicator.setVisibility(View.VISIBLE);
-            mIndicator.getChildAt(0).setSelected(true);
-        } else {
-            mIndicator.setVisibility(View.GONE);
+        ImagePagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
+        @Override
+        public Fragment getItem(int position) {
+            return ImageFragment.getInstance(mUris.get(position), mUris);
+        }
+
+        @Override
+        public int getCount() {
+            return mUris.size();
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            super.notifyDataSetChanged();
+            if (mUris.size() > 1) {
+                mIndicator.removeAllViews();
+
+                for (int i = 0; i < mUris.size(); i++) {
+                    inflate(getContext(), R.layout.image_pager_indicator, mIndicator);
+                }
+
+                mIndicator.setVisibility(View.VISIBLE);
+                mIndicator.getChildAt(0).setSelected(true);
+            } else {
+                mIndicator.setVisibility(View.GONE);
+            }
+            onPageSelected(mCurentPosition);
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            for (int i = 0; i < mIndicator.getChildCount(); i++) {
+                mIndicator.getChildAt(i).setSelected(false);
+            }
+            mIndicator.getChildAt(position).setSelected(true);
+            mCurentPosition = position;
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
     }
+
 
     public static final class ImageFragment extends Fragment {
 
