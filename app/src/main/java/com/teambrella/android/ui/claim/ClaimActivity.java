@@ -18,6 +18,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
@@ -78,13 +79,23 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     }
 
     @Override
-    protected String[] getDataTag() {
+    protected String[] getDataTags() {
         return new String[]{DATA_TAG};
     }
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
         return TeambrellaDataFragment.getInstance(getIntent().getParcelableExtra(EXTRA_URI));
+    }
+
+    @Override
+    protected String[] getPagerTags() {
+        return new String[]{};
+    }
+
+    @Override
+    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+        return null;
     }
 
     @Override

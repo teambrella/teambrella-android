@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.teambrella.android.R;
+import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.team.claims.ClaimsFragment;
 
 /**
@@ -47,9 +49,9 @@ public class TeamFragment extends Fragment {
                     case 0:
                         return new FeedFragment();
                     case 1:
-                        return new MembersFragment();
+                        return ADataPagerProgressFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, MembersFragment.class);
                     case 2:
-                        return new ClaimsFragment();
+                        return ADataPagerProgressFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, ClaimsFragment.class);
                     default:
                         throw new RuntimeException();
                 }

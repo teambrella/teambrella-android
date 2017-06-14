@@ -6,9 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -24,11 +27,18 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        for (String tag : getDataTag()) {
+        for (String tag : getDataTags()) {
             if (fragmentManager.findFragmentByTag(tag) == null) {
                 transaction.add(getDataFragment(tag), tag);
             }
         }
+
+        for (String tag : getPagerTags()) {
+            if (fragmentManager.findFragmentByTag(tag) == null) {
+                transaction.add(getDataPagerFragment(tag), tag);
+            }
+        }
+
 
         if (!transaction.isEmpty()) {
             transaction.commit();
@@ -51,8 +61,22 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
         }
     }
 
-    protected abstract String[] getDataTag();
+    @Override
+    public IDataPager<JsonArray> getPager(String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(tag);
+        if (dataFragment != null) {
+            return dataFragment.getPager();
+        }
+        return null;
+    }
+
+    protected abstract String[] getDataTags();
+
+    protected abstract String[] getPagerTags();
 
     protected abstract TeambrellaDataFragment getDataFragment(String tag);
+
+    protected abstract TeambrellaDataPagerFragment getDataPagerFragment(String tag);
 
 }

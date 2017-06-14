@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 
 /**
@@ -70,8 +71,18 @@ public class TeammateActivity extends ADataHostActivity {
 
 
     @Override
-    protected String[] getDataTag() {
+    protected String[] getDataTags() {
         return new String[]{DATA_FRAGMENT};
+    }
+
+    @Override
+    protected String[] getPagerTags() {
+        return new String[]{};
+    }
+
+    @Override
+    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+        return null;
     }
 
     @Override

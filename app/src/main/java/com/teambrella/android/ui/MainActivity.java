@@ -10,18 +10,19 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
-import com.teambrella.android.data.MainDataFragment;
-import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
@@ -33,13 +34,15 @@ import java.lang.reflect.Field;
 /**
  * Main Activity
  */
-public class MainActivity extends AppCompatActivity implements IMainDataHost {
+public class MainActivity extends ADataHostActivity {
+
+    public static final String TEAMMATES_DATA_TAG = "teammates";
+    public static final String CLAIMS_DATA_TAG = "claims";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
     private static final String PROXIES_TAG = "proxies";
     private static final String PROFILE_TAG = "profile";
-    private static final String DATA_PROVIDER_TAG = "data_provider";
 
 
     private int mSelectedItemId = 0;
@@ -49,15 +52,9 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/AkkuratPro-Bold.otf");
-
         BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottom_bar);
         BottomNavigationViewHelper.removeShiftMode(navigationView);
         setTypeface(navigationView, typeface);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
-                .add(MainDataFragment.getInstance(BuildConfig.TEAM_ID), DATA_PROVIDER_TAG).commit();
-
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -68,7 +65,9 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         Fragment currentFragment = fragmentManager.findFragmentByTag(getTagById(mSelectedItemId));
         String newFragmentTag = getTagById(item.getItemId());
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.detach(currentFragment);
+        if (currentFragment != null) {
+            transaction.detach(currentFragment);
+        }
         Fragment newFragment = fragmentManager.findFragmentByTag(newFragmentTag);
 
         if (newFragment != null) {
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
             transaction.add(R.id.container, createFragmentByTag(newFragmentTag), newFragmentTag);
         }
         transaction.commit();
+        fragmentManager.executePendingTransactions();
         mSelectedItemId = item.getItemId();
         return true;
     }
@@ -115,18 +115,34 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         }
     }
 
+
     @Override
-    public IDataPager<JsonArray> getTeamListPager() {
-        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
-        return dataFragment.getTeamListPager();
+    protected String[] getDataTags() {
+        return new String[]{};
     }
 
     @Override
-    public IDataPager<JsonArray> getClaimsListPager() {
-        MainDataFragment dataFragment = (MainDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_PROVIDER_TAG);
-        return dataFragment.getClaimsListPager();
+    protected String[] getPagerTags() {
+        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG};
     }
 
+    @Override
+    protected TeambrellaDataFragment getDataFragment(String tag) {
+        return null;
+    }
+
+    @Override
+    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+        switch (tag) {
+            case TEAMMATES_DATA_TAG:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(BuildConfig.TEAM_ID),
+                        TeambrellaModel.ATTR_DATA_TEAMMATES);
+            case CLAIMS_DATA_TAG:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(BuildConfig.TEAM_ID),
+                        null);
+        }
+        return null;
+    }
 
     private void setTypeface(ViewGroup viewGroup, Typeface typeface) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
