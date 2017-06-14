@@ -9,17 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.image.ImageViewerActivity;
+import com.teambrella.android.ui.team.claims.ClaimsActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
     private AmountWidget mLimit;
     private AmountWidget mNet;
     private TextView mRisk;
+    private View mSeeClaims;
 
 
     public static TeammateObjectFragment getInstance(String dataTag) {
@@ -56,7 +60,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
         mLimit = (AmountWidget) view.findViewById(R.id.limit);
         mNet = (AmountWidget) view.findViewById(R.id.net);
         mRisk = (TextView) view.findViewById(R.id.risk);
-        view.findViewById(R.id.see_claims).setOnClickListener(v -> Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show());
+        mSeeClaims = view.findViewById(R.id.see_claims);
         return view;
     }
 
@@ -97,6 +101,9 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                 mNet.setAmount(Math.round(objectBasic.get(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT).getAsFloat()));
                 mRisk.setText(getString(R.string.risk_format_string, objectBasic.get(TeambrellaModel.ATTR_DATA_RISK).getAsFloat() + 0.05f));
             }
+
+            mSeeClaims.setOnClickListener(v -> startActivity(ClaimsActivity.getLaunchIntent(getContext()
+                    , TeambrellaUris.getClaimsUri(BuildConfig.TEAM_ID, new JsonWrapper(data).getInt(TeambrellaModel.ATTR_DATA_ID, 0)))));
 
 
         }

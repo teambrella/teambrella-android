@@ -24,6 +24,7 @@ public class TeambrellaUris {
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
+    static final String KEY_TEAMMATE_ID = "TeammateId";
     static final String KEY_ID = "Id";
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -67,6 +68,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_LIST)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getClaimsUri(int teamId, int teammateId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_LIST)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
                 .build();
     }
 

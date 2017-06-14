@@ -76,6 +76,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_OFFSET = "Offset";
     public static final String ATTR_REQUEST_LIMIT = "Limit";
     public static final String ATTR_REQUEST_ID = "Id";
+    public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
 
 
     /*Response*/
@@ -171,10 +172,6 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";
     public static final String ATTR_DATA_COVERAGE = "Coverage";
     public static final String ATTR_DATA_INCIDENT_DATE = "IncidentDate";
-
-
-
-
 
 
 }

@@ -19,7 +19,7 @@ android {
         buildConfigField "String", "KATE_PRIVATE_KEY", "\"" + keyProperties.getProperty("KatePrivateKey") + "\""
         buildConfigField "String", "THORAX_PRIVATE_KEY", "\"" + keyProperties.getProperty("ThoraxPrivateKey") + "\""
         buildConfigField "String", "MASTER_USER_PRIVATE_KEY", "\"" + keyProperties.getProperty("MasterUserPrivateKey") + "\""
-        buildConfigField "int", "TEAM_ID", "2"
+        buildConfigField "int", "TEAM_ID", "2006"
         jackOptions {
             enabled true
         }

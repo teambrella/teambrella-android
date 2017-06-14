@@ -127,6 +127,10 @@ public class TeambrellaServer {
             break;
             case TeambrellaUris.CLAIMS_LIST:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                String teammateIdParam = uri.getQueryParameter(TeambrellaUris.KEY_TEAMMATE_ID);
+                if (teammateIdParam != null) {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID_FILTER, Integer.parseInt(teammateIdParam));
+                }
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
