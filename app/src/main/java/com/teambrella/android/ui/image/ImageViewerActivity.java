@@ -25,12 +25,15 @@ import java.util.ArrayList;
 public class ImageViewerActivity extends AppCompatActivity {
 
     private static final String EXTRA_URIS = "uris";
+    private static final String EXTRA_POSITION = "position";
 
     private ViewPager mViewPager;
 
 
-    public static Intent getLaunchIntent(Context context, ArrayList<String> uris) {
-        return new Intent(context, ImageViewerActivity.class).putExtra(EXTRA_URIS, uris);
+    public static Intent getLaunchIntent(Context context, ArrayList<String> uris, int position) {
+        return new Intent(context, ImageViewerActivity.class)
+                .putExtra(EXTRA_URIS, uris)
+                .putExtra(EXTRA_POSITION, position);
     }
 
 
@@ -41,6 +44,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         supportPostponeEnterTransition();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         final ArrayList<String> uris = getIntent().getStringArrayListExtra(EXTRA_URIS);
+        int position = getIntent().getIntExtra(EXTRA_POSITION, 0);
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -52,6 +56,10 @@ public class ImageViewerActivity extends AppCompatActivity {
                 return uris.size();
             }
         });
+
+        if (savedInstanceState == null) {
+            mViewPager.setCurrentItem(position);
+        }
     }
 
 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -109,7 +110,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
             tholder.mRisk.setText(context.getString(R.string.risk_format_string, item.get(TeambrellaModel.ATTR_DATA_RISK).getAsFloat()));
 
-            holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(2,
+            holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(BuildConfig.TEAM_ID,
                     item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
     }

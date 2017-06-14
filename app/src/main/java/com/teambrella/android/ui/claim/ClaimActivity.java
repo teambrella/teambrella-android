@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
@@ -97,19 +99,21 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject response = notification.getValue();
-            JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject claimBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
-            if (claimBasic != null) {
-                String avatar = claimBasic.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            if (basic != null) {
+                String avatar = basic.getString(TeambrellaModel.ATTR_DATA_AVATAR);
                 if (avatar != null) {
                     ImageView teammatePicture = (ImageView) findViewById(R.id.teammate_picture);
                     String pictureUri = TeambrellaServer.AUTHORITY + avatar;
                     TeambrellaImageLoader.getInstance(this).getPicasso()
                             .load(pictureUri).into(teammatePicture);
                     teammatePicture.setOnClickListener(v ->
-                            startActivity(TeammateActivity.getIntent(ClaimActivity.this, TeambrellaUris.getTeammateUri(2, claimBasic.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString())
-                                    , claimBasic.get(TeambrellaModel.ATTR_DATA_NAME).getAsString()
+                            startActivity(TeammateActivity.getIntent(ClaimActivity.this
+                                    , TeambrellaUris.getTeammateUri(BuildConfig.TEAM_ID
+                                            , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                                    , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
                                     , pictureUri)));
                 }
             }

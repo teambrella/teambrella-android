@@ -76,7 +76,7 @@ public class ImagePager extends FrameLayout {
 
         @Override
         public Fragment getItem(int position) {
-            return ImageFragment.getInstance(mUris.get(position), mUris);
+            return ImageFragment.getInstance(mUris.get(position), mUris, position);
         }
 
         @Override
@@ -127,12 +127,14 @@ public class ImagePager extends FrameLayout {
 
         private static final String EXTRA_URI = "uri";
         private static final String EXTRA_URIS = "uris";
+        private static final String EXTRA_POSITION = "position";
 
-        public static ImageFragment getInstance(String uri, ArrayList<String> uris) {
+        public static ImageFragment getInstance(String uri, ArrayList<String> uris, int position) {
             ImageFragment fragment = new ImageFragment();
             Bundle args = new Bundle();
             args.putString(EXTRA_URI, uri);
             args.putStringArrayList(EXTRA_URIS, uris);
+            args.putInt(EXTRA_POSITION, position);
             fragment.setArguments(args);
             return fragment;
         }
@@ -143,7 +145,11 @@ public class ImagePager extends FrameLayout {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image, container, false);
             TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
-            imageView.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), getArguments().getStringArrayList(EXTRA_URIS))));
+            imageView.setOnClickListener(v -> v.getContext()
+                    .startActivity(ImageViewerActivity.getLaunchIntent(v.getContext()
+                            , getArguments().getStringArrayList(EXTRA_URIS)
+                            , getArguments().getInt(EXTRA_POSITION)
+                    )));
             return imageView;
         }
     }

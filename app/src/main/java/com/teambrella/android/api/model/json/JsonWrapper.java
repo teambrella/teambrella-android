@@ -6,21 +6,21 @@ import com.google.gson.JsonObject;
 /**
  * Json Wrapper
  */
-class JsonWrapper {
+public class JsonWrapper {
 
     /**
      * Data object
      */
     protected final JsonObject mObject;
 
-    JsonWrapper(JsonObject object) {
+    public JsonWrapper(JsonObject object) {
         this.mObject = object;
     }
 
     /*
      * Get String property
      */
-    String getString(String key) {
+    public String getString(String key) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsString();
@@ -31,7 +31,7 @@ class JsonWrapper {
     /*
      * Get Integer property
      */
-    int getInt(String key, int defaultValue) {
+    public int getInt(String key, int defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsInt();
@@ -39,10 +39,11 @@ class JsonWrapper {
         return defaultValue;
     }
 
+
     /*
      * Get Long property
      */
-    long getLong(String key, long defaultValue) {
+    public long getLong(String key, long defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsLong();
@@ -53,7 +54,7 @@ class JsonWrapper {
     /*
      * Get Boolean property
      */
-    boolean getBoolean(String key, boolean defaultValue) {
+    public boolean getBoolean(String key, boolean defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsBoolean();
@@ -61,11 +62,20 @@ class JsonWrapper {
         return defaultValue;
     }
 
-    float getFloat(String key, float defaultValue) {
+    public float getFloat(String key, float defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsFloat();
         }
         return defaultValue;
+    }
+
+
+    public JsonWrapper getObject(String key) {
+        JsonElement value = mObject.get(key);
+        if (value != null && !value.isJsonNull()) {
+            return new JsonWrapper(value.getAsJsonObject());
+        }
+        return null;
     }
 }

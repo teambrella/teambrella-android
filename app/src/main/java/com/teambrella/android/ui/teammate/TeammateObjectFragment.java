@@ -84,7 +84,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                         uris.add(TeambrellaServer.AUTHORITY + photos.get(i).getAsString());
                     }
 
-                    mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), uris),
+                    mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), uris, 0),
                             ActivityOptionsCompat.
                                     makeSceneTransitionAnimation(getActivity(), mObjectPicture, TeambrellaServer.AUTHORITY + photos.get(0).getAsString()).toBundle()));
 

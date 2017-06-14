@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.data.MainDataFragment;
 import com.teambrella.android.data.base.IDataPager;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements IMainDataHost {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), HOME_TAG)
-                .add(MainDataFragment.getInstance(2), DATA_PROVIDER_TAG).commit();
+                .add(MainDataFragment.getInstance(BuildConfig.TEAM_ID), DATA_PROVIDER_TAG).commit();
 
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);

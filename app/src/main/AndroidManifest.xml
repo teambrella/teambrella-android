@@ -46,7 +46,7 @@
 
         <activity
             android:name=".ui.image.ImageViewerActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.ImageViewer" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"
