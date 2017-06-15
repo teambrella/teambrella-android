@@ -98,13 +98,13 @@
                 android:id="@+id/object_info_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp" />
+                android:background="@drawable/section_background" />
 
             <FrameLayout
                 android:id="@+id/voting_statistics_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp" />
+                android:background="@drawable/section_background" />
 
 
         </LinearLayout>
