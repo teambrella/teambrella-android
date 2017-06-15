@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -20,6 +19,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.image.ImageViewerActivity;
 import com.teambrella.android.ui.team.claims.ClaimsActivity;
@@ -75,7 +75,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                 JsonArray photos = objectData.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
                 Resources resources = getContext().getResources();
                 if (photos != null && photos.size() > 0) {
-                    Picasso.with(getContext())
+                    TeambrellaImageLoader.getInstance(getContext()).getPicasso()
                             .load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
                             .resize(resources.getDimensionPixelSize(R.dimen.teammate_object_picture_width)
                                     , resources.getDimensionPixelSize(R.dimen.teammate_object_picture_height))

@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 /**
  * Teammate screen.
@@ -55,6 +58,8 @@ public class TeammateActivity extends ADataHostActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+
         }
         setTitle(getIntent().getStringExtra(TEAMMATE_NAME));
     }
@@ -69,6 +74,14 @@ public class TeammateActivity extends ADataHostActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void setTitle(CharSequence title) {
+        SpannableString s = new SpannableString(title);
+        s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        super.setTitle(s);
+    }
 
     @Override
     protected String[] getDataTags() {

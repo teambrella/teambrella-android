@@ -112,7 +112,10 @@ public class ImagePager extends FrameLayout {
             for (int i = 0; i < mIndicator.getChildCount(); i++) {
                 mIndicator.getChildAt(i).setSelected(false);
             }
-            mIndicator.getChildAt(position).setSelected(true);
+            View view = mIndicator.getChildAt(position);
+            if (view != null) {
+                view.setSelected(true);
+            }
             mCurentPosition = position;
         }
 
