@@ -75,7 +75,10 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_USER_ID = "UserId";
     public static final String ATTR_REQUEST_OFFSET = "Offset";
     public static final String ATTR_REQUEST_LIMIT = "Limit";
+    public static final String ATTR_REQUEST_SINCE = "Since";
+    public static final String ATTR_REQUEST_LIMIT_OF_HISTORY = "LimitOfHistory";
     public static final String ATTR_REQUEST_ID = "Id";
+    public static final String ATTR_REQUEST_CLAIM_ID = "claimId";
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
 
 

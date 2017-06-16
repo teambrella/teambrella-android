@@ -18,6 +18,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.chat.claim.ClaimChatActivity;
 import com.teambrella.android.ui.widget.ImagePager;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     private TextView mMessageTitle;
     private TextView mMessageText;
     private TextView mUnreadCount;
+    private View mDiscussion;
 
     public static ClaimFragment getInstance(String tag) {
         return ADataProgressFragment.getInstance(tag, ClaimFragment.class);
@@ -50,6 +52,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         mMessageTitle = (TextView) view.findViewById(R.id.message_title);
         mMessageText = (TextView) view.findViewById(R.id.message_text);
         mUnreadCount = (TextView) view.findViewById(R.id.unread);
+        mDiscussion = view.findViewById(R.id.discussion);
+
 
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
 
@@ -112,6 +116,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             .load(TeambrellaServer.AUTHORITY + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
+
+                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt())));
             }
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

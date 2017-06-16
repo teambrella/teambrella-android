@@ -30,11 +30,14 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     private final TeambrellaServer mServer;
     private final Uri mUri;
     private final String mProperty;
-    private final JsonArray mArray = new JsonArray();
+    private JsonArray mArray = new JsonArray();
 
     private boolean mHasError = false;
     private boolean mIsLoading = false;
     private boolean mHasNext = true;
+    private boolean mHasPrevious = true;
+    private int mNextIndex = 0;
+    private int mPreviousIndex = 0;
 
 
     public TeambrellaDataPagerLoader(Context context, Uri uri, String property) {
@@ -49,7 +52,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     @Override
     public void loadNext() {
         if (!mIsLoading && mHasNext) {
-            mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mArray.size(), LIMIT), null)
+            mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mNextIndex, LIMIT), null)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onNext, this::onError, this::onComplete);
@@ -83,6 +86,23 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
         return mIsLoading;
     }
 
+    @Override
+    public boolean hasPrevious() {
+        return mHasPrevious;
+    }
+
+    @Override
+    public void loadPrevious() {
+        if (!mIsLoading && mHasPrevious) {
+            mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mPreviousIndex, LIMIT), null)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onPrevious, this::onError, this::onComplete);
+            mIsLoading = true;
+            mHasError = false;
+        }
+    }
+
     private void onNext(JsonObject data) {
 
         JsonArray newData;
@@ -96,9 +116,29 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
         mArray.addAll(newData);
         mHasNext = newData.size() == LIMIT;
+        mNextIndex += newData.size();
         mIsLoading = false;
         mPublisher.onNext(Notification.createOnNext(newData));
     }
+
+    private void onPrevious(JsonObject data) {
+        JsonArray newData;
+
+        if (mProperty == null) {
+            newData = data.get(TeambrellaModel.ATTR_DATA).getAsJsonArray();
+        } else {
+            newData = data.get(TeambrellaModel.ATTR_DATA)
+                    .getAsJsonObject().get(mProperty).getAsJsonArray();
+        }
+
+        newData.addAll(mArray);
+        mHasNext = newData.size() == LIMIT;
+        mPreviousIndex -= newData.size();
+        mArray = newData;
+        mIsLoading = false;
+        mPublisher.onNext(Notification.createOnNext(newData));
+    }
+
 
     private void onError(Throwable throwable) {
         mPublisher.onNext(Notification.createOnError(throwable));

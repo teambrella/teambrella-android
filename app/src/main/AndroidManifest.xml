@@ -52,6 +52,10 @@
             android:name=".ui.image.ImageViewerActivity"
             android:theme="@style/AppTheme.ImageViewer" />
 
+        <activity
+            android:name=".ui.chat.claim.ClaimChatActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="com.teambrella.android.provider"

@@ -19,12 +19,14 @@ public class TeambrellaUris {
     private static final String SEGMENT_ONE = "one";
     private static final String SEGMENT_UPDATES = "updates";
     private static final String SEGMENT_REGISTER = "registerKey";
+    private static final String SEGMENT_CHAT = "chat";
 
     static final String KEY_FACEBOOK_TOKEN = "facebookToken";
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
     static final String KEY_TEAMMATE_ID = "TeammateId";
+    static final String KEY_SINCE = "Since";
     static final String KEY_ID = "Id";
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -34,6 +36,7 @@ public class TeambrellaUris {
     static final int ME_REGISTER_KEY = 4;
     static final int CLAIMS_LIST = 5;
     static final int CLAIMS_ONE = 6;
+    static final int CLAIMS_CHAT = 7;
 
 
     static {
@@ -43,6 +46,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER, ME_REGISTER_KEY);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_LIST, CLAIMS_LIST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_ONE, CLAIMS_ONE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_CHAT, CLAIMS_CHAT);
     }
 
 
@@ -87,6 +91,22 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_ONE)
                 .appendQueryParameter(KEY_ID, Integer.toString(claimId))
+                .build();
+    }
+
+
+    public static Uri getClaimChatUri(int claimId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendQueryParameter(KEY_ID, Integer.toString(claimId))
+                .build();
+    }
+
+    public static Uri appendChatSince(Uri uri, long since) {
+        return uri.buildUpon()
+                .appendQueryParameter(KEY_SINCE, Long.toString(since))
                 .build();
     }
 

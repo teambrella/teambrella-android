@@ -136,6 +136,13 @@ public class TeambrellaServer {
                 break;
             case TeambrellaUris.CLAIMS_ONE:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
+                break;
+            case TeambrellaUris.CLAIMS_CHAT:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
+                String sinceParam = uri.getQueryParameter(TeambrellaUris.KEY_SINCE);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, sinceParam != null ? Long.parseLong(sinceParam) : null);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
                 break;
@@ -167,6 +174,8 @@ public class TeambrellaServer {
                 return mAPI.getClaimsList(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.CLAIMS_ONE:
                 return mAPI.getClaim(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.CLAIMS_CHAT:
+                return mAPI.getClaimChat(timestamp, publicKey, signature, requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

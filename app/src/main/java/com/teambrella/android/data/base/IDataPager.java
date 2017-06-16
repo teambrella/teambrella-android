@@ -16,6 +16,10 @@ public interface IDataPager<T> {
 
     boolean hasNext();
 
+    boolean hasPrevious();
+
+    void loadPrevious();
+
     boolean hasError();
 
     boolean isLoading();

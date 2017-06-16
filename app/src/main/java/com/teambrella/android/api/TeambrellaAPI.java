@@ -64,4 +64,12 @@ public interface TeambrellaAPI {
                                                  @Header("sig") String signature,
                                                  @Query("facebookToken") String facebookToken);
 
+
+    @Headers("Content-Type: application/json")
+    @POST("claim/getChat")
+    Observable<Response<JsonObject>> getClaimChat(@Header("t") long timestamp,
+                                                  @Header("key") String publicKey,
+                                                  @Header("sig") String signature,
+                                                  @Body JsonElement body);
+
 }
