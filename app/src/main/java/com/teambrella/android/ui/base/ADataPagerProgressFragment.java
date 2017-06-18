@@ -27,7 +27,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
     protected T mDataHost;
     private Disposable mDisposable;
-    private RecyclerView mList;
+    protected RecyclerView mList;
     private TeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
 

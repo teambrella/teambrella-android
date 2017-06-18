@@ -136,10 +136,10 @@ public class MainActivity extends ADataHostActivity {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(BuildConfig.TEAM_ID),
-                        TeambrellaModel.ATTR_DATA_TEAMMATES);
+                        TeambrellaModel.ATTR_DATA_TEAMMATES, TeambrellaDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(BuildConfig.TEAM_ID),
-                        null);
+                        null, TeambrellaDataPagerFragment.class);
         }
         return null;
     }

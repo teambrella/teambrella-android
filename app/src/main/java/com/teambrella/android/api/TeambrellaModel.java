@@ -175,6 +175,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";
     public static final String ATTR_DATA_COVERAGE = "Coverage";
     public static final String ATTR_DATA_INCIDENT_DATE = "IncidentDate";
+    public static final String ATTR_DATA_CHAT = "Chat";
+    public static final String ATTR_DATA_TEXT = "Text";
+    public static final String ATTR_DATA_TEMMATE_PART = "TeammatePart";
 
 
 }

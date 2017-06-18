@@ -22,13 +22,13 @@ import io.reactivex.subjects.PublishSubject;
  */
 public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
-    private final static int LIMIT = 10;
+    protected final static int LIMIT = 10;
 
 
     private final ConnectableObservable<Notification<JsonArray>> mConnectableObservable;
     private final PublishSubject<Notification<JsonArray>> mPublisher = PublishSubject.create();
     private final TeambrellaServer mServer;
-    private final Uri mUri;
+    protected final Uri mUri;
     private final String mProperty;
     private JsonArray mArray = new JsonArray();
 
@@ -43,6 +43,15 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     public TeambrellaDataPagerLoader(Context context, Uri uri, String property) {
         mConnectableObservable = mPublisher.publish();
         mConnectableObservable.connect();
+        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+        mUri = uri;
+        mProperty = property;
+    }
+
+    public TeambrellaDataPagerLoader(Context context, Uri uri, String property, int offset) {
+        mConnectableObservable = mPublisher.publish();
+        mConnectableObservable.connect();
+        mNextIndex = mPreviousIndex = offset;
         mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
         mUri = uri;
         mProperty = property;
@@ -104,16 +113,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     }
 
     private void onNext(JsonObject data) {
-
-        JsonArray newData;
-
-        if (mProperty == null) {
-            newData = data.get(TeambrellaModel.ATTR_DATA).getAsJsonArray();
-        } else {
-            newData = data.get(TeambrellaModel.ATTR_DATA)
-                    .getAsJsonObject().get(mProperty).getAsJsonArray();
-        }
-
+        JsonArray newData = getPageableData(data);
         mArray.addAll(newData);
         mHasNext = newData.size() == LIMIT;
         mNextIndex += newData.size();
@@ -122,21 +122,22 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     }
 
     private void onPrevious(JsonObject data) {
-        JsonArray newData;
-
-        if (mProperty == null) {
-            newData = data.get(TeambrellaModel.ATTR_DATA).getAsJsonArray();
-        } else {
-            newData = data.get(TeambrellaModel.ATTR_DATA)
-                    .getAsJsonObject().get(mProperty).getAsJsonArray();
-        }
-
+        JsonArray newData = getPageableData(data);
         newData.addAll(mArray);
         mHasNext = newData.size() == LIMIT;
         mPreviousIndex -= newData.size();
         mArray = newData;
         mIsLoading = false;
         mPublisher.onNext(Notification.createOnNext(newData));
+    }
+
+    protected JsonArray getPageableData(JsonObject src) {
+        if (mProperty == null) {
+            return src.get(TeambrellaModel.ATTR_DATA).getAsJsonArray();
+        } else {
+            return src.get(TeambrellaModel.ATTR_DATA)
+                    .getAsJsonObject().get(mProperty).getAsJsonArray();
+        }
     }
 
 

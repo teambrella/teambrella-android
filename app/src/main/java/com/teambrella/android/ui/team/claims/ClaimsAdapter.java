@@ -53,6 +53,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         if (holder instanceof ClaimViewHolder) {
             ClaimViewHolder claimViewHolder = (ClaimViewHolder) holder;
             final Context context = holder.itemView.getContext();

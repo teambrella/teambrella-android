@@ -76,7 +76,7 @@ public class ClaimsActivity extends ADataHostActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(mUri, null);
+                return TeambrellaDataPagerFragment.getInstance(mUri, null, TeambrellaDataPagerFragment.class);
         }
         return null;
     }
