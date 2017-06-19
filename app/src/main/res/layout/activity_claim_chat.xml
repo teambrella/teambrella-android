@@ -34,11 +34,13 @@
             android:src="@drawable/ic_send" />
 
         <EditText
+            android:id="@+id/text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/send_image"
             android:layout_toStartOf="@id/send_text"
             android:maxLines="3" />
+
 
     </RelativeLayout>
 

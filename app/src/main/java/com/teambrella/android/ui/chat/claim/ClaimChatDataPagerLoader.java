@@ -6,15 +6,15 @@ import android.net.Uri;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.data.base.TeambrellaDataPagerLoader;
+import com.teambrella.android.data.base.TeambrellaChatDataPagerLoader;
 
 /**
  * Claim chat pager loader
  */
-class ClaimChatDataPagerLoader extends TeambrellaDataPagerLoader {
+class ClaimChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     ClaimChatDataPagerLoader(Context context, Uri uri) {
-        super(context, uri, null, -LIMIT);
+        super(context, uri);
     }
 
     @Override

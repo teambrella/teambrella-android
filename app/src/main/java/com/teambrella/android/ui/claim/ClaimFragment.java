@@ -117,7 +117,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
 
-                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt())));
+                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt(), claimDiscussion.get(TeambrellaModel.ATTR_DATA_TOPIC_ID).getAsString())));
             }
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

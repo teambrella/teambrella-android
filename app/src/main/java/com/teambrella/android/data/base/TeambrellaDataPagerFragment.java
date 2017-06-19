@@ -15,7 +15,7 @@ public class TeambrellaDataPagerFragment extends Fragment {
     protected static final String EXTRA_URI = "uri";
     protected static final String EXTRA_PROPERTY = "property";
 
-    private TeambrellaDataPagerLoader mLoader;
+    private IDataPager<JsonArray> mLoader;
 
     public static <T extends TeambrellaDataPagerFragment> T getInstance(Uri uri, String property, Class<T> clazz) {
         try {
@@ -43,7 +43,7 @@ public class TeambrellaDataPagerFragment extends Fragment {
         return mLoader;
     }
 
-    protected TeambrellaDataPagerLoader createLoader(Bundle args) {
+    protected IDataPager<JsonArray> createLoader(Bundle args) {
         final Uri uri = args != null ? args.getParcelable(EXTRA_URI) : null;
         final String property = args != null ? args.getString(EXTRA_PROPERTY) : null;
         return new TeambrellaDataPagerLoader(getContext(), uri, property);

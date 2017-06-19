@@ -47,7 +47,7 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
             JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
             ((ClaimChatViewHolder) holder).mMessage.setText(Html.fromHtml(item.get(TeambrellaModel.ATTR_DATA_TEXT).getAsString()));
             TeambrellaImageLoader.getInstance(((ClaimChatViewHolder) holder).mMessage.getContext())
-                    .getPicasso().load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_TEMMATE_PART).getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+                    .getPicasso().load(TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                     .into(((ClaimChatViewHolder) holder).mUserPicture);
 
         }

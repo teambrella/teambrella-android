@@ -12,13 +12,13 @@ public interface IDataPager<T> {
 
     Observable<Notification<T>> getObservable();
 
-    void loadNext();
+    void loadNext(boolean force);
 
     boolean hasNext();
 
     boolean hasPrevious();
 
-    void loadPrevious();
+    void loadPrevious(boolean force);
 
     boolean hasError();
 

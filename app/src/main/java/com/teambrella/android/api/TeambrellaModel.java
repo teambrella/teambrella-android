@@ -76,7 +76,9 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_OFFSET = "Offset";
     public static final String ATTR_REQUEST_LIMIT = "Limit";
     public static final String ATTR_REQUEST_SINCE = "Since";
-    public static final String ATTR_REQUEST_LIMIT_OF_HISTORY = "LimitOfHistory";
+    public static final String ATTR_REQUEST_SINCE_OFFSET = "SinceOffset";
+    public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
+    public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
     public static final String ATTR_REQUEST_CLAIM_ID = "claimId";
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
@@ -163,6 +165,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RESOLUTION_TIME = "ResolutionTime";
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";
     public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
+    public static final String ATTR_DATA_TOPIC_ID = "TopicId";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -177,7 +180,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_INCIDENT_DATE = "IncidentDate";
     public static final String ATTR_DATA_CHAT = "Chat";
     public static final String ATTR_DATA_TEXT = "Text";
-    public static final String ATTR_DATA_TEMMATE_PART = "TeammatePart";
+    public static final String ATTR_DATA_TEAMMATE_PART = "TeammatePart";
+    public static final String ATTR_DATA_CREATED = "Created";
 
 
 }

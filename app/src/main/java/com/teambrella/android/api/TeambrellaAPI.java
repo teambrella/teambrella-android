@@ -72,4 +72,11 @@ public interface TeambrellaAPI {
                                                   @Header("sig") String signature,
                                                   @Body JsonElement body);
 
+    @Headers("Content-Type: application/json")
+    @POST("post/newPost")
+    Observable<Response<JsonObject>> newPost(@Header("t") long timestamp,
+                                             @Header("key") String publicKey,
+                                             @Header("sig") String signature,
+                                             @Body JsonElement body);
+
 }

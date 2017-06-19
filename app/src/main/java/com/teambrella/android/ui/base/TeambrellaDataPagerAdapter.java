@@ -67,13 +67,13 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         if (mPager.hasNext() && !mPager.isLoading() && !mPager.hasError() && position == mPager.getLoadedData().size()) {
-            mPager.loadNext();
+            mPager.loadNext(false);
         }
 
 
         if (holder instanceof ErrorViewHolder) {
             holder.itemView.setOnClickListener(v -> {
-                mPager.loadNext();
+                mPager.loadNext(false);
                 notifyDataSetChanged();
             });
         }

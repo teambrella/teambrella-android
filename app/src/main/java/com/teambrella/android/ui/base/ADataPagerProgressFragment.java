@@ -28,7 +28,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected T mDataHost;
     private Disposable mDisposable;
     protected RecyclerView mList;
-    private TeambrellaDataPagerAdapter mAdapter;
+    protected TeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
 
     public static <T extends ADataPagerProgressFragment> T getInstance(String tag, Class<T> clazz) {
@@ -77,7 +77,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         super.onViewCreated(view, savedInstanceState);
         IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
         if (pager.getLoadedData().size() == 0 && pager.hasNext()) {
-            pager.loadNext();
+            pager.loadNext(false);
             setContentShown(false);
         } else {
             setContentShown(true);
@@ -85,7 +85,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
     }
 
-    private void onDataUpdated(Notification<JsonArray> notification) {
+    protected void onDataUpdated(Notification<JsonArray> notification) {
         if (notification.isOnNext()) {
 
         } else {
