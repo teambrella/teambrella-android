@@ -42,7 +42,7 @@ public class ClaimChatActivity extends ADataHostActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mClaimId = getIntent().getIntExtra(EXTRA_CLAIM_ID, 0);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_one_fragment);
+        setContentView(R.layout.activity_claim_chat);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
