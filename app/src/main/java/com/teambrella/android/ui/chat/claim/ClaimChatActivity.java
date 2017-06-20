@@ -115,8 +115,8 @@ public class ClaimChatActivity extends ADataHostActivity {
 
 
     public void update() {
-        getPager(DATA_FRAGMENT_TAG).loadNext(true);
-        mHandler.postDelayed(mUpdate, 2000);
+        //getPager(DATA_FRAGMENT_TAG).loadNext(true);
+        //mHandler.postDelayed(mUpdate, 2000);
     }
 
     @Override
@@ -143,10 +143,5 @@ public class ClaimChatActivity extends ADataHostActivity {
     }
 
 
-    private Runnable mUpdate = new Runnable() {
-        @Override
-        public void run() {
-            update();
-        }
-    };
+    private Runnable mUpdate = () -> update();
 }

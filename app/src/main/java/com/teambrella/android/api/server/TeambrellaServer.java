@@ -140,7 +140,7 @@ public class TeambrellaServer {
             case TeambrellaUris.CLAIMS_CHAT:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
                 String sinceParam = uri.getQueryParameter(TeambrellaUris.KEY_SINCE);
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE_OFFSET, sinceParam != null ? Long.parseLong(sinceParam) : null);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, sinceParam != null ? Long.parseLong(sinceParam) : null);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.NEW_POST:

@@ -1,5 +1,6 @@
 package com.teambrella.android.api.model.json;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -68,6 +69,14 @@ public class JsonWrapper {
             return value.getAsFloat();
         }
         return defaultValue;
+    }
+
+    public JsonArray getJsonArray(String key) {
+        JsonElement value = mObject.get(key);
+        if (value != null && !value.isJsonNull()) {
+            return value.getAsJsonArray();
+        }
+        return null;
     }
 
 

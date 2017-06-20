@@ -76,7 +76,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_OFFSET = "Offset";
     public static final String ATTR_REQUEST_LIMIT = "Limit";
     public static final String ATTR_REQUEST_SINCE = "Since";
-    public static final String ATTR_REQUEST_SINCE_OFFSET = "SinceOffset";
+    // public static final String ATTR_REQUEST_SINCE_OFFSET = "SinceOffset";
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
@@ -87,6 +87,11 @@ public class TeambrellaModel {
     /*Response*/
     public static final String ATTR_STATUS = "Status";
     public static final String ATTR_DATA = "Data";
+    public static final String ATTR_METADATA_ = "MetaData";
+
+
+    /* Metadata */
+    public static final String ATTR_METADATA_ORIGINAL_SIZE = "OriginalSize";
 
 
     /*Status*/
@@ -182,6 +187,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEXT = "Text";
     public static final String ATTR_DATA_TEAMMATE_PART = "TeammatePart";
     public static final String ATTR_DATA_CREATED = "Created";
+    public static final String ATTR_DATA_LAST_READ = "LastRead";
+    public static final String ATTR_DATA_IMAGES = "Images";
 
 
 }
