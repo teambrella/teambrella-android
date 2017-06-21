@@ -1,9 +1,5 @@
 package com.teambrella.android.ui.chat.claim;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -14,7 +10,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -23,13 +18,40 @@ import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
+import java.util.Locale;
+
 /**
  * Claim Chat Adapter
  */
 class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
 
+    private static final String FORMAT_STRING = "<img src=\"%d\">";
+    private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;
+
     ClaimChatAdapter(IDataPager<JsonArray> pager) {
         super(pager);
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        int viewType = super.getItemViewType(position);
+
+        if (viewType == VIEW_TYPE_REGULAR) {
+            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
+            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+            String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            if (text != null && images != null && images.size() > 0) {
+                for (int i = 0; i < images.size(); i++) {
+                    if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
+                        viewType = VIEW_TYPE_REGULAR_IMAGE;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return viewType;
     }
 
     @Override
@@ -39,7 +61,10 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
                 case VIEW_TYPE_REGULAR:
-                    viewHolder = new ClaimChatViewHolder(inflater.inflate(R.layout.list_item_message, parent, false));
+                    viewHolder = new ClaimChatMessageViewHolder(inflater.inflate(R.layout.list_item_message, parent, false));
+                    break;
+                case VIEW_TYPE_REGULAR_IMAGE:
+                    viewHolder = new ClaimChatImageViewHolder(inflater.inflate(R.layout.list_item_message_image, parent, false));
                     break;
             }
         }
@@ -49,77 +74,53 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (holder instanceof ClaimChatViewHolder) {
+        Picasso picasso = TeambrellaImageLoader.getInstance(holder.itemView.getContext())
+                .getPicasso();
+
+        if (holder instanceof ClaimChatMessageViewHolder) {
             JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
-            ((ClaimChatViewHolder) holder).mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT), new Html.ImageGetter() {
+            ((ClaimChatMessageViewHolder) holder).mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
+            picasso.load(TeambrellaServer.AUTHORITY + item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .into(((ClaimChatMessageViewHolder) holder).mUserPicture);
 
-                URLDrawable mDrawable = new URLDrawable();
-
-                @Override
-                public Drawable getDrawable(String source) {
-                    int value = -1;
-
-                    try {
-                        value = Integer.parseInt(source);
-                    } catch (NumberFormatException e) {
-
+        } else if (holder instanceof ClaimChatImageViewHolder) {
+            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
+            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+            String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            if (text != null && images != null && images.size() > 0) {
+                for (int i = 0; i < images.size(); i++) {
+                    if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
+                        picasso.load(TeambrellaServer.AUTHORITY + images.get(i).getAsString())
+                                .into(((ClaimChatImageViewHolder) holder).mImage);
+                        break;
                     }
-
-                    if (value != -1) {
-                        TeambrellaImageLoader.getInstance(((ClaimChatViewHolder) holder).mMessage.getContext())
-                                .getPicasso().load(TeambrellaServer.AUTHORITY + item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES).get(value).getAsString())
-                                .into((new Target() {
-                                    @Override
-                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        mDrawable.drawable = new BitmapDrawable(bitmap);
-                                        // redraw the image by invalidating the container
-                                        holder.itemView.invalidate();
-                                    }
-
-                                    @Override
-                                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                                    }
-
-                                    @Override
-                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                                    }
-                                }));
-                    }
-                    return mDrawable;
                 }
-            }, null));
-            TeambrellaImageLoader.getInstance(((ClaimChatViewHolder) holder).mMessage.getContext())
-                    .getPicasso().load(TeambrellaServer.AUTHORITY + item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .into(((ClaimChatViewHolder) holder).mUserPicture);
-
+            }
+            picasso.load(TeambrellaServer.AUTHORITY + item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .into(((ClaimChatImageViewHolder) holder).mUserPicture);
         }
     }
 
-    private static class ClaimChatViewHolder extends RecyclerView.ViewHolder {
+    private static class ClaimChatMessageViewHolder extends RecyclerView.ViewHolder {
         ImageView mUserPicture;
         TextView mMessage;
 
-        ClaimChatViewHolder(View itemView) {
+        ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
             mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
             mMessage = (TextView) itemView.findViewById(R.id.message);
         }
     }
 
+    private static class ClaimChatImageViewHolder extends RecyclerView.ViewHolder {
+        ImageView mUserPicture;
+        ImageView mImage;
 
-    public class URLDrawable extends BitmapDrawable {
-        // the drawable that you need to set, you could set the initial drawing
-        // with the loading image if you need to
-        protected Drawable drawable;
-
-        @Override
-        public void draw(Canvas canvas) {
-            // override the draw to facilitate refresh function later
-            if (drawable != null) {
-                drawable.draw(canvas);
-            }
+        ClaimChatImageViewHolder(View itemView) {
+            super(itemView);
+            mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
+            mImage = (ImageView) itemView.findViewById(R.id.image);
         }
     }
+
 }

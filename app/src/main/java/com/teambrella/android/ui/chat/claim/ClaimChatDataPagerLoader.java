@@ -2,8 +2,8 @@ package com.teambrella.android.ui.chat.claim;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,11 +12,16 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.TeambrellaChatDataPagerLoader;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Claim chat pager loader
  */
 class ClaimChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
+
+    private static final String SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))";
 
     private static final String LOG_TAG = ClaimChatDataPagerLoader.class.getSimpleName();
 
@@ -33,56 +38,69 @@ class ClaimChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     @Override
     protected JsonObject postProcess(JsonObject object) {
+        JsonArray messages = getPageableData(object);
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, messages.size());
+        object.add(TeambrellaModel.ATTR_METADATA_, metadata);
 
-//        JsonArray messages = getPageableData(object);
-//        JsonObject metadata = new JsonObject();
-//        metadata.addProperty(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, messages.size());
-//        object.add(TeambrellaModel.ATTR_METADATA_, metadata);
-//
-//        object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
-//                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
-//                .remove(TeambrellaModel.ATTR_DATA_CHAT);
-//
-//
-//        JsonArray newMessages = new JsonArray();
-//
-//        Iterator<JsonElement> it = messages.iterator();
-//        //noinspection WhileLoopReplaceableByForEach
-//        while (it.hasNext()) {
-//            final String imageReference = "<img src=\"%d\">";
-//            JsonObject srcObject = it.next().getAsJsonObject();
-//            JsonWrapper message = new JsonWrapper(srcObject);
-//            String text = message.getString(TeambrellaModel.ATTR_DATA_TEXT);
-//            JsonArray images = message.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
-//
-//
-//            String[] slices = text != null ? text.split("<img src=\"0\">") : null;
-//
-//            if (slices != null) {
-//
-//                for (String str : slices) {
-//                    Log.d(LOG_TAG, str);
-//                }
-//            }
-//
-////
-////            if (images.size() > 0) {
-////                srcObject.remove(TeambrellaModel.ATTR_DATA_IMAGES);
-////                String srcString = text;
-////                for (int i = 0; i < images.size(); i++) {
-////                    String[] slices = srcString.split(String.format(Locale.US, imageReference, i));
-////                    if (slices.length == 2) {
-////
-////                    }
-////                }
-////
-////            } else {
-////                Log.d(LOG_TAG, text);
-////            }
-//
-//        }
+        object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
+                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
+                .remove(TeambrellaModel.ATTR_DATA_CHAT);
+
+
+        JsonArray newMessages = new JsonArray();
+
+        Iterator<JsonElement> it = messages.iterator();
+        //noinspection WhileLoopReplaceableByForEach
+        while (it.hasNext()) {
+            JsonObject srcObject = it.next().getAsJsonObject();
+            JsonWrapper message = new JsonWrapper(srcObject);
+            String text = message.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            JsonArray images = message.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+
+            if (text != null && images != null && images.size() > 0) {
+                Gson gson = new Gson();
+                List<String> slices = separate(text, 0, images.size());
+                for (String slice : slices) {
+                    JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
+                    newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, slice);
+                    newMessages.add(newObject);
+                }
+            } else {
+                newMessages.add(srcObject);
+            }
+        }
+
+        object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
+                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
+                .add(TeambrellaModel.ATTR_DATA_CHAT, newMessages);
 
 
         return super.postProcess(object);
+    }
+
+
+    private static List<String> separate(String input, int position, int size) {
+        List<String> list = new LinkedList<>();
+
+        if (position < size) {
+            String[] slices = input.trim().split(String.format(Locale.US, SPLIT_FORMAT_STRING, position, position));
+            if (slices.length == 1) {
+                if (slices[0].trim().length() > 0) {
+                    list.add(slices[0].trim());
+                }
+            } else {
+                for (String slice : slices) {
+                    list.addAll(separate(slice, position + 1, size));
+                }
+            }
+        } else {
+            if (input.trim().length() > 0) {
+                list.add(input.trim());
+            }
+        }
+
+
+        return list;
     }
 }
