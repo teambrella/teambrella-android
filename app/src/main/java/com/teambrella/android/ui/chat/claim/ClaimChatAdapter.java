@@ -20,6 +20,7 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -82,7 +83,7 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
     }
 
     private static class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL YYYY", Locale.getDefault());
+        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
         Picasso picasso;
@@ -96,7 +97,9 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void bind(JsonWrapper object) {
-            picasso.load(TeambrellaServer.AUTHORITY + object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
+            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY,
+                    object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getObject(),
+                    TeambrellaModel.ATTR_DATA_AVATAR))
                     .into(mUserPicture);
             mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
         }
@@ -129,13 +132,12 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-            JsonArray images = object.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
-                        picasso.load(TeambrellaServer.AUTHORITY + images.get(i).getAsString())
-                                .into(mImage);
+                        picasso.load(images.get(i)).into(mImage);
                         break;
                     }
                 }

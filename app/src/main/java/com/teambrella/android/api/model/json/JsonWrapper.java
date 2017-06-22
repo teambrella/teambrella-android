@@ -87,4 +87,8 @@ public class JsonWrapper {
         }
         return null;
     }
+
+    public JsonObject getObject() {
+        return mObject;
+    }
 }

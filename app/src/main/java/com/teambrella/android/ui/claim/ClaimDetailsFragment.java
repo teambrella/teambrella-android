@@ -29,7 +29,7 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     private TextView mDeductible;
     private TextView mCoverage;
     private TextView mInsidentDate;
-    private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL YYYY", Locale.getDefault());
+    private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL", Locale.ENGLISH);
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 

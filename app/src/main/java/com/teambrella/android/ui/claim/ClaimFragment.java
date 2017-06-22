@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -91,13 +90,10 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
             JsonObject claimBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
             if (claimBasic != null) {
-                JsonArray photos = claimBasic.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
+                ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY,
+                        claimBasic, TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
                 if (photos != null && photos.size() > 0) {
-                    ArrayList<String> list = new ArrayList<>(photos.size());
-                    for (int i = 0; i < photos.size(); i++) {
-                        list.add(TeambrellaServer.AUTHORITY + photos.get(i).getAsString());
-                    }
-                    mClaimPictures.init(getChildFragmentManager(), list);
+                    mClaimPictures.init(getChildFragmentManager(), photos);
                 }
 
                 getActivity().setTitle(claimBasic.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());

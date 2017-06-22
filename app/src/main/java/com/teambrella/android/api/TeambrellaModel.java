@@ -1,5 +1,10 @@
 package com.teambrella.android.api;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+
 /**
  * Model
  */
@@ -189,6 +194,32 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CREATED = "Created";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+
+
+    /**
+     * Get Images
+     */
+    public static ArrayList<String> getImages(String authority, JsonObject object, String property) {
+        ArrayList<String> list = new ArrayList<>();
+
+        JsonElement element = object.get(property);
+
+        if (element != null && element.isJsonArray()) {
+            for (JsonElement item : element.getAsJsonArray()) {
+                list.add(authority + item.getAsString());
+            }
+        }
+
+        return list;
+    }
+
+    public static String getImage(String authority, JsonObject object, String property) {
+        JsonElement element = object.get(property);
+        if (element != null && element.isJsonPrimitive()) {
+            return authority + element.getAsString();
+        }
+        return null;
+    }
 
 
 }
