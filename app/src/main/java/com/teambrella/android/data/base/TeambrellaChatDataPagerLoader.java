@@ -25,7 +25,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
 
     private static final long SINCE_MAX_VALUE = 736335536470868471L;
 
-    private final static int LIMIT = 10;
+    private final static int LIMIT = 20;
 
     private final ConnectableObservable<Notification<JsonArray>> mConnectableObservable;
     private final PublishSubject<Notification<JsonArray>> mPublisher = PublishSubject.create();

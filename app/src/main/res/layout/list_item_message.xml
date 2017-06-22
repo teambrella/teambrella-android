@@ -14,17 +14,44 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
-    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-        android:id="@+id/message"
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:background="@drawable/bubble"
-        android:lineSpacingExtra="5dp"
-        android:textColor="@color/charcoalGrey"
-        android:textSize="14sp"
+        android:gravity="end"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/user_picture"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constraintWidth_default="wrap">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:padding="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="14sp" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:paddingBottom="6dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:text="12:34"
+            android:textColor="@color/blueGrey"
+            android:textSize="10sp" />
+
+
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

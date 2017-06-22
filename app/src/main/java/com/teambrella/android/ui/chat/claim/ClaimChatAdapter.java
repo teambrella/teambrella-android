@@ -17,7 +17,9 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.util.TimeUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
@@ -74,52 +76,70 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Picasso picasso = TeambrellaImageLoader.getInstance(holder.itemView.getContext())
-                .getPicasso();
-
-        if (holder instanceof ClaimChatMessageViewHolder) {
-            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
-            ((ClaimChatMessageViewHolder) holder).mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
-            picasso.load(TeambrellaServer.AUTHORITY + item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .into(((ClaimChatMessageViewHolder) holder).mUserPicture);
-
-        } else if (holder instanceof ClaimChatImageViewHolder) {
-            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
-            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
-            String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
-            if (text != null && images != null && images.size() > 0) {
-                for (int i = 0; i < images.size(); i++) {
-                    if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
-                        picasso.load(TeambrellaServer.AUTHORITY + images.get(i).getAsString())
-                                .into(((ClaimChatImageViewHolder) holder).mImage);
-                        break;
-                    }
-                }
-            }
-            picasso.load(TeambrellaServer.AUTHORITY + item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .into(((ClaimChatImageViewHolder) holder).mUserPicture);
+        if (holder instanceof ClaimChatViewHolder) {
+            ((ClaimChatViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
 
-    private static class ClaimChatMessageViewHolder extends RecyclerView.ViewHolder {
+    private static class ClaimChatViewHolder extends RecyclerView.ViewHolder {
+        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL YYYY", Locale.getDefault());
         ImageView mUserPicture;
+        TextView mTime;
+        Picasso picasso;
+
+        ClaimChatViewHolder(View itemView) {
+            super(itemView);
+            picasso = TeambrellaImageLoader.getInstance(itemView.getContext())
+                    .getPicasso();
+            mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
+            mTime = (TextView) itemView.findViewById(R.id.time);
+        }
+
+        void bind(JsonWrapper object) {
+            picasso.load(TeambrellaServer.AUTHORITY + object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .into(mUserPicture);
+            mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+        }
+    }
+
+
+    private static class ClaimChatMessageViewHolder extends ClaimChatViewHolder {
         TextView mMessage;
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
-            mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
             mMessage = (TextView) itemView.findViewById(R.id.message);
+        }
+
+        @Override
+        void bind(JsonWrapper object) {
+            super.bind(object);
+            mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT)));
         }
     }
 
-    private static class ClaimChatImageViewHolder extends RecyclerView.ViewHolder {
-        ImageView mUserPicture;
+    private static class ClaimChatImageViewHolder extends ClaimChatViewHolder {
         ImageView mImage;
 
         ClaimChatImageViewHolder(View itemView) {
             super(itemView);
-            mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
             mImage = (ImageView) itemView.findViewById(R.id.image);
+        }
+
+        @Override
+        void bind(JsonWrapper object) {
+            super.bind(object);
+            JsonArray images = object.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+            String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            if (text != null && images != null && images.size() > 0) {
+                for (int i = 0; i < images.size(); i++) {
+                    if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
+                        picasso.load(TeambrellaServer.AUTHORITY + images.get(i).getAsString())
+                                .into(mImage);
+                        break;
+                    }
+                }
+            }
         }
     }
 
