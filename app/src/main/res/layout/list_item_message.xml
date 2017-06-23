@@ -33,7 +33,7 @@
             android:lineSpacingExtra="5dp"
             android:padding="8dp"
             android:paddingEnd="16dp"
-            android:paddingStart="16dp"
+            android:paddingStart="32dp"
             android:paddingTop="8dp"
             android:textColor="@color/charcoalGrey"
             android:textSize="14sp" />
@@ -46,7 +46,6 @@
             android:paddingBottom="6dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="12:34"
             android:textColor="@color/blueGrey"
             android:textSize="10sp" />
 
