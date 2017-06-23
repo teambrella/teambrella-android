@@ -30,7 +30,22 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
         mPager = pager;
-        mDisposal = mPager.getObservable().subscribe(d -> notifyDataSetChanged());
+        mDisposal = mPager.getObservable().subscribe(pairNotification -> {
+            if (pairNotification.isOnNext()) {
+                Integer addedSize = pairNotification.getValue().first;
+                int shift = hasHeader() ? 1 : 0;
+                int dataSize = mPager.getLoadedData().size();
+                if (addedSize > 0) {
+                    notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
+                } else if (pairNotification.getValue().first < 0) {
+                    notifyItemRangeInserted((mPager.hasPrevious() ? 1 : 0), Math.abs(addedSize));
+                } else {
+                    notifyDataSetChanged();
+                }
+            } else {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -38,10 +53,18 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
         int size = mPager.getLoadedData().size();
 
-        if (position == size) {
-            if (mPager.hasError()) {
+        if (position == 0) {
+            if (mPager.hasPreviousError()) {
                 return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isLoading()) {
+            } else if (mPager.hasPrevious() || mPager.isPreviousLoading()) {
+                return VIEW_TYPE_LOADING;
+            }
+
+        } else if ((position == size) && !mPager.hasPrevious() && !mPager.isPreviousLoading() && !mPager.hasPreviousError()
+                || ((mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious()) && position == size + 1)) {
+            if (mPager.hasNextError()) {
+                return VIEW_TYPE_ERROR;
+            } else if (mPager.hasNext() || mPager.isNextLoading()) {
                 return VIEW_TYPE_LOADING;
             } else {
                 throw new RuntimeException();
@@ -66,8 +89,12 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (mPager.hasNext() && !mPager.isLoading() && !mPager.hasError() && position > mPager.getLoadedData().size() - 10) {
+        if (mPager.hasNext() && !mPager.isNextLoading() && !mPager.hasNextError() && position > mPager.getLoadedData().size() - 10) {
             mPager.loadNext(false);
+        }
+
+        if (mPager.hasPrevious() && !mPager.isNextLoading() && !mPager.hasNextError() && position < 10) {
+            mPager.loadPrevious(false);
         }
 
 
@@ -87,8 +114,16 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return mPager.getLoadedData().size()
-                + (mPager.hasError() || mPager.isLoading() || mPager.hasNext() ? 1 : 0);
+        return mPager.getLoadedData().size() + (hasFooter() ? 1 : 0) + (hasHeader() ? 1 : 0);
+
+    }
+
+    protected boolean hasHeader() {
+        return mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious();
+    }
+
+    protected boolean hasFooter() {
+        return mPager.hasNextError() || mPager.isNextLoading() || mPager.hasNext();
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {

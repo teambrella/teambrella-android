@@ -41,7 +41,7 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
         int viewType = super.getItemViewType(position);
 
         if (viewType == VIEW_TYPE_REGULAR) {
-            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
+            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject());
             JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
             String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
             if (text != null && images != null && images.size() > 0) {
@@ -78,9 +78,10 @@ class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof ClaimChatViewHolder) {
-            ((ClaimChatViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+            ((ClaimChatViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject()));
         }
     }
+
 
     private static class ClaimChatViewHolder extends RecyclerView.ViewHolder {
         private static SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL", Locale.ENGLISH);

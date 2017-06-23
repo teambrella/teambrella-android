@@ -65,9 +65,9 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         int size = mPager.getLoadedData().size() + 1;
 
         if (position == size) {
-            if (mPager.hasError()) {
+            if (mPager.hasNextError()) {
                 return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isLoading()) {
+            } else if (mPager.hasNext() || mPager.isNextLoading()) {
                 return VIEW_TYPE_LOADING;
             } else {
                 throw new RuntimeException();
@@ -75,12 +75,6 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         }
 
         return VIEW_TYPE_REGULAR;
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return super.getItemCount() + 1;
     }
 
     @Override
@@ -113,6 +107,12 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(BuildConfig.TEAM_ID,
                     item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
+    }
+
+
+    @Override
+    protected boolean hasHeader() {
+        return true;
     }
 
     static class TeammatesViewHolder extends RecyclerView.ViewHolder {

@@ -1,5 +1,7 @@
 package com.teambrella.android.data.base;
 
+import android.util.Pair;
+
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 
@@ -10,7 +12,7 @@ public interface IDataPager<T> {
 
     T getLoadedData();
 
-    Observable<Notification<T>> getObservable();
+    Observable<Notification<Pair<Integer, T>>> getObservable();
 
     void loadNext(boolean force);
 
@@ -20,8 +22,12 @@ public interface IDataPager<T> {
 
     void loadPrevious(boolean force);
 
-    boolean hasError();
+    boolean hasNextError();
 
-    boolean isLoading();
+    boolean isNextLoading();
+
+    boolean hasPreviousError();
+
+    boolean isPreviousLoading();
 
 }

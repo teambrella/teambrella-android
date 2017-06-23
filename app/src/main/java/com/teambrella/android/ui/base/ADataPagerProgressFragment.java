@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
     }
 
-    protected void onDataUpdated(Notification<JsonArray> notification) {
+    protected void onDataUpdated(Notification<Pair<Integer, JsonArray>> notification) {
         if (notification.isOnNext()) {
 
         } else {
