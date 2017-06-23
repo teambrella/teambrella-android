@@ -33,7 +33,7 @@
             android:adjustViewBounds="true"
             android:maxWidth="300dp"
             android:paddingEnd="4dp"
-            android:paddingStart="4dp"
+            android:paddingStart="20dp"
             android:paddingTop="4dp"
             android:scaleType="fitCenter" />
 
@@ -45,9 +45,7 @@
             android:paddingBottom="6dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="12:34"
-            android:textColor="@color/blueGrey"
-            android:textSize="10sp" />
+            android:textColor="@color/blueGrey" />
 
 
     </LinearLayout>
