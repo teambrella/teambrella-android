@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
 
@@ -9,7 +10,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.teambrella.android"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -20,9 +21,6 @@ android {
         buildConfigField "String", "THORAX_PRIVATE_KEY", "\"" + keyProperties.getProperty("ThoraxPrivateKey") + "\""
         buildConfigField "String", "MASTER_USER_PRIVATE_KEY", "\"" + keyProperties.getProperty("MasterUserPrivateKey") + "\""
         buildConfigField "int", "TEAM_ID", "2006"
-        jackOptions {
-            enabled true
-        }
     }
     buildTypes {
         release {
