@@ -1,5 +1,7 @@
 package com.teambrella.android.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -36,6 +37,10 @@ import java.lang.reflect.Field;
  */
 public class MainActivity extends ADataHostActivity {
 
+
+    private static final String TEAM_ID_EXTRA = "team_id";
+
+
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
 
@@ -46,9 +51,17 @@ public class MainActivity extends ADataHostActivity {
 
 
     private int mSelectedItemId = 0;
+    private int mTeamId;
+
+
+    public static Intent getLaunchIntent(Context context, int teamId) {
+        return new Intent(context, MainActivity.class).putExtra(TEAM_ID_EXTRA, teamId);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/AkkuratPro-Bold.otf");
@@ -105,7 +118,7 @@ public class MainActivity extends ADataHostActivity {
             case HOME_TAG:
                 return new HomeFragment();
             case TEAM_TAG:
-                return new TeamFragment();
+                return TeamFragment.getInstance(getIntent().getIntExtra(TEAM_ID_EXTRA, 0));
             case PROFILE_TAG:
                 return new ProfileFragment();
             case PROXIES_TAG:
@@ -114,7 +127,6 @@ public class MainActivity extends ADataHostActivity {
                 throw new RuntimeException("unknown tag " + tag);
         }
     }
-
 
     @Override
     protected String[] getDataTags() {
@@ -135,10 +147,10 @@ public class MainActivity extends ADataHostActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(BuildConfig.TEAM_ID),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(mTeamId),
                         TeambrellaModel.ATTR_DATA_TEAMMATES, TeambrellaDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(BuildConfig.TEAM_ID),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);
         }
         return null;

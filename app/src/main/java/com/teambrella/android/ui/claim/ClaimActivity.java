@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -35,13 +34,17 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String UI_TAG = "ui";
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_MODEL = "model";
+    private static final String EXTRA_TEAM_ID = "team_id";
 
 
     private Disposable mDisposal;
 
 
-    public static Intent getLaunchIntent(Context context, Uri uri, String model) {
-        return new Intent(context, ClaimActivity.class).putExtra(EXTRA_URI, uri).putExtra(EXTRA_MODEL, model);
+    public static Intent getLaunchIntent(Context context, Uri uri, String model, int teamId) {
+        return new Intent(context, ClaimActivity.class)
+                .putExtra(EXTRA_URI, uri)
+                .putExtra(EXTRA_MODEL, model)
+                .putExtra(EXTRA_TEAM_ID, teamId);
     }
 
 
@@ -121,7 +124,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                             .load(pictureUri).into(teammatePicture);
                     teammatePicture.setOnClickListener(v ->
                             startActivity(TeammateActivity.getIntent(ClaimActivity.this
-                                    , TeambrellaUris.getTeammateUri(BuildConfig.TEAM_ID
+                                    , TeambrellaUris.getTeammateUri(getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                             , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
                                     , pictureUri)));

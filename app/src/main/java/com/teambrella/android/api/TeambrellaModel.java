@@ -195,6 +195,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
 
+    public static final String ATTR_DATA_MY_TEAMS = "MyTeams";
+
 
     /**
      * Get Images

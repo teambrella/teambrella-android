@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+
 /**
  * Json Wrapper
  */
@@ -77,6 +79,20 @@ public class JsonWrapper {
             return value.getAsJsonArray();
         }
         return null;
+    }
+
+
+    public ArrayList<JsonWrapper> getArray(String key) {
+        ArrayList<JsonWrapper> array = new ArrayList<>();
+        JsonElement value = mObject.get(key);
+        if (value != null && !value.isJsonNull()) {
+            JsonArray jsonArray = value.getAsJsonArray();
+            for (JsonElement element : jsonArray) {
+                array.add(new JsonWrapper(element.getAsJsonObject()));
+            }
+        }
+
+        return array;
     }
 
 

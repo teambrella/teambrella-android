@@ -27,13 +27,19 @@ import butterknife.ButterKnife;
  * Claims Adapter
  */
 public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
+
+
+    private final int mTeamId;
+
+
     /**
      * Constructor
      *
      * @param pager pager
      */
-    public ClaimsAdapter(IDataPager<JsonArray> pager) {
+    public ClaimsAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
 
@@ -69,7 +75,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             claimViewHolder.mNet.setText("$" + Math.round(item.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble()));
             claimViewHolder.itemView.setOnClickListener(v -> context.startActivity(
                     ClaimActivity.getLaunchIntent(context, TeambrellaUris.getClaimUri(item.get(TeambrellaModel.ATTR_DATA_ID).getAsInt()),
-                            item.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString())));
+                            item.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString(), mTeamId)));
         }
     }
 

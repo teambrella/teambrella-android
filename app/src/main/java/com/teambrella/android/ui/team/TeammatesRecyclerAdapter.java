@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -31,11 +30,14 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
     private static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 1;
 
+    private final int mTeamId;
+
     /**
      * Constructor.
      */
-    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager) {
+    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
     @Override
@@ -104,7 +106,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
             tholder.mRisk.setText(context.getString(R.string.risk_format_string, item.get(TeambrellaModel.ATTR_DATA_RISK).getAsFloat()));
 
-            holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(BuildConfig.TEAM_ID,
+            holder.itemView.setOnClickListener(v -> context.startActivity(TeammateActivity.getIntent(context, TeambrellaUris.getTeammateUri(mTeamId,
                     item.get(TeambrellaModel.ATTR_DATA_USER_ID).getAsString()), item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString(), userPictureUri)));
         }
     }

@@ -15,6 +15,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 
@@ -38,7 +40,9 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (TeambrellaUser.get(this).getPrivateKey() != null) {
+        TeambrellaUser user = TeambrellaUser.get(this);
+        if (user.getPrivateKey() != null
+                ) {
 //            PeriodicTask task = new PeriodicTask.Builder()
 //                    .setService(TeambrellaUtilService.class)
 //                    .setTag("account_task")
@@ -46,8 +50,12 @@ public class WelcomeActivity extends AppCompatActivity {
 //                    .build();
 //
 //            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
-            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
-            finish();
+            if (user.getTeamId() > 0) {
+                startActivity(MainActivity.getLaunchIntent(this, user.getTeamId()));
+                finish();
+            } else {
+                new GetTeamIDTask().execute(TeambrellaUser.get(this).getPrivateKey());
+            }
         }
 
 
@@ -105,11 +113,28 @@ public class WelcomeActivity extends AppCompatActivity {
                 user.setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);
                 break;
         }
-
-        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
-        finish();
-
+        new GetTeamIDTask().execute(user.getPrivateKey());
     };
+
+    private class GetTeamIDTask extends AsyncTask<String, Void, Integer> {
+        @Override
+        protected Integer doInBackground(String... keys) {
+            TeambrellaServer server = new TeambrellaServer(WelcomeActivity.this, keys[0]);
+            return server.requestObservable(TeambrellaUris.getMyTeams(), null).map(jsonObject -> new JsonWrapper(jsonObject)
+                    .getObject(TeambrellaModel.ATTR_DATA)
+                    .getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS)
+                    .get(0).getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, 0)).blockingFirst();
+        }
+
+        @Override
+        protected void onPostExecute(Integer teamId) {
+            super.onPostExecute(teamId);
+            TeambrellaUser.get(WelcomeActivity.this).setTeamId(teamId);
+            startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this, teamId));
+            finish();
+        }
+    }
+
 
     private class RegisterKeyTask extends AsyncTask<Void, Void, Boolean> {
 

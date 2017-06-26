@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -68,11 +67,12 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject data = notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject objectData = data.get(TeambrellaModel.ATTR_DATA_ONE_OBJECT).getAsJsonObject();
-            JsonObject objectBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper objectData = data.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT);
+            JsonWrapper objectBasic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             if (objectData != null) {
-                JsonArray photos = objectData.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
+                JsonArray photos = objectData.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).getAsJsonArray();
                 Resources resources = getContext().getResources();
                 if (photos != null && photos.size() > 0) {
                     TeambrellaImageLoader.getInstance(getContext()).getPicasso()
@@ -93,19 +93,17 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                                     makeSceneTransitionAnimation(getActivity(), mObjectPicture, TeambrellaServer.AUTHORITY + photos.get(0).getAsString()).toBundle()));
 
                 }
-                mObjectModel.setText(objectData.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());
-                mLimit.setAmount(Math.round(objectData.get(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT).getAsFloat()));
+                mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL));
+                mLimit.setAmount(Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT, 0f)));
             }
 
             if (objectBasic != null) {
-                mNet.setAmount(Math.round(objectBasic.get(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT).getAsFloat()));
-                mRisk.setText(getString(R.string.risk_format_string, objectBasic.get(TeambrellaModel.ATTR_DATA_RISK).getAsFloat() + 0.05f));
+                mNet.setAmount(Math.round(objectBasic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT, 0f)));
+                mRisk.setText(getString(R.string.risk_format_string, objectBasic.getFloat(TeambrellaModel.ATTR_DATA_RISK, 0f) + 0.05f));
+                mSeeClaims.setOnClickListener(v -> startActivity(ClaimsActivity.getLaunchIntent(getContext()
+                        , TeambrellaUris.getClaimsUri(objectBasic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, 0), data.getInt(TeambrellaModel.ATTR_DATA_ID, 0)))));
+
             }
-
-            mSeeClaims.setOnClickListener(v -> startActivity(ClaimsActivity.getLaunchIntent(getContext()
-                    , TeambrellaUris.getClaimsUri(BuildConfig.TEAM_ID, new JsonWrapper(data).getInt(TeambrellaModel.ATTR_DATA_ID, 0)))));
-
-
         }
     }
 }

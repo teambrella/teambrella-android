@@ -15,13 +15,26 @@ import android.widget.TextView;
 
 import com.teambrella.android.R;
 import com.teambrella.android.ui.MainActivity;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.team.claims.ClaimsFragment;
 
 /**
  * Team fragment
  */
 public class TeamFragment extends Fragment {
+
+
+    private static String EXTRA_TEAM_ID = "team_id";
+
+
+    public static TeamFragment getInstance(int teamId) {
+        TeamFragment fragment = new TeamFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_TEAM_ID, teamId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
 
     @Override
@@ -49,9 +62,9 @@ public class TeamFragment extends Fragment {
                     case 0:
                         return new FeedFragment();
                     case 1:
-                        return ADataPagerProgressFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, MembersFragment.class);
+                        return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     case 2:
-                        return ADataPagerProgressFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, ClaimsFragment.class);
+                        return ClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     default:
                         throw new RuntimeException();
                 }

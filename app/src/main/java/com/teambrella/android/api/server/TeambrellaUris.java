@@ -21,6 +21,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_REGISTER = "registerKey";
     private static final String SEGMENT_CHAT = "chat";
     private static final String SEGMENT_NEW_POST = "newPost";
+    private static final String SEGMENT_TEAMS = "teams";
+
 
     static final String KEY_FACEBOOK_TOKEN = "facebookToken";
     static final String KEY_OFFSET = "Offset";
@@ -40,6 +42,7 @@ public class TeambrellaUris {
     static final int CLAIMS_ONE = 6;
     static final int CLAIMS_CHAT = 7;
     static final int NEW_POST = 8;
+    static final int MY_TEAMS = 9;
 
 
     static {
@@ -47,6 +50,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_ONE + "/*", TEAMMATES_ONE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_UPDATES, ME_UPDATES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER, ME_REGISTER_KEY);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_TEAMS, MY_TEAMS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_LIST, CLAIMS_LIST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_ONE, CLAIMS_ONE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_CHAT, CLAIMS_CHAT);
@@ -106,6 +110,14 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_ONE)
                 .appendQueryParameter(KEY_ID, Integer.toString(claimId))
+                .build();
+    }
+
+    public static Uri getMyTeams() {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_TEAMS)
                 .build();
     }
 

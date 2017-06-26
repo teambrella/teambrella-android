@@ -150,6 +150,7 @@ public class TeambrellaServer {
                 break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
+            case TeambrellaUris.MY_TEAMS:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -183,6 +184,8 @@ public class TeambrellaServer {
                 return mAPI.getClaimChat(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.NEW_POST:
                 return mAPI.newPost(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.MY_TEAMS:
+                return mAPI.getTeams(timestamp, publicKey, signature);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
