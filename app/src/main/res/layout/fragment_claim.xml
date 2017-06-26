@@ -101,11 +101,18 @@
 
                 </android.support.constraint.ConstraintLayout>
 
+
+                <FrameLayout
+                    android:id="@+id/voting_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/section_background" />
+
                 <FrameLayout
                     android:id="@+id/details_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp" />
+                    android:background="@drawable/section_background" />
 
             </LinearLayout>
 

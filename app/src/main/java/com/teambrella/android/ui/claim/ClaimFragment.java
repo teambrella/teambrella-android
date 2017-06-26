@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.claim.ClaimChatActivity;
 import com.teambrella.android.ui.widget.ImagePager;
@@ -31,6 +33,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
     private static final String DETAILS_FRAGMENT_TAG = "details";
+    private static final String VOTING_FRAGMENT_TAG = "voting";
 
     private ImagePager mClaimPictures;
     private ImageView mOriginalObjectPicture;
@@ -77,10 +80,21 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(DETAILS_FRAGMENT_TAG) == null) {
-            fragmentManager.beginTransaction().add(R.id.details_container, ClaimDetailsFragment.getInstance(mTag), DETAILS_FRAGMENT_TAG)
-                    .commit();
+            transaction.add(R.id.details_container, ClaimDetailsFragment.getInstance(mTag), DETAILS_FRAGMENT_TAG);
         }
+
+        if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
+            transaction.add(R.id.voting_container, ADataFragment.getInstance(mTag, ClaimVotingFragment.class), VOTING_FRAGMENT_TAG);
+        }
+
+
+        if (!transaction.isEmpty()) {
+            transaction.commit();
+        }
+
+
     }
 
     @Override
