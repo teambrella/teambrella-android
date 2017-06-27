@@ -48,6 +48,7 @@
     <string name="claim_title_format_string">Claim %d</string>
     <string name="claim_details">Claim Details</string>
     <string name="claim_amount">Claim Amount</string>
+    <string name="voting">Voting</string>
     <string name="estimated_expenses">Estimated expenses</string>
     <string name="deductible">Deductible</string>
     <string name="coverage">Coverage</string>
@@ -57,6 +58,9 @@
     <string name="percentage_format_string">%d%%</string>
 
 
+    <string name="team_vote">Team Vote</string>
+    <string name="your_vote">Your vote</string>
+    <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
 
 
 </resources>
