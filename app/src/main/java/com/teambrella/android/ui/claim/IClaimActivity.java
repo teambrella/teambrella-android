@@ -10,4 +10,5 @@ public interface IClaimActivity extends IDataHost {
     void setTitle(String title);
 
     void setSubtitle(String subtitle);
+
 }

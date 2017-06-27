@@ -87,6 +87,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_ID = "Id";
     public static final String ATTR_REQUEST_CLAIM_ID = "claimId";
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
+    public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
 
 
     /*Response*/
@@ -194,6 +195,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CREATED = "Created";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+
+
+    public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
+    public static final String ATTR_DATA_MY_VOTE = "MyVote";
 
     public static final String ATTR_DATA_MY_TEAMS = "MyTeams";
 
