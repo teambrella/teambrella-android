@@ -34,7 +34,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="8dp">
@@ -52,12 +52,18 @@
                 android:textColor="@color/dark"
                 android:textSize="36sp" />
 
+            <com.teambrella.android.ui.widget.AmountWidget
+                android:id="@+id/team_vote_currency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
+
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/your_vote_background"
             android:orientation="vertical"
@@ -76,6 +82,11 @@
                 android:textColor="@color/dark"
                 android:textSize="36sp" />
 
+            <com.teambrella.android.ui.widget.AmountWidget
+                android:id="@+id/your_vote_currency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" />
 
         </LinearLayout>
 
