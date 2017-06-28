@@ -73,6 +73,14 @@ public class JsonWrapper {
         return defaultValue;
     }
 
+    public double getDouble(String key, double defaultValue) {
+        JsonElement value = mObject.get(key);
+        if (value != null && !value.isJsonNull()) {
+            return value.getAsDouble();
+        }
+        return defaultValue;
+    }
+
     public JsonArray getJsonArray(String key) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {

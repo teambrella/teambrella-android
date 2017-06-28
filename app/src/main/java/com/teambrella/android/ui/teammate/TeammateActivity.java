@@ -15,6 +15,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 /**
@@ -51,7 +52,7 @@ public class TeammateActivity extends ADataHostActivity {
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, TeammateFragment.getInstance(DATA_FRAGMENT), UI_FRAGMENT)
+                    .add(R.id.container, ADataProgressFragment.getInstance(DATA_FRAGMENT, TeammateFragment.class), UI_FRAGMENT)
                     .commit();
         }
 

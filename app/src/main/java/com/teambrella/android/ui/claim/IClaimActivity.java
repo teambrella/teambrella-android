@@ -11,4 +11,6 @@ public interface IClaimActivity extends IDataHost {
 
     void setSubtitle(String subtitle);
 
+    void postVote(int vote);
+
 }

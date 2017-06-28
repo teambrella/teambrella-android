@@ -43,6 +43,10 @@ public class TeambrellaDataFragment extends Fragment {
         mLoader.load(mUri, null);
     }
 
+    public void load(Uri uri) {
+        mLoader.load(uri, null);
+    }
+
 
     public Observable<Notification<JsonObject>> getObservable() {
         return mLoader.getObservable();

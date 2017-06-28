@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -42,10 +43,6 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     private TextView mUnreadCount;
     private View mDiscussion;
 
-    public static ClaimFragment getInstance(String tag) {
-        return ADataProgressFragment.getInstance(tag, ClaimFragment.class);
-    }
-
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim, container, false);
@@ -60,7 +57,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
 
         if (savedInstanceState == null) {
-            mDataHost.load(mTag);
+            mDataHost.load(mTags[0]);
             setContentShown(false);
         }
         return view;
@@ -82,11 +79,11 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(DETAILS_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.details_container, ClaimDetailsFragment.getInstance(mTag), DETAILS_FRAGMENT_TAG);
+            transaction.add(R.id.details_container, ClaimDetailsFragment.getInstance(mTags), DETAILS_FRAGMENT_TAG);
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_container, ADataFragment.getInstance(mTag, ClaimVotingFragment.class), VOTING_FRAGMENT_TAG);
+            transaction.add(R.id.voting_container, ADataFragment.getInstance(mTags, ClaimVotingFragment.class), VOTING_FRAGMENT_TAG);
         }
 
 
@@ -100,26 +97,30 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject response = notification.getValue();
-            JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject claimBasic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper claimBasic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             if (claimBasic != null) {
                 ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY,
-                        claimBasic, TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
+                        claimBasic.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
                 if (photos != null && photos.size() > 0) {
                     mClaimPictures.init(getChildFragmentManager(), photos);
                 }
-
-                getActivity().setTitle(claimBasic.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString());
+                getActivity().setTitle(claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL));
             }
 
-            JsonObject claimDiscussion = data.get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject();
+            JsonWrapper claimDiscussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
             if (claimDiscussion != null) {
-                mMessageTitle.setText(getString(R.string.claim_title_format_string, data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt()));
-                mMessageText.setText(claimDiscussion.get(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT).getAsString());
-                mUnreadCount.setText(Integer.toString(claimDiscussion.get(TeambrellaModel.ATTR_DATA_UNREAD_COUNT).getAsInt()));
+                mMessageTitle.setText(getString(R.string.claim_title_format_string, data.getInt(TeambrellaModel.ATTR_DATA_ID, 0)));
+                String text = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT);
 
-                String objectPhoto = claimDiscussion.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTO).getAsString();
+                if (text != null) {
+                    mMessageText.setText(text);
+                }
+
+                mUnreadCount.setText(Integer.toString(claimDiscussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, 0)));
+
+                String objectPhoto = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
                 if (objectPhoto != null) {
                     Resources resources = getResources();
                     TeambrellaImageLoader.getInstance(getContext()).getPicasso()
@@ -127,7 +128,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
 
-                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.get(TeambrellaModel.ATTR_DATA_ID).getAsInt(), claimDiscussion.get(TeambrellaModel.ATTR_DATA_TOPIC_ID).getAsString())));
+                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.getInt(TeambrellaModel.ATTR_DATA_ID, 0), claimDiscussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))));
             }
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

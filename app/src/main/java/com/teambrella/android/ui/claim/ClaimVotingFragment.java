@@ -13,14 +13,9 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataFragment;
 
 import io.reactivex.Notification;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Claim Voting fragment
@@ -32,8 +27,6 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private TextView mTeamVotePercents;
     private TextView mYourVotePercents;
     private SeekBar mVotingControl;
-    private int mCurentProgress;
-    private int mClaimId;
 
 
     @Nullable
@@ -54,7 +47,6 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-            mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);
 
             mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string,
                     (int) (data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0) * 100))));
@@ -65,7 +57,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
 
             mVotingControl.setProgress((int) (data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0) * 100));
-
+            mYourVotePercents.setAlpha(1f);
 
         }
     }
@@ -77,7 +69,6 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         if (fromUser) {
             mYourVotePercents.setAlpha(0.3f);
         }
-        mCurentProgress = progress;
     }
 
     @Override
@@ -87,13 +78,6 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        new TeambrellaServer(getContext(),
-                TeambrellaUser.get(getContext()).getPrivateKey()).requestObservable(TeambrellaUris.getClaimVoteUri(mClaimId, seekBar.getProgress()), null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(jsonObject -> {
-                    //Toast.makeText(getContext(), "Yes", Toast.LENGTH_SHORT).show();
-                    mYourVotePercents.setAlpha(1f);
-                });
+        mDataHost.postVote(seekBar.getProgress());
     }
 }

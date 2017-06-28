@@ -20,6 +20,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
@@ -30,7 +31,8 @@ import io.reactivex.disposables.Disposable;
  */
 public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
-    private static final String DATA_TAG = "data";
+    private static final String CLAIM_DATA_TAG = "claim_data_tag";
+    private static final String VOTE_DATA_TAG = "vote_data_tag";
     private static final String UI_TAG = "ui";
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_MODEL = "model";
@@ -38,6 +40,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
 
     private Disposable mDisposal;
+
+
+    int mClaimId;
 
 
     public static Intent getLaunchIntent(Context context, Uri uri, String model, int teamId) {
@@ -54,7 +59,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         setContentView(R.layout.activity_claim);
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(UI_TAG) == null) {
-            fragmentManager.beginTransaction().add(R.id.container, ClaimFragment.getInstance(DATA_TAG), UI_TAG).commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.container, ADataProgressFragment.getInstance(new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG}, ClaimFragment.class), UI_TAG)
+                    .commit();
         }
 
         ActionBar actionBar = getSupportActionBar();
@@ -70,7 +77,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mDisposal = getObservable(DATA_TAG).subscribe(this::onDataUpdated);
+        mDisposal = getObservable(CLAIM_DATA_TAG).subscribe(this::onDataUpdated);
     }
 
     @Override
@@ -83,12 +90,19 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     @Override
     protected String[] getDataTags() {
-        return new String[]{DATA_TAG};
+        return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
     }
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
-        return TeambrellaDataFragment.getInstance(getIntent().getParcelableExtra(EXTRA_URI));
+        switch (tag) {
+            case CLAIM_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(getIntent().getParcelableExtra(EXTRA_URI));
+            case VOTE_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(null);
+        }
+
+        return null;
     }
 
     @Override
@@ -111,6 +125,16 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         ((TextView) findViewById(R.id.subtitle)).setText(subtitle);
     }
 
+
+    @Override
+    public void postVote(int vote) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
+        }
+    }
+
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
@@ -130,6 +154,10 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                                     , pictureUri)));
                 }
             }
+
+
+            mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);
+
         }
     }
 }

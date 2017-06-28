@@ -18,6 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AmountWidget;
 
@@ -42,14 +43,6 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
 
     private AmountWidget mCoverThem;
 
-    public static TeammateFragment getInstance(String dataTag) {
-        TeammateFragment fragment = new TeammateFragment();
-        Bundle args = new Bundle();
-        args.putString(EXTRA_DATA_FRAGMENT_TAG, dataTag);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,7 +53,7 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mCoverThem = (AmountWidget) view.findViewById(R.id.cover_them);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
         if (savedInstanceState == null) {
-            mDataHost.load(mTag);
+            mDataHost.load(mTags[0]);
             setContentShown(false);
         }
         mSwipeRefreshLayout.setOnRefreshListener(this::onRefresh);
@@ -73,11 +66,11 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(OBJECT_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.object_info_container, TeammateObjectFragment.getInstance(mTag), OBJECT_FRAGMENT_TAG);
+            transaction.add(R.id.object_info_container, ADataFragment.getInstance(mTags, TeammateObjectFragment.class), OBJECT_FRAGMENT_TAG);
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_STATS_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_statistics_container, TeammateVotingStatsFragment.getInstance(mTag), OBJECT_FRAGMENT_TAG);
+            transaction.add(R.id.voting_statistics_container, ADataFragment.getInstance(mTags, TeammateVotingStatsFragment.class), VOTING_STATS_FRAGMENT_TAG);
         }
 
         if (!transaction.isEmpty()) {
@@ -86,7 +79,7 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     }
 
     private void onRefresh() {
-        mDataHost.load(mTag);
+        mDataHost.load(mTags[0]);
     }
 
     @Override

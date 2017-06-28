@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
 
 import java.text.ParseException;
@@ -33,8 +34,8 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 
-    public static ClaimDetailsFragment getInstance(String dataTag) {
-        return ADataFragment.getInstance(dataTag, ClaimDetailsFragment.class);
+    public static ClaimDetailsFragment getInstance(String[] dataTags) {
+        return ADataFragment.getInstance(dataTags, ClaimDetailsFragment.class);
     }
 
     @Nullable
@@ -52,19 +53,22 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject response = notification.getValue();
-            JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject basic = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
-            mClaimAmount.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble())));
-            mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES).getAsDouble())));
-            mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_DEDUCTIBLE).getAsDouble())));
-            mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.get(TeambrellaModel.ATTR_DATA_COVERAGE).getAsDouble() * 100)));
-
-            try {
-                mDataHost.setSubtitle(mDateFormat.format(mSDF.parse(basic.get(TeambrellaModel.ATTR_DATA_INCIDENT_DATE).getAsString())));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            if (basic != null) {
+                mClaimAmount.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT, 0f))));
+                mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES, 0f))));
+                mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE, 0f))));
+                mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_COVERAGE, 0f) * 100)));
+                try {
+                    mDataHost.setSubtitle(mDateFormat.format(mSDF.parse(basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE))));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
+
+
         }
     }
 }

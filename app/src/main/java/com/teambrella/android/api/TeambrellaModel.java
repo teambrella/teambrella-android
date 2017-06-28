@@ -104,6 +104,7 @@ public class TeambrellaModel {
     public static final String ATTR_STATUS_TIMESTAMP = "Timestamp";
     public static final String ATTR_STATUS_RESULT_CODE = "ResultCode";
     public static final String ATTR_STATUS_ERROR_MESSAGE = "ErrorMessage";
+    public static final String ATTR_STATUS_URI = "uri";
 
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
     public static final int VALUE_STATUS_RESULT_CODE_FATAL = 1;

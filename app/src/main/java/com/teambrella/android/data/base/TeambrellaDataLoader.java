@@ -4,12 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -38,6 +40,12 @@ public class TeambrellaDataLoader {
 
     public void load(Uri uri, JsonObject data) {
         mServer.requestObservable(uri, data)
+                .map(jsonObject -> {
+                    if (jsonObject != null) {
+                        jsonObject.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject().addProperty(TeambrellaModel.ATTR_STATUS_URI, uri.toString());
+                    }
+                    return jsonObject;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onNext, this::onError, this::onComplete);

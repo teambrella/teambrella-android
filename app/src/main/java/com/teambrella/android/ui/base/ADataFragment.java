@@ -20,9 +20,9 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
 
     protected T mDataHost;
 
-    private Disposable mDisposal;
+    private Disposable[] mDisposals;
 
-    protected String mTag;
+    protected String[] mTags;
 
 
     public static <T extends ADataFragment> T getInstance(String tag, Class<T> clazz) {
@@ -34,7 +34,22 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
         }
 
         Bundle args = new Bundle();
-        args.putString(EXTRA_DATA_FRAGMENT_TAG, tag);
+        args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, new String[]{tag});
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
+    public static <T extends ADataFragment> T getInstance(String[] tags, Class<T> clazz) {
+        T fragment;
+        try {
+            fragment = clazz.newInstance();
+        } catch (java.lang.InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("unable to create fragment");
+        }
+
+        Bundle args = new Bundle();
+        args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, tags);
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,7 +57,7 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTag = getArguments().getString(EXTRA_DATA_FRAGMENT_TAG);
+        mTags = getArguments().getStringArray(EXTRA_DATA_FRAGMENT_TAG);
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +70,10 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mDisposal = mDataHost.getObservable(mTag).subscribe(this::onDataUpdated);
+        mDisposals = new Disposable[mTags.length];
+        for (int i = 0; i < mDisposals.length; i++) {
+            mDisposals[i] = mDataHost.getObservable(mTags[i]).subscribe(this::onDataUpdated);
+        }
     }
 
     protected abstract void onDataUpdated(Notification<JsonObject> notification);
@@ -63,9 +81,10 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mDisposal != null && !mDisposal.isDisposed()) {
-            mDisposal.dispose();
-            mDisposal = null;
+        for (Disposable disposable : mDisposals) {
+            if (disposable != null && !disposable.isDisposed()) {
+                disposable.dispose();
+            }
         }
     }
 
