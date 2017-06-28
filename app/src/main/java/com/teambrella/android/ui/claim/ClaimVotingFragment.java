@@ -14,6 +14,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.widget.AmountWidget;
 
 import io.reactivex.Notification;
 
@@ -26,7 +27,10 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
     private TextView mTeamVotePercents;
     private TextView mYourVotePercents;
+    private AmountWidget mTeamVoteCurrency;
+    private AmountWidget mYourVoteCurrency;
     private SeekBar mVotingControl;
+    private float mClaimAmount;
 
 
     @Nullable
@@ -37,6 +41,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mTeamVotePercents = (TextView) view.findViewById(R.id.team_vote_percent);
         mYourVotePercents = (TextView) view.findViewById(R.id.your_vote_percent);
         mVotingControl = (SeekBar) view.findViewById(R.id.voting_control);
+        mTeamVoteCurrency = (AmountWidget) view.findViewById(R.id.team_vote_currency);
+        mYourVoteCurrency = (AmountWidget) view.findViewById(R.id.your_vote_currency);
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
         return view;
@@ -47,18 +53,22 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
-            mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string,
-                    (int) (data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0) * 100))));
+            if (basic != null) {
+                mClaimAmount = basic.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT, mClaimAmount);
+            }
 
+            float teamVote = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0);
+            float yourVote = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0);
 
-            mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string,
-                    (int) (data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0) * 100))));
-
-
-            mVotingControl.setProgress((int) (data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0) * 100));
+            mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
+            mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
+            mVotingControl.setProgress((int) (yourVote * 100));
+            mTeamVoteCurrency.setAmount(mClaimAmount * teamVote);
+            mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
             mYourVotePercents.setAlpha(1f);
-
+            mYourVoteCurrency.setAlpha(1f);
         }
     }
 
@@ -66,8 +76,10 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, progress)));
+        mYourVoteCurrency.setAmount((mClaimAmount * progress) / 100);
         if (fromUser) {
             mYourVotePercents.setAlpha(0.3f);
+            mYourVoteCurrency.setAlpha(0.3f);
         }
     }
 
