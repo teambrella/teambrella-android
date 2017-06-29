@@ -11,24 +11,36 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.MenuItem;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
+import io.reactivex.Notification;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Teammate screen.
  */
-public class TeammateActivity extends ADataHostActivity {
+public class TeammateActivity extends ADataHostActivity implements ITeammateActivity {
 
     private static final String TEAMMATE_URI = "teammate_uri";
     private static final String TEAMMATE_NAME = "teammate_name";
     private static final String TEAMMATE_PICTURE = "teammate_picture";
 
     private static final String DATA_FRAGMENT = "data";
+    private static final String VOTE_FRAGMENT = "vote";
     private static final String UI_FRAGMENT = "ui";
+
+
+    private Disposable mDisposal;
+    private int mTeammateId = -1;
 
     /**
      * Get intent to launch activity
@@ -66,6 +78,20 @@ public class TeammateActivity extends ADataHostActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mDisposal = getObservable(DATA_FRAGMENT).subscribe(this::onDataUpdated);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDisposal != null && !mDisposal.isDisposed()) {
+            mDisposal.dispose();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -84,9 +110,19 @@ public class TeammateActivity extends ADataHostActivity {
         super.setTitle(s);
     }
 
+
+    @Override
+    public void postVote(double vote) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_FRAGMENT);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getTeammateVoteUri(mTeammateId, vote));
+        }
+    }
+
     @Override
     protected String[] getDataTags() {
-        return new String[]{DATA_FRAGMENT};
+        return new String[]{DATA_FRAGMENT, VOTE_FRAGMENT};
     }
 
     @Override
@@ -105,7 +141,18 @@ public class TeammateActivity extends ADataHostActivity {
             case DATA_FRAGMENT:
                 return TeambrellaDataFragment
                         .getInstance(getIntent().getParcelableExtra(TEAMMATE_URI));
+            case VOTE_FRAGMENT:
+                return TeambrellaDataFragment.getInstance(null);
         }
         return null;
+    }
+
+
+    private void onDataUpdated(Notification<JsonObject> notification) {
+        if (notification.isOnNext()) {
+            mTeammateId = new JsonWrapper(notification.getValue())
+                    .getObject(TeambrellaModel.ATTR_DATA)
+                    .getInt(TeambrellaModel.ATTR_DATA_ID, 0);
+        }
     }
 }

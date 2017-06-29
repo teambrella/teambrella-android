@@ -152,6 +152,10 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)) / 100);
                 break;
+            case TeambrellaUris.SET_TEAMMATE_VOTE:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -192,6 +196,8 @@ public class TeambrellaServer {
                 return mAPI.getTeams(timestamp, publicKey, signature);
             case TeambrellaUris.SET_CLAIM_VOTE:
                 return mAPI.setClaimVote(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.SET_TEAMMATE_VOTE:
+                return mAPI.setTeammateVote(timestamp, publicKey, signature, requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

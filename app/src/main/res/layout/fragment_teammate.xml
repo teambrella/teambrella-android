@@ -94,6 +94,14 @@
 
             </LinearLayout>
 
+
+            <FrameLayout
+                android:id="@+id/voting_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/section_background" />
+
+
             <FrameLayout
                 android:id="@+id/object_info_container"
                 android:layout_width="match_parent"

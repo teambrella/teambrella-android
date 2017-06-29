@@ -49,6 +49,7 @@
     <string name="claim_details">Claim Details</string>
     <string name="claim_amount">Claim Amount</string>
     <string name="voting">Voting</string>
+    <string name="voting_risk">Voting:Risk</string>
     <string name="estimated_expenses">Estimated expenses</string>
     <string name="deductible">Deductible</string>
     <string name="coverage">Coverage</string>

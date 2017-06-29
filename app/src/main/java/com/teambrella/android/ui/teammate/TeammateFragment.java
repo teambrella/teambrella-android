@@ -30,6 +30,7 @@ import io.reactivex.Notification;
 public class TeammateFragment extends ADataProgressFragment<IDataHost> {
 
     private static final String OBJECT_FRAGMENT_TAG = "object_tag";
+    private static final String VOTING_TAG = "voting_tag";
     private static final String VOTING_STATS_FRAGMENT_TAG = "voting_stats_tag";
 
 
@@ -72,6 +73,12 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         if (fragmentManager.findFragmentByTag(VOTING_STATS_FRAGMENT_TAG) == null) {
             transaction.add(R.id.voting_statistics_container, ADataFragment.getInstance(mTags, TeammateVotingStatsFragment.class), VOTING_STATS_FRAGMENT_TAG);
         }
+
+
+        if (fragmentManager.findFragmentByTag(VOTING_TAG) == null) {
+            transaction.add(R.id.voting_container, ADataFragment.getInstance(mTags, TeammateVotingFragment.class), VOTING_TAG);
+        }
+
 
         if (!transaction.isEmpty()) {
             transaction.commit();
