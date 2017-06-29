@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 
@@ -45,10 +46,12 @@ public class TeammateVotingStatsFragment extends ADataFragment<IDataHost> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject data = notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject statsData = data.get(TeambrellaModel.ATTR_DATA_ONE_STATS).getAsJsonObject();
-            mWeight.setText(getString(R.string.risk_format_string, statsData.get(TeambrellaModel.ATTR_DATA_WEIGHT).getAsFloat()));
-            mProxyRank.setText(getString(R.string.risk_format_string, statsData.get(TeambrellaModel.ATTR_DATA_PROXY_RANK).getAsFloat()));
+            JsonWrapper data = new JsonWrapper(notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject());
+            JsonWrapper statsData = data.getObject(TeambrellaModel.ATTR_DATA_ONE_STATS);
+            if (statsData != null) {
+                mWeight.setText(getString(R.string.risk_format_string, statsData.getFloat(TeambrellaModel.ATTR_DATA_WEIGHT, 0f)));
+                mProxyRank.setText(getString(R.string.risk_format_string, statsData.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK, 0f)));
+            }
         }
     }
 }

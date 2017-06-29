@@ -86,14 +86,14 @@ public interface TeambrellaAPI {
                                               @Header("sig") String signature);
 
     @Headers("Content-Type: application/json")
-    @POST("claim/postVote")
+    @POST("claim/setVote")
     Observable<Response<JsonObject>> setClaimVote(@Header("t") long timestamp,
                                                   @Header("key") String publicKey,
                                                   @Header("sig") String signature,
                                                   @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
-    @POST("teammate/postVote")
+    @POST("teammate/setVote")
     Observable<Response<JsonObject>> setTeammateVote(@Header("t") long timestamp,
                                                      @Header("key") String publicKey,
                                                      @Header("sig") String signature,

@@ -50,7 +50,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
             JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
             if (voting != null) {
                 mTeamVoteRisk.setText(voting.getString(TeambrellaModel.ATTR_DATA_RISK_VOTED));
-                mMyVoteRisk.setText(voting.getString(TeambrellaModel.ATTR_DATA_MY_VOTE));
+                mMyVoteRisk.setText(String.format(Locale.US, "%.2f", voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
                 mVotingControl.setProgress(riskToProgress(voting.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
             }
         }
@@ -59,7 +59,9 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mMyVoteRisk.setText(String.format(Locale.US, "%.2f", progressToRisk(progress)));
+        if (fromUser) {
+            mMyVoteRisk.setText(String.format(Locale.US, "%.2f", progressToRisk(progress)));
+        }
     }
 
     @Override

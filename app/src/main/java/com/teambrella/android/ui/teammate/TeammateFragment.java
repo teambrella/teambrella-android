@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -92,14 +93,14 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            JsonObject data = notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
-            JsonObject basicData = data.get(TeambrellaModel.ATTR_DATA_ONE_BASIC).getAsJsonObject();
+            JsonWrapper data = new JsonWrapper(notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject());
+            JsonWrapper basicData = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             if (basicData != null) {
-                Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + basicData.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+                Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + basicData.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                         .into(mUserPicture);
-                mCoverMe.setAmount(basicData.get(TeambrellaModel.ATTR_DATA_COVER_ME).getAsFloat());
-                mCoverThem.setAmount(basicData.get(TeambrellaModel.ATTR_DATA_COVER_THEM).getAsFloat());
-                mUserName.setText(basicData.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
+                mCoverMe.setAmount(basicData.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME, 0f));
+                mCoverThem.setAmount(basicData.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM, 0f));
+                mUserName.setText(basicData.getString(TeambrellaModel.ATTR_DATA_NAME));
             }
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();

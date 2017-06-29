@@ -64,7 +64,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, ADataProgressFragment.getInstance(DATA_FRAGMENT, TeammateFragment.class), UI_FRAGMENT)
+                    .add(R.id.container, ADataProgressFragment.getInstance(new String[]{DATA_FRAGMENT, VOTE_FRAGMENT}, TeammateFragment.class), UI_FRAGMENT)
                     .commit();
         }
 
