@@ -54,21 +54,27 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
 
             if (basic != null) {
                 mClaimAmount = basic.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT, mClaimAmount);
             }
 
-            float teamVote = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0);
-            float yourVote = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING).getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0);
 
-            mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
-            mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
-            mVotingControl.setProgress((int) (yourVote * 100));
-            mTeamVoteCurrency.setAmount(mClaimAmount * teamVote);
-            mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
-            mYourVotePercents.setAlpha(1f);
-            mYourVoteCurrency.setAlpha(1f);
+            if (voting != null) {
+
+                float teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0);
+                float yourVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0);
+
+                mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
+                mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
+                mVotingControl.setProgress((int) (yourVote * 100));
+                mTeamVoteCurrency.setAmount(mClaimAmount * teamVote);
+                mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
+                mYourVotePercents.setAlpha(1f);
+                mYourVoteCurrency.setAlpha(1f);
+            }
+
         }
     }
 

@@ -106,7 +106,8 @@
                     android:id="@+id/voting_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/section_background" />
+                    android:background="@drawable/section_background"
+                    android:visibility="gone" />
 
                 <FrameLayout
                     android:id="@+id/details_container"

@@ -100,6 +100,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper claimBasic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+
             if (claimBasic != null) {
                 ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY,
                         claimBasic.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
@@ -129,6 +130,14 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 }
 
                 mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.getInt(TeambrellaModel.ATTR_DATA_ID, 0), claimDiscussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))));
+            }
+
+            JsonWrapper claimVoting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+            if (claimVoting != null) {
+                View view = getView();
+                if (view != null) {
+                    view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
+                }
             }
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

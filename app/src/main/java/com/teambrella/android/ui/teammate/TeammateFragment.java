@@ -95,12 +95,21 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         if (notification.isOnNext()) {
             JsonWrapper data = new JsonWrapper(notification.getValue().get(TeambrellaModel.ATTR_DATA).getAsJsonObject());
             JsonWrapper basicData = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
             if (basicData != null) {
                 Picasso.with(getContext()).load(TeambrellaServer.AUTHORITY + basicData.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                         .into(mUserPicture);
                 mCoverMe.setAmount(basicData.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME, 0f));
                 mCoverThem.setAmount(basicData.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM, 0f));
                 mUserName.setText(basicData.getString(TeambrellaModel.ATTR_DATA_NAME));
+            }
+
+            if (voting != null) {
+                View view = getView();
+                if (view != null) {
+                    view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
+                }
+
             }
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
