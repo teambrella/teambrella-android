@@ -205,6 +205,14 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_MY_TEAMS = "MyTeams";
 
 
+    public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
+
+
+    public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
+    public static final int ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES = 20;
+    public static final int ATTR_DATA_ITEM_TYPE_TEAMMATE = 30;
+
+
     /**
      * Get Images
      */

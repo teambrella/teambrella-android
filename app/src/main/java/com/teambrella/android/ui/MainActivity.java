@@ -28,6 +28,7 @@ import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
+import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 
 import java.lang.reflect.Field;
 
@@ -148,7 +149,7 @@ public class MainActivity extends ADataHostActivity {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(mTeamId),
-                        TeambrellaModel.ATTR_DATA_TEAMMATES, TeambrellaDataPagerFragment.class);
+                        TeambrellaModel.ATTR_DATA_TEAMMATES, TeammatesDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);

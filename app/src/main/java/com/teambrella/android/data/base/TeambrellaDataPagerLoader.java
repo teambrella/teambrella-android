@@ -31,7 +31,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     private final TeambrellaServer mServer;
     protected final Uri mUri;
     private final String mProperty;
-    private JsonArray mArray = new JsonArray();
+    protected JsonArray mArray = new JsonArray();
 
     private boolean mHasError = false;
     private boolean mIsLoading = false;
@@ -106,7 +106,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     private void onNext(JsonObject data) {
         JsonArray newData = getPageableData(data);
-        mArray.addAll(newData);
+        onAddNewData(newData);
         mHasNext = newData.size() == LIMIT;
         mNextIndex += newData.size();
         mIsLoading = false;
@@ -122,6 +122,15 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
         }
     }
 
+
+    /**
+     * On Add new Data
+     *
+     * @param newData new data
+     */
+    protected void onAddNewData(JsonArray newData) {
+        mArray.addAll(newData);
+    }
 
     private void onError(Throwable throwable) {
         mPublisher.onNext(Notification.createOnError(throwable));

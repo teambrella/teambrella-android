@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.team;
+package com.teambrella.android.ui.team.teammates;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
     private static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_HEADER_NEW_MEMBERS = VIEW_TYPE_REGULAR + 2;
 
     private final int mTeamId;
 
@@ -52,6 +53,11 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_HEADER_TEAMMATES:
                     viewHolder = new RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_teammates_header, parent, false)) {
                     };
+                    break;
+                case VIEW_TYPE_HEADER_NEW_MEMBERS:
+                    viewHolder = new RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_new_teammtes_header, parent, false)) {
+                    };
+                    break;
             }
         }
         return viewHolder;
@@ -59,24 +65,17 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public int getItemViewType(int position) {
-
-        if (position == 0) {
-            return VIEW_TYPE_HEADER_TEAMMATES;
-        }
-
-        int size = mPager.getLoadedData().size() + 1;
-
-        if (position == size) {
-            if (mPager.hasNextError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isNextLoading()) {
-                return VIEW_TYPE_LOADING;
-            } else {
-                throw new RuntimeException();
+        int type = super.getItemViewType(position);
+        if (type == VIEW_TYPE_REGULAR) {
+            JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
+            switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsInt()) {
+                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS:
+                    return VIEW_TYPE_HEADER_NEW_MEMBERS;
+                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES:
+                    return VIEW_TYPE_HEADER_TEAMMATES;
             }
         }
-
-        return VIEW_TYPE_REGULAR;
+        return type;
     }
 
     @Override
@@ -85,7 +84,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof TeammatesViewHolder) {
             TeammatesViewHolder tholder = (TeammatesViewHolder) holder;
             final Context context = holder.itemView.getContext();
-            final JsonObject item = mPager.getLoadedData().get(position - 1).getAsJsonObject();
+            final JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
 
             final String userPictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
             Picasso.with(context).load(userPictureUri).into(tholder.mIcon);
@@ -114,7 +113,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected boolean hasHeader() {
-        return true;
+        return false;
     }
 
     static class TeammatesViewHolder extends RecyclerView.ViewHolder {

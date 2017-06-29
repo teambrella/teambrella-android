@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.team.claims.ClaimsFragment;
+import com.teambrella.android.ui.team.teammates.MembersFragment;
 
 /**
  * Team fragment

@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.team;
+package com.teambrella.android.ui.team.teammates;
 
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
