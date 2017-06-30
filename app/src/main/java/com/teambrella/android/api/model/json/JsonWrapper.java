@@ -65,12 +65,22 @@ public class JsonWrapper {
         return defaultValue;
     }
 
+
+    public float getFloat(String key) {
+        return getFloat(key, 0f);
+    }
+
+
     public float getFloat(String key, float defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsFloat();
         }
         return defaultValue;
+    }
+
+    public double getDouble(String key) {
+        return getDouble(key, 0f);
     }
 
     public double getDouble(String key, double defaultValue) {
