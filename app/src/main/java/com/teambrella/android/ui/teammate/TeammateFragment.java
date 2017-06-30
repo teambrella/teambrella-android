@@ -54,6 +54,7 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mCoverMe = (AmountWidget) view.findViewById(R.id.cover_me);
         mCoverThem = (AmountWidget) view.findViewById(R.id.cover_them);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        mSwipeRefreshLayout.setEnabled(false);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);

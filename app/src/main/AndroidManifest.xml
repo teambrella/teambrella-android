@@ -97,6 +97,9 @@
                 android:resource="@xml/authenticator" />
         </service>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="1aabde6f4584b31368c96dedb50b3a5fe04de6cb" />
     </application>
 
 </manifest>

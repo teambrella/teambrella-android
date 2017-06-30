@@ -82,10 +82,32 @@
     </LinearLayout>
 
 
-    <SeekBar
-        android:id="@+id/voting_control"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_height="200dp">
+
+        <com.teambrella.android.ui.widget.VoterBar
+            android:id="@+id/voter_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/black" />
+
+    </RelativeLayout>
+
+
+    <!--<SeekBar-->
+    <!--android:id="@+id/voting_control"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="16dp" />-->
 
 </LinearLayout>
