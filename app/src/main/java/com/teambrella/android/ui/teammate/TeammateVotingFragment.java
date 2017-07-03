@@ -14,6 +14,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.VoterBar;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import io.reactivex.Notification;
@@ -52,11 +53,32 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+            JsonWrapper riskScale = data.getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE);
             if (voting != null) {
                 mTeamVoteRisk.setText(voting.getString(TeambrellaModel.ATTR_DATA_RISK_VOTED));
                 mMyVoteRisk.setText(String.format(Locale.US, "%.2f", voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
                 //mVotingControl.setProgress(riskToProgress(voting.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
             }
+
+
+            if (riskScale != null) {
+                ArrayList<JsonWrapper> ranges = riskScale.getArray(TeambrellaModel.ATTR_DATA_RANGES);
+
+                VoterBar.VoterBox[] boxes = new VoterBar.VoterBox[ranges.size()];
+
+                for (int i = 0; i < boxes.length; i++) {
+                    JsonWrapper range = ranges.get(i);
+                    float left = range.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
+                    float right = range.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE);
+                    float value = left + (right - left) / 2;
+                    int count = range.getInt(TeambrellaModel.ATTR_DATA_COUNT);
+                    boxes[i] = new VoterBar.VoterBox(riskFloatProgress(left), riskFloatProgress(right), value, count);
+                }
+
+                mVoterBar.init(boxes);
+            }
+
+
         }
     }
 
@@ -74,6 +96,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private static int riskToProgress(double risk) {
         return (int) Math.round(Math.log(risk * 5) / Math.log(25) * 1000);
     }
+
+
+    private static double riskFloatProgress(double risk) {
+        return (Math.log(risk * 5) / Math.log(25));
+    }
+
 
     @Override
     public void onVoteChanged(float vote, boolean fromUser) {

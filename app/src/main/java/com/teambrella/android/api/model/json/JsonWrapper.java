@@ -34,6 +34,14 @@ public class JsonWrapper {
     /*
      * Get Integer property
      */
+    public int getInt(String key) {
+        return getInt(key, 0);
+    }
+
+
+    /*
+     * Get Integer property
+     */
     public int getInt(String key, int defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
