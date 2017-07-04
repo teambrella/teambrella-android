@@ -1,7 +1,10 @@
 package com.teambrella.android.ui.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,7 +84,7 @@ public class VoterBar extends HorizontalScrollView {
 
             View leftView = new View(getContext());
             leftView.setBackgroundColor(Color.WHITE);
-            mContainer.addView(leftView, new ViewGroup.LayoutParams(getMeasuredWidth() / 2, ViewGroup.LayoutParams.MATCH_PARENT));
+            mContainer.addView(leftView, new ViewGroup.LayoutParams(getMeasuredWidth() / 2, 1));
 
             int width = getMeasuredWidth();
             int votingWidth = 4 * width;
@@ -89,7 +92,7 @@ public class VoterBar extends HorizontalScrollView {
             if (data[0].left >= 0f) {
                 View view = new View(getContext());
                 leftView.setBackgroundColor(Color.WHITE);
-                mContainer.addView(view, new ViewGroup.LayoutParams((int) (data[0].left * votingWidth), ViewGroup.LayoutParams.MATCH_PARENT));
+                mContainer.addView(view, new ViewGroup.LayoutParams((int) (data[0].left * votingWidth), 1));
             }
 
             for (VoterBox box : data) {
@@ -102,7 +105,7 @@ public class VoterBar extends HorizontalScrollView {
             if (data[data.length - 1].right * votingWidth <= votingWidth) {
                 View view = new View(getContext());
                 leftView.setBackgroundColor(Color.WHITE);
-                mContainer.addView(view, new ViewGroup.LayoutParams((int) (votingWidth - data[data.length - 1].right * votingWidth), ViewGroup.LayoutParams.MATCH_PARENT));
+                mContainer.addView(view, new ViewGroup.LayoutParams((int) (votingWidth - data[data.length - 1].right * votingWidth), 1));
             }
 
             View rightView = new View(getContext());
@@ -151,5 +154,19 @@ public class VoterBar extends HorizontalScrollView {
         if (mVoterBarListener != null) {
             mVoterBarListener.onVoteChanged(((float) l) / max, true);
         }
+        int shift = getMeasuredWidth() / 2;
+        for (int i = 0; i < mContainer.getChildCount(); i++) {
+            View child = mContainer.getChildAt(i);
+            child.setSelected(child.getLeft() - shift < l && child.getRight() - shift > l);
+        }
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Path clipPath = new Path();
+        clipPath.addRoundRect(new RectF(canvas.getClipBounds()), 10, 10, Path.Direction.CW);
+        canvas.clipPath(clipPath);
+        super.onDraw(canvas);
     }
 }
