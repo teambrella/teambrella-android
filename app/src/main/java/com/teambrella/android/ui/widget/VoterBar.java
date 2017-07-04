@@ -135,8 +135,8 @@ public class VoterBar extends HorizontalScrollView {
                 if (view instanceof VoterBoxView) {
                     VoterBoxView boxView = (VoterBoxView) view;
                     if (boxView.getMinHeight() > 0) {
-                        int height = getMeasuredHeight() - boxView.getMinHeight();
-                        view.setTranslationY(height - height * (float) mData[j].height / (float) max);
+                        int height = getMeasuredHeight() - boxView.getMinHeight() - 20 - 50;
+                        view.setTranslationY(50 + height - height * ((float) mData[j].height / (float) max));
                         j++;
                     }
                 }

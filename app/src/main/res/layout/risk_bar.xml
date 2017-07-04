@@ -4,13 +4,14 @@
     android:layout_width="75dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="2dp">
+    android:paddingEnd="1dp"
+    android:paddingStart="1dp">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="12dp"
-        android:background="@color/blueGrey" />
+        android:layout_marginTop="8dp"
+        android:background="@drawable/voter_box_background" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -19,9 +20,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkSkyBlue"
-        android:padding="2dp"
+        android:background="@drawable/voter_box_risk_background"
+        android:paddingBottom="2dp"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        android:paddingTop="2dp"
         android:textColor="@android:color/white"
+        android:textSize="9sp"
         tools:text="1.26" />
 
 

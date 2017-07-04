@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -82,32 +83,120 @@
     </LinearLayout>
 
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="wrap_content">
 
         <com.teambrella.android.ui.widget.VoterBar
             android:id="@+id/voter_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="120dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:overScrollMode="never"
             android:scrollbars="none" />
 
         <View
+            android:id="@+id/divider"
             android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/black" />
+            android:layout_height="0dp"
+            android:background="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/voter_bar"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/voter_bar" />
 
-    </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/new_teammate_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/new_teammate_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:translationY="4dp" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/new_teammate_risk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/risk_background_light_blue"
+                android:paddingEnd="2dp"
+                android:paddingStart="2dp"
+                android:text="1.65"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
 
 
-    <!--<SeekBar-->
-    <!--android:id="@+id/voting_control"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="16dp" />-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
+            app:layout_constraintLeft_toRightOf="@id/new_teammate_info">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/right_teammate_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:translationY="2dp" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/right_teammate_risk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/risk_background_warm_blue"
+                android:paddingEnd="2dp"
+                android:paddingStart="2dp"
+                android:text="1.65"
+                android:textColor="@android:color/white"
+                android:textSize="9sp" />
+            />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
+            app:layout_constraintEnd_toStartOf="@id/new_teammate_info">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/left_teammate_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:translationY="2dp" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/left_teammate_risk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/risk_background_warm_blue"
+                android:paddingEnd="2dp"
+                android:paddingStart="2dp"
+                android:text="1.60"
+                android:textColor="@android:color/white"
+                android:textSize="9sp" />
+
+        </LinearLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </LinearLayout>

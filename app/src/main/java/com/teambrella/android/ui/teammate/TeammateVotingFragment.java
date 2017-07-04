@@ -5,16 +5,21 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.VoterBar;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 import io.reactivex.Notification;
@@ -28,6 +33,13 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private TextView mTeamVoteRisk;
     private TextView mMyVoteRisk;
     private VoterBar mVoterBar;
+    private ImageView mLeftTeammateIcon;
+    private ImageView mRightTeammateIcon;
+    private TextView mLeftTeammateRisk;
+    private TextView mRightTeammateRisk;
+    private ImageView mNewTeammateIcon;
+    private TextView mNewTeammateRisk;
+    private ArrayList<JsonWrapper> mRanges;
     //private SeekBar mVotingControl;
 
 
@@ -39,6 +51,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mTeamVoteRisk = (TextView) view.findViewById(R.id.team_vote_risk);
         mMyVoteRisk = (TextView) view.findViewById(R.id.your_vote_risk);
         mVoterBar = (VoterBar) view.findViewById(R.id.voter_bar);
+        mLeftTeammateIcon = (ImageView) view.findViewById(R.id.left_teammate_icon);
+        mRightTeammateIcon = (ImageView) view.findViewById(R.id.right_teammate_icon);
+        mNewTeammateIcon = (ImageView) view.findViewById(R.id.new_teammate_icon);
+        mLeftTeammateRisk = (TextView) view.findViewById(R.id.left_teammate_risk);
+        mRightTeammateRisk = (TextView) view.findViewById(R.id.right_teammate_risk);
+        mNewTeammateRisk = (TextView) view.findViewById(R.id.new_teammate_risk);
         mVoterBar.setVoterBarListener(this);
         //mVotingControl = (SeekBar) view.findViewById(R.id.voting_control);
         //mVotingControl.setMax(1000);
@@ -62,12 +80,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
 
             if (riskScale != null) {
-                ArrayList<JsonWrapper> ranges = riskScale.getArray(TeambrellaModel.ATTR_DATA_RANGES);
+                mRanges = riskScale.getArray(TeambrellaModel.ATTR_DATA_RANGES);
 
-                VoterBar.VoterBox[] boxes = new VoterBar.VoterBox[ranges.size()];
+                VoterBar.VoterBox[] boxes = new VoterBar.VoterBox[mRanges.size()];
 
                 for (int i = 0; i < boxes.length; i++) {
-                    JsonWrapper range = ranges.get(i);
+                    JsonWrapper range = mRanges.get(i);
                     float left = range.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
                     float right = range.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE);
                     float value = left + (right - left) / 2;
@@ -76,6 +94,14 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
                 mVoterBar.init(boxes);
+            }
+
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+
+            if (basic != null) {
+                Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+                picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                        .into(mNewTeammateIcon);
             }
 
 
@@ -105,6 +131,44 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
     @Override
     public void onVoteChanged(float vote, boolean fromUser) {
-        mMyVoteRisk.setText(String.format(Locale.US, "%.2f", Math.pow(25, vote) / 5));
+        double value = Math.pow(25, vote) / 5;
+        mMyVoteRisk.setText(String.format(Locale.US, "%.2f", value));
+        mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
+        Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+        for (JsonWrapper interval : mRanges) {
+            float left = interval.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
+            float right = interval.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE);
+            if (value >= left && value < right) {
+                ArrayList<JsonWrapper> teammates = interval.getArray(TeambrellaModel.ATTR_DATA_TEAMMTES_IN_RANGE);
+                Iterator<JsonWrapper> it = teammates.iterator();
+
+                if (it.hasNext()) {
+                    JsonWrapper item = it.next();
+                    mLeftTeammateIcon.setVisibility(View.VISIBLE);
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                            .into(mLeftTeammateIcon);
+                    mLeftTeammateRisk.setVisibility(View.VISIBLE);
+                    mLeftTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
+                } else {
+                    mLeftTeammateIcon.setVisibility(View.INVISIBLE);
+                    mLeftTeammateRisk.setVisibility(View.INVISIBLE);
+                }
+
+                if (it.hasNext()) {
+                    JsonWrapper item = it.next();
+                    mRightTeammateIcon.setVisibility(View.VISIBLE);
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                            .into(mRightTeammateIcon);
+                    mRightTeammateRisk.setVisibility(View.VISIBLE);
+                    mRightTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
+                } else {
+                    mRightTeammateIcon.setVisibility(View.INVISIBLE);
+                    mRightTeammateRisk.setVisibility(View.INVISIBLE);
+                }
+                break;
+            }
+        }
+
+
     }
 }

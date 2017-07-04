@@ -204,6 +204,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_LEFT_RANGE = "LeftRange";
     public static final String ATTR_DATA_RIGHT_RANGE = "RightRange";
     public static final String ATTR_DATA_COUNT = "Count";
+    public static final String ATTR_DATA_TEAMMTES_IN_RANGE = "TeammatesInRange";
 
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
