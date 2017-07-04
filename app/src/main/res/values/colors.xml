@@ -30,4 +30,7 @@
     <color name="paleGrey">#e8edf2</color>
     <color name="battleshipGrey">#66737d</color>
     <color name="lightPeriwinkle20">#33bdc3ff</color>
+    <color name="lavender">#bcc1f2</color>
+    <color name="lightPeriwinkleTwo">#cdd2fe</color>
+    <color name="perrywinkle">#7882e5</color>
 </resources>
