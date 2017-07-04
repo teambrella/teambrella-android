@@ -85,7 +85,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
 
         <com.teambrella.android.ui.widget.VoterBar
             android:id="@+id/voter_bar"
@@ -93,6 +94,7 @@
             android:layout_height="120dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:background="@drawable/voter_bar_background"
             android:overScrollMode="never"
             android:scrollbars="none" />
 
@@ -116,6 +118,7 @@
             android:orientation="vertical"
             android:paddingEnd="4dp"
             android:paddingStart="4dp"
+            android:translationY="-8dp"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -145,6 +148,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
+            android:translationY="-8dp"
             app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
             app:layout_constraintLeft_toRightOf="@id/new_teammate_info">
 
@@ -173,6 +177,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
+            android:translationY="-8dp"
             app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
             app:layout_constraintEnd_toStartOf="@id/new_teammate_info">
 

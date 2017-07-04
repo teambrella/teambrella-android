@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item>
-        <shape android:shape="rectangle">
-            <corners android:radius="2dp" />
-            <solid android:color="@android:color/white" />
-        </shape>
-
-    </item>
-
-    <item
-        android:bottom="1.5dp"
-        android:left="1.5dp"
-        android:right="1.5dp"
-        android:top="1.5dp">
-        <shape android:shape="rectangle">
-            <corners android:radius="1.5dp" />
-            <solid android:color="@color/perrywinkle" />
-        </shape>
-
-    </item>
-
-
-</layer-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/voter_box_risk_background_selected" android:state_selected="true" />
+    <item android:drawable="@drawable/voter_box_risk_background_normal" />
+</selector>
