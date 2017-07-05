@@ -27,60 +27,91 @@
     </LinearLayout>
 
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@drawable/voter_bar_background">
 
+        <android.support.constraint.Guideline
+            android:id="@+id/vote_info_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
-        <LinearLayout
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/team_vote_title"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_margin="8dp"
+            android:text="@string/team_vote"
+            app:layout_constraintEnd_toStartOf="@id/vote_info_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/team_vote" />
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/team_vote_risk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark"
+            android:textSize="36sp"
+            app:layout_constraintStart_toStartOf="@id/team_vote_title"
+            app:layout_constraintTop_toBottomOf="@id/team_vote_title" />
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/team_vote_risk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dark"
-                android:textSize="36sp" />
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/team_vote_avg_difference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@color/blueGrey"
+            android:gravity="center_horizontal"
+            android:lines="2"
+            android:padding="2dp"
+            android:text="@string/vote_avg_difference"
+            android:textSize="9sp"
+            app:layout_constraintBottom_toBottomOf="@id/team_vote_risk"
+            app:layout_constraintStart_toEndOf="@id/team_vote_risk"
+            app:layout_constraintTop_toTopOf="@id/team_vote_risk" />
 
-        </LinearLayout>
-
-
-        <LinearLayout
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/your_vote_title"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/your_vote_background"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_margin="8dp"
+            android:text="@string/your_vote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vote_info_divider"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_vote" />
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/your_vote_risk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:lines="1"
-                android:textColor="@color/dark"
-                android:textSize="36sp" />
-        </LinearLayout>
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/your_vote_risk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:textColor="@color/dark"
+            android:textSize="36sp"
+            app:layout_constraintStart_toStartOf="@id/your_vote_title"
+            app:layout_constraintTop_toBottomOf="@id/your_vote_title" />
 
 
-    </LinearLayout>
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/your_vote_avg_difference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@color/blueGrey"
+            android:gravity="center_horizontal"
+            android:lines="2"
+            android:padding="2dp"
+            android:text="@string/vote_avg_difference"
+            android:textSize="9sp"
+            app:layout_constraintBottom_toBottomOf="@id/your_vote_risk"
+            app:layout_constraintStart_toEndOf="@id/your_vote_risk"
+            app:layout_constraintTop_toTopOf="@id/your_vote_risk" />
+
+    </android.support.constraint.ConstraintLayout>
 
 
     <android.support.constraint.ConstraintLayout
