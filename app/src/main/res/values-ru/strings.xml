@@ -1,0 +1,69 @@
+<resources>
+    <string name="facebook_app_id" translatable="false">416598765047865</string>
+    <string name="app_name">Teambrella</string>
+
+    <!-- Bottom navigation bar -->
+    <string name="bottom_navigation_home">Главная</string>
+    <string name="bottom_navigation_team">Команда</string>
+    <string name="bottom_navigation_proxies">Профи</string>
+    <string name="bottom_navigation_me">Я</string>
+
+    <!-- Team's tab -->
+    <string name="team_feed">Лента</string>
+    <string name="team_members">Участники</string>
+    <string name="team_claims">Рекламации</string>
+
+
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> $%d]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> $%d]]></string>
+    <string name="teammate_net_format_string_zero">$0</string>
+    <string name="risk_format_string">%.1f</string>
+    <string name="currency_format_string">%.0f</string>
+
+
+    <string name="teammates">Участники</string>
+    <string name="new_teammates">Новый участник</string>
+    <string name="net">Всего</string>
+    <string name="cover_me">Покрывает меня</string>
+    <string name="cover_them">Покрываю их</string>
+    <string name="voting_ends_title">Голосование окончится через</string>
+
+    <string name="object">Предмет</string>
+    <string name="coverage_type">Покрыто</string>
+    <string name="collision_deductible">Франшиза</string>
+
+    <string name="limit">Предел</string>
+    <string name="risk_factor">Фактор Риска</string>
+    <string name="see_claims">К Рекламациям</string>
+    <string name="voting_stats">Статистика</string>
+    <string name="weight">Вес</string>
+
+
+    <string name="proxy_rank">Ранк Профи</string>
+
+    <string name="decisions">Решения</string>
+    <string name="discussions">Обсуждения</string>
+    <string name="voting_frequency">Частота Голосования</string>
+    <string name="add_to_my_proxies">Добавить в мои профи</string>
+
+
+    <string name="claim_title_format_string">Рекламация %d</string>
+    <string name="claim_details">Детали Рекламации</string>
+    <string name="claim_amount">Сумма Рекламации</string>
+    <string name="voting">Голосование</string>
+    <string name="voting_risk">Голосование:Риск</string>
+    <string name="estimated_expenses">Ожидаемые траты</string>
+    <string name="deductible">Франшиза</string>
+    <string name="coverage">Покрытие</string>
+    <string name="incident_date">Дата проишествия</string>
+
+    <string name="amount_format_string">$%d</string>
+    <string name="percentage_format_string">%d%%</string>
+
+
+    <string name="team_vote">Решение Команды</string>
+    <string name="your_vote">Твой голос</string>
+    <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
+
+
+</resources>
