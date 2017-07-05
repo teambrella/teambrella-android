@@ -1,0 +1,69 @@
+<resources>
+    <string name="facebook_app_id" translatable="false">416598765047865</string>
+    <string name="app_name">Teambrella</string>
+
+    <!-- Bottom navigation bar -->
+    <string name="bottom_navigation_home">Tablero</string>
+    <string name="bottom_navigation_team">Equipo</string>
+    <string name="bottom_navigation_proxies">Proxies</string>
+    <string name="bottom_navigation_me">Yo</string>
+
+    <!-- Team's tab -->
+    <string name="team_feed">Noticias del Equipo</string>
+    <string name="team_members">Compañeros</string>
+    <string name="team_claims">Reclamaciones</string>
+
+
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> $%d]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> $%d]]></string>
+    <string name="teammate_net_format_string_zero">$0</string>
+    <string name="risk_format_string">%.1f</string>
+    <string name="currency_format_string">%.0f</string>
+
+
+    <string name="teammates">Compañeros</string>
+    <string name="new_teammates">Nuevos compañeros</string>
+    <string name="net">Net</string>
+    <string name="cover_me">Me cubre</string>
+    <string name="cover_them">Loc cubro</string>
+    <string name="voting_ends_title">Votación termina en</string>
+
+    <string name="object">Objeto</string>
+    <string name="coverage_type">Está cubierto</string>
+    <string name="collision_deductible">Deducible por Colisión</string>
+
+    <string name="limit">Limite</string>
+    <string name="risk_factor">Factor Riesgo</string>
+    <string name="see_claims">Véase los Reclamaciones</string>
+    <string name="voting_stats">Estadísticas de votación</string>
+    <string name="weight">Peso</string>
+
+
+    <string name="proxy_rank">Rango de Proxy</string>
+
+    <string name="decisions">Decisiones</string>
+    <string name="discussions">Discusiones</string>
+    <string name="voting_frequency">Frecuencia de Votación</string>
+    <string name="add_to_my_proxies">Añadir a Mis Proxies</string>
+
+
+    <string name="claim_title_format_string">Reclamación %d</string>
+    <string name="claim_details">Detalles de Reclamación</string>
+    <string name="claim_amount">Cantidad Reclamada</string>
+    <string name="voting">Votación</string>
+    <string name="voting_risk">Votación:Riesgo</string>
+    <string name="estimated_expenses">Gastos estimados</string>
+    <string name="deductible">Deducible</string>
+    <string name="coverage">Cobertura</string>
+    <string name="incident_date">Fecha del Incidente</string>
+
+    <string name="amount_format_string">$%d</string>
+    <string name="percentage_format_string">%d%%</string>
+
+
+    <string name="team_vote">Voto Del Equipo</string>
+    <string name="your_vote">Tu Voto</string>
+    <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
+
+
+</resources>
