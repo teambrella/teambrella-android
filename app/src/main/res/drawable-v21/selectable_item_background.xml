@@ -3,5 +3,5 @@
     <item>
         <color android:color="@color/listItemBackground" />
     </item>
-    <item android:drawable="@android:color/transparent" />
+    <item android:drawable="?attr/selectableItemBackground" />
 </layer-list>
