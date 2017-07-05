@@ -40,6 +40,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private ImageView mNewTeammateIcon;
     private TextView mNewTeammateRisk;
     private ArrayList<JsonWrapper> mRanges;
+
     //private SeekBar mVotingControl;
 
 
@@ -75,6 +76,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
             if (voting != null) {
                 mTeamVoteRisk.setText(voting.getString(TeambrellaModel.ATTR_DATA_RISK_VOTED));
                 mMyVoteRisk.setText(String.format(Locale.US, "%.2f", voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
+                mMyVoteRisk.setAlpha(1f);
                 //mVotingControl.setProgress(riskToProgress(voting.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
             }
 
@@ -93,7 +95,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     boxes[i] = new VoterBar.VoterBox(riskFloatProgress(left), riskFloatProgress(right), value, count);
                 }
 
-                mVoterBar.init(boxes);
+                mVoterBar.init(boxes, (float) riskFloatProgress(voting != null ? voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) : -1));
             }
 
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
@@ -134,6 +136,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         double value = Math.pow(25, vote) / 5;
         mMyVoteRisk.setText(String.format(Locale.US, "%.2f", value));
         mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
+
+
+        if (fromUser) {
+            mMyVoteRisk.setAlpha(0.3f);
+        }
+
         Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
         for (JsonWrapper interval : mRanges) {
             float left = interval.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
@@ -168,7 +176,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 break;
             }
         }
+    }
 
-
+    @Override
+    public void onVoterBarReleased(float vote, boolean fromUser) {
+        if (fromUser) {
+            mDataHost.postVote(Math.pow(25, vote) / 5);
+        }
     }
 }

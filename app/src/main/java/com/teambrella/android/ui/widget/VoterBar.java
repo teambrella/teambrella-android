@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -40,11 +41,16 @@ public class VoterBar extends HorizontalScrollView {
 
 
     public interface VoterBarListener {
+
         void onVoteChanged(float vote, boolean fromUser);
+
+        void onVoterBarReleased(float vote, boolean fromUser);
     }
 
 
     private LinearLayout mContainer;
+    private float mInitialVote;
+    private boolean mIsFromUser;
 
     public VoterBar(Context context) {
         super(context);
@@ -69,9 +75,10 @@ public class VoterBar extends HorizontalScrollView {
     }
 
 
-    public void init(VoterBox[] data) {
+    public void init(VoterBox[] data, float initialVote) {
 
         mData = data;
+        mInitialVote = initialVote;
         if (getMeasuredWidth() == 0 || getMeasuredHeight() == 0) {
             return;
         }
@@ -118,7 +125,18 @@ public class VoterBar extends HorizontalScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        post(() -> init(mData));
+        post(() -> init(mData, mInitialVote));
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mIsFromUser = true;
+                break;
+        }
+        return super.onTouchEvent(ev);
     }
 
     @Override
@@ -144,6 +162,11 @@ public class VoterBar extends HorizontalScrollView {
                     }
                 }
             }
+
+            if (mInitialVote > 0 && getScrollX() == 0) {
+                scrollTo((int) ((mContainer.getWidth() - getMeasuredWidth()) * mInitialVote), 0);
+                mInitialVote = -1f;
+            }
         }
     }
 
@@ -152,13 +175,16 @@ public class VoterBar extends HorizontalScrollView {
         super.onScrollChanged(l, t, oldl, oldt);
         int max = mContainer.getWidth() - getMeasuredWidth();
         if (mVoterBarListener != null) {
-            mVoterBarListener.onVoteChanged(((float) l) / max, true);
+            mVoterBarListener.onVoteChanged(((float) l) / max, mIsFromUser);
         }
         int shift = getMeasuredWidth() / 2;
         for (int i = 0; i < mContainer.getChildCount(); i++) {
             View child = mContainer.getChildAt(i);
             child.setSelected(child.getLeft() - shift < l && child.getRight() - shift > l);
         }
+
+        removeCallbacks(mIdleChecker);
+        postDelayed(mIdleChecker, 1000);
     }
 
 
@@ -169,4 +195,13 @@ public class VoterBar extends HorizontalScrollView {
         canvas.clipPath(clipPath);
         super.onDraw(canvas);
     }
+
+
+    private final Runnable mIdleChecker = () -> {
+        if (mVoterBarListener != null) {
+            int max = mContainer.getWidth() - getMeasuredWidth();
+            mVoterBarListener.onVoterBarReleased(((float) getScrollX()) / max, mIsFromUser);
+            mIsFromUser = false;
+        }
+    };
 }
