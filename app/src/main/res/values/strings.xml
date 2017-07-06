@@ -64,6 +64,10 @@
     <string name="team_vote">Team Vote</string>
     <string name="your_vote">Your vote</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
-    <string name="vote_avg_difference">"AVG\n+15%"</string>
+    <string name="vote_avg_difference_bigger_format_string">"AVG\n+%d%%"</string>
+    <string name="vote_avg_difference_smaller_format_string">"AVG\n%d%%"</string>
+    <string name="vote_avg_difference_same">"AVG\n0%%"</string>
+    <string name="reset_vote">Reset Vote</string>
+    <string name="no_teammate_vote_value">. . .</string>
 
 </resources>

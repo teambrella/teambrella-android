@@ -153,8 +153,13 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)) / 100);
                 break;
             case TeambrellaUris.SET_TEAMMATE_VOTE:
+                Double vote = Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_VOTE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)));
+                if (vote > 0) {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, vote);
+                } else {
+                    requestBody.add(TeambrellaModel.ATTR_REQUEST_MY_VOTE, null);
+                }
                 break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:

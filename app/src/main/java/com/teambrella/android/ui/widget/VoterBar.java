@@ -75,6 +75,15 @@ public class VoterBar extends HorizontalScrollView {
     }
 
 
+    public void setVote(float vote) {
+        if (mContainer != null && mContainer.getMeasuredWidth() != 0) {
+            smoothScrollTo((int) ((mContainer.getWidth() - getMeasuredWidth()) * vote), 0);
+        } else {
+            mInitialVote = vote;
+        }
+    }
+
+
     public void init(VoterBox[] data, float initialVote) {
 
         mData = data;

@@ -205,6 +205,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RIGHT_RANGE = "RightRange";
     public static final String ATTR_DATA_COUNT = "Count";
     public static final String ATTR_DATA_TEAMMTES_IN_RANGE = "TeammatesInRange";
+    public static final String ATTR_DATA_PROXY_AVATAR = "ProxyAvatar";
+    public static final String ATTR_DATA_PROXY_NAME = "ProxyName";
 
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
@@ -214,6 +216,7 @@ public class TeambrellaModel {
 
 
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
+    public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;

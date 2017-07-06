@@ -39,7 +39,13 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private TextView mRightTeammateRisk;
     private ImageView mNewTeammateIcon;
     private TextView mNewTeammateRisk;
+    private TextView mAVGDifferenceTeamVote;
+    private TextView mAVGDifferenceMyVote;
     private ArrayList<JsonWrapper> mRanges;
+    private View mRestVoteButton;
+    private TextView mProxyName;
+    private ImageView mProxyAvatar;
+    private float mAVGRisk;
 
     //private SeekBar mVotingControl;
 
@@ -58,7 +64,19 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mLeftTeammateRisk = (TextView) view.findViewById(R.id.left_teammate_risk);
         mRightTeammateRisk = (TextView) view.findViewById(R.id.right_teammate_risk);
         mNewTeammateRisk = (TextView) view.findViewById(R.id.new_teammate_risk);
+        mAVGDifferenceTeamVote = (TextView) view.findViewById(R.id.team_vote_avg_difference);
+        mAVGDifferenceMyVote = (TextView) view.findViewById(R.id.your_vote_avg_difference);
+        mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
+        mProxyName = (TextView) view.findViewById(R.id.proxy_name);
+        mProxyAvatar = (ImageView) view.findViewById(R.id.proxy_avatar);
         mVoterBar.setVoterBarListener(this);
+
+
+        mRestVoteButton.setOnClickListener(v -> {
+            mDataHost.postVote(-1f);
+            setVoting(true);
+        });
+
         //mVotingControl = (SeekBar) view.findViewById(R.id.voting_control);
         //mVotingControl.setMax(1000);
         //mVotingControl.setOnSeekBarChangeListener(this);
@@ -69,16 +87,11 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
+            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
             JsonWrapper riskScale = data.getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE);
-            if (voting != null) {
-                mTeamVoteRisk.setText(voting.getString(TeambrellaModel.ATTR_DATA_RISK_VOTED));
-                mMyVoteRisk.setText(String.format(Locale.US, "%.2f", voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
-                mMyVoteRisk.setAlpha(1f);
-                //mVotingControl.setProgress(riskToProgress(voting.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE, 0f)));
-            }
 
 
             if (riskScale != null) {
@@ -96,12 +109,57 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
                 mVoterBar.init(boxes, (float) riskFloatProgress(voting != null ? voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) : -1));
+                mAVGRisk = riskScale.getFloat(TeambrellaModel.ATTR_DATA_AVG_RISK);
             }
+
+            if (voting != null) {
+                double teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RISK_VOTED, -1f);
+                double myVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
+                String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
+                String proxyAvatar = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR);
+
+
+                if (teamVote > 0) {
+                    mTeamVoteRisk.setText(String.format(Locale.US, "%.2f", teamVote));
+                    mAVGDifferenceTeamVote.setVisibility(View.VISIBLE);
+                    setAVGDifference(teamVote, mAVGRisk, mAVGDifferenceTeamVote);
+                } else {
+                    mTeamVoteRisk.setText(R.string.no_teammate_vote_value);
+                    mAVGDifferenceTeamVote.setVisibility(View.INVISIBLE);
+                }
+
+                if (myVote > 0) {
+                    mMyVoteRisk.setText(String.format(Locale.US, "%.2f", myVote));
+                    setAVGDifference(myVote, mAVGRisk, mAVGDifferenceMyVote);
+                    mAVGDifferenceMyVote.setVisibility(View.VISIBLE);
+                    mVoterBar.setVote((float) riskFloatProgress(myVote));
+                } else {
+                    mAVGDifferenceMyVote.setVisibility(View.INVISIBLE);
+                    mMyVoteRisk.setText(R.string.no_teammate_vote_value);
+                    mVoterBar.setVote((float) riskFloatProgress(mAVGRisk));
+                }
+
+                if (proxyName != null && proxyAvatar != null) {
+                    mProxyName.setText(proxyName);
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
+                            .into(mProxyAvatar);
+                    mProxyName.setVisibility(View.VISIBLE);
+                    mProxyAvatar.setVisibility(View.VISIBLE);
+                    mRestVoteButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mProxyName.setVisibility(View.INVISIBLE);
+                    mProxyAvatar.setVisibility(View.INVISIBLE);
+                    mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                }
+
+
+                setVoting(false);
+            }
+
 
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
             if (basic != null) {
-                Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
                 picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .into(mNewTeammateIcon);
             }
@@ -131,16 +189,37 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     }
 
 
+    private static void setAVGDifference(double vote, double average, TextView view) {
+        long percent = Math.round(((vote - average) / average) * 100);
+        if (percent > 0) {
+            view.setText(view.getContext().getResources().getString(R.string.vote_avg_difference_bigger_format_string, percent));
+        } else if (percent < 0) {
+            view.setText(view.getContext().getResources().getString(R.string.vote_avg_difference_smaller_format_string, percent));
+        } else {
+            view.setText(R.string.vote_avg_difference_same);
+        }
+    }
+
+
+    private void setVoting(boolean isVoting) {
+        mMyVoteRisk.setAlpha(isVoting ? 0.3f : 1f);
+        mRestVoteButton.setAlpha(isVoting ? 0.3f : 1f);
+        mRestVoteButton.setEnabled(!isVoting);
+    }
+
+
     @Override
     public void onVoteChanged(float vote, boolean fromUser) {
         double value = Math.pow(25, vote) / 5;
-        mMyVoteRisk.setText(String.format(Locale.US, "%.2f", value));
-        mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
-
 
         if (fromUser) {
-            mMyVoteRisk.setAlpha(0.3f);
+            setVoting(true);
+            mMyVoteRisk.setText(String.format(Locale.US, "%.2f", value));
+            setAVGDifference((float) value, mAVGRisk, mAVGDifferenceMyVote);
+            mAVGDifferenceMyVote.setVisibility(View.VISIBLE);
         }
+
+        mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
 
         Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
         for (JsonWrapper interval : mRanges) {
