@@ -40,6 +40,15 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/your_vote_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vote_info_divider"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/team_vote_title"
             style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
