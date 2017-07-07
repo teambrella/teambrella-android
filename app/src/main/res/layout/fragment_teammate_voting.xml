@@ -74,6 +74,39 @@
             app:layout_constraintStart_toEndOf="@id/team_vote_risk"
             app:layout_constraintTop_toTopOf="@id/team_vote_risk" />
 
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            app:layout_constraintStart_toStartOf="@id/team_vote_risk"
+            app:layout_constraintTop_toBottomOf="@id/team_vote_risk">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/first"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/second"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="1dp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/third"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="30dp"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="1dp" />
+
+        </FrameLayout>
+
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/your_vote_title"
             style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
@@ -111,8 +144,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_height="42dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@id/your_vote_title"
@@ -120,8 +152,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/proxy_avatar"
-                android:layout_width="16dp"
-                android:layout_height="16dp" />
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/proxy_name"
