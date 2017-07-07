@@ -145,10 +145,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     setAVGDifference(myVote, mAVGRisk, mAVGDifferenceMyVote);
                     mAVGDifferenceMyVote.setVisibility(View.VISIBLE);
                     mVoterBar.setVote((float) riskFloatProgress(myVote));
+                    mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", myVote));
                 } else {
                     mAVGDifferenceMyVote.setVisibility(View.INVISIBLE);
                     mMyVoteRisk.setText(R.string.no_teammate_vote_value);
                     mVoterBar.setVote((float) riskFloatProgress(mAVGRisk));
+                    mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", mAVGRisk));
                 }
 
                 if (proxyName != null && proxyAvatar != null) {

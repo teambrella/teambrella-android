@@ -51,6 +51,7 @@ public class VoterBar extends HorizontalScrollView {
     private LinearLayout mContainer;
     private float mInitialVote;
     private boolean mIsFromUser;
+    private boolean mIsTouched;
 
     public VoterBar(Context context) {
         super(context);
@@ -143,6 +144,13 @@ public class VoterBar extends HorizontalScrollView {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mIsFromUser = true;
+                mIsTouched = true;
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                mIsTouched = false;
+                removeCallbacks(mIdleChecker);
+                postDelayed(mIdleChecker, 200);
                 break;
         }
         return super.onTouchEvent(ev);
@@ -191,14 +199,13 @@ public class VoterBar extends HorizontalScrollView {
             View child = mContainer.getChildAt(i);
             child.setSelected(child.getLeft() - shift < l && child.getRight() - shift > l);
         }
-
         removeCallbacks(mIdleChecker);
         postDelayed(mIdleChecker, 200);
     }
 
 
     public boolean isUserActive() {
-        return mIsFromUser;
+        return mIsTouched || mIsFromUser;
     }
 
 
@@ -212,7 +219,7 @@ public class VoterBar extends HorizontalScrollView {
 
 
     private final Runnable mIdleChecker = () -> {
-        if (mVoterBarListener != null) {
+        if (mVoterBarListener != null && !mIsTouched) {
             int max = mContainer.getWidth() - getMeasuredWidth();
             mVoterBarListener.onVoterBarReleased(((float) getScrollX()) / max, mIsFromUser);
             mIsFromUser = false;
