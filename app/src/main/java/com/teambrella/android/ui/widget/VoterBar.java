@@ -197,6 +197,11 @@ public class VoterBar extends HorizontalScrollView {
     }
 
 
+    public boolean isUserActive() {
+        return mIsFromUser;
+    }
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         Path clipPath = new Path();

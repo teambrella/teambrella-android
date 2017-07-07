@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
@@ -18,6 +16,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.widget.VoterBar;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
 
 /**
  * Teammate Voting Fragment
@@ -47,7 +47,10 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private View mRestVoteButton;
     private TextView mProxyName;
     private ImageView mProxyAvatar;
+    private TeambrellaAvatarsWidgets mAvatarWidgets;
     private float mAVGRisk;
+
+    private int mCount;
 
     //private SeekBar mVotingControl;
 
@@ -71,11 +74,13 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mProxyName = (TextView) view.findViewById(R.id.proxy_name);
         mProxyAvatar = (ImageView) view.findViewById(R.id.proxy_avatar);
+        mAvatarWidgets = (TeambrellaAvatarsWidgets) view.findViewById(R.id.team_avatars);
         mVoterBar.setVoterBarListener(this);
 
 
         mRestVoteButton.setOnClickListener(v -> {
             mDataHost.postVote(-1f);
+            mCount++;
             setVoting(true);
         });
 
@@ -88,6 +93,11 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
+
+        if (mCount > 0) {
+            mCount--;
+        }
+
         if (notification.isOnNext()) {
             Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
@@ -114,7 +124,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 mAVGRisk = riskScale.getFloat(TeambrellaModel.ATTR_DATA_AVG_RISK);
             }
 
-            if (voting != null) {
+            if (voting != null && mCount == 0 && !mVoterBar.isUserActive()) {
                 double teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RISK_VOTED, -1f);
                 double myVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
                 String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
@@ -155,30 +165,11 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
 
-                JsonArray avatars = voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS);
-                Iterator<JsonElement> iterator = avatars.iterator();
-                if (iterator.hasNext()) {
-                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
-                            into((ImageView) getView().findViewById(R.id.first));
-                } else {
-                    getView().findViewById(R.id.first).setVisibility(View.INVISIBLE);
-                }
-
-
-                if (iterator.hasNext()) {
-                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
-                            into((ImageView) getView().findViewById(R.id.second));
-                } else {
-                    getView().findViewById(R.id.second).setVisibility(View.INVISIBLE);
-                }
-
-                if (iterator.hasNext()) {
-                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
-                            into((ImageView) getView().findViewById(R.id.third));
-                } else {
-                    getView().findViewById(R.id.third).setVisibility(View.INVISIBLE);
-                }
-
+                Observable.
+                        fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
+                        .map(jsonElement -> TeambrellaServer.AUTHORITY + jsonElement.getAsString())
+                        .toList()
+                        .subscribe(mAvatarWidgets::setAvatars);
 
                 setVoting(false);
             }
@@ -190,8 +181,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .into(mNewTeammateIcon);
             }
-
-
         }
     }
 
@@ -288,6 +277,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     public void onVoterBarReleased(float vote, boolean fromUser) {
         if (fromUser) {
             mDataHost.postVote(Math.pow(25, vote) / 5);
+            mCount++;
         }
     }
 }

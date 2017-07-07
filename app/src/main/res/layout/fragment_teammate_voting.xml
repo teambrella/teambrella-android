@@ -75,37 +75,18 @@
             app:layout_constraintTop_toTopOf="@id/team_vote_risk" />
 
 
-        <FrameLayout
+        <com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
+            android:id="@+id/team_avatars"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
+            app:avatar_background_color="@color/dark"
+            app:avatar_border_color="@android:color/white"
+            app:avatar_border_width="1dp"
+            app:avatar_count="4"
+            app:avatar_shift="5dp"
+            app:avatar_size="20dp"
             app:layout_constraintStart_toStartOf="@id/team_vote_risk"
-            app:layout_constraintTop_toBottomOf="@id/team_vote_risk">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/first"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/second"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="15dp"
-                app:civ_border_color="@android:color/white"
-                app:civ_border_width="1dp" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/third"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"
-                app:civ_border_color="@android:color/white"
-                app:civ_border_width="1dp" />
-
-        </FrameLayout>
+            app:layout_constraintTop_toBottomOf="@id/team_vote_risk" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/your_vote_title"
