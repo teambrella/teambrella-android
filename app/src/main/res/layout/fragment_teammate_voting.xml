@@ -218,7 +218,8 @@
                 android:id="@+id/right_teammate_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:translationY="2dp" />
+                android:translationY="2dp"
+                android:visibility="invisible" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/right_teammate_risk"
@@ -229,8 +230,9 @@
                 android:paddingStart="2dp"
                 android:text="1.65"
                 android:textColor="@android:color/white"
-                android:textSize="9sp" />
-            />
+                android:textSize="9sp"
+                android:visibility="invisible" />
+
         </LinearLayout>
 
 
@@ -247,7 +249,8 @@
                 android:id="@+id/left_teammate_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:translationY="2dp" />
+                android:translationY="2dp"
+                android:visibility="invisible" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/left_teammate_risk"
@@ -258,7 +261,8 @@
                 android:paddingStart="2dp"
                 android:text="1.60"
                 android:textColor="@android:color/white"
-                android:textSize="9sp" />
+                android:textSize="9sp"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
