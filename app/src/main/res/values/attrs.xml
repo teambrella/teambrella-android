@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TeambrellaAvatarsWidgets">
+        <attr name="avatar_size" format="dimension" />
+        <attr name="avatar_count" format="integer" />
+        <attr name="avatar_background_color" format="color" />
+        <attr name="avatar_border_width" format="dimension" />
+        <attr name="avatar_border_color" format="color" />
+        <attr name="avatar_shift" format="dimension" />
+    </declare-styleable>
+</resources>
