@@ -217,6 +217,7 @@ public class TeambrellaModel {
 
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
     public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
+    public static final String ATTR_DATA_OTHER_AVATARS = "OtherAvatars";
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
@@ -242,7 +243,7 @@ public class TeambrellaModel {
     }
 
     public static String getImage(String authority, JsonObject object, String property) {
-        JsonElement element = object.get(property);
+        JsonElement element = property != null ? object.get(property) : object;
         if (element != null && element.isJsonPrimitive()) {
             return authority + element.getAsString();
         }

@@ -193,7 +193,7 @@ public class VoterBar extends HorizontalScrollView {
         }
 
         removeCallbacks(mIdleChecker);
-        postDelayed(mIdleChecker, 1000);
+        postDelayed(mIdleChecker, 200);
     }
 
 

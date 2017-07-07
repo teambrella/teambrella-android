@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
@@ -150,6 +152,31 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     mProxyName.setVisibility(View.INVISIBLE);
                     mProxyAvatar.setVisibility(View.INVISIBLE);
                     mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                }
+
+
+                JsonArray avatars = voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS);
+                Iterator<JsonElement> iterator = avatars.iterator();
+                if (iterator.hasNext()) {
+                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
+                            into((ImageView) getView().findViewById(R.id.first));
+                } else {
+                    getView().findViewById(R.id.first).setVisibility(View.INVISIBLE);
+                }
+
+
+                if (iterator.hasNext()) {
+                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
+                            into((ImageView) getView().findViewById(R.id.second));
+                } else {
+                    getView().findViewById(R.id.second).setVisibility(View.INVISIBLE);
+                }
+
+                if (iterator.hasNext()) {
+                    picasso.load(TeambrellaServer.AUTHORITY + iterator.next().getAsString()).
+                            into((ImageView) getView().findViewById(R.id.third));
+                } else {
+                    getView().findViewById(R.id.third).setVisibility(View.INVISIBLE);
                 }
 
 
