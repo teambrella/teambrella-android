@@ -34,5 +34,6 @@
     <color name="lightPeriwinkleTwo">#cdd2fe</color>
     <color name="perrywinkle">#7882e5</color>
     <color name="veryLightBlueTwo">#eef5ff</color>
-
+    <color name="paleGreyFour">#f8fafd</color>
+    <color name="cloudyBlue">#ced8df</color>
 </resources>
