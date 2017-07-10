@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontal_separator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="290dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/paleGreyFour"
+        app:layout_constraintBottom_toTopOf="@id/horizontal_separator"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="236dp"
+        android:background="@color/warmBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/home_header"
+        style="@style/Teambrella.TextAppearence.Home.Header"
+        android:layout_marginTop="16dp"
+        android:text="Hi Frank!"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/home_sub_header"
+        style="@style/Teambrella.TextAppearence.Home.SunHeader"
+        android:text="Here’s what’s new for you"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_header" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="184dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/home_card_background"
+        app:layout_constraintTop_toBottomOf="@id/home_sub_header" />
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/coverage_and_wallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_separator">
+
+        <View
+            android:id="@+id/vertical_divider"
+            android:layout_width="1dp"
+            android:layout_height="64dp"
+            android:background="@color/cloudyBlue"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vertical_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/coverage_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_icon_coverage" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/coverage_header"
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/coverage_icon"
+                android:text="@string/coverage" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
+                android:layout_below="@id/coverage_header"
+                android:layout_toEndOf="@id/coverage_icon"
+                android:includeFontPadding="false"
+                android:text="95 %" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vertical_divider"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/wallet_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_icon_wallet" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/wallet_header"
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/wallet_icon"
+                android:text="@string/wallet" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
+                android:layout_below="@id/wallet_header"
+                android:layout_toEndOf="@id/wallet_icon"
+                android:includeFontPadding="false"
+                android:text="600" />
+
+        </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:id="@+id/horizontal_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/cloudyBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/coverage_and_wallet" />
+
+
+    <ImageView
+        android:id="@+id/object_picture"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_divider" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/model"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        app:layout_constraintStart_toEndOf="@id/object_picture"
+        app:layout_constraintTop_toTopOf="@+id/object_picture"
+        tools:layout_editor_absoluteX="120dp"
+        tools:text="Audi A6, 2007" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/coverage_type"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/collision_deductible"
+        app:layout_constraintBottom_toBottomOf="@+id/object_picture"
+        app:layout_constraintStart_toStartOf="@id/model"
+        tools:layout_editor_absoluteX="120dp" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/coverage_type"
+        app:layout_constraintBottom_toTopOf="@+id/coverage_type"
+        app:layout_constraintStart_toStartOf="@id/model"
+        tools:layout_editor_absoluteX="120dp" />
+
+
+    <Button
+        android:id="@+id/see_claims"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/submit_another_claim"
+        android:textColor="@color/lightBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/object_picture"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+
+</android.support.constraint.ConstraintLayout>

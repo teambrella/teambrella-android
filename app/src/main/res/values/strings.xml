@@ -70,4 +70,7 @@
     <string name="reset_vote">Reset Vote</string>
     <string name="no_teammate_vote_value">. . .</string>
 
+    <string name="wallet">Wallet</string>
+    <string name="submit_another_claim">Submit another claim</string>
+
 </resources>

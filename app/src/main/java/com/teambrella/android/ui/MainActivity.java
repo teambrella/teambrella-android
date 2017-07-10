@@ -71,6 +71,7 @@ public class MainActivity extends ADataHostActivity {
         setTypeface(navigationView, typeface);
         mSelectedItemId = R.id.bottom_navigation_home;
         navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+        navigationView.setSelectedItemId(mSelectedItemId);
     }
 
 
