@@ -23,6 +23,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.profile.ProfileFragment;
@@ -44,6 +45,7 @@ public class MainActivity extends ADataHostActivity {
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
+    public static final String HOME_DATA_TAG = "home_data";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
@@ -118,7 +120,7 @@ public class MainActivity extends ADataHostActivity {
     private Fragment createFragmentByTag(String tag) {
         switch (tag) {
             case HOME_TAG:
-                return new HomeFragment();
+                return ADataFragment.getInstance(HOME_DATA_TAG, HomeFragment.class);
             case TEAM_TAG:
                 return TeamFragment.getInstance(getIntent().getIntExtra(TEAM_ID_EXTRA, 0));
             case PROFILE_TAG:
@@ -132,7 +134,7 @@ public class MainActivity extends ADataHostActivity {
 
     @Override
     protected String[] getDataTags() {
-        return new String[]{};
+        return new String[]{HOME_DATA_TAG};
     }
 
     @Override
@@ -142,6 +144,10 @@ public class MainActivity extends ADataHostActivity {
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
+        switch (tag) {
+            case HOME_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeamId));
+        }
         return null;
     }
 

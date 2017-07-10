@@ -99,5 +99,11 @@ public interface TeambrellaAPI {
                                                      @Header("sig") String signature,
                                                      @Body JsonElement body);
 
+    @Headers("Content-Type: application/json")
+    @POST("feed/getHome")
+    Observable<Response<JsonObject>> getHome(@Header("t") long timestamp,
+                                             @Header("key") String publicKey,
+                                             @Header("sig") String signature,
+                                             @Body JsonElement body);
 
 }
