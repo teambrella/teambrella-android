@@ -77,5 +77,6 @@
     <string name="your_claim">Your claim</string>
     <string name="claimed">Claimed</string>
     <string name="welcome_user_format_string">Hi %s! </string>
+    <string name="application">Application</string>
 
 </resources>

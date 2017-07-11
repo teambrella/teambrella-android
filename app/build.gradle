@@ -31,6 +31,7 @@ android {
         versionName "0.0.1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "DENIS_PRIVATE_KEY", "\"" + keyProperties.getProperty("DenisPrivateKey") + "\""
         buildConfigField "String", "KATE_PRIVATE_KEY", "\"" + keyProperties.getProperty("KatePrivateKey") + "\""
         buildConfigField "String", "THORAX_PRIVATE_KEY", "\"" + keyProperties.getProperty("ThoraxPrivateKey") + "\""

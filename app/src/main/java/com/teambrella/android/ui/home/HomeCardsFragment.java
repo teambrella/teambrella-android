@@ -27,6 +27,9 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.AmountWidget;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import io.reactivex.Notification;
 
 /**
@@ -122,6 +125,8 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
     public static final class CardsFragment extends Fragment {
 
         private static String EXTRA_DATA = "data";
+        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy \'at\' HH:mm ", Locale.ENGLISH);
+        private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         private JsonWrapper mCard;
 
@@ -151,9 +156,17 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             ImageView icon = (ImageView) view.findViewById(R.id.icon);
             TextView message = (TextView) view.findViewById(R.id.message_text);
             TextView unread = (TextView) view.findViewById(R.id.unread);
-            AmountWidget amountWidget = (AmountWidget) view.findViewById(R.id.claimed_amount);
+            AmountWidget amountWidget = (AmountWidget) view.findViewById(R.id.amount_widget);
             TextView teamVote = (TextView) view.findViewById(R.id.team_vote);
             TextView title = (TextView) view.findViewById(R.id.title);
+            TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
+            TextView leftTitle = (TextView) view.findViewById(R.id.left_title);
+
+
+            int itemType = mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
+
+
+            leftTitle.setText(itemType == TeambrellaModel.HOME_CARD_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
             picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
@@ -166,9 +179,23 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             unread.setText(mCard.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
 
             amountWidget.setAmount(mCard.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT));
-            teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
-            title.setText(getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+            if (itemType == TeambrellaModel.HOME_CARD_TEAMMATE) {
+                teamVote.setText(getString(R.string.risk_format_string, mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)));
+            } else {
+                teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
+            }
+            title.setText(itemType == TeambrellaModel.HOME_CARD_TEAMMATE ? getString(R.string.application)
+                    : getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
 
+            try {
+                subtitle.setText(mDateFormat.format(mSDF.parse(mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE))));
+            } catch (Exception e) {
+
+            }
+
+
+            view.setOnClickListener(v -> {
+            });
 
             return view;
 

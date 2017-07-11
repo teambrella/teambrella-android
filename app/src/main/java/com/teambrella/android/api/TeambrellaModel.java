@@ -224,6 +224,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_AMOUNT = "Amount";
     public static final String ATTR_DATA_TEAM_VOTE = "TeamVote";
     public static final String ATTR_DATA_ITEM_ID = "ItemId";
+    public static final String ATTR_DATA_ITEM_DATE = "ItemDate";
 
 
     public static final int HOME_CARD_TEAMMATE = 0;
