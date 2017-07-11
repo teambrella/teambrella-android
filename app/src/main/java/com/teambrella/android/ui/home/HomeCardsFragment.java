@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -37,6 +38,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
     private TextView mHeader;
     private ViewPager mCardsPager;
     private CardAdapter mAdapter;
+    private LinearLayout mPagerIndicator;
 
     @Nullable
     @Override
@@ -44,8 +46,16 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
         View view = inflater.inflate(R.layout.fragment_home_cards, container, false);
         mHeader = (TextView) view.findViewById(R.id.home_header);
         mCardsPager = (ViewPager) view.findViewById(R.id.cards_pager);
+        mPagerIndicator = (LinearLayout) view.findViewById(R.id.page_indicator);
         mCardsPager.setPageMargin(40);
         return view;
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mAdapter = null;
     }
 
     @Override
@@ -56,7 +66,33 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             mHeader.setText(getString(R.string.welcome_user_format_string, data.getString(TeambrellaModel.ATTR_DATA_NAME)));
 
             if (mAdapter == null) {
-                mCardsPager.setAdapter(mAdapter = new CardAdapter(data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS)));
+                JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
+                mCardsPager.setAdapter(mAdapter = new CardAdapter(cards));
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                for (int i = 0; i < cards.size(); i++) {
+                    View view = inflater.inflate(R.layout.home_card_pager_indicator, mPagerIndicator, false);
+                    view.setSelected(mCardsPager.getCurrentItem() == i);
+                    mPagerIndicator.addView(view);
+                }
+
+                mCardsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        for (int i = 0; i < mPagerIndicator.getChildCount(); i++) {
+                            mPagerIndicator.getChildAt(i).setSelected(position == i);
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
             }
         }
     }
