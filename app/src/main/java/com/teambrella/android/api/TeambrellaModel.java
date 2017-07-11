@@ -219,6 +219,18 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
     public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
     public static final String ATTR_DATA_OTHER_AVATARS = "OtherAvatars";
+    public static final String ATTR_DATA_CARDS = "Cards";
+    public static final String ATTR_DATA_SMALL_PHOTO_OR_AVATAR = "SmallPhotoOrAvatar";
+    public static final String ATTR_DATA_AMOUNT = "Amount";
+    public static final String ATTR_DATA_TEAM_VOTE = "TeamVote";
+    public static final String ATTR_DATA_ITEM_ID = "ItemId";
+
+
+    public static final int HOME_CARD_TEAMMATE = 0;
+    public static final int HOME_CARD_CLAIM = 1;
+    public static final int HOME_CARD_RULE = 2;
+    public static final int HOME_CARD_TEAM_CHART = 3;
+    public static final int HOME_CARD_TEAM_NOTIFICATION = 100;
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
