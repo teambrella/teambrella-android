@@ -3,7 +3,6 @@
     <color name="colorPrimary">@color/blurpleTwo</color>
     <color name="colorPrimaryDark">@color/sapphire</color>
     <color name="colorAccent">@color/lipstick</color>
-
     <color name="darkSkyBlue">#35abd9</color>
     <color name="lightBlue">#4ec4f2</color>
     <color name="frenchBlue">#424eb6</color>
@@ -35,7 +34,7 @@
     <color name="perrywinkle">#7882e5</color>
     <color name="veryLightBlueTwo">#eef5ff</color>
     <color name="paleGreyFour">#f8fafd</color>
-    <color name="cloudyBlue">#ced8df</color>
+    <color name="cloudyBlue_40">#64ced8df</color>
     <color name="selection_color">#08000000</color>
     <color name="selection_border_color">#30000000</color>
 </resources>

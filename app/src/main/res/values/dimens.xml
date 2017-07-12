@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="teammate_object_picture_width">96dp</dimen>
     <dimen name="teammate_object_picture_height">80dp</dimen>
     <dimen name="claim_object_picture_height">40dp</dimen>
     <dimen name="claim_object_picture_with">40dp</dimen>
+    <dimen name="home_horizontal_separator_offset">230dp</dimen>
+    <dimen name="home_cards_height">150dp</dimen>
+    <dimen name="home_cards_top_margin">8dp</dimen>
+    <dimen name="home_top_background_length">190dp</dimen>
+    <dimen name="home_coverage_and_wallet_height">48dp</dimen>
+    <dimen name="home_default_vertical_margin">12dp</dimen>
 </resources>
