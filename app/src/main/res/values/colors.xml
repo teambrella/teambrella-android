@@ -36,4 +36,6 @@
     <color name="veryLightBlueTwo">#eef5ff</color>
     <color name="paleGreyFour">#f8fafd</color>
     <color name="cloudyBlue">#ced8df</color>
+    <color name="selection_color">#08000000</color>
+    <color name="selection_border_color">#30000000</color>
 </resources>

@@ -147,16 +147,15 @@
         tools:layout_editor_absoluteX="120dp" />
 
 
-    <Button
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/see_claims"
+        style="@style/Teambrella.TextAppearence.SectionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="?attr/selectableItemBackground"
         android:text="@string/submit_another_claim"
-        android:textColor="@color/lightBlue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_divider"
+        app:layout_constraintStart_toStartOf="@id/horizontal_divider"
         app:layout_constraintTop_toBottomOf="@id/object_picture"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp" />
