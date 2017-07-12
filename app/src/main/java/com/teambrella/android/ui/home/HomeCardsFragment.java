@@ -93,7 +93,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
 
                     @Override
                     public void onPageScrollStateChanged(int state) {
-
+                        ((HomeFragment) getParentFragment()).setRefreshingEnable(state == ViewPager.SCROLL_STATE_IDLE);
                     }
                 });
             }

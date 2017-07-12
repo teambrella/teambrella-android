@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,31 @@ public class HomeFragment extends ADataFragment<IDataHost> {
     private static final String COVERAGE_FRAGMENT_TAG = "coverage";
 
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshable);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mDataHost.load(mTags[0]));
         mDataHost.load(mTags[0]);
         return view;
     }
 
+    @Override
+    public void onStart() {
+        mSwipeRefreshLayout.postDelayed(mRefreshingRunnable, 100);
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mSwipeRefreshLayout.removeCallbacks(mRefreshingRunnable);
+        super.onStop();
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -55,6 +73,16 @@ public class HomeFragment extends ADataFragment<IDataHost> {
 
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
-
+        mSwipeRefreshLayout.removeCallbacks(mRefreshingRunnable);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
+
+
+    public void setRefreshingEnable(boolean enable) {
+        mSwipeRefreshLayout.setEnabled(enable);
+    }
+
+
+    private Runnable mRefreshingRunnable = () -> mSwipeRefreshLayout.setRefreshing(true);
+
 }

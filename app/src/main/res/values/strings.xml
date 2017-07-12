@@ -64,6 +64,9 @@
     <string name="team_vote">Team Vote</string>
     <string name="your_vote">Your vote</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
+
+
+    <!--- new resources -->
     <string name="vote_avg_difference_bigger_format_string">"AVG\n+%d%%"</string>
     <string name="vote_avg_difference_smaller_format_string">"AVG\n%d%%"</string>
     <string name="vote_avg_difference_same">"AVG\n0%%"</string>
@@ -78,5 +81,7 @@
     <string name="claimed">Claimed</string>
     <string name="welcome_user_format_string">Hi %s! </string>
     <string name="application">Application</string>
+    <string name="pet_insurance">Pet Insurance</string>
+
 
 </resources>
