@@ -10,7 +10,7 @@
         android:id="@+id/icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:background="@color/cloudyBlue"
+        android:background="@color/cloudyBlue_40"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -76,7 +76,7 @@
         android:layout_height="42dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:background="@color/cloudyBlue"
+        android:background="@color/cloudyBlue_40"
         app:layout_constraintBottom_toTopOf="@id/original_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

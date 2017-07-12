@@ -25,7 +25,7 @@
     <string name="new_teammates">Nuevos compañeros</string>
     <string name="net">Net</string>
     <string name="cover_me">Me cubre</string>
-    <string name="cover_them">Loc cubro</string>
+    <string name="cover_them">Los cubro</string>
     <string name="voting_ends_title">Votación termina en</string>
 
     <string name="object">Objeto</string>
@@ -33,7 +33,7 @@
     <string name="collision_deductible">Deducible por Colisión</string>
 
     <string name="limit">Limite</string>
-    <string name="risk_factor">Factor Riesgo</string>
+    <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
@@ -52,7 +52,7 @@
     <string name="claim_amount">Cantidad Reclamada</string>
     <string name="voting">Votación</string>
     <string name="voting_risk">Votación:Riesgo</string>
-    <string name="estimated_expenses">Gastos estimados</string>
+    <string name="estimated_expenses">Gastos Estimados</string>
     <string name="deductible">Deducible</string>
     <string name="coverage">Cobertura</string>
     <string name="incident_date">Fecha del Incidente</string>
