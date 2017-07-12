@@ -135,13 +135,12 @@
 
     </LinearLayout>
 
-    <Button
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/add_to_proxies"
+        style="@style/Teambrella.TextAppearence.SectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:background="?attr/selectableItemBackground"
-        android:text="@string/add_to_my_proxies"
-        android:textColor="@color/lightBlue" />
+        android:text="@string/add_to_my_proxies" />
 
 </LinearLayout>

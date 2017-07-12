@@ -71,7 +71,7 @@
     <string name="no_teammate_vote_value">. . .</string>
 
     <string name="wallet">Wallet</string>
-    <string name="submit_another_claim">Submit another claim</string>
+    <string name="submit_another_claim">Submit Another Claim</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
     <string name="your_claim">Your claim</string>
