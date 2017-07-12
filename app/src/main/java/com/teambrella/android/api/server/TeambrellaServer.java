@@ -36,8 +36,8 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    public static final String AUTHORITY = "http://94.72.4.72/";
-    //public static final String AUTHORITY = "http://192.168.0.222/";
+    //public static final String AUTHORITY = "http://94.72.4.72/";
+    public static final String AUTHORITY = "http://192.168.0.222/";
 
     /**
      * Shared preference

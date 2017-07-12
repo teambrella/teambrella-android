@@ -66,7 +66,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-            mHeader.setText(getString(R.string.welcome_user_format_string, data.getString(TeambrellaModel.ATTR_DATA_NAME)));
+            mHeader.setText(getString(R.string.welcome_user_format_string, data.getString(TeambrellaModel.ATTR_DATA_NAME).trim().split(" ")[0]));
 
             if (mAdapter == null) {
                 JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
