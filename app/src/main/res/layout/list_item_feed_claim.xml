@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/selectable_item_background"
     android:paddingEnd="16dp"
     android:paddingStart="16dp"
     android:paddingTop="16dp">
@@ -20,6 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon"
@@ -39,15 +41,40 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-        android:id="@+id/message"
-        style="@style/Teambrella.TextAppearence.MessageText"
+
+    <LinearLayout
+        android:id="@+id/message_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:lines="2"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/header"
-        app:layout_constraintTop_toBottomOf="@id/header" />
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/message"
+            style="@style/Teambrella.TextAppearence.MessageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="2" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/unread_message_count_background"
+            android:gravity="center"
+            android:lines="1"
+            android:textColor="@android:color/white"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
 
     <com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
         android:id="@+id/avatars"
@@ -59,8 +86,22 @@
         app:avatar_count="4"
         app:avatar_shift="5dp"
         app:avatar_size="20dp"
-        app:layout_constraintStart_toStartOf="@id/message"
-        app:layout_constraintTop_toBottomOf="@id/message" />
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/message_layout"
+        app:layout_constraintTop_toBottomOf="@id/message_layout" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/type"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/avatars"
+        app:layout_constraintStart_toEndOf="@id/avatars"
+        app:layout_constraintTop_toBottomOf="@id/message_layout"
+        app:layout_constraintTop_toTopOf="@id/avatars" />
 
 
     <View
