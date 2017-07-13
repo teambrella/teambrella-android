@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import io.reactivex.Observable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Feed Adapter
@@ -92,12 +94,17 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void bind(JsonWrapper item) {
-            Context context = itemView.getContext();
-            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                    .into(mIcon);
-            mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
-
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
+            Context context = itemView.getContext();
+            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+
+
+            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
+                requestCreator.transform(new CropCircleTransformation());
+            }
+
+            requestCreator.into(mIcon);
+            mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
 
 
             switch (itemType) {

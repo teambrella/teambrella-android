@@ -2,21 +2,13 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -30,8 +22,6 @@ import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
-
-import java.lang.reflect.Field;
 
 
 /**
@@ -54,7 +44,7 @@ public class MainActivity extends ADataHostActivity {
     private static final String PROFILE_TAG = "profile";
 
 
-    private int mSelectedItemId = 0;
+    private int mSelectedItemId = -1;
     private int mTeamId;
 
 
@@ -68,20 +58,29 @@ public class MainActivity extends ADataHostActivity {
         mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/AkkuratPro-Bold.otf");
-        BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottom_bar);
-        BottomNavigationViewHelper.removeShiftMode(navigationView);
-        setTypeface(navigationView, typeface);
-        mSelectedItemId = R.id.bottom_navigation_home;
-        navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-        navigationView.setSelectedItemId(mSelectedItemId);
+        findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
+        findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
+        findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
+        findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
+        onNavigationItemSelected(findViewById(R.id.home));
     }
 
 
-    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    private boolean onNavigationItemSelected(View view) {
+
+        if (mSelectedItemId == view.getId()) {
+            return false;
+        }
+
+        if (mSelectedItemId != -1) {
+            findViewById(mSelectedItemId).setSelected(false);
+        }
+        view.setSelected(true);
+
+
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment currentFragment = fragmentManager.findFragmentByTag(getTagById(mSelectedItemId));
-        String newFragmentTag = getTagById(item.getItemId());
+        Fragment currentFragment = mSelectedItemId != -1 ? fragmentManager.findFragmentByTag(getTagById(mSelectedItemId)) : null;
+        String newFragmentTag = getTagById(view.getId());
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (currentFragment != null) {
             transaction.detach(currentFragment);
@@ -95,7 +94,7 @@ public class MainActivity extends ADataHostActivity {
         }
         transaction.commit();
         fragmentManager.executePendingTransactions();
-        mSelectedItemId = item.getItemId();
+        mSelectedItemId = view.getId();
         return true;
     }
 
@@ -103,13 +102,13 @@ public class MainActivity extends ADataHostActivity {
     @NonNull
     private String getTagById(int id) {
         switch (id) {
-            case R.id.bottom_navigation_home:
+            case R.id.home:
                 return HOME_TAG;
-            case R.id.bottom_navigation_team:
+            case R.id.team:
                 return TEAM_TAG;
-            case R.id.bottom_navigation_proxies:
+            case R.id.proxies:
                 return PROXIES_TAG;
-            case R.id.bottom_navigation_me:
+            case R.id.me:
                 return PROFILE_TAG;
             default:
                 throw new RuntimeException("unknown item id");
@@ -167,38 +166,6 @@ public class MainActivity extends ADataHostActivity {
         }
         return null;
     }
-
-    private void setTypeface(ViewGroup viewGroup, Typeface typeface) {
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            View view = viewGroup.getChildAt(i);
-            if (view instanceof TextView) {
-                ((TextView) view).setTypeface(typeface);
-            } else if (view instanceof ViewGroup) {
-                setTypeface((ViewGroup) view, typeface);
-            }
-        }
-    }
 }
 
-class BottomNavigationViewHelper {
 
-    static void removeShiftMode(BottomNavigationView view) {
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
-        try {
-            Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
-            shiftingMode.setAccessible(true);
-            shiftingMode.setBoolean(menuView, false);
-            shiftingMode.setAccessible(false);
-            for (int i = 0; i < menuView.getChildCount(); i++) {
-                BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
-                item.setShiftingMode(false);
-                // set once again checked value, so view will be updated
-                item.setChecked(item.getItemData().isChecked());
-            }
-        } catch (NoSuchFieldException e) {
-            Log.e("ERROR NO SUCH FIELD", "Unable to get shift mode field");
-        } catch (IllegalAccessException e) {
-            Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
-        }
-    }
-}

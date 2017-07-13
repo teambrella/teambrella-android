@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,15 +11,91 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_bar" />
 
-    <android.support.design.widget.BottomNavigationView
+
+    <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/navigation_view_background"
-        app:itemBackground="@android:color/white"
-        app:itemIconTint="@color/navigation_view_text_color"
-        app:itemTextColor="@color/navigation_view_text_color"
-        app:menu="@menu/bottom_navigation_bar" />
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/Teambrella.BottomBarIcon"
+                android:background="@drawable/ic_icon_home"
+                tools:ignore="ContentDescription" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.TextAppearence.BottomBarText"
+                android:text="@string/bottom_navigation_home" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/team"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/Teambrella.BottomBarIcon"
+                android:background="@drawable/ic_icon_team"
+                tools:ignore="ContentDescription" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.TextAppearence.BottomBarText"
+                android:text="@string/bottom_navigation_team" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/proxies"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/Teambrella.BottomBarIcon"
+                android:background="@drawable/ic_icon_proxies"
+                tools:ignore="ContentDescription" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.TextAppearence.BottomBarText"
+                android:text="@string/bottom_navigation_proxies" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/me"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/Teambrella.BottomBarIcon"
+                tools:ignore="ContentDescription" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                style="@style/Teambrella.TextAppearence.BottomBarText"
+                android:text="@string/bottom_navigation_me" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
