@@ -46,6 +46,7 @@ public class MainActivity extends ADataHostActivity {
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
     public static final String HOME_DATA_TAG = "home_data";
+    public static final String FEED_DATA_TAG = "feed_data";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
@@ -139,7 +140,7 @@ public class MainActivity extends ADataHostActivity {
 
     @Override
     protected String[] getPagerTags() {
-        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG};
+        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG};
     }
 
     @Override
@@ -159,6 +160,9 @@ public class MainActivity extends ADataHostActivity {
                         TeambrellaModel.ATTR_DATA_TEAMMATES, TeammatesDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeamId),
+                        null, TeambrellaDataPagerFragment.class);
+            case FEED_DATA_TAG:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);
         }
         return null;

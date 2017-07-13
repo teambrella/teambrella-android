@@ -51,6 +51,7 @@ public class TeambrellaUris {
     static final int SET_CLAIM_VOTE = 10;
     static final int SET_TEAMMATE_VOTE = 11;
     static final int GET_HOME = 12;
+    static final int GET_FEED = 13;
 
 
     static {
@@ -66,6 +67,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTE, SET_CLAIM_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTE, SET_TEAMMATE_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_HOME, GET_HOME);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_LIST, GET_FEED);
     }
 
 
@@ -82,6 +84,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(Integer.toString(teamId))
                 .appendEncodedPath(SEGMENT_LIST)
                 .build();
+    }
+
+    public static Uri getFeedUri(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_LIST)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+
     }
 
 

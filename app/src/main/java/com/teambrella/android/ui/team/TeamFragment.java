@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.team.claims.ClaimsFragment;
+import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
 
 /**
@@ -61,7 +62,7 @@ public class TeamFragment extends Fragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return new FeedFragment();
+                        return FeedFragment.getInstance(MainActivity.FEED_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     case 1:
                         return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     case 2:
