@@ -166,7 +166,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             int itemType = mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
 
 
-            leftTitle.setText(itemType == TeambrellaModel.HOME_CARD_TEAMMATE ? R.string.limit : R.string.claimed);
+            leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
             picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
@@ -179,12 +179,12 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             unread.setText(mCard.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
 
             amountWidget.setAmount(mCard.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT));
-            if (itemType == TeambrellaModel.HOME_CARD_TEAMMATE) {
+            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
                 teamVote.setText(getString(R.string.risk_format_string, mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)));
             } else {
                 teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
             }
-            title.setText(itemType == TeambrellaModel.HOME_CARD_TEAMMATE ? getString(R.string.application)
+            title.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? getString(R.string.application)
                     : getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
 
             try {

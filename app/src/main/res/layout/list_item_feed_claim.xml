@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp">
 
     <ImageView
         android:id="@+id/icon"
@@ -32,9 +34,9 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/when"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="a wee ago" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -46,5 +48,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/header"
         app:layout_constraintTop_toBottomOf="@id/header" />
+
+    <com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
+        android:id="@+id/avatars"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        app:avatar_background_color="@color/dark"
+        app:avatar_border_color="@android:color/white"
+        app:avatar_border_width="1dp"
+        app:avatar_count="4"
+        app:avatar_shift="5dp"
+        app:avatar_size="20dp"
+        app:layout_constraintStart_toStartOf="@id/message"
+        app:layout_constraintTop_toBottomOf="@id/message" />
+
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Teambrella.ListDivider"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/avatars" />
 
 </android.support.constraint.ConstraintLayout>

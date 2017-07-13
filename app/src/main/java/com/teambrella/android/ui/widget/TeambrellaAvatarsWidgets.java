@@ -59,7 +59,8 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             circleImageView.setBorderColor(mAvatarBorderColor);
             circleImageView.setBorderWidth(mAvatarBorderWidth);
             circleImageView.setFillColor(mAvatarBackgroundColor);
-            int size = i == 0 ? mAvatarSize + mAvatarBorderWidth * 2 : mAvatarSize;
+            //int size = i == 0 ? mAvatarSize - mAvatarBorderWidth * 2 : mAvatarSize;
+            int size = mAvatarSize;
             FrameLayout.LayoutParams params = new LayoutParams(size, size);
             params.gravity = Gravity.CENTER_VERTICAL;
             params.leftMargin = i * (mAvatarSize - mAvatarShift);

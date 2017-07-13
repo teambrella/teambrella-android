@@ -225,13 +225,14 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEAM_VOTE = "TeamVote";
     public static final String ATTR_DATA_ITEM_ID = "ItemId";
     public static final String ATTR_DATA_ITEM_DATE = "ItemDate";
+    public static final String ATTR_DATA_TOP_POSTER_AVATARS = "TopPosterAvatars";
 
 
-    public static final int HOME_CARD_TEAMMATE = 0;
-    public static final int HOME_CARD_CLAIM = 1;
-    public static final int HOME_CARD_RULE = 2;
-    public static final int HOME_CARD_TEAM_CHART = 3;
-    public static final int HOME_CARD_TEAM_NOTIFICATION = 100;
+    public static final int FEED_ITEM_TEAMMATE = 0;
+    public static final int FEED_ITEM_CLAIM = 1;
+    public static final int FEED_ITEM_RULE = 2;
+    public static final int FEED_ITEM_TEAM_CHART = 3;
+    public static final int FEED_ITEM_TEAM_NOTIFICATION = 100;
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
