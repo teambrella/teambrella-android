@@ -104,10 +104,12 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     @Override
     public void setTitle(CharSequence title) {
-        SpannableString s = new SpannableString(title);
-        s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        super.setTitle(s);
+        if (title != null) {
+            SpannableString s = new SpannableString(title);
+            s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            super.setTitle(s);
+        }
     }
 
 

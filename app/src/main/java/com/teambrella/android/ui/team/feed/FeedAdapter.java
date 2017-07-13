@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.team.feed;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -15,9 +16,12 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
 import java.text.ParseException;
@@ -64,7 +68,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
-    static class FeedItemViewHolder extends RecyclerView.ViewHolder {
+    class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
         private Picasso picasso;
         private ImageView mIcon;
@@ -72,6 +76,8 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         private TextView mWhen;
         private TextView mMessage;
         private TeambrellaAvatarsWidgets mAvatarWidgets;
+        private TextView mUnread;
+        private TextView mType;
 
         FeedItemViewHolder(View itemView) {
             super(itemView);
@@ -81,22 +87,36 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             mMessage = (TextView) itemView.findViewById(R.id.message);
             picasso = TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso();
             mAvatarWidgets = (TeambrellaAvatarsWidgets) itemView.findViewById(R.id.avatars);
+            mUnread = (TextView) itemView.findViewById(R.id.unread);
+            mType = (TextView) itemView.findViewById(R.id.type);
         }
 
         void bind(JsonWrapper item) {
+            Context context = itemView.getContext();
             picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                     .into(mIcon);
             mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
 
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
 
+
             switch (itemType) {
                 case TeambrellaModel.FEED_ITEM_CLAIM:
-                    mTitle.setText(itemView.getContext().getString(R.string.claim_title_format_string, item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+                    mType.setText(R.string.claim);
                     break;
                 default:
-                    mTitle.setText(R.string.application);
+                    mType.setText(R.string.application);
+                    break;
             }
+
+            mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME));
+
+            int unreadCount = item.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
+
+            mUnread.setText(item.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
+            mUnread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.INVISIBLE);
+
+
             try {
                 long time = mSDF.parse(item.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)).getTime();
                 long now = System.currentTimeMillis();
@@ -111,6 +131,22 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                     .map(jsonElement -> TeambrellaServer.AUTHORITY + jsonElement.getAsString())
                     .toList()
                     .subscribe(mAvatarWidgets::setAvatars);
+
+
+            itemView.setOnClickListener(v -> {
+                switch (itemType) {
+                    case TeambrellaModel.FEED_ITEM_CLAIM:
+                        context.startActivity(ClaimActivity.getLaunchIntent(context
+                                , TeambrellaUris.getClaimUri(item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID))
+                                , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                                , mTeamId));
+                        break;
+                    default:
+                        context.startActivity(TeammateActivity.getIntent(context
+                                , TeambrellaUris.getTeammateUri(mTeamId, item.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)), null, null));
+                        break;
+                }
+            });
 
         }
     }

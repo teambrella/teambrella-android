@@ -194,8 +194,20 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             }
 
 
-            view.setOnClickListener(v -> {
-            });
+//            view.setOnClickListener(v -> {
+//                switch (itemType) {
+//                    case TeambrellaModel.FEED_ITEM_CLAIM:
+//                        getContext().startActivity(ClaimActivity.getLaunchIntent(getContext()
+//                                , TeambrellaUris.getClaimUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID))
+//                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+//                                , ));
+//                        break;
+//                    default:
+//                        getContext().startActivity(TeammateActivity.getIntent(getContext()
+//                                , TeambrellaUris.getTeammateUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)), null, null));
+//                        break;
+//                }
+//            });
 
             return view;
 

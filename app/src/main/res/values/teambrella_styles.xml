@@ -220,6 +220,7 @@
 
     <style name="Teambrella.TextAppearence.MessageText">
         <item name="android:textColor">@color/bluishGrey</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
         <item name="android:textSize">12sp</item>
     </style>
 
