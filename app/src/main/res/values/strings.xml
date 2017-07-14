@@ -83,6 +83,7 @@
     <string name="application">Application</string>
     <string name="pet_insurance">Pet Insurance</string>
     <string name="claim">Claim</string>
+    <string name="application_discussion">Application Discussion</string>
 
 
 </resources>
