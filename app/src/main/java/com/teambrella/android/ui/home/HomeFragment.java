@@ -29,6 +29,9 @@ public class HomeFragment extends ADataFragment<IDataHost> {
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -9,12 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.home.HomeFragment;
@@ -23,11 +27,14 @@ import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 
+import io.reactivex.disposables.Disposable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
 
 /**
  * Main Activity
  */
-public class MainActivity extends ADataHostActivity {
+public class MainActivity extends ADataHostActivity implements IMainDataHost {
 
 
     private static final String TEAM_ID_EXTRA = "team_id";
@@ -46,6 +53,8 @@ public class MainActivity extends ADataHostActivity {
 
     private int mSelectedItemId = -1;
     private int mTeamId;
+    private Disposable mDisposable;
+    private ImageView mAvatar;
 
 
     public static Intent getLaunchIntent(Context context, int teamId) {
@@ -58,6 +67,7 @@ public class MainActivity extends ADataHostActivity {
         mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAvatar = (ImageView) findViewById(R.id.avatar);
         findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
         findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
         findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
@@ -151,6 +161,35 @@ public class MainActivity extends ADataHostActivity {
         return null;
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
+            if (notification.isOnNext()) {
+                JsonWrapper response = new JsonWrapper(notification.getValue());
+                JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+                TeambrellaImageLoader.getInstance(MainActivity.this).getPicasso()
+                        .load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                        .transform(new CropCircleTransformation())
+                        .into(mAvatar);
+            }
+        });
+    }
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
+
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
@@ -166,6 +205,8 @@ public class MainActivity extends ADataHostActivity {
         }
         return null;
     }
+
+
 }
 
 

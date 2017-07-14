@@ -18,24 +18,29 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import io.reactivex.Notification;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Home Cards Fragment.
  */
-public class HomeCardsFragment extends ADataFragment<IDataHost> {
+public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
 
     private TextView mHeader;
@@ -112,7 +117,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
 
         @Override
         public Fragment getItem(int position) {
-            return CardsFragment.getInstance(mCards.get(position).toString());
+            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId());
         }
 
         @Override
@@ -124,16 +129,19 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
 
     public static final class CardsFragment extends Fragment {
 
-        private static String EXTRA_DATA = "data";
+        private static final String EXTRA_DATA = "data";
+        private static final String EXTRA_TEAM_ID = "team_id";
         private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy \'at\' HH:mm ", Locale.ENGLISH);
         private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         private JsonWrapper mCard;
+        private int mTeamId;
 
-        public static CardsFragment getInstance(String data) {
+        public static CardsFragment getInstance(String data, int teamId) {
             CardsFragment fragment = new CardsFragment();
             Bundle args = new Bundle();
             args.putString(EXTRA_DATA, data);
+            args.putInt(EXTRA_TEAM_ID, teamId);
             fragment.setArguments(args);
             return fragment;
         }
@@ -143,6 +151,7 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             super.onCreate(savedInstanceState);
             Gson gson = new GsonBuilder().create();
             mCard = new JsonWrapper(gson.fromJson(getArguments().getString(EXTRA_DATA), JsonObject.class));
+            mTeamId = getArguments().getInt(EXTRA_TEAM_ID);
         }
 
         @Nullable
@@ -169,8 +178,14 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                    .into(icon);
+            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+
+            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
+                requestCreator.transform(new CropCircleTransformation());
+            }
+
+            requestCreator.into(icon);
+
             message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT)));
 
             int unreadCount = mCard.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
@@ -194,20 +209,20 @@ public class HomeCardsFragment extends ADataFragment<IDataHost> {
             }
 
 
-//            view.setOnClickListener(v -> {
-//                switch (itemType) {
-//                    case TeambrellaModel.FEED_ITEM_CLAIM:
-//                        getContext().startActivity(ClaimActivity.getLaunchIntent(getContext()
-//                                , TeambrellaUris.getClaimUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID))
-//                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
-//                                , ));
-//                        break;
-//                    default:
-//                        getContext().startActivity(TeammateActivity.getIntent(getContext()
-//                                , TeambrellaUris.getTeammateUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)), null, null));
-//                        break;
-//                }
-//            });
+            view.setOnClickListener(v -> {
+                switch (itemType) {
+                    case TeambrellaModel.FEED_ITEM_CLAIM:
+                        getContext().startActivity(ClaimActivity.getLaunchIntent(getContext()
+                                , TeambrellaUris.getClaimUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID))
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                                , mTeamId));
+                        break;
+                    default:
+                        getContext().startActivity(TeammateActivity.getIntent(getContext()
+                                , TeambrellaUris.getTeammateUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)), null, null));
+                        break;
+                }
+            });
 
             return view;
 
