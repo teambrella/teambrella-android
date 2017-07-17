@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -73,9 +73,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             mHeader.setText(getString(R.string.welcome_user_format_string, data.getString(TeambrellaModel.ATTR_DATA_NAME).trim().split(" ")[0]));
-
+            JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
             if (mAdapter == null) {
-                JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
                 mCardsPager.setAdapter(mAdapter = new CardAdapter(cards));
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 for (int i = 0; i < cards.size(); i++) {
@@ -102,17 +101,19 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                         ((HomeFragment) getParentFragment()).setRefreshingEnable(state == ViewPager.SCROLL_STATE_IDLE);
                     }
                 });
+            } else {
+                mAdapter.setData(cards);
             }
         }
     }
 
 
-    public final class CardAdapter extends FragmentPagerAdapter {
+    public final class CardAdapter extends FragmentStatePagerAdapter {
 
         private JsonArray mCards;
 
-        public CardAdapter(JsonArray cards) {
-            super(HomeCardsFragment.this.getFragmentManager());
+        CardAdapter(JsonArray cards) {
+            super(HomeCardsFragment.this.getChildFragmentManager());
             mCards = cards;
         }
 
@@ -124,6 +125,16 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         @Override
         public int getCount() {
             return mCards.size();
+        }
+
+        public void setData(JsonArray cards) {
+            mCards = cards;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 
