@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical|start"
@@ -11,13 +12,13 @@
         android:background="@color/colorPrimary"
         android:gravity="center_vertical">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/back"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:background="?attr/selectableItemBackground"
             android:scaleType="center"
-            android:src="@drawable/ic_arrow_back" />
+            app:srcCompat="@drawable/ic_arrow_back" />
 
         <LinearLayout
             android:layout_width="0dp"
