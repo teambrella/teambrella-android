@@ -1,5 +1,4 @@
 <resources>
-    <string name="facebook_app_id" translatable="false">416598765047865</string>
     <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->

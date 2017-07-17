@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.chat.claim;
+package com.teambrella.android.ui.chat;
 
 import android.content.Context;
 import android.net.Uri;
@@ -19,13 +19,13 @@ import java.util.Locale;
 /**
  * Claim chat pager loader
  */
-class ClaimChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
+class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     private static final String SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))";
 
-    private static final String LOG_TAG = ClaimChatDataPagerLoader.class.getSimpleName();
+    private static final String LOG_TAG = ChatDataPagerLoader.class.getSimpleName();
 
-    ClaimChatDataPagerLoader(Context context, Uri uri) {
+    ChatDataPagerLoader(Context context, Uri uri) {
         super(context, uri);
     }
 

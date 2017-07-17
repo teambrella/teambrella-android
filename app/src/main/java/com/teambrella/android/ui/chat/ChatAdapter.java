@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.chat.claim;
+package com.teambrella.android.ui.chat;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -26,12 +26,12 @@ import java.util.Locale;
 /**
  * Claim Chat Adapter
  */
-class ClaimChatAdapter extends TeambrellaDataPagerAdapter {
+class ChatAdapter extends TeambrellaDataPagerAdapter {
 
     private static final String FORMAT_STRING = "<img src=\"%d\">";
     private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;
 
-    ClaimChatAdapter(IDataPager<JsonArray> pager) {
+    ChatAdapter(IDataPager<JsonArray> pager) {
         super(pager);
     }
 

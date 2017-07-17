@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.chat.claim;
+package com.teambrella.android.ui.chat;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,12 +17,12 @@ import io.reactivex.Notification;
 /**
  * Claim Chat Fragment
  */
-public class ClaimChatFragment extends ADataPagerProgressFragment<IDataHost> {
+public class ChatFragment extends ADataPagerProgressFragment<IDataHost> {
 
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ClaimChatAdapter(mDataHost.getPager(mTag));
+        return new ChatAdapter(mDataHost.getPager(mTag));
     }
 
 

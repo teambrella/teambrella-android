@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.chat.claim;
+package com.teambrella.android.ui.chat;
 
 import android.os.Bundle;
 
@@ -9,10 +9,10 @@ import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 /**
  * Clam Chat Pager Fragment
  */
-public class ClaimChatPagerFragment extends TeambrellaDataPagerFragment {
+public class ChatPagerFragment extends TeambrellaDataPagerFragment {
 
     @Override
     protected IDataPager<JsonArray> createLoader(Bundle args) {
-        return new ClaimChatDataPagerLoader(getContext(), args.getParcelable(EXTRA_URI));
+        return new ChatDataPagerLoader(getContext(), args.getParcelable(EXTRA_URI));
     }
 }

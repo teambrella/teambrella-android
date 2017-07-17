@@ -52,7 +52,7 @@
             android:theme="@style/AppTheme.ImageViewer" />
 
         <activity
-            android:name=".ui.chat.claim.ClaimChatActivity"
+            android:name=".ui.chat.ChatActivity"
             android:screenOrientation="portrait" />
 
         <provider

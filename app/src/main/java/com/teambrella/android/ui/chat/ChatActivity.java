@@ -1,7 +1,8 @@
-package com.teambrella.android.ui.chat.claim;
+package com.teambrella.android.ui.chat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -27,9 +28,9 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Claim chat
  */
-public class ClaimChatActivity extends ADataHostActivity {
+public class ChatActivity extends ADataHostActivity {
 
-    private static final String EXTRA_CLAIM_ID = "claim_id";
+    private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";
 
 
@@ -37,20 +38,20 @@ public class ClaimChatActivity extends ADataHostActivity {
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
 
 
-    private int mClaimId;
+    private Uri mUri;
     private String mTopicId;
     private Handler mHandler = new Handler();
 
 
-    public static Intent getLaunchIntent(Context context, int claimId, String topicId) {
-        return new Intent(context, ClaimChatActivity.class)
-                .putExtra(EXTRA_CLAIM_ID, claimId).putExtra(EXTRA_TOPIC_ID, topicId);
+    public static Intent getLaunchIntent(Context context, Uri uri, String topicId) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_URI, uri).putExtra(EXTRA_TOPIC_ID, topicId);
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mClaimId = getIntent().getIntExtra(EXTRA_CLAIM_ID, 0);
+        mUri = getIntent().getParcelableExtra(EXTRA_URI);
         mTopicId = getIntent().getStringExtra(EXTRA_TOPIC_ID);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim_chat);
@@ -60,18 +61,19 @@ public class ClaimChatActivity extends ADataHostActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
 
         }
-        setTitle(getString(R.string.claim_title_format_string, getIntent().getIntExtra(EXTRA_CLAIM_ID, 0)));
+
+        //setTitle(getString(R.string.claim_title_format_string, getIntent().getIntExtra(EXTRA_CLAIM_ID, 0)));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, ClaimChatFragment.getInstance(DATA_FRAGMENT_TAG, ClaimChatFragment.class), UI_FRAGMENT_TAG)
+                    .add(R.id.container, ChatFragment.getInstance(DATA_FRAGMENT_TAG, ChatFragment.class), UI_FRAGMENT_TAG)
                     .commit();
         }
 
         findViewById(R.id.send_text).setOnClickListener(v -> {
             TextView textView = (TextView) findViewById(R.id.text);
-            TeambrellaServer server = new TeambrellaServer(ClaimChatActivity.this, TeambrellaUser.get(ClaimChatActivity.this).getPrivateKey());
+            TeambrellaServer server = new TeambrellaServer(ChatActivity.this, TeambrellaUser.get(ChatActivity.this).getPrivateKey());
             server.requestObservable(TeambrellaUris.getNewPostUri(mTopicId, textView.getText().toString()), null)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
@@ -123,7 +125,7 @@ public class ClaimChatActivity extends ADataHostActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case DATA_FRAGMENT_TAG:
-                return ClaimChatPagerFragment.getInstance(TeambrellaUris.getClaimChatUri(mClaimId), null, ClaimChatPagerFragment.class);
+                return ChatPagerFragment.getInstance(mUri, null, ChatPagerFragment.class);
         }
         return null;
     }
@@ -142,6 +144,5 @@ public class ClaimChatActivity extends ADataHostActivity {
         mHandler.removeCallbacks(mUpdate);
     }
 
-
-    private Runnable mUpdate = () -> update();
+    private final Runnable mUpdate = this::update;
 }

@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.claim;
 
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -17,10 +18,11 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
-import com.teambrella.android.ui.chat.claim.ClaimChatActivity;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.ImagePager;
 
 import java.util.ArrayList;
@@ -129,7 +131,15 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
 
-                mDiscussion.setOnClickListener(v -> startActivity(ClaimChatActivity.getLaunchIntent(getContext(), data.getInt(TeambrellaModel.ATTR_DATA_ID, 0), claimDiscussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))));
+
+                final int claimId = data.getInt(TeambrellaModel.ATTR_DATA_ID);
+                final String topicId = data.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
+                final Uri uri = claimId > 0 ? TeambrellaUris.getClaimChatUri(claimId) : null;
+
+
+                if (uri != null) {
+                    mDiscussion.setOnClickListener(v -> startActivity(ChatActivity.getLaunchIntent(getContext(), uri, topicId)));
+                }
             }
 
             JsonWrapper claimVoting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
