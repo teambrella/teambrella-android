@@ -52,6 +52,8 @@ public class TeambrellaUris {
     static final int SET_TEAMMATE_VOTE = 11;
     static final int GET_HOME = 12;
     static final int GET_FEED = 13;
+    static final int TEAMMATE_CHAT = 14;
+    static final int FEED_CHAT = 15;
 
 
     static {
@@ -68,6 +70,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTE, SET_TEAMMATE_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_HOME, GET_HOME);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_LIST, GET_FEED);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_CHAT, TEAMMATE_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_CHAT, FEED_CHAT);
     }
 
 
@@ -123,6 +127,27 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_LIST)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+
+    public static Uri getTeammateChatUri(int teamId, String userId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_TEAMMATE)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_ID, userId)
+                .build();
+    }
+
+
+    public static Uri getFeedChatUri(String topicId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendQueryParameter(KEY_ID, topicId)
                 .build();
     }
 

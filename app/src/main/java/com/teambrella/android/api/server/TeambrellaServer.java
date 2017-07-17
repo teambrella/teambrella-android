@@ -144,6 +144,20 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
+            case TeambrellaUris.TEAMMATE_CHAT:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                sinceParam = uri.getQueryParameter(TeambrellaUris.KEY_SINCE);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, sinceParam != null ? Long.parseLong(sinceParam) : null);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                break;
+            case TeambrellaUris.FEED_CHAT:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                sinceParam = uri.getQueryParameter(TeambrellaUris.KEY_SINCE);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, sinceParam != null ? Long.parseLong(sinceParam) : null);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.NEW_POST:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_TEXT));
@@ -166,7 +180,6 @@ public class TeambrellaServer {
                 break;
             case TeambrellaUris.GET_FEED:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
-                //requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, 636354838963500333L);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
@@ -216,6 +229,10 @@ public class TeambrellaServer {
                 return mAPI.getHome(timestamp, publicKey, signature, requestBody);
             case TeambrellaUris.GET_FEED:
                 return mAPI.getFeed(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.FEED_CHAT:
+                return mAPI.getFeedChat(timestamp, publicKey, signature, requestBody);
+            case TeambrellaUris.TEAMMATE_CHAT:
+                return mAPI.getTeammateChat(timestamp, publicKey, signature, requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

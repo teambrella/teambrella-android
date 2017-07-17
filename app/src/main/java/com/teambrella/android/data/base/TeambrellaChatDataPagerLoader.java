@@ -130,16 +130,17 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
 
     private void onNext(JsonObject data) {
         JsonWrapper response = new JsonWrapper(data);
-        int size = response.getObject(TeambrellaModel.ATTR_METADATA_).getInt(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, 0);
+        int size = response.getObject(TeambrellaModel.ATTR_METADATA_).getInt(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE);
         mIsNextLoading = false;
         JsonArray newData = getPageableData(data);
 
         if (mSince == -1) {
             mSince = response.getObject(TeambrellaModel.ATTR_DATA).getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getLong(TeambrellaModel.ATTR_DATA_LAST_READ, 0);
             if (newData.size() == 0) {
+                mHasNext = false;
                 loadPrevious(false);
+                return;
             }
-            return;
         }
         mArray.addAll(newData);
         mHasNext = size == LIMIT;
@@ -151,7 +152,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
     private void onPrevious(JsonObject data) {
         JsonWrapper response = new JsonWrapper(data);
         JsonArray newData = getPageableData(data);
-        int size = response.getObject(TeambrellaModel.ATTR_METADATA_).getInt(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, 0);
+        int size = response.getObject(TeambrellaModel.ATTR_METADATA_).getInt(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE);
         newData.addAll(mArray);
         mHasPrevious = size == LIMIT;
         mPreviousIndex -= size;

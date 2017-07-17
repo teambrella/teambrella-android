@@ -36,7 +36,7 @@
             android:scaleType="center"
             app:srcCompat="@drawable/ic_send" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <EditText
             android:id="@+id/text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

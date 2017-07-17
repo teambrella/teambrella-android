@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -19,10 +20,12 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
@@ -161,6 +164,15 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
 
 
             mDiscussion.setOnClickListener(v -> {
+                Context context = getContext();
+                Observable.fromArray(data)
+                        .map(jsonWrapper -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
+                        .doOnNext(basic -> context.startActivity(
+                                ChatActivity.getLaunchIntent(context
+                                        , TeambrellaUris.getTeammateChatUri(
+                                                basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
+                                                , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                                        , data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)))).blockingFirst();
             });
 
         } else {

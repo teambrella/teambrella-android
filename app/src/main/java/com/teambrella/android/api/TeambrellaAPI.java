@@ -73,6 +73,22 @@ public interface TeambrellaAPI {
                                                   @Body JsonElement body);
 
     @Headers("Content-Type: application/json")
+    @POST("teammate/getChat")
+    Observable<Response<JsonObject>> getTeammateChat(@Header("t") long timestamp,
+                                                     @Header("key") String publicKey,
+                                                     @Header("sig") String signature,
+                                                     @Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/getChat")
+    Observable<Response<JsonObject>> getFeedChat(@Header("t") long timestamp,
+                                                 @Header("key") String publicKey,
+                                                 @Header("sig") String signature,
+                                                 @Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
     @POST("post/newPost")
     Observable<Response<JsonObject>> newPost(@Header("t") long timestamp,
                                              @Header("key") String publicKey,

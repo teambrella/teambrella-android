@@ -66,10 +66,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mAdapter = getAdapter();
         mList.setAdapter(mAdapter);
-
-        IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
-        mDisposable = pager.getObservable()
-                .subscribe(this::onDataUpdated);
         return view;
     }
 
@@ -86,6 +82,23 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
+        mDisposable = pager.getObservable()
+                .subscribe(this::onDataUpdated);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
+
     protected void onDataUpdated(Notification<Pair<Integer, JsonArray>> notification) {
         if (notification.isOnNext()) {
 
@@ -99,9 +112,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-        }
         mAdapter.destroy();
         mList = null;
     }

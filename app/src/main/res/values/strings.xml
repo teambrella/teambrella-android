@@ -81,6 +81,7 @@
     <string name="claimed">Claimed</string>
     <string name="welcome_user_format_string">Hi %s! </string>
     <string name="application">Application</string>
+    <string name="discussion">Discussion</string>
     <string name="pet_insurance">Pet Insurance</string>
     <string name="claim">Claim</string>
     <string name="application_discussion">Application Discussion</string>

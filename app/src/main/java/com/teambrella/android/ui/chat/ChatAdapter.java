@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import io.reactivex.Observable;
+
 /**
  * Claim Chat Adapter
  */
@@ -98,10 +100,22 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void bind(JsonWrapper object) {
-            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY,
-                    object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getObject(),
-                    TeambrellaModel.ATTR_DATA_AVATAR))
-                    .into(mUserPicture);
+            Observable.fromArray(object)
+                    .map(item -> item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART))
+                    .map(item -> TeambrellaServer.AUTHORITY + item.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .map(uri -> picasso.load(uri))
+                    .doOnNext(requestCreator -> requestCreator.into(mUserPicture))
+                    .map(requestCreator -> true)
+                    .subscribe(b -> {
+                    }, e -> {
+                    }, () -> {
+                    });
+
+
+//            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY,
+//                    object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getObject(),
+//                    TeambrellaModel.ATTR_DATA_AVATAR))
+//                    .into(mUserPicture);
             mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
         }
     }
