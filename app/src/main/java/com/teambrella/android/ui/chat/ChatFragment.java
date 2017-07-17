@@ -38,7 +38,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IDataHost> {
         if (notification.isOnNext()) {
             JsonArray array = notification.getValue().second;
             if (array != null && array.size() > 0) {
-                //mList.getLayoutManager().smoothScrollToPosition(mList, null, mAdapter.getItemCount() - 1);
+                mList.post(() -> mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1));
             }
         }
     }

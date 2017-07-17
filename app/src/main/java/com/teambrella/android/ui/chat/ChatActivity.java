@@ -87,7 +87,7 @@ public class ChatActivity extends ADataHostActivity {
 
         });
 
-        mHandler.postDelayed(mUpdate, 4000);
+        mHandler.postDelayed(mUpdate, 2000);
     }
 
     @Override
@@ -117,8 +117,8 @@ public class ChatActivity extends ADataHostActivity {
 
 
     public void update() {
-        //getPager(DATA_FRAGMENT_TAG).loadNext(true);
-        //mHandler.postDelayed(mUpdate, 2000);
+        getPager(DATA_FRAGMENT_TAG).loadNext(true);
+        mHandler.postDelayed(mUpdate, 2000);
     }
 
     @Override

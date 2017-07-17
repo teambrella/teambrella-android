@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.home;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,8 +29,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.claim.ClaimActivity;
-import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import java.text.SimpleDateFormat;
@@ -199,8 +200,19 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             } else {
                 teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
             }
-            title.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? getString(R.string.application)
-                    : getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+
+
+            switch (itemType) {
+                case TeambrellaModel.FEED_ITEM_CLAIM:
+                    title.setText(getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+                    break;
+                case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                    title.setText(mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
+                    break;
+                case TeambrellaModel.FEED_ITEM_TEAMMATE:
+                    title.setText(R.string.application);
+                    break;
+            }
 
             try {
                 subtitle.setText(mDateFormat.format(mSDF.parse(mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE))));
@@ -210,18 +222,20 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
 
             view.setOnClickListener(v -> {
+                final Uri chatUri;
+                Context context = getContext();
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
-                        getContext().startActivity(ClaimActivity.getLaunchIntent(getContext()
-                                , TeambrellaUris.getClaimUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID))
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
-                                , mTeamId));
+                        chatUri = TeambrellaUris.getClaimChatUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID));
+                        break;
+                    case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                        chatUri = TeambrellaUris.getFeedChatUri(mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                     default:
-                        getContext().startActivity(TeammateActivity.getIntent(getContext()
-                                , TeambrellaUris.getTeammateUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)), null, null));
+                        chatUri = TeambrellaUris.getTeammateChatUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID));
                         break;
                 }
+                context.startActivity(ChatActivity.getLaunchIntent(context, chatUri, mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)));
             });
 
             return view;
