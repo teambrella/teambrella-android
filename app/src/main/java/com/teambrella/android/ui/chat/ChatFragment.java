@@ -36,8 +36,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IDataHost> {
     protected void onDataUpdated(Notification<Pair<Integer, JsonArray>> notification) {
         super.onDataUpdated(notification);
         if (notification.isOnNext()) {
+            boolean isNext = notification.getValue().first > 0;
             JsonArray array = notification.getValue().second;
-            if (array != null && array.size() > 0) {
+            if (array != null && array.size() > 0 && isNext) {
                 mList.post(() -> mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1));
             }
         }

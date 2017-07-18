@@ -133,7 +133,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
 
                 final int claimId = data.getInt(TeambrellaModel.ATTR_DATA_ID);
-                final String topicId = data.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
+                final String topicId = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
                 final Uri uri = claimId > 0 ? TeambrellaUris.getClaimChatUri(claimId) : null;
 
 

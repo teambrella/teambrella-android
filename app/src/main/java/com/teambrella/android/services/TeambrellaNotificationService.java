@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -70,6 +71,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     @Override
     public void onMessage(String message) {
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ON_NEW_MESSAGE_RECEIVED));
+        ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(300);
+
     }
 
     @Override

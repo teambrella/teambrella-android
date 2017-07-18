@@ -63,7 +63,16 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
-        mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+                try {
+                    super.onLayoutChildren(recycler, state);
+                } catch (Exception e) {
+
+                }
+            }
+        });
         mAdapter = getAdapter();
         mList.setAdapter(mAdapter);
         return view;

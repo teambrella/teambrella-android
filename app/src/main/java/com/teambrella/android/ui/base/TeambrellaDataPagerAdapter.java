@@ -38,7 +38,8 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                 if (addedSize > 0) {
                     notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
                 } else if (pairNotification.getValue().first < 0) {
-                    notifyItemRangeInserted((mPager.hasPrevious() ? 1 : 0), Math.abs(addedSize));
+                    notifyItemChanged(0);
+                    notifyItemRangeInserted(0, Math.abs(addedSize));
                 } else {
                     notifyDataSetChanged();
                 }
