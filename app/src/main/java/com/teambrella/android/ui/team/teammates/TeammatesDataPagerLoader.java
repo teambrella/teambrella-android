@@ -39,15 +39,20 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
         return new JsonWrapper(src).getObject(TeambrellaModel.ATTR_DATA).getJsonArray(TeambrellaModel.ATTR_DATA_TEAMMATES);
     }
 
-    @Override
-    public void reload() {
-        mNewMembers.add(NEW_MEMBERS_SECTION);
-        mTeammates.add(TEAMMATES_SECTION);
-        super.reload();
-    }
 
     @Override
     protected void onAddNewData(JsonArray newData) {
+
+        if (mArray.size() == 0) {
+            if (mNewMembers.size() == 0) {
+                mNewMembers.add(NEW_MEMBERS_SECTION);
+            }
+
+            if (mTeammates.size() == 0) {
+                mTeammates.add(TEAMMATES_SECTION);
+            }
+        }
+
         for (JsonElement element : newData) {
             JsonObject item = element.getAsJsonObject();
             item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE);
@@ -63,7 +68,7 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
             mNewMembers = new JsonArray();
         }
 
-        if (mTeammates.size() > 2) {
+        if (mTeammates.size() > 1) {
             mArray.addAll(mTeammates);
             mTeammates = new JsonArray();
         }

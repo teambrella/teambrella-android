@@ -42,15 +42,20 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                         int dataSize = mPager.getLoadedData().size();
                         int addedSize = metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE);
                         int shift = hasHeader() ? 1 : 0;
-                        switch (metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)) {
-                            case TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION:
-                                notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
-                                break;
 
-                            case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
-                                notifyItemChanged(0);
-                                notifyItemRangeInserted(0, addedSize);
-                                break;
+                        if (addedSize > 0) {
+                            switch (metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)) {
+                                case TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION:
+                                    notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
+                                    break;
+
+                                case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
+                                    notifyItemChanged(0);
+                                    notifyItemRangeInserted(0, addedSize);
+                                    break;
+                            }
+                        } else {
+                            notifyDataSetChanged();
                         }
                     }
                 }

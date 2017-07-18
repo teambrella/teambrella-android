@@ -93,6 +93,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         }
 
         mRefreshable.setOnRefreshListener(pager::reload);
+        mRefreshable.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
     }
 
