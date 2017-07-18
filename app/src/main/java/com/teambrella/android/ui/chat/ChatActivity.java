@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -40,7 +39,6 @@ public class ChatActivity extends ADataHostActivity {
 
     private Uri mUri;
     private String mTopicId;
-    private Handler mHandler = new Handler();
 
 
     public static Intent getLaunchIntent(Context context, Uri uri, String topicId) {
@@ -86,8 +84,6 @@ public class ChatActivity extends ADataHostActivity {
                     });
 
         });
-
-        mHandler.postDelayed(mUpdate, 2000);
     }
 
     @Override
@@ -116,11 +112,6 @@ public class ChatActivity extends ADataHostActivity {
     }
 
 
-    public void update() {
-        getPager(DATA_FRAGMENT_TAG).loadNext(true);
-        mHandler.postDelayed(mUpdate, 2000);
-    }
-
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
@@ -137,12 +128,4 @@ public class ChatActivity extends ADataHostActivity {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         super.setTitle(s);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacks(mUpdate);
-    }
-
-    private final Runnable mUpdate = this::update;
 }

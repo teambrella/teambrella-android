@@ -19,6 +19,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.services.TeambrellaNotificationService;
 
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
@@ -51,6 +52,9 @@ public class WelcomeActivity extends AppCompatActivity {
 //
 //            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
             if (user.getTeamId() > 0) {
+                startService(new Intent(this, TeambrellaNotificationService.class)
+                        .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, user.getTeamId())
+                        .setAction(TeambrellaNotificationService.CONNECT_ACTION));
                 startActivity(MainActivity.getLaunchIntent(this, user.getTeamId()));
                 finish();
             } else {
@@ -130,6 +134,9 @@ public class WelcomeActivity extends AppCompatActivity {
         protected void onPostExecute(Integer teamId) {
             super.onPostExecute(teamId);
             TeambrellaUser.get(WelcomeActivity.this).setTeamId(teamId);
+            startService(new Intent(WelcomeActivity.this, TeambrellaNotificationService.class)
+                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, teamId)
+                    .setAction(TeambrellaNotificationService.CONNECT_ACTION));
             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this, teamId));
             finish();
         }

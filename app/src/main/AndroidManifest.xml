@@ -95,6 +95,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+        <service android:name=".services.TeambrellaNotificationService" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

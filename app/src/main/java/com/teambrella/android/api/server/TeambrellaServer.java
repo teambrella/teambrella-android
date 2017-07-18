@@ -16,8 +16,16 @@ import com.teambrella.android.api.TeambrellaServerException;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import io.reactivex.Observable;
 import okhttp3.Interceptor;
@@ -285,6 +293,73 @@ public class TeambrellaServer {
                     .addHeader("sig", signature)
                     .build();
             return chain.proceed(newRequest);
+        }
+    }
+
+
+    public TeambrellaSocketClient createSocketClient(URI uri, int teamId, SocketClientListener listener) {
+        Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
+        String publicKey = mKey.getPublicKeyAsHex();
+        String signature = mKey.signMessage(Long.toString(timestamp));
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("t", Long.toString(timestamp));
+        headers.put("key", publicKey);
+        headers.put("sig", signature);
+        return new TeambrellaSocketClient(uri, teamId, headers, listener);
+    }
+
+
+    public interface SocketClientListener {
+
+        void onMessage(String message);
+
+        void onClose(int code, String reason, boolean remote);
+
+        void onError(Exception ex);
+    }
+
+    public static class TeambrellaSocketClient extends WebSocketClient {
+
+
+        private final int mTeamId;
+        private final SocketClientListener mListener;
+
+
+        TeambrellaSocketClient(URI serverUri, int mTeamId, Map<String, String> httpHeaders, SocketClientListener listener) {
+            super(serverUri, new Draft_6455(), httpHeaders, 0);
+            this.mTeamId = mTeamId;
+            this.mListener = listener;
+        }
+
+
+        @Override
+        public void connect() {
+            try {
+                setSocket(SSLSocketFactory.getDefault().createSocket());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            super.connect();
+        }
+
+        @Override
+        public void onOpen(ServerHandshake handshakeData) {
+            send("0;" + mTeamId + ";1");
+        }
+
+        @Override
+        public void onMessage(String message) {
+            mListener.onMessage(message);
+        }
+
+        @Override
+        public void onClose(int code, String reason, boolean remote) {
+            mListener.onClose(code, reason, remote);
+        }
+
+        @Override
+        public void onError(Exception ex) {
+            mListener.onError(ex);
         }
     }
 
