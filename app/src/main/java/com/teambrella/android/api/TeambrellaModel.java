@@ -99,13 +99,19 @@ public class TeambrellaModel {
 
     /* Metadata */
     public static final String ATTR_METADATA_ORIGINAL_SIZE = "OriginalSize";
-
+    public static final String ATTR_METADATA_DIRECTION = "direction";
+    public static final String ATTR_METADATA_FORCE = "force";
+    public static final String ATTR_METADATA_RELOAD = "reload";
+    public static final String ATTR_METADATA_NEXT_DIRECTION = "next";
+    public static final String ATTR_METADATA_PREVIOUS_DIRECTION = "previous";
+    public static final String ATTR_METADATA_SIZE = "size";
 
     /*Status*/
     public static final String ATTR_STATUS_TIMESTAMP = "Timestamp";
     public static final String ATTR_STATUS_RESULT_CODE = "ResultCode";
     public static final String ATTR_STATUS_ERROR_MESSAGE = "ErrorMessage";
     public static final String ATTR_STATUS_URI = "uri";
+
 
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
     public static final int VALUE_STATUS_RESULT_CODE_FATAL = 1;

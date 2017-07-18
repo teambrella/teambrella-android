@@ -3,15 +3,16 @@ package com.teambrella.android.ui.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.data.base.IDataPager;
@@ -31,6 +32,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected RecyclerView mList;
     protected TeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
+    private SwipeRefreshLayout mRefreshable;
 
     public static <T extends ADataPagerProgressFragment> T getInstance(String tag, Class<T> clazz) {
         T fragment;
@@ -63,6 +65,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
+        mRefreshable = (SwipeRefreshLayout) view.findViewById(R.id.refreshable);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
@@ -89,10 +92,13 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
             setContentShown(true);
         }
 
+        mRefreshable.setOnRefreshListener(pager::reload);
+
     }
 
     @Override
     public void onStart() {
+
         super.onStart();
         IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
         mDisposable = pager.getObservable()
@@ -108,13 +114,13 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         }
     }
 
-    protected void onDataUpdated(Notification<Pair<Integer, JsonArray>> notification) {
+    protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-
         } else {
             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
         }
         setContentShown(true);
+        mRefreshable.setRefreshing(false);
     }
 
 
@@ -129,6 +135,11 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     public void onDetach() {
         super.onDetach();
         mDataHost = null;
+    }
+
+
+    protected void setRefreshable(boolean refreshable) {
+        mRefreshable.setEnabled(refreshable);
     }
 
     protected abstract TeambrellaDataPagerAdapter getAdapter();

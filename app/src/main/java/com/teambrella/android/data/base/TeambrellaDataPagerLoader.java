@@ -2,7 +2,6 @@ package com.teambrella.android.data.base;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Pair;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -23,13 +22,13 @@ import io.reactivex.subjects.PublishSubject;
  */
 public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
-    protected final static int LIMIT = 10;
+    private final static int LIMIT = 10;
 
 
-    private final ConnectableObservable<Notification<Pair<Integer, JsonArray>>> mConnectableObservable;
-    private final PublishSubject<Notification<Pair<Integer, JsonArray>>> mPublisher = PublishSubject.create();
+    private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
+    private final PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
     private final TeambrellaServer mServer;
-    protected final Uri mUri;
+    private final Uri mUri;
     private final String mProperty;
     protected JsonArray mArray = new JsonArray();
 
@@ -52,6 +51,16 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
         if (!mIsLoading && (mHasNext || force)) {
             mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mNextIndex, LIMIT), null)
                     .subscribeOn(Schedulers.io())
+                    .map(jsonObject -> {
+                        JsonObject metadata = new JsonObject();
+                        metadata.addProperty(TeambrellaModel.ATTR_METADATA_RELOAD, false);
+                        metadata.addProperty(TeambrellaModel.ATTR_METADATA_FORCE, force);
+                        metadata.addProperty(TeambrellaModel.ATTR_METADATA_DIRECTION, TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION);
+                        JsonArray array = getPageableData(jsonObject);
+                        metadata.addProperty(TeambrellaModel.ATTR_METADATA_SIZE, array.size());
+                        jsonObject.add(TeambrellaModel.ATTR_METADATA_, metadata);
+                        return jsonObject;
+                    })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onNext, this::onError, this::onComplete);
             mIsLoading = true;
@@ -60,7 +69,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     }
 
     @Override
-    public Observable<Notification<Pair<Integer, JsonArray>>> getObservable() {
+    public Observable<Notification<JsonObject>> getObservable() {
         return mConnectableObservable;
     }
 
@@ -104,13 +113,38 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
         return false;
     }
 
+
+    @Override
+    public void reload() {
+        mServer.requestObservable(TeambrellaUris.appendPagination(mUri, 0, LIMIT), null)
+                .subscribeOn(Schedulers.io())
+                .map(jsonObject -> {
+                    JsonObject metadata = new JsonObject();
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_RELOAD, true);
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_FORCE, true);
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_DIRECTION, TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION);
+                    JsonArray array = getPageableData(jsonObject);
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_SIZE, array.size());
+                    jsonObject.add(TeambrellaModel.ATTR_METADATA_, metadata);
+                    return jsonObject;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(jsonObject -> {
+                    mNextIndex = 0;
+                    mArray = new JsonArray();
+                })
+                .subscribe(this::onNext, this::onError, this::onComplete);
+        mIsLoading = true;
+        mHasError = false;
+    }
+
     private void onNext(JsonObject data) {
         JsonArray newData = getPageableData(data);
         onAddNewData(newData);
         mHasNext = newData.size() == LIMIT;
         mNextIndex += newData.size();
         mIsLoading = false;
-        mPublisher.onNext(Notification.createOnNext(new Pair<>(newData.size(), newData)));
+        mPublisher.onNext(Notification.createOnNext(data));
     }
 
     protected JsonArray getPageableData(JsonObject src) {

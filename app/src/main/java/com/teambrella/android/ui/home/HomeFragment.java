@@ -68,7 +68,6 @@ public class HomeFragment extends ADataFragment<IDataHost> {
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
-
     }
 
     @Override

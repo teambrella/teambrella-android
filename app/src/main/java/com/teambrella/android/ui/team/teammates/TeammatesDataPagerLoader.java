@@ -32,13 +32,18 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
         super(context, uri, null);
         mNewMembers = new JsonArray();
         mTeammates = new JsonArray();
-        mNewMembers.add(NEW_MEMBERS_SECTION);
-        mTeammates.add(TEAMMATES_SECTION);
     }
 
     @Override
     protected JsonArray getPageableData(JsonObject src) {
         return new JsonWrapper(src).getObject(TeambrellaModel.ATTR_DATA).getJsonArray(TeambrellaModel.ATTR_DATA_TEAMMATES);
+    }
+
+    @Override
+    public void reload() {
+        mNewMembers.add(NEW_MEMBERS_SECTION);
+        mTeammates.add(TEAMMATES_SECTION);
+        super.reload();
     }
 
     @Override

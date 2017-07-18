@@ -1,6 +1,6 @@
 package com.teambrella.android.data.base;
 
-import android.util.Pair;
+import com.google.gson.JsonObject;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -12,7 +12,7 @@ public interface IDataPager<T> {
 
     T getLoadedData();
 
-    Observable<Notification<Pair<Integer, T>>> getObservable();
+    Observable<Notification<JsonObject>> getObservable();
 
     void loadNext(boolean force);
 
@@ -29,5 +29,7 @@ public interface IDataPager<T> {
     boolean hasPreviousError();
 
     boolean isPreviousLoading();
+
+    void reload();
 
 }

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 
 import io.reactivex.disposables.Disposable;
@@ -30,18 +32,27 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
         mPager = pager;
-        mDisposal = mPager.getObservable().subscribe(pairNotification -> {
-            if (pairNotification.isOnNext()) {
-                Integer addedSize = pairNotification.getValue().first;
-                int shift = hasHeader() ? 1 : 0;
-                int dataSize = mPager.getLoadedData().size();
-                if (addedSize > 0) {
-                    notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
-                } else if (pairNotification.getValue().first < 0) {
-                    notifyItemChanged(0);
-                    notifyItemRangeInserted(0, Math.abs(addedSize));
-                } else {
-                    notifyDataSetChanged();
+        mDisposal = mPager.getObservable().subscribe(notification -> {
+            if (notification.isOnNext()) {
+                JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
+                if (metadata != null) {
+                    if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) {
+                        notifyDataSetChanged();
+                    } else {
+                        int dataSize = mPager.getLoadedData().size();
+                        int addedSize = metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE);
+                        int shift = hasHeader() ? 1 : 0;
+                        switch (metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)) {
+                            case TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION:
+                                notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
+                                break;
+
+                            case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
+                                notifyItemChanged(0);
+                                notifyItemRangeInserted(0, addedSize);
+                                break;
+                        }
+                    }
                 }
             } else {
                 notifyDataSetChanged();
