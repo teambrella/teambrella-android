@@ -139,7 +139,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
 
-    protected void setRefreshable(boolean refreshable) {
+    protected void setRefreshable(@SuppressWarnings("SameParameterValue") boolean refreshable) {
         mRefreshable.setEnabled(refreshable);
     }
 
