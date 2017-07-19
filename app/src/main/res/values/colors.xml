@@ -37,4 +37,6 @@
     <color name="cloudyBlue_40">#64ced8df</color>
     <color name="selection_color">#08000000</color>
     <color name="selection_border_color">#30000000</color>
+    <color name="cornflowerBlueTwo">#5c67da</color>
+    <color name="blueBlueTwo">#2e3cca</color>
 </resources>

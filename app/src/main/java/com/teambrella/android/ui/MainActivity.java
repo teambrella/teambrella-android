@@ -19,6 +19,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.home.HomeFragment;
@@ -73,6 +74,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
         findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
         findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
         onNavigationItemSelected(findViewById(R.id.home));
+
+        if (savedInstanceState == null) {
+            startService(new Intent(this, TeambrellaNotificationService.class)
+                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, mTeamId)
+                    .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+        }
     }
 
 
@@ -190,6 +197,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            startService(new Intent(this, TeambrellaNotificationService.class)
+                    .setAction(TeambrellaNotificationService.STOP_ACTION));
+        }
+    }
+
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
@@ -205,9 +222,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
         }
         return null;
     }
-
-
-
 
 
 }

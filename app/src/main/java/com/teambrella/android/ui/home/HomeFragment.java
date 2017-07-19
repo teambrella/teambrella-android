@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataFragment;
 
 import io.reactivex.Notification;
@@ -37,6 +38,12 @@ public class HomeFragment extends ADataFragment<IDataHost> {
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         mSwipeRefreshLayout.setOnRefreshListener(() -> mDataHost.load(mTags[0]));
         mDataHost.load(mTags[0]);
+
+
+        view.findViewById(R.id.exit).setOnClickListener(v -> {
+            TeambrellaUser.get(getContext()).setPrivateKey(null);
+            getActivity().finish();
+        });
         return view;
     }
 

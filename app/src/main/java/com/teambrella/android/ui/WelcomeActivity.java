@@ -19,7 +19,6 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.services.TeambrellaNotificationService;
 
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
@@ -41,28 +40,11 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         TeambrellaUser user = TeambrellaUser.get(this);
-        if (user.getPrivateKey() != null
-                ) {
-//            PeriodicTask task = new PeriodicTask.Builder()
-//                    .setService(TeambrellaUtilService.class)
-//                    .setTag("account_task")
-//                    .setPeriod(10L)
-//                    .build();
-//
-//            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
-            if (user.getTeamId() > 0) {
-                startService(new Intent(this, TeambrellaNotificationService.class)
-                        .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, user.getTeamId())
-                        .setAction(TeambrellaNotificationService.CONNECT_ACTION));
-                startActivity(MainActivity.getLaunchIntent(this, user.getTeamId()));
-                finish();
-            } else {
-                new GetTeamIDTask().execute(TeambrellaUser.get(this).getPrivateKey());
-            }
-        }
-
-
         setContentView(R.layout.acivity_welcome);
         LoginButton loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         LinkedList<String> permission = new LinkedList<>();
@@ -93,6 +75,28 @@ public class WelcomeActivity extends AppCompatActivity {
         findViewById(R.id.thorax).setOnClickListener(mClickListener);
         findViewById(R.id.masterUser).setOnClickListener(mClickListener);
 
+
+        if (user.getPrivateKey() != null) {
+//            PeriodicTask task = new PeriodicTask.Builder()
+//                    .setService(TeambrellaUtilService.class)
+//                    .setTag("account_task")
+//                    .setPeriod(10L)
+//                    .build();
+//
+//            GcmNetworkManager.getInstance(WelcomeActivity.this).schedule(task);
+            loginButton.postDelayed(() -> new GetTeamIDTask().execute(user.getPrivateKey()), 2000);
+        } else {
+            findViewById(R.id.denis).setVisibility(View.VISIBLE);
+            findViewById(R.id.kate).setVisibility(View.VISIBLE);
+            findViewById(R.id.thorax).setVisibility(View.VISIBLE);
+            findViewById(R.id.masterUser).setVisibility(View.VISIBLE);
+
+            findViewById(R.id.denis).setOnClickListener(mClickListener);
+            findViewById(R.id.kate).setOnClickListener(mClickListener);
+            findViewById(R.id.thorax).setOnClickListener(mClickListener);
+            findViewById(R.id.masterUser).setOnClickListener(mClickListener);
+        }
+
     }
 
     @Override
@@ -121,6 +125,17 @@ public class WelcomeActivity extends AppCompatActivity {
     };
 
     private class GetTeamIDTask extends AsyncTask<String, Void, Integer> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            findViewById(R.id.denis).setVisibility(View.GONE);
+            findViewById(R.id.kate).setVisibility(View.GONE);
+            findViewById(R.id.thorax).setVisibility(View.GONE);
+            findViewById(R.id.masterUser).setVisibility(View.GONE);
+        }
+
         @Override
         protected Integer doInBackground(String... keys) {
             TeambrellaServer server = new TeambrellaServer(WelcomeActivity.this, keys[0]);
@@ -133,10 +148,6 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer teamId) {
             super.onPostExecute(teamId);
-            TeambrellaUser.get(WelcomeActivity.this).setTeamId(teamId);
-            startService(new Intent(WelcomeActivity.this, TeambrellaNotificationService.class)
-                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, teamId)
-                    .setAction(TeambrellaNotificationService.CONNECT_ACTION));
             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this, teamId));
             finish();
         }

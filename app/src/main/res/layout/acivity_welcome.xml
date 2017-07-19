@@ -2,8 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/welcome_background"
     android:orientation="vertical">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_confetti_color" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,47 +21,52 @@
         android:orientation="vertical">
 
 
-        <TextView
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="56dp"
-            android:text="Who are you ?"
-            android:textSize="36sp" />
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="50sp" />
 
         <Button
             android:id="@+id/masterUser"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Master" />
+            android:text="Demo"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/denis"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Denis" />
+            android:text="Denis"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/kate"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Kate" />
+            android:text="Kate"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/thorax"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Thorax" />
+            android:text="Thorax"
+            android:visibility="gone" />
 
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/facebook_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="46dp" />
+            android:layout_marginTop="46dp"
+            android:visibility="gone" />
 
 
     </LinearLayout>
