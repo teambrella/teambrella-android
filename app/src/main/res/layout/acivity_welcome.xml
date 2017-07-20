@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/welcome_background"
@@ -13,63 +14,60 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_confetti_color" />
 
-    <LinearLayout
+
+    <android.support.constraint.Guideline
+        android:id="@+id/divider"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/app_name"
+        android:textColor="@android:color/white"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/try_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/try_demo"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@android:color/white"
-            android:textSize="50sp" />
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/facebook_login"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/facebook_login_background"
+        android:gravity="center"
+        android:paddingEnd="32dp"
+        android:paddingStart="32dp"
+        android:text="@string/continue_with_facebook"
+        android:textColor="@color/blueWithAHintOfPurple"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@id/try_demo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="300dp" />
 
-        <Button
-            android:id="@+id/masterUser"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Demo"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/denis"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Denis"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/kate"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Kate"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/thorax"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Thorax"
-            android:visibility="gone" />
-
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/facebook_login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
-            android:visibility="gone" />
-
-
-    </LinearLayout>
-
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

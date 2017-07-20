@@ -2,13 +2,13 @@
     <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->
-    <string name="bottom_navigation_home">Tablero</string>
+    <string name="bottom_navigation_home">Inicio</string>
     <string name="bottom_navigation_team">Equipo</string>
     <string name="bottom_navigation_proxies">Proxies</string>
     <string name="bottom_navigation_me">Yo</string>
 
     <!-- Team's tab -->
-    <string name="team_feed">Noticias del Equipo</string>
+    <string name="team_feed">Noticias</string>
     <string name="team_members">Compañeros</string>
     <string name="team_claims">Reclamaciones</string>
 
@@ -50,7 +50,7 @@
     <string name="claim_details">Detalles de Reclamación</string>
     <string name="claim_amount">Cantidad Reclamada</string>
     <string name="voting">Votación</string>
-    <string name="voting_risk">Votación:Riesgo</string>
+    <string name="voting_risk">Votación: Riesgo</string>
     <string name="estimated_expenses">Gastos Estimados</string>
     <string name="deductible">Deducible</string>
     <string name="coverage">Cobertura</string>
