@@ -16,6 +16,11 @@ repositories {
 
 apply plugin: 'kotlin-android'
 
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
 
     Properties keyProperties = new Properties()
@@ -27,8 +32,8 @@ android {
         applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 14
-        versionName "0.0.1.14"
+        versionCode 15
+        versionName "0.0.1.15"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -36,11 +41,33 @@ android {
         buildConfigField "String", "KATE_PRIVATE_KEY", "\"" + keyProperties.getProperty("KatePrivateKey") + "\""
         buildConfigField "String", "THORAX_PRIVATE_KEY", "\"" + keyProperties.getProperty("ThoraxPrivateKey") + "\""
         buildConfigField "String", "MASTER_USER_PRIVATE_KEY", "\"" + keyProperties.getProperty("MasterUserPrivateKey") + "\""
+        buildConfigField "String", "EUGENE_PRIVATE_KEY", "\"" + keyProperties.getProperty("EugenePrivateKey") + "\""
+        buildConfigField "String", "DENIS_FACEEBOOK_ID", "\"" + keyProperties.getProperty("DenisFacebookId") + "\""
+        buildConfigField "String", "KATE_FACEEBOOK_ID", "\"" + keyProperties.getProperty("KateFacebookId") + "\""
+        buildConfigField "String", "THORAX_FACEEBOOK_ID", "\"" + keyProperties.getProperty("ThoraxFacebookId") + "\""
+        buildConfigField "String", "EUGENE_FACEEBOOK_ID", "\"" + keyProperties.getProperty("EugeneFacebookId") + "\""
+    }
+
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            v2SigningEnabled false
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 

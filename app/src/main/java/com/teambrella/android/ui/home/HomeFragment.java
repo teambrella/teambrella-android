@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.WelcomeActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 
 import io.reactivex.Notification;
@@ -43,6 +45,7 @@ public class HomeFragment extends ADataFragment<IDataHost> {
         view.findViewById(R.id.exit).setOnClickListener(v -> {
             TeambrellaUser.get(getContext()).setPrivateKey(null);
             getActivity().finish();
+            startActivity(new Intent(getContext(), WelcomeActivity.class));
         });
         return view;
     }
