@@ -44,7 +44,6 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    //public static final String BASE_URL = "http://94.72.4.72/";
     public static final String AUTHORITY = "surilla.com";
     public static final String BASE_URL = "https://surilla.com";
     public static final String SCHEME = "https";
@@ -83,7 +82,10 @@ public class TeambrellaServer {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new HeaderInterceptor())
+                .addInterceptor(interceptor)
+                .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).build().toString())
@@ -205,45 +207,38 @@ public class TeambrellaServer {
     }
 
     private Observable<Response<JsonObject>> getObservableObject(Uri uri, JsonObject requestBody) {
-        Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
-        String publicKey = mKey.getPublicKeyAsHex();
-        String signature = mKey.signMessage(Long.toString(timestamp));
-        requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AVATAR_SIZE, 256);
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
             case TeambrellaUris.TEAMMATES_LIST:
-                return mAPI.getTeammateList(timestamp, publicKey, signature, requestBody);
+                return mAPI.getTeammateList(requestBody);
             case TeambrellaUris.TEAMMATES_ONE:
-                return mAPI.getTeammateOne(timestamp, publicKey, signature, requestBody);
+                return mAPI.getTeammateOne(requestBody);
             case TeambrellaUris.ME_UPDATES:
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TIMESTAMP, timestamp);
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_PUBLIC_KEY, publicKey);
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SIGNATURE, signature);
-                return mAPI.getUpdates(timestamp, publicKey, signature, requestBody);
+                return mAPI.getUpdates(requestBody);
             case TeambrellaUris.ME_REGISTER_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KEY_FACEBOOK_TOKEN);
-                return mAPI.registerKey(timestamp, publicKey, signature, facebookToken);
+                return mAPI.registerKey(facebookToken);
             case TeambrellaUris.CLAIMS_LIST:
-                return mAPI.getClaimsList(timestamp, publicKey, signature, requestBody);
+                return mAPI.getClaimsList(requestBody);
             case TeambrellaUris.CLAIMS_ONE:
-                return mAPI.getClaim(timestamp, publicKey, signature, requestBody);
+                return mAPI.getClaim(requestBody);
             case TeambrellaUris.CLAIMS_CHAT:
-                return mAPI.getClaimChat(timestamp, publicKey, signature, requestBody);
+                return mAPI.getClaimChat(requestBody);
             case TeambrellaUris.NEW_POST:
-                return mAPI.newPost(timestamp, publicKey, signature, requestBody);
+                return mAPI.newPost(requestBody);
             case TeambrellaUris.MY_TEAMS:
-                return mAPI.getTeams(timestamp, publicKey, signature);
+                return mAPI.getTeams();
             case TeambrellaUris.SET_CLAIM_VOTE:
-                return mAPI.setClaimVote(timestamp, publicKey, signature, requestBody);
+                return mAPI.setClaimVote(requestBody);
             case TeambrellaUris.SET_TEAMMATE_VOTE:
-                return mAPI.setTeammateVote(timestamp, publicKey, signature, requestBody);
+                return mAPI.setTeammateVote(requestBody);
             case TeambrellaUris.GET_HOME:
-                return mAPI.getHome(timestamp, publicKey, signature, requestBody);
+                return mAPI.getHome(requestBody);
             case TeambrellaUris.GET_FEED:
-                return mAPI.getFeed(timestamp, publicKey, signature, requestBody);
+                return mAPI.getFeed(requestBody);
             case TeambrellaUris.FEED_CHAT:
-                return mAPI.getFeedChat(timestamp, publicKey, signature, requestBody);
+                return mAPI.getFeedChat(requestBody);
             case TeambrellaUris.TEAMMATE_CHAT:
-                return mAPI.getTeammateChat(timestamp, publicKey, signature, requestBody);
+                return mAPI.getTeammateChat(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
