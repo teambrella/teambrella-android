@@ -1,6 +1,7 @@
 package com.teambrella.android.image;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -33,6 +34,18 @@ public class TeambrellaImageLoader {
 
     public Picasso getPicasso() {
         return mPicasso;
+    }
+
+
+    public static Uri.Builder getUriBuilder() {
+        return new Uri.Builder().scheme(TeambrellaServer.SCHEME).authority(TeambrellaServer.AUTHORITY);
+    }
+
+    public static Uri getImageUri(String path) {
+        if (path == null) {
+            throw new IllegalArgumentException("no path");
+        }
+        return getUriBuilder().appendEncodedPath(path).build();
     }
 
 }

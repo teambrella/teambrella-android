@@ -76,7 +76,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                 Resources resources = getContext().getResources();
                 if (photos != null && photos.size() > 0) {
                     TeambrellaImageLoader.getInstance(getContext()).getPicasso()
-                            .load(TeambrellaServer.AUTHORITY + photos.get(0).getAsString())
+                            .load(TeambrellaServer.BASE_URL + photos.get(0).getAsString())
                             .resize(resources.getDimensionPixelSize(R.dimen.teammate_object_picture_width)
                                     , resources.getDimensionPixelSize(R.dimen.teammate_object_picture_height))
                             .centerCrop()
@@ -85,12 +85,12 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
                     final ArrayList<String> uris = new ArrayList<>();
                     for (int i = 0; i < photos.size(); i++) {
-                        uris.add(TeambrellaServer.AUTHORITY + photos.get(i).getAsString());
+                        uris.add(TeambrellaServer.BASE_URL + photos.get(i).getAsString());
                     }
 
                     mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(v.getContext(), uris, 0),
                             ActivityOptionsCompat.
-                                    makeSceneTransitionAnimation(getActivity(), mObjectPicture, TeambrellaServer.AUTHORITY + photos.get(0).getAsString()).toBundle()));
+                                    makeSceneTransitionAnimation(getActivity(), mObjectPicture, TeambrellaServer.BASE_URL + photos.get(0).getAsString()).toBundle()));
 
                 }
                 mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL));

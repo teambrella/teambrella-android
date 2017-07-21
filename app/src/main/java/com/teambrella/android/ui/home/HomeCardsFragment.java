@@ -190,7 +190,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
                 requestCreator.transform(new CropCircleTransformation());

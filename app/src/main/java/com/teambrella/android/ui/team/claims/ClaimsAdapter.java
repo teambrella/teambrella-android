@@ -64,8 +64,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             ClaimViewHolder claimViewHolder = (ClaimViewHolder) holder;
             final Context context = holder.itemView.getContext();
             JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
-            final String objectPictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTO).getAsString();
-            final String teammatePictureUri = TeambrellaServer.AUTHORITY + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
+            final String objectPictureUri = TeambrellaServer.BASE_URL + item.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTO).getAsString();
+            final String teammatePictureUri = TeambrellaServer.BASE_URL + item.get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString();
             Picasso picasso = TeambrellaImageLoader.getInstance(context).getPicasso();
 
             picasso.load(objectPictureUri).into(claimViewHolder.mIcon);

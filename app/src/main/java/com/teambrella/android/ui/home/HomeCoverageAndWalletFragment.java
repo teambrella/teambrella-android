@@ -50,7 +50,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IDataHost> {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             mObjectModel.setText(data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME));
-            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO)).into(mObjectPicture);
+            picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO)).into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE) + 0.005) * 100))));
         }
     }

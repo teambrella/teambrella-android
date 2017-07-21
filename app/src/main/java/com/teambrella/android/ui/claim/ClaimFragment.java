@@ -104,7 +104,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             JsonWrapper claimBasic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
             if (claimBasic != null) {
-                ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY,
+                ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.BASE_URL,
                         claimBasic.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
                 if (photos != null && photos.size() > 0) {
                     mClaimPictures.init(getChildFragmentManager(), photos);
@@ -127,7 +127,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 if (objectPhoto != null) {
                     Resources resources = getResources();
                     TeambrellaImageLoader.getInstance(getContext()).getPicasso()
-                            .load(TeambrellaServer.AUTHORITY + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
+                            .load(TeambrellaServer.BASE_URL + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
 

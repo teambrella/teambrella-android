@@ -177,7 +177,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 TeambrellaImageLoader.getInstance(MainActivity.this).getPicasso()
-                        .load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                        .load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .transform(new CropCircleTransformation())
                         .into(mAvatar);
             }

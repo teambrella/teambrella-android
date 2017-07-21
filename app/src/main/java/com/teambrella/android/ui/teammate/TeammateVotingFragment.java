@@ -155,7 +155,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                 if (proxyName != null && proxyAvatar != null) {
                     mProxyName.setText(proxyName);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
                             .into(mProxyAvatar);
                     mProxyName.setVisibility(View.VISIBLE);
                     mProxyAvatar.setVisibility(View.VISIBLE);
@@ -169,7 +169,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
-                        .map(jsonElement -> TeambrellaServer.AUTHORITY + jsonElement.getAsString())
+                        .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                         .toList()
                         .subscribe(mAvatarWidgets::setAvatars);
 
@@ -180,7 +180,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
             if (basic != null) {
-                picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .into(mNewTeammateIcon);
             }
         }
@@ -250,7 +250,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mLeftTeammateIcon.setVisibility(View.VISIBLE);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                             .into(mLeftTeammateIcon);
                     mLeftTeammateRisk.setVisibility(View.VISIBLE);
                     mLeftTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
@@ -262,7 +262,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mRightTeammateIcon.setVisibility(View.VISIBLE);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                             .into(mRightTeammateIcon);
                     mRightTeammateRisk.setVisibility(View.VISIBLE);
                     mRightTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));

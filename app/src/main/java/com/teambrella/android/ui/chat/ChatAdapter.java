@@ -102,7 +102,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         void bind(JsonWrapper object) {
             Observable.fromArray(object)
                     .map(item -> item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART))
-                    .map(item -> TeambrellaServer.AUTHORITY + item.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .map(item -> TeambrellaServer.BASE_URL + item.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .map(uri -> picasso.load(uri))
                     .doOnNext(requestCreator -> requestCreator.into(mUserPicture))
                     .map(requestCreator -> true)
@@ -112,7 +112,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
                     });
 
 
-//            picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY,
+//            picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL,
 //                    object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getObject(),
 //                    TeambrellaModel.ATTR_DATA_AVATAR))
 //                    .into(mUserPicture);
@@ -148,7 +148,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         void bind(JsonWrapper object) {
             super.bind(object);
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
-            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.AUTHORITY, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
+            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {

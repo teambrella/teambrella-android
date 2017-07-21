@@ -10,18 +10,19 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Notification;
+import io.reactivex.Observable;
 
 /**
  * Teammates Recycler Adapter
@@ -124,10 +125,17 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void onBind(JsonWrapper item) {
-            String userPictureUri = TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
-            if (userPictureUri != null) {
-                Picasso.with(itemView.getContext()).load(userPictureUri).into(mIcon);
-            }
+
+            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
+                    .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                        // 8)
+                    });
+
+            String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .blockingFirst().getValue();
+
+
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             itemView.setOnClickListener(v -> itemView.getContext().startActivity(TeammateActivity.getIntent(itemView.getContext(), TeambrellaUris.getTeammateUri(mTeamId,

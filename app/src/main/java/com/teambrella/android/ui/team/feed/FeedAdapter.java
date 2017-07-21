@@ -96,7 +96,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         void bind(JsonWrapper item) {
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
             Context context = itemView.getContext();
-            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.AUTHORITY, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
 
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
@@ -145,7 +145,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
             Observable.
                     fromIterable(item.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS))
-                    .map(jsonElement -> TeambrellaServer.AUTHORITY + jsonElement.getAsString())
+                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                     .toList()
                     .subscribe(mAvatarWidgets::setAvatars);
 

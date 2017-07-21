@@ -44,8 +44,11 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    //public static final String AUTHORITY = "http://94.72.4.72/";
-    public static final String AUTHORITY = "http://192.168.0.222/";
+    //public static final String BASE_URL = "http://94.72.4.72/";
+    public static final String AUTHORITY = "surilla.com";
+    public static final String BASE_URL = "https://surilla.com";
+    public static final String SCHEME = "https";
+
 
     /**
      * Shared preference
@@ -83,7 +86,7 @@ public class TeambrellaServer {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(AUTHORITY)
+                .baseUrl(new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).build().toString())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
