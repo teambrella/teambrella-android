@@ -72,16 +72,13 @@ public class TeambrellaModel {
 
 
     /*Request*/
-    public static final String ATTR_REQUEST_TIMESTAMP = "Timestamp";
-    public static final String ATTR_REQUEST_SIGNATURE = "Signature";
-    public static final String ATTR_REQUEST_PUBLIC_KEY = "PublicKey";
-    public static final String ATTR_REQUEST_AVATAR_SIZE = "AvatarSize";
     public static final String ATTR_REQUEST_TEAM_ID = "TeamId";
     public static final String ATTR_REQUEST_USER_ID = "UserId";
     public static final String ATTR_REQUEST_OFFSET = "Offset";
     public static final String ATTR_REQUEST_LIMIT = "Limit";
     public static final String ATTR_REQUEST_SINCE = "Since";
-    // public static final String ATTR_REQUEST_SINCE_OFFSET = "SinceOffset";
+    public static final String ATTR_REQUEST_ADD = "add";
+
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";

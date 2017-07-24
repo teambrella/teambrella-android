@@ -125,8 +125,16 @@ public class TeambrellaServer {
 
         JsonObject requestBody = body != null ? body : new JsonObject();
         switch (TeambrellaUris.sUriMatcher.match(uri)) {
-            case TeambrellaUris.TEAMMATES_LIST: {
+            case TeambrellaUris.TEAMMATES_LIST:
                 int teamId = TeambrellaUris.getTeamId(uri);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                break;
+            case TeambrellaUris.MY_PROXIES:
+            case TeambrellaUris.USER_RATING:
+            case TeambrellaUris.PROXY_FOR: {
+                teamId = Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
@@ -196,6 +204,11 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
+
+            case TeambrellaUris.SET_MY_PROXY:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ADD, Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_ADD)));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -239,6 +252,12 @@ public class TeambrellaServer {
                 return mAPI.getFeedChat(requestBody);
             case TeambrellaUris.TEAMMATE_CHAT:
                 return mAPI.getTeammateChat(requestBody);
+            case TeambrellaUris.MY_PROXIES:
+                return mAPI.getMyProxies(requestBody);
+            case TeambrellaUris.USER_RATING:
+                return mAPI.getUserRating(requestBody);
+            case TeambrellaUris.PROXY_FOR:
+                return mAPI.getProxyFor(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

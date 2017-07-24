@@ -22,7 +22,7 @@ import io.reactivex.subjects.PublishSubject;
  */
 public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
-    private final static int LIMIT = 10;
+    private final static int LIMIT = 40;
 
 
     private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;

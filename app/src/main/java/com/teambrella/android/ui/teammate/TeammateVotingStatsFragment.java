@@ -23,6 +23,7 @@ public class TeammateVotingStatsFragment extends ADataFragment<IDataHost> {
 
     private TextView mWeight;
     private TextView mProxyRank;
+    private TextView mSetProxy;
 
 
     public static TeammateVotingStatsFragment getInstance(String dataTag) {
@@ -40,6 +41,7 @@ public class TeammateVotingStatsFragment extends ADataFragment<IDataHost> {
         View view = inflater.inflate(R.layout.fragment_teammate_voting_stats, container, false);
         mWeight = (TextView) view.findViewById(R.id.weight);
         mProxyRank = (TextView) view.findViewById(R.id.proxy_rank);
+        mSetProxy = (TextView) view.findViewById(R.id.add_to_proxies);
         return view;
     }
 

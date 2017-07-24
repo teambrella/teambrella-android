@@ -26,12 +26,18 @@ public class TeambrellaUris {
     private static final String SEGMENT_TEAMMATE = "teammate";
     private static final String SEGMENT_FEED = "feed";
     private static final String SEGMENT_HOME = "home";
+    private static final String SEGMENT_PROXY = "proxy";
+    private static final String SEGMENT_MY = "my";
+    private static final String SEGMENT_IA_AM = "iam";
+    private static final String SEGMENT_RATING = "rating";
+    private static final String SEGMENT_SET_MY_PROXY = "setMyProxy";
 
 
     static final String KEY_FACEBOOK_TOKEN = "facebookToken";
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
+    static final String KEY_ADD = "add";
     static final String KEY_TEAMMATE_ID = "TeammateId";
     static final String KEY_SINCE = "Since";
     static final String KEY_ID = "Id";
@@ -54,6 +60,10 @@ public class TeambrellaUris {
     static final int GET_FEED = 13;
     static final int TEAMMATE_CHAT = 14;
     static final int FEED_CHAT = 15;
+    static final int MY_PROXIES = 16;
+    static final int PROXY_FOR = 17;
+    static final int USER_RATING = 18;
+    static final int SET_MY_PROXY = 19;
 
 
     static {
@@ -72,6 +82,10 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_LIST, GET_FEED);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_CHAT, TEAMMATE_CHAT);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_CHAT, FEED_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_MY, MY_PROXIES);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_IA_AM, PROXY_FOR);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_RATING, USER_RATING);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_MY_PROXY, SET_MY_PROXY);
     }
 
 
@@ -242,6 +256,44 @@ public class TeambrellaUris {
                 appendEncodedPath(Integer.toString(teamId)).appendEncodedPath(SEGMENT_ONE)
                 .appendEncodedPath(userId).build();
     }
+
+    public static Uri getMyProxiesUri(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_MY)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getProxyForUri(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_IA_AM)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getUserRatingUri(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_RATING)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri setMyProxyUri(String userId, boolean add) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_SET_MY_PROXY)
+                .appendQueryParameter(KEY_ID, userId)
+                .appendQueryParameter(KEY_ADD, Boolean.toString(add))
+                .build();
+    }
+
 
     /**
      * Get updates Uri

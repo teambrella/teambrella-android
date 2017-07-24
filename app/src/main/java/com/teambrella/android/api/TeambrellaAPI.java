@@ -4,13 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.reactivex.Observable;
-import okhttp3.MultipartBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 /**
@@ -86,7 +83,23 @@ public interface TeambrellaAPI {
     @POST("feed/getList")
     Observable<Response<JsonObject>> getFeed(@Body JsonElement body);
 
-    @Multipart
-    @POST("claim/newTempFile")
-    Observable<Response<JsonObject>> newClaimFile(@Part MultipartBody.Part file);
+    @Headers("Content-Type: application/json")
+    @POST("proxy/getMyProxiesList")
+    Observable<Response<JsonObject>> getMyProxies(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("proxy/getIAmProxyForList")
+    Observable<Response<JsonObject>> getProxyFor(@Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("proxy/getRatingList")
+    Observable<Response<JsonObject>> getUserRating(@Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("proxy/setMyProxy")
+    Observable<Response<JsonObject>> setMyProxy(@Body JsonElement body);
+
+
 }

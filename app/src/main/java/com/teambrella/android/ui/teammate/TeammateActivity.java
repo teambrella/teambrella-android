@@ -36,6 +36,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     private static final String DATA_FRAGMENT = "data";
     private static final String VOTE_FRAGMENT = "vote";
+    private static final String PROXY_FRAGMENT = "proxy";
     private static final String UI_FRAGMENT = "ui";
 
 
@@ -64,7 +65,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, ADataProgressFragment.getInstance(new String[]{DATA_FRAGMENT, VOTE_FRAGMENT}, TeammateFragment.class), UI_FRAGMENT)
+                    .add(R.id.container, ADataProgressFragment.getInstance(new String[]{DATA_FRAGMENT, VOTE_FRAGMENT, PROXY_FRAGMENT}, TeammateFragment.class), UI_FRAGMENT)
                     .commit();
         }
 

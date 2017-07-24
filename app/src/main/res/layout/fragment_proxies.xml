@@ -18,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:title="@string/bottom_navigation_team"
+            android:title="@string/proxy_vote"
             app:layout_scrollFlags="scroll|enterAlways"
             app:titleMarginStart="32dp"
             app:titleTextColor="@android:color/white" />
@@ -36,11 +36,12 @@
             app:tabTextAppearance="@style/Teambrella.TextAppearence.Tab"
             app:tabTextColor="@android:color/white">
 
-            <android.support.design.widget.TabItem android:text="@string/team_feed" />
-
-            <android.support.design.widget.TabItem android:text="@string/team_members" />
-
-            <android.support.design.widget.TabItem android:text="@string/team_claims" />
+            <!--suppress AndroidDomInspection -->
+            <android.support.design.widget.TabItem android:text="@string/my_proxies" />
+            <!--suppress AndroidDomInspection -->
+            <android.support.design.widget.TabItem android:text="@string/proxy_for" />
+            <!--suppress AndroidDomInspection -->
+            <android.support.design.widget.TabItem android:text="@string/user_index" />
 
         </android.support.design.widget.TabLayout>
 

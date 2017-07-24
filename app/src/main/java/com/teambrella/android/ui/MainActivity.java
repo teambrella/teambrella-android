@@ -45,6 +45,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
     public static final String CLAIMS_DATA_TAG = "claims";
     public static final String HOME_DATA_TAG = "home_data";
     public static final String FEED_DATA_TAG = "feed_data";
+    public static final String MY_PROXIES_DATA = "my_proxies_data";
+    public static final String PROXIES_FOR_DATA = "proxies_for_data";
+    public static final String USER_RATING_DATA = "user_rating_data";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
@@ -156,7 +159,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
 
     @Override
     protected String[] getPagerTags() {
-        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG};
+        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA};
     }
 
     @Override
@@ -218,6 +221,15 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
                         null, TeambrellaDataPagerFragment.class);
             case FEED_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeamId),
+                        null, TeambrellaDataPagerFragment.class);
+            case PROXIES_FOR_DATA:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyProxiesUri(mTeamId),
+                        null, TeambrellaDataPagerFragment.class);
+            case MY_PROXIES_DATA:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getProxyForUri(mTeamId),
+                        null, TeambrellaDataPagerFragment.class);
+            case USER_RATING_DATA:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getUserRatingUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);
         }
         return null;
