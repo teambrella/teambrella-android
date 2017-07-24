@@ -89,5 +89,11 @@
     <!-- new -->
     <string name="try_demo">Try the Demo</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="proxy_vote">Proxy Vote</string>
+    <string name="my_proxies">My Proxies</string>
+    <string name="proxy_for">Proxy For</string>
+    <string name="user_index">User Index</string>
+    <string name="remove_from_my_proxies">Remove from my proxies</string>
+
 
 </resources>
