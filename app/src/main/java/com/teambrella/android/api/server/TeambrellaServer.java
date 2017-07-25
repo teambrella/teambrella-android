@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 
 import io.reactivex.Observable;
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -258,6 +259,8 @@ public class TeambrellaServer {
                 return mAPI.getUserRating(requestBody);
             case TeambrellaUris.PROXY_FOR:
                 return mAPI.getProxyFor(requestBody);
+            case TeambrellaUris.SET_MY_PROXY:
+                return mAPI.setMyProxy(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

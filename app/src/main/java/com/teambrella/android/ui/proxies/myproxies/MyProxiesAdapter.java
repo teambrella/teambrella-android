@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.proxies.proxyfor;
+package com.teambrella.android.ui.proxies.myproxies;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,20 +19,23 @@ import io.reactivex.Observable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
- * Proxy For Adapter
+ * My Proxies Adapter
  */
-class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
-    ProxyForAdapter(IDataPager<JsonArray> pager) {
+public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
+
+
+    MyProxiesAdapter(IDataPager<JsonArray> pager) {
         super(pager);
     }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = super.onCreateViewHolder(parent, viewType);
 
         if (holder == null) {
-            holder = new ProxyForViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_proxy_for, parent, false));
+            holder = new MyProxyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_my_proxy, parent, false));
         }
         return holder;
     }
@@ -40,17 +43,17 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (holder instanceof ProxyForViewHolder) {
-            ((ProxyForViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+        if (holder instanceof MyProxyViewHolder) {
+            ((MyProxyViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
 
-    private static final class ProxyForViewHolder extends RecyclerView.ViewHolder {
+    private static final class MyProxyViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;
         private TextView mTitle;
 
-        ProxyForViewHolder(View itemView) {
+        MyProxyViewHolder(View itemView) {
             super(itemView);
             mIcon = (ImageView) itemView.findViewById(R.id.icon);
             mTitle = (TextView) itemView.findViewById(R.id.title);
@@ -59,13 +62,14 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
+                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).into(mIcon), throwable -> {
                         // 8)
                     });
 
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
 
         }
+
 
     }
 

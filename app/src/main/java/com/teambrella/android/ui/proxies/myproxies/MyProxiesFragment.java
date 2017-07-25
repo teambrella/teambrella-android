@@ -11,6 +11,11 @@ public class MyProxiesFragment extends ADataPagerProgressFragment<IMainDataHost>
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new TeambrellaDataPagerAdapter(mDataHost.getPager(mTag));
+        return new MyProxiesAdapter(mDataHost.getPager(mTag));
+    }
+
+    @Override
+    protected boolean isLongPressDragEnabled() {
+        return true;
     }
 }

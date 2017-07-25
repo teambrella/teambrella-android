@@ -222,15 +222,15 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
             case FEED_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);
-            case PROXIES_FOR_DATA:
+            case MY_PROXIES_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyProxiesUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);
-            case MY_PROXIES_DATA:
+            case PROXIES_FOR_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getProxyForUri(mTeamId),
-                        null, TeambrellaDataPagerFragment.class);
+                        "Members", TeambrellaDataPagerFragment.class);
             case USER_RATING_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getUserRatingUri(mTeamId),
-                        null, TeambrellaDataPagerFragment.class);
+                        "Members", TeambrellaDataPagerFragment.class);
         }
         return null;
     }

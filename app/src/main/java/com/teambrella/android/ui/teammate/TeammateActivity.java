@@ -23,6 +23,7 @@ import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -42,6 +43,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     private Disposable mDisposal;
     private int mTeammateId = -1;
+    private String mUserId = null;
 
     /**
      * Get intent to launch activity
@@ -124,8 +126,17 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     }
 
     @Override
+    public void setAsProxy(boolean set) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_FRAGMENT);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.setMyProxyUri(mUserId, set));
+        }
+    }
+
+    @Override
     protected String[] getDataTags() {
-        return new String[]{DATA_FRAGMENT, VOTE_FRAGMENT};
+        return new String[]{DATA_FRAGMENT, VOTE_FRAGMENT, PROXY_FRAGMENT};
     }
 
     @Override
@@ -145,6 +156,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
                 return TeambrellaDataFragment
                         .getInstance(getIntent().getParcelableExtra(TEAMMATE_URI));
             case VOTE_FRAGMENT:
+            case PROXY_FRAGMENT:
                 return TeambrellaDataFragment.getInstance(null);
         }
         return null;
@@ -153,9 +165,14 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     private void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            mTeammateId = new JsonWrapper(notification.getValue())
-                    .getObject(TeambrellaModel.ATTR_DATA)
-                    .getInt(TeambrellaModel.ATTR_DATA_ID, 0);
+            Observable.fromArray(notification.getValue())
+                    .map(JsonWrapper::new)
+                    .map(node -> node.getObject(TeambrellaModel.ATTR_DATA))
+                    .doOnNext(node -> mTeammateId = node.getInt(TeambrellaModel.ATTR_DATA_ID))
+                    .map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
+                    .doOnNext(node -> mUserId = node.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                    .onErrorReturnItem(new JsonWrapper(null))
+                    .blockingFirst();
         }
     }
 }

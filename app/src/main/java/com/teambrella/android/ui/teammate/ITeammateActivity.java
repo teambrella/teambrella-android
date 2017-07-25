@@ -8,4 +8,6 @@ import com.teambrella.android.data.base.IDataHost;
 public interface ITeammateActivity extends IDataHost {
 
     void postVote(double vote);
+
+    void setAsProxy(boolean set);
 }

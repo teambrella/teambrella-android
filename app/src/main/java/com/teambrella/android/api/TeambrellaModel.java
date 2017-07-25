@@ -232,6 +232,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TOP_POSTER_AVATARS = "TopPosterAvatars";
     public static final String ATTR_DATA_MODEL_OR_NAME = "ModelOrName";
     public static final String ATTR_DATA_ITEM_USER_ID = "ItemUserId";
+    public static final String ATTR_DATA_IS_MY_PROXY = "IsMyProxy";
+    public static final String ATTR_DATA_AM_I_PROXY = "AmIProxy";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

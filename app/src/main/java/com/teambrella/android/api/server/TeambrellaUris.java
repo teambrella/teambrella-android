@@ -37,33 +37,33 @@ public class TeambrellaUris {
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
-    static final String KEY_ADD = "add";
+    public static final String KEY_ADD = "add";
     static final String KEY_TEAMMATE_ID = "TeammateId";
     static final String KEY_SINCE = "Since";
     static final String KEY_ID = "Id";
     static final String KEY_TEXT = "Text";
     static final String KEY_VOTE = "Vote";
 
-    static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    static final int TEAMMATES_LIST = 1;
-    static final int TEAMMATES_ONE = 2;
-    static final int ME_UPDATES = 3;
-    static final int ME_REGISTER_KEY = 4;
-    static final int CLAIMS_LIST = 5;
-    static final int CLAIMS_ONE = 6;
-    static final int CLAIMS_CHAT = 7;
-    static final int NEW_POST = 8;
-    static final int MY_TEAMS = 9;
-    static final int SET_CLAIM_VOTE = 10;
-    static final int SET_TEAMMATE_VOTE = 11;
-    static final int GET_HOME = 12;
-    static final int GET_FEED = 13;
-    static final int TEAMMATE_CHAT = 14;
-    static final int FEED_CHAT = 15;
-    static final int MY_PROXIES = 16;
-    static final int PROXY_FOR = 17;
-    static final int USER_RATING = 18;
-    static final int SET_MY_PROXY = 19;
+    public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    public static final int TEAMMATES_LIST = 1;
+    public static final int TEAMMATES_ONE = 2;
+    public static final int ME_UPDATES = 3;
+    public static final int ME_REGISTER_KEY = 4;
+    public static final int CLAIMS_LIST = 5;
+    public static final int CLAIMS_ONE = 6;
+    public static final int CLAIMS_CHAT = 7;
+    public static final int NEW_POST = 8;
+    public static final int MY_TEAMS = 9;
+    public static final int SET_CLAIM_VOTE = 10;
+    public static final int SET_TEAMMATE_VOTE = 11;
+    public static final int GET_HOME = 12;
+    public static final int GET_FEED = 13;
+    public static final int TEAMMATE_CHAT = 14;
+    public static final int FEED_CHAT = 15;
+    public static final int MY_PROXIES = 16;
+    public static final int PROXY_FOR = 17;
+    public static final int USER_RATING = 18;
+    public static final int SET_MY_PROXY = 19;
 
 
     static {

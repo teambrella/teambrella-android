@@ -1,6 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
-import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -51,14 +51,16 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     private TextView mMessage;
     private TextView mUnread;
 
-
-    private View mDiscussion;
-
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private AmountWidget mCoverMe;
 
     private AmountWidget mCoverThem;
+
+
+    private String mUserId;
+    private int mTeamId;
+    private String mTopicId;
 
 
     @Override
@@ -73,13 +75,14 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mAvatars = (TeambrellaAvatarsWidgets) view.findViewById(R.id.avatars);
         mMessage = (TextView) view.findViewById(R.id.message);
         mUnread = (TextView) view.findViewById(R.id.unread);
-        mDiscussion = view.findViewById(R.id.discussion);
         mSwipeRefreshLayout.setEnabled(false);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
         }
         mSwipeRefreshLayout.setOnRefreshListener(this::onRefresh);
+        view.findViewById(R.id.discussion).setOnClickListener(v ->
+                startActivity(ChatActivity.getLaunchIntent(getContext(), TeambrellaUris.getTeammateChatUri(mTeamId, mUserId), mTopicId)));
         return view;
     }
 
@@ -114,65 +117,63 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
+            Observable<JsonWrapper> responseObservable = Observable.just(notification.getValue())
+                    .map(JsonWrapper::new);
+
+            //noinspection unused
+            final Integer matchId = responseObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
+                    .map(jsonWrapper -> Uri.parse(jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI)))
+                    .map(TeambrellaUris.sUriMatcher::match)
+                    .blockingFirst();
+
 
             Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
 
-            JsonWrapper data = Observable.fromArray(notification.getValue())
-                    .map(JsonWrapper::new)
-                    .map(item -> item.getObject(TeambrellaModel.ATTR_DATA))
-                    .blockingFirst();
 
-            Observable.fromArray(data).map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
-                    .doOnNext(basic -> {
-                        if (basic != null) {
-                            mCoverMe.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME));
-                            mCoverThem.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM));
-                            mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME));
-                        }
-                    })
-                    .map(jsonWrapper -> TeambrellaServer.BASE_URL + jsonWrapper.getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .doOnNext(uri -> {
-                        picasso.load(uri).into(mUserPicture);
-                        picasso.load(uri).transform(new CropCircleTransformation()).into(mTeammateIcon);
-                    })
-                    .subscribe(this::onSuccess, this::onError);
+            Observable<JsonWrapper> dataObservable =
+                    responseObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA));
 
-            Observable.fromArray(data).map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING))
+            Observable<JsonWrapper> basicObservable =
+                    dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC));
+
+            basicObservable.doOnNext(basic -> mCoverMe.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME)))
+                    .doOnNext(basic -> mCoverThem.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM)))
+                    .doOnNext(basic -> mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME)))
+                    .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
+                    .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                    .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+
+
+            basicObservable.map(basic -> TeambrellaServer.BASE_URL + basic.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .doOnNext(uri -> picasso.load(uri).into(mUserPicture))
+                    .doOnNext(uri -> picasso.load(uri).transform(new CropCircleTransformation()).into(mTeammateIcon))
+                    .onErrorReturnItem("").blockingFirst();
+
+
+            dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING))
                     .doOnNext(voting -> {
                         View view = getView();
                         if (view != null) {
                             view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
                         }
-                    }).subscribe(this::onSuccess, this::onError);
-
-            Observable.fromArray(data).map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
-                    .doOnNext(discussion -> {
-                        if (discussion != null) {
-                            int unreadCount = discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
-                            mUnread.setText(discussion.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
-                            mUnread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.INVISIBLE);
-                            mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT)));
-                        }
                     })
-                    .flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
+                    .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+
+            Observable<JsonWrapper> discussionsObservable = dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION));
+
+
+            discussionsObservable.doOnNext(discussion -> mUnread.setText(discussion.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT)))
+                    .doOnNext(discussion -> mUnread.setVisibility(discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE))
+                    .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
+                    .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
+                    .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+
+
+            discussionsObservable.flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                     .toList()
-                    .subscribe(mAvatars::setAvatars, this::onError);
-
-
-            mDiscussion.setOnClickListener(v -> {
-                Context context = getContext();
-                Observable.fromArray(data)
-                        .map(jsonWrapper -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
-                        .doOnNext(basic -> context.startActivity(
-                                ChatActivity.getLaunchIntent(context
-                                        , TeambrellaUris.getTeammateChatUri(
-                                                basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
-                                                , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
-                                        , data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))))
-                        .subscribe(this::onSuccess, this::onError);
-            });
-
+                    .subscribe(mAvatars::setAvatars, e -> {
+                    });
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
         }
@@ -180,11 +181,5 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private void onSuccess(Object item) {
 
-    }
-
-    private void onError(Throwable e) {
-
-    }
 }

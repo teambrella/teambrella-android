@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,10 +66,14 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
+        new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mList);
         mRefreshable = (SwipeRefreshLayout) view.findViewById(R.id.refreshable);
-        mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
+        mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false)
+
+        {
             @Override
-            public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State
+                    state) {
                 try {
                     super.onLayoutChildren(recycler, state);
                 } catch (Exception e) {
@@ -76,7 +81,9 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                 }
             }
         });
-        mAdapter = getAdapter();
+        mAdapter =
+
+                getAdapter();
         mList.setAdapter(mAdapter);
         return view;
     }
@@ -124,6 +131,10 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         mRefreshable.setRefreshing(false);
     }
 
+    protected boolean isLongPressDragEnabled() {
+        return false;
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -144,5 +155,45 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
     protected abstract TeambrellaDataPagerAdapter getAdapter();
+
+
+    private class ItemTouchCallback extends ItemTouchHelper.SimpleCallback {
+
+        ItemTouchCallback() {
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return ADataPagerProgressFragment.this.isLongPressDragEnabled();
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            // nothing to do
+        }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            super.onSelectedChanged(viewHolder, actionState);
+            switch (actionState) {
+                case ItemTouchHelper.ACTION_STATE_DRAG:
+                    viewHolder.itemView.setAlpha(0.5f);
+                    break;
+            }
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            viewHolder.itemView.setAlpha(1f);
+        }
+    }
 
 }
