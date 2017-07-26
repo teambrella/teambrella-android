@@ -234,6 +234,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ITEM_USER_ID = "ItemUserId";
     public static final String ATTR_DATA_IS_MY_PROXY = "IsMyProxy";
     public static final String ATTR_DATA_AM_I_PROXY = "AmIProxy";
+    public static final String ATTR_DATA_LOCATION = "Location";
+    public static final String ATTR_DATA_DECISION_FREQUENCY = "DecisionFreq";
+    public static final String ATTR_DATA_DISCUSSION_FREQUENCY = "DiscussionFreq";
+    public static final String ATTR_DATA_VOTING_FREQUENCY = "VotingFreq";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

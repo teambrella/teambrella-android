@@ -1,16 +1,17 @@
 <resources>
+    <string name="facebook_app_id" translatable="false">416598765047865</string>
     <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->
-    <string name="bottom_navigation_home">Inicio</string>
-    <string name="bottom_navigation_team">Equipo</string>
+    <string name="bottom_navigation_home">Home</string>
+    <string name="bottom_navigation_team">Team</string>
     <string name="bottom_navigation_proxies">Proxies</string>
-    <string name="bottom_navigation_me">Yo</string>
+    <string name="bottom_navigation_me">Me</string>
 
     <!-- Team's tab -->
-    <string name="team_feed">Noticias</string>
-    <string name="team_members">Compañeros</string>
-    <string name="team_claims">Reclamaciones</string>
+    <string name="team_feed">Feed</string>
+    <string name="team_members">Members</string>
+    <string name="team_claims">Claims</string>
 
 
     <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> $%d]]></string>
@@ -20,49 +21,70 @@
     <string name="currency_format_string">%.0f</string>
 
 
-    <string name="teammates">Compañeros</string>
-    <string name="new_teammates">Nuevos compañeros</string>
+    <string name="teammates">Teammates</string>
+    <string name="new_teammates">New Teammates</string>
     <string name="net">Net</string>
-    <string name="cover_me">Me cubre</string>
-    <string name="cover_them">Los cubro</string>
-    <string name="voting_ends_title">Votación termina en</string>
+    <string name="cover_me">Cover me</string>
+    <string name="cover_them">Cover them</string>
+    <string name="voting_ends_title">Voting ends in</string>
 
-    <string name="object">Objeto</string>
-    <string name="coverage_type">Está cubierto</string>
-    <string name="collision_deductible">Deducible por Colisión</string>
+    <string name="object">Object</string>
+    <string name="coverage_type">Covered</string>
+    <string name="collision_deductible">Collision Deductible</string>
 
-    <string name="limit">Limite</string>
-    <string name="risk_factor">Factor de Riesgo</string>
-    <string name="see_claims">Véase los Reclamaciones</string>
-    <string name="voting_stats">Estadísticas de votación</string>
-    <string name="weight">Peso</string>
-
-
-    <string name="proxy_rank">Rango de Proxy</string>
-
-    <string name="decisions">Decisiones</string>
-    <string name="discussions">Discusiones</string>
-    <string name="voting_frequency">Frecuencia de Votación</string>
-    <string name="add_to_my_proxies">Añadir a Mis Proxies</string>
+    <string name="limit">Limit</string>
+    <string name="risk_factor">Risk Factor</string>
+    <string name="see_claims">See Claims</string>
+    <string name="voting_stats">Voting Stats</string>
+    <string name="weight">Weight</string>
 
 
-    <string name="claim_title_format_string">Reclamación %d</string>
-    <string name="claim_details">Detalles de Reclamación</string>
-    <string name="claim_amount">Cantidad Reclamada</string>
-    <string name="voting">Votación</string>
-    <string name="voting_risk">Votación: Riesgo</string>
-    <string name="estimated_expenses">Gastos Estimados</string>
-    <string name="deductible">Deducible</string>
-    <string name="coverage">Cobertura</string>
-    <string name="incident_date">Fecha del Incidente</string>
+    <string name="proxy_rank">Proxy Rank</string>
+
+    <string name="decisions">Decisions</string>
+    <string name="discussions">Discussions</string>
+    <string name="voting_frequency">Voting Frequency</string>
+    <string name="add_to_my_proxies">Add to my proxy voters</string>
+
+
+    <string name="claim_title_format_string">Claim %d</string>
+    <string name="claim_details">Claim Details</string>
+    <string name="claim_amount">Claim Amount</string>
+    <string name="voting">Voting</string>
+    <string name="voting_risk">Voting:Risk</string>
+    <string name="estimated_expenses">Estimated expenses</string>
+    <string name="deductible">Deductible</string>
+    <string name="coverage">Coverage</string>
+    <string name="incident_date">Incident date</string>
 
     <string name="amount_format_string">$%d</string>
     <string name="percentage_format_string">%d%%</string>
 
 
-    <string name="team_vote">Voto Del Equipo</string>
-    <string name="your_vote">Tu Voto</string>
+    <string name="team_vote">Team Vote</string>
+    <string name="your_vote">Your vote</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
+
+
+    <!--- new resources -->
+    <string name="vote_avg_difference_bigger_format_string">"PROM.\n+%d%%"</string>
+    <string name="vote_avg_difference_smaller_format_string">"PROM.\n%d%%"</string>
+    <string name="vote_avg_difference_same">"PROM.\n0%%"</string>
+    <string name="reset_vote">Reiniciar Votación</string>
+    <string name="no_teammate_vote_value">. . .</string>
+
+    <string name="wallet">Monedero</string>
+    <string name="submit_another_claim">Enviar Nueva Reclamación</string>
+    <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
+    <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
+    <string name="your_claim">Tu Reclamación</string>
+    <string name="claimed">Reclamado</string>
+    <string name="welcome_user_format_string">¡Hola %s! </string>
+    <string name="application">Solicitud</string>
+    <string name="discussion">Discusión</string>
+    <string name="pet_insurance">Salud de la Mascota</string>
+    <string name="claim">Reclamación</string>
+    <string name="application_discussion">Discusión de Solicitud</string>
 
 
 </resources>
