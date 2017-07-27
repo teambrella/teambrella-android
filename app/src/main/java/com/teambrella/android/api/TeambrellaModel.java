@@ -239,6 +239,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DECISION_FREQUENCY = "DecisionFreq";
     public static final String ATTR_DATA_DISCUSSION_FREQUENCY = "DiscussionFreq";
     public static final String ATTR_DATA_VOTING_FREQUENCY = "VotingFreq";
+    public static final String ATTR_DATA_COMMISSION = "Commission";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

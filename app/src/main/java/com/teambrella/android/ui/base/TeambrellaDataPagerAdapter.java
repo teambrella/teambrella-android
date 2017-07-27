@@ -84,8 +84,6 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                 return VIEW_TYPE_ERROR;
             } else if (mPager.hasNext() || mPager.isNextLoading()) {
                 return VIEW_TYPE_LOADING;
-            } else {
-                throw new RuntimeException();
             }
         }
 

@@ -32,7 +32,6 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         super(pager);
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = super.onCreateViewHolder(parent, viewType);
