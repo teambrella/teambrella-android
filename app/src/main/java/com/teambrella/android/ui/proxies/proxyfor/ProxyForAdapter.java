@@ -85,8 +85,8 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
             case 1:
                 return VIEW_TYPE_HEADER;
             default:
-                if (position == getItemCount()) {
-                    if (mPager.hasNext()) {
+                if (position == getItemCount() - 1) {
+                    if (mPager.hasNext() || mPager.isNextLoading()) {
                         return VIEW_TYPE_LOADING;
                     } else {
                         return VIEW_TYPE_ERROR;
