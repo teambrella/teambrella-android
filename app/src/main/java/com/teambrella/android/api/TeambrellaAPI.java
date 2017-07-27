@@ -102,4 +102,9 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> setMyProxy(@Body JsonElement body);
 
 
+    @Headers("Content-Type: application/json")
+    @POST("proxy/setMyProxyPosition")
+    Observable<Response<JsonObject>> setProxyPosition(@Body JsonElement body);
+
+
 }

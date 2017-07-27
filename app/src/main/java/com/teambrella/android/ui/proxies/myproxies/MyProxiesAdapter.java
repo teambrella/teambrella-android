@@ -51,6 +51,15 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        ((MyProxyViewHolder) viewHolder).mPosition.setText(Integer.toString(target.getAdapterPosition() + 1));
+        ((MyProxyViewHolder) target).mPosition.setText(Integer.toString(viewHolder.getAdapterPosition() + 1));
+        super.exchangeItems(viewHolder, target);
+    }
+
     private static final class MyProxyViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;

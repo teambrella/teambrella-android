@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -89,6 +90,17 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         return VIEW_TYPE_REGULAR;
+    }
+
+    public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        JsonArray data = mPager.getLoadedData();
+        int srcPosition = viewHolder.getAdapterPosition();
+        int dstPosition = target.getAdapterPosition();
+        JsonElement srcElement = data.get(srcPosition);
+        JsonElement dstElement = data.get(dstPosition);
+        data.set(srcPosition, dstElement);
+        data.set(dstPosition, srcElement);
+        notifyItemMoved(srcPosition, dstPosition);
     }
 
     @Override

@@ -48,6 +48,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
     public static final String MY_PROXIES_DATA = "my_proxies_data";
     public static final String PROXIES_FOR_DATA = "proxies_for_data";
     public static final String USER_RATING_DATA = "user_rating_data";
+    public static final String SET_PROXY_POSITION_DATA = "set_proxy_position";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
@@ -154,7 +155,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
 
     @Override
     protected String[] getDataTags() {
-        return new String[]{HOME_DATA_TAG};
+        return new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA};
     }
 
     @Override
@@ -167,6 +168,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
         switch (tag) {
             case HOME_DATA_TAG:
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeamId));
+            case SET_PROXY_POSITION_DATA:
+                return TeambrellaDataFragment.getInstance(null);
         }
         return null;
     }
@@ -190,6 +193,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
     @Override
     public int getTeamId() {
         return mTeamId;
+    }
+
+
+    @Override
+    public void setProxyPosition(String userId, int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(SET_PROXY_POSITION_DATA);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getSetProxyPositionUri(position, userId, mTeamId));
+        }
     }
 
     @Override

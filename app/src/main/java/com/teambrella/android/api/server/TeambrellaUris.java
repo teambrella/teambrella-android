@@ -31,6 +31,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_IA_AM = "iam";
     private static final String SEGMENT_RATING = "rating";
     private static final String SEGMENT_SET_MY_PROXY = "setMyProxy";
+    private static final String SEGMENT_SET_POSITION = "setPosition";
 
 
     static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -43,6 +44,7 @@ public class TeambrellaUris {
     static final String KEY_ID = "Id";
     static final String KEY_TEXT = "Text";
     static final String KEY_VOTE = "Vote";
+    static final String KEY_POSITION = "Position";
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     public static final int TEAMMATES_LIST = 1;
@@ -64,6 +66,7 @@ public class TeambrellaUris {
     public static final int PROXY_FOR = 17;
     public static final int USER_RATING = 18;
     public static final int SET_MY_PROXY = 19;
+    public static final int SET_PROXY_POSITION = 20;
 
 
     static {
@@ -86,6 +89,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_IA_AM, PROXY_FOR);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_RATING, USER_RATING);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_MY_PROXY, SET_MY_PROXY);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_POSITION, SET_PROXY_POSITION);
     }
 
 
@@ -228,6 +232,18 @@ public class TeambrellaUris {
         return uri.buildUpon()
                 .appendQueryParameter(KEY_SINCE, Long.toString(since))
                 .build();
+    }
+
+    public static Uri getSetProxyPositionUri(int position, String userId, int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_SET_POSITION)
+                .appendQueryParameter(KEY_POSITION, Integer.toString(position))
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_ID, userId)
+                .build();
+
     }
 
 

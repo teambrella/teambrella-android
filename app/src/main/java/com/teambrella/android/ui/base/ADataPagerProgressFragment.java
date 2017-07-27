@@ -81,9 +81,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                 }
             }
         });
-        mAdapter =
-
-                getAdapter();
+        mAdapter = getAdapter();
         mList.setAdapter(mAdapter);
         return view;
     }
@@ -135,6 +133,10 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         return false;
     }
 
+    protected void onDraggingFinished(RecyclerView.ViewHolder viewHolder) {
+
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -170,7 +172,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            mAdapter.exchangeItems(viewHolder, target);
             return true;
         }
 
@@ -193,6 +195,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
             viewHolder.itemView.setAlpha(1f);
+            ADataPagerProgressFragment.this.onDraggingFinished(viewHolder);
         }
     }
 

@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 
 import io.reactivex.Observable;
-import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -210,6 +209,12 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ADD, Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_ADD)));
                 break;
+
+            case TeambrellaUris.SET_PROXY_POSITION:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POSTION, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_POSITION)));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -261,6 +266,8 @@ public class TeambrellaServer {
                 return mAPI.getProxyFor(requestBody);
             case TeambrellaUris.SET_MY_PROXY:
                 return mAPI.setMyProxy(requestBody);
+            case TeambrellaUris.SET_PROXY_POSITION:
+                return mAPI.setProxyPosition(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

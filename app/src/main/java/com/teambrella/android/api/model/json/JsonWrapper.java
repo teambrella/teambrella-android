@@ -99,6 +99,7 @@ public class JsonWrapper {
         return defaultValue;
     }
 
+
     public JsonArray getJsonArray(String key) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
