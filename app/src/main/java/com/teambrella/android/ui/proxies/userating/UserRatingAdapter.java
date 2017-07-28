@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.proxies.userating;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +74,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof UserViewHolder) {
-            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position + 1).getAsJsonObject()));
+            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
 
@@ -83,6 +84,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
         private ImageView mIcon;
         private TextView mTitle;
         private TextView mRating;
+        private TextView mPosition;
 
 
         UserViewHolder(View itemView) {
@@ -90,8 +92,10 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
             mIcon = (ImageView) itemView.findViewById(R.id.icon);
             mTitle = (TextView) itemView.findViewById(R.id.title);
             mRating = (TextView) itemView.findViewById(R.id.rating);
+            mPosition = (TextView) itemView.findViewById(R.id.position);
         }
 
+        @SuppressLint("SetTextI18n")
         void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
@@ -100,6 +104,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
                     });
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
+            mPosition.setText(Integer.toString(item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1)));
         }
 
     }
