@@ -97,4 +97,7 @@
     <string name="commission_format_string">$%.2f</string>
     <string name="i_am_proxy_for">"Who you're a proxy for"</string>
     <string name="last_voted_format_string">Last Voted: %s</string>
+    <string name="you">You</string>
+    <string name="opt_into_rating">Opt Into Rating</string>
+    <string name="opt_out_of_rating">Opt Out of Rating</string>
 </resources>
