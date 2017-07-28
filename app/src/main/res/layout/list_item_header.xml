@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:gravity="bottom"
+    android:paddingBottom="7dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp">
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/status_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAllCaps="true"
+        android:textColor="@color/blueGrey"
+        android:textSize="12sp" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/status_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textColor="@color/blueGrey"
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
+
+
+</LinearLayout>

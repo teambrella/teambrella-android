@@ -2,6 +2,7 @@ package com.teambrella.android.ui.base;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,7 +65,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(getContentLayout(), container, false);
         mList = (RecyclerView) view.findViewById(R.id.list);
         new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mList);
         mRefreshable = (SwipeRefreshLayout) view.findViewById(R.id.refreshable);
@@ -85,6 +86,12 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         mList.setAdapter(mAdapter);
         return view;
     }
+
+    protected @LayoutRes
+    int getContentLayout() {
+        return R.layout.fragment_list;
+    }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

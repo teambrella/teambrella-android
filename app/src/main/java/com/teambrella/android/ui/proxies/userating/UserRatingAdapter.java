@@ -23,17 +23,48 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
+    private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 2;
+    private static final int VIEW_TYPE_USER = VIEW_TYPE_REGULAR + 3;
+
     UserRatingAdapter(IDataPager<JsonArray> pager) {
         super(pager);
     }
 
 
     @Override
+    public int getItemViewType(int position) {
+        switch (position) {
+            case 0:
+                return VIEW_TYPE_HEADER;
+            default:
+                if (position == getItemCount()) {
+                    if (mPager.hasNext() || mPager.isNextLoading()) {
+                        return VIEW_TYPE_LOADING;
+                    } else {
+                        return VIEW_TYPE_ERROR;
+                    }
+                } else {
+                    return VIEW_TYPE_USER;
+                }
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = super.onCreateViewHolder(parent, viewType);
 
         if (holder == null) {
-            holder = new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_user, parent, false));
+            switch (viewType) {
+                case VIEW_TYPE_USER:
+                    return new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_user, parent, false));
+                case VIEW_TYPE_HEADER:
+                    return new Header(parent, R.string.team_members, R.string.proxy_rank);
+            }
         }
         return holder;
     }
@@ -42,19 +73,23 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof UserViewHolder) {
-            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position + 1).getAsJsonObject()));
         }
     }
+
 
     private static final class UserViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;
         private TextView mTitle;
+        private TextView mRating;
+
 
         UserViewHolder(View itemView) {
             super(itemView);
             mIcon = (ImageView) itemView.findViewById(R.id.icon);
             mTitle = (TextView) itemView.findViewById(R.id.title);
+            mRating = (TextView) itemView.findViewById(R.id.rating);
         }
 
         void onBind(JsonWrapper item) {
@@ -63,9 +98,8 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
                     .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
                         // 8)
                     });
-
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-
+            mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
         }
 
     }

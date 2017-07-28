@@ -1,9 +1,11 @@
 package com.teambrella.android.ui.base;
 
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -162,6 +164,18 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     private static class ErrorViewHolder extends RecyclerView.ViewHolder {
         ErrorViewHolder(View itemView) {
             super(itemView);
+        }
+    }
+
+
+    protected static class Header extends RecyclerView.ViewHolder {
+        public Header(ViewGroup parent, @StringRes int titleResId, @StringRes int subtitleResId) {
+            super(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_header, parent, false));
+            if (titleResId > 0)
+                ((TextView) itemView.findViewById(R.id.status_title)).setText(titleResId);
+
+            if (subtitleResId > 0)
+                ((TextView) itemView.findViewById(R.id.status_subtitle)).setText(subtitleResId);
         }
     }
 }
