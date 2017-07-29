@@ -52,7 +52,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        return super.getItemCount();
     }
 
     @Override

@@ -116,7 +116,13 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     @Override
     public void reload() {
-        mServer.requestObservable(TeambrellaUris.appendPagination(mUri, 0, LIMIT), null)
+        reload(mUri);
+    }
+
+
+    @Override
+    public void reload(Uri uri) {
+        mServer.requestObservable(TeambrellaUris.appendPagination(uri, 0, LIMIT), null)
                 .subscribeOn(Schedulers.io())
                 .map(jsonObject -> {
                     JsonObject metadata = new JsonObject();

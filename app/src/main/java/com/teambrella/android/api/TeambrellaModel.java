@@ -78,7 +78,8 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_LIMIT = "Limit";
     public static final String ATTR_REQUEST_SINCE = "Since";
     public static final String ATTR_REQUEST_ADD = "add";
-    public static final String ATTR_REQUEST_POSTION = "Position";
+    public static final String ATTR_REQUEST_POSITION = "Position";
+    public static final String ATTR_REQUEST_OPT_INTO = "OptInto";
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
     public static final String ATTR_REQUEST_TEXT = "Text";

@@ -131,8 +131,12 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
                 break;
-            case TeambrellaUris.MY_PROXIES:
             case TeambrellaUris.USER_RATING:
+                String optIn = uri.getQueryParameter(TeambrellaUris.KEY_OPT_IN);
+                if (optIn != null) {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OPT_INTO, Boolean.parseBoolean(optIn));
+                }
+            case TeambrellaUris.MY_PROXIES:
             case TeambrellaUris.PROXY_FOR: {
                 teamId = Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
@@ -213,7 +217,7 @@ public class TeambrellaServer {
             case TeambrellaUris.SET_PROXY_POSITION:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POSTION, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_POSITION)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POSITION, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_POSITION)));
                 break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:

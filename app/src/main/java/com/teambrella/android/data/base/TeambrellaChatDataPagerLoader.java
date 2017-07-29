@@ -146,6 +146,12 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         }
     }
 
+
+    @Override
+    public void reload(Uri uri) {
+
+    }
+
     @Override
     public boolean hasPreviousError() {
         return mHasPreviousError;

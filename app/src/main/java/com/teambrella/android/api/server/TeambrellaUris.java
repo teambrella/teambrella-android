@@ -38,6 +38,7 @@ public class TeambrellaUris {
     static final String KEY_OFFSET = "Offset";
     static final String KEY_LIMIT = "Limit";
     static final String KEY_TEAM_ID = "TeamId";
+    static final String KEY_OPT_IN = "OptIn";
     public static final String KEY_ADD = "add";
     static final String KEY_TEAMMATE_ID = "TeammateId";
     static final String KEY_SINCE = "Since";
@@ -297,6 +298,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_PROXY)
                 .appendEncodedPath(SEGMENT_RATING)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getUserRatingUri(int teamId, boolean optIn) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PROXY)
+                .appendEncodedPath(SEGMENT_RATING)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_OPT_IN, Boolean.toString(optIn))
                 .build();
     }
 

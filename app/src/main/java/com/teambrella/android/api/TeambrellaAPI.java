@@ -93,7 +93,7 @@ public interface TeambrellaAPI {
 
 
     @Headers("Content-Type: application/json")
-    @POST("proxy/getRatingList")
+    @POST("proxy/setOptIntoRating")
     Observable<Response<JsonObject>> getUserRating(@Body JsonElement body);
 
 

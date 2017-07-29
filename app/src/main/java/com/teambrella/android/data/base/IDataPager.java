@@ -1,5 +1,7 @@
 package com.teambrella.android.data.base;
 
+import android.net.Uri;
+
 import com.google.gson.JsonObject;
 
 import io.reactivex.Notification;
@@ -31,5 +33,7 @@ public interface IDataPager<T> {
     boolean isPreviousLoading();
 
     void reload();
+
+    void reload(Uri uri);
 
 }

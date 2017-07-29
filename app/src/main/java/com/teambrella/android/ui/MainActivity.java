@@ -206,6 +206,15 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
     }
 
     @Override
+    public void optInToRating(boolean optIn) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(USER_RATING_DATA);
+        if (dataFragment != null) {
+            dataFragment.getPager().reload(TeambrellaUris.getUserRatingUri(mTeamId, optIn));
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (mDisposable != null && !mDisposable.isDisposed()) {

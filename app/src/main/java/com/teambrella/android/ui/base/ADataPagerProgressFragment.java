@@ -163,6 +163,10 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         mRefreshable.setEnabled(refreshable);
     }
 
+    protected void setRefreshing(@SuppressWarnings("SameParameterValue") boolean refreshing) {
+        mRefreshable.setRefreshing(refreshing);
+    }
+
     protected abstract TeambrellaDataPagerAdapter getAdapter();
 
 
