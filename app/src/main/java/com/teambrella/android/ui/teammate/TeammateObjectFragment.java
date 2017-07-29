@@ -80,7 +80,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
 
             Observable<JsonWrapper> objectObservable =
-                    responseObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
+                    dataObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
 
             objectObservable.doOnNext(objectData -> mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL)))
                     .doOnNext(objectData -> mLimit.setAmount(Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT))))
