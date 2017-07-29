@@ -1,25 +1,17 @@
 package com.teambrella.android.ui.proxies.proxyfor;
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-import com.teambrella.android.ui.teammate.TeammateActivity;
-
-import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Proxy For Adapter
@@ -88,8 +80,10 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
                 if (position == getItemCount() - 1) {
                     if (mPager.hasNext() || mPager.isNextLoading()) {
                         return VIEW_TYPE_LOADING;
-                    } else {
+                    } else if (mPager.hasNextError()) {
                         return VIEW_TYPE_ERROR;
+                    } else {
+                        return VIEW_TYPE_TEAMMATES;
                     }
                 } else {
                     return VIEW_TYPE_TEAMMATES;
@@ -119,44 +113,23 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
     }
 
 
-    private final class ProxyForViewHolder extends RecyclerView.ViewHolder {
+    private final class ProxyForViewHolder extends AMemberViewHolder {
 
-        private ImageView mIcon;
-        private TextView mTitle;
         private TextView mSubtitle;
         private TextView mCommission;
 
         ProxyForViewHolder(View itemView) {
-            super(itemView);
-            mIcon = (ImageView) itemView.findViewById(R.id.icon);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
+            super(itemView, mTeamId);
             mSubtitle = (TextView) itemView.findViewById(R.id.subtitle);
             mCommission = (TextView) itemView.findViewById(R.id.commission);
         }
 
-        void onBind(JsonWrapper item) {
-            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
-                        // 8)
-                    });
-
-            String name = item.getString(TeambrellaModel.ATTR_DATA_NAME);
-
-            mTitle.setText(name);
+        @Override
+        protected void onBind(JsonWrapper item) {
+            super.onBind(item);
             mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, "never"));
             mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
 
-
-            Uri teammateUri = TeambrellaUris.getTeammateUri(mTeamId, item.getString(TeambrellaModel.ATTR_DATA_USER_ID));
-
-            itemView.setOnClickListener(v -> itemView.getContext().startActivity(
-                    TeammateActivity.getIntent(itemView.getContext()
-                            , teammateUri
-                            , item.getString(TeambrellaModel.ATTR_DATA_NAME)
-                            , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)).toString())
-                    )
-            );
         }
 
     }

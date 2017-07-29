@@ -2,7 +2,6 @@ package com.teambrella.android.ui.teammate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -45,19 +44,18 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private int mTeammateId = -1;
     private String mUserId = null;
 
-    /**
-     * Get intent to launch activity
-     *
-     * @param context to use
-     * @param uri     teammate uri
-     * @return intent to start activity
-     */
-    public static Intent getIntent(Context context, Uri uri, String name, String userPictureUri) {
+
+    public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
         return new Intent(context, TeammateActivity.class)
-                .putExtra(TEAMMATE_URI, uri)
+                .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
                 .putExtra(TEAMMATE_NAME, name)
-                .putExtra(TEAMMATE_URI, uri);
+                .putExtra(TEAMMATE_PICTURE, userPictureUri);
     }
+
+    public static void start(Context context, int teamId, String userId, String name, String userPictureUri) {
+        context.startActivity(getIntent(context, teamId, userId, name, userPictureUri));
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

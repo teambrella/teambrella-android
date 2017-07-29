@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
@@ -138,10 +137,9 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
-            itemView.setOnClickListener(v -> itemView.getContext().startActivity(TeammateActivity.getIntent(itemView.getContext(), TeambrellaUris.getTeammateUri(mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID)), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri)));
+            itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
         }
-
     }
 
     class TeammatesViewHolder extends ATeammateViewHolder {

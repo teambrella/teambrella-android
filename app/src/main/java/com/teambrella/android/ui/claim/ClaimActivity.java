@@ -147,11 +147,11 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                     TeambrellaImageLoader.getInstance(this).getPicasso()
                             .load(pictureUri).into(teammatePicture);
                     teammatePicture.setOnClickListener(v ->
-                            startActivity(TeammateActivity.getIntent(ClaimActivity.this
-                                    , TeambrellaUris.getTeammateUri(getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
-                                            , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                            TeammateActivity.start(ClaimActivity.this
+                                    , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
+                                    , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
-                                    , pictureUri)));
+                                    , pictureUri));
                 }
             }
 

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -13,8 +14,13 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 
+import io.reactivex.Notification;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teambrella Data Pager Adapter
@@ -178,4 +184,36 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                 ((TextView) itemView.findViewById(R.id.status_subtitle)).setText(subtitleResId);
         }
     }
+
+
+    protected static abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
+
+        private final int mTeamId;
+        private final ImageView mIcon;
+        private final TextView mTitle;
+
+        protected AMemberViewHolder(View itemView, int teamId) {
+            super(itemView);
+            mTeamId = teamId;
+            mIcon = (ImageView) itemView.findViewById(R.id.icon);
+            mTitle = (TextView) itemView.findViewById(R.id.title);
+        }
+
+        protected void onBind(JsonWrapper item) {
+            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
+                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
+                        // 8)
+                    });
+            String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .blockingFirst().getValue();
+            mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
+            itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
+
+        }
+
+
+    }
+
 }

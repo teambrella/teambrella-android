@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -15,11 +14,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-
-import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * My Proxies Adapter
@@ -27,9 +22,11 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
+    private final int mTeamId;
 
-    MyProxiesAdapter(IDataPager<JsonArray> pager) {
+    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
     @Override
@@ -59,10 +56,8 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         super.exchangeItems(viewHolder, target);
     }
 
-    private static final class MyProxyViewHolder extends RecyclerView.ViewHolder {
+    private final class MyProxyViewHolder extends AMemberViewHolder {
 
-        private ImageView mIcon;
-        private TextView mTitle;
         private TextView mLocation;
         private TextView mRank;
         private ProgressBar mDecision;
@@ -71,9 +66,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         private TextView mPosition;
 
         MyProxyViewHolder(View itemView) {
-            super(itemView);
-            mIcon = (ImageView) itemView.findViewById(R.id.icon);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
+            super(itemView, mTeamId);
             mLocation = (TextView) itemView.findViewById(R.id.location);
             mRank = (TextView) itemView.findViewById(R.id.rank);
             mDecision = (ProgressBar) itemView.findViewById(R.id.decision_progress);
@@ -83,14 +76,8 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         }
 
         @SuppressLint("SetTextI18n")
-        void onBind(JsonWrapper item) {
-            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).into(mIcon), throwable -> {
-                        // 8)
-                    });
-
-            mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
+        protected void onBind(JsonWrapper item) {
+            super.onBind(item);
             mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION);
             mLocation.setText(TextUtils.isEmpty(location) ? "Unknown location" : location);

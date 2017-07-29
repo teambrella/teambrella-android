@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -13,11 +12,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-
-import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * User Rating Adapter
@@ -27,8 +22,12 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 2;
     private static final int VIEW_TYPE_USER = VIEW_TYPE_REGULAR + 3;
 
-    UserRatingAdapter(IDataPager<JsonArray> pager) {
+
+    private int mTeamId;
+
+    UserRatingAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
 
@@ -79,30 +78,21 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     }
 
 
-    private static final class UserViewHolder extends RecyclerView.ViewHolder {
+    private final class UserViewHolder extends AMemberViewHolder {
 
-        private ImageView mIcon;
-        private TextView mTitle;
         private TextView mRating;
         private TextView mPosition;
 
 
         UserViewHolder(View itemView) {
-            super(itemView);
-            mIcon = (ImageView) itemView.findViewById(R.id.icon);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
+            super(itemView, mTeamId);
             mRating = (TextView) itemView.findViewById(R.id.rating);
             mPosition = (TextView) itemView.findViewById(R.id.position);
         }
 
         @SuppressLint("SetTextI18n")
-        void onBind(JsonWrapper item) {
-            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
-                        // 8)
-                    });
-            mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
+        protected void onBind(JsonWrapper item) {
+            super.onBind(item);
             mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             mPosition.setText(Integer.toString(item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1)));
         }
