@@ -67,6 +67,12 @@ public abstract class ADataProgressFragment<T extends IDataHost> extends Progres
         mDataHost = (T) context;
     }
 
+
+    @Override
+    protected void onReload() {
+        mDataHost.load(mTags[0]);
+    }
+
     @Override
     public void onStart() {
         super.onStart();

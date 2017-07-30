@@ -89,7 +89,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
 
     @Override
     public void reload() {
-
+        loadNext(true);
     }
 
     @Override

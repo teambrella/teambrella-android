@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,8 +50,6 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     private TextView mMessage;
     private TextView mUnread;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private AmountWidget mCoverMe;
 
     private AmountWidget mCoverThem;
@@ -70,17 +67,14 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mUserName = (TextView) view.findViewById(R.id.user_name);
         mCoverMe = (AmountWidget) view.findViewById(R.id.cover_me);
         mCoverThem = (AmountWidget) view.findViewById(R.id.cover_them);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
         mTeammateIcon = (ImageView) view.findViewById(R.id.teammate_icon);
         mAvatars = (TeambrellaAvatarsWidgets) view.findViewById(R.id.avatars);
         mMessage = (TextView) view.findViewById(R.id.message);
         mUnread = (TextView) view.findViewById(R.id.unread);
-        mSwipeRefreshLayout.setEnabled(false);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
         }
-        mSwipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         view.findViewById(R.id.discussion).setOnClickListener(v ->
                 startActivity(ChatActivity.getLaunchIntent(getContext(), TeambrellaUris.getTeammateChatUri(mTeamId, mUserId), mTopicId)));
         return view;
@@ -108,10 +102,6 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
-    }
-
-    private void onRefresh() {
-        mDataHost.load(mTags[0]);
     }
 
     @Override
@@ -178,7 +168,6 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
         }
         setContentShown(true);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
 
