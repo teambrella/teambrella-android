@@ -101,4 +101,25 @@
     <string name="opt_into_rating">Opt Into Rating</string>
     <string name="opt_out_of_rating">Opt Out of Rating</string>
     <string name="profile">Profile</string>
+
+    <string name="decision_harsh">harsh</string>
+    <string name="decision_severe">severe</string>
+    <string name="decision_moderate">moderate</string>
+    <string name="decision_mild">mild</string>
+    <string name="decision_generous">generous</string>
+
+
+    <string name="discussion_quite">quite</string>
+    <string name="discussion_reserved">reserved</string>
+    <string name="discussion_moderate">moderate</string>
+    <string name="discussion_sociable">sociable</string>
+    <string name="discussion_chatty">chatty</string>
+
+    <string name="voting_never">never</string>
+    <string name="voting_rarely">rarely</string>
+    <string name="voting_occasionally">occasionally</string>
+    <string name="voting_frequently">frequently</string>
+    <string name="voting_often">often</string>
+    <string name="voting_regularly">regularly</string>
+    <string name="voting_always">always</string>
 </resources>
