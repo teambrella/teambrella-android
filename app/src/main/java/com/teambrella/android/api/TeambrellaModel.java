@@ -159,6 +159,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_KEY_ORDER = "KeyOrder";
     public static final String ATTR_DATA_BTC_AMOUNT = "AmountBTC";
     public static final String ATTR_DATA_CLAIM_ID = "ClaimId";
+    public static final String ATTR_DATA_ONE_CLAIM_ID = "OneClaimId";
+    public static final String ATTR_DATA_CLAIM_COUNT = "ClaimCount";
     public static final String ATTR_DATA_CLAIM_TEAMMATE_ID = "ClaimTeammateId";
     public static final String ATTR_DATA_KIND = "Kind";
     public static final String ATTR_DATA_STATE = "State";

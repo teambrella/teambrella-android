@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
@@ -26,8 +27,12 @@ public class ClaimsActivity extends ADataHostActivity {
 
     private Uri mUri;
 
-    public static Intent getLaunchIntent(Context context, Uri uri) {
-        return new Intent(context, ClaimsActivity.class).putExtra(EXTRA_URI, uri);
+    public static Intent getLaunchIntent(Context context, int teamId, int teammateId) {
+        return new Intent(context, ClaimsActivity.class).putExtra(EXTRA_URI, TeambrellaUris.getClaimsUri(teamId, teammateId));
+    }
+
+    public static void start(Context context, int teamId, int teammateId) {
+        context.startActivity(new Intent(context, ClaimsActivity.class).putExtra(EXTRA_URI, TeambrellaUris.getClaimsUri(teamId, teammateId)));
     }
 
     @Override

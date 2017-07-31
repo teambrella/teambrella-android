@@ -2,7 +2,6 @@ package com.teambrella.android.ui.claim;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -45,11 +44,15 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     int mClaimId;
 
 
-    public static Intent getLaunchIntent(Context context, Uri uri, String model, int teamId) {
+    public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
         return new Intent(context, ClaimActivity.class)
-                .putExtra(EXTRA_URI, uri)
+                .putExtra(EXTRA_URI, TeambrellaUris.getClaimUri(id))
                 .putExtra(EXTRA_MODEL, model)
                 .putExtra(EXTRA_TEAM_ID, teamId);
+    }
+
+    public static void start(Context context, int id, String model, int teamId) {
+        context.startActivity(getLaunchIntent(context, id, model, teamId));
     }
 
 

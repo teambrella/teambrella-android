@@ -10,4 +10,6 @@ public interface ITeammateActivity extends IDataHost {
     void postVote(double vote);
 
     void setAsProxy(boolean set);
+
+    boolean isItMe();
 }

@@ -23,10 +23,11 @@ import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.home.HomeFragment;
-import com.teambrella.android.ui.profile.ProfileFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
+import com.teambrella.android.ui.teammate.ITeammateActivity;
+import com.teambrella.android.ui.user.UserFragment;
 
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -35,10 +36,11 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Main Activity
  */
-public class MainActivity extends ADataHostActivity implements IMainDataHost {
+public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
 
 
     private static final String TEAM_ID_EXTRA = "team_id";
+    private static final String USER_ID_EXTRA = "user_id_extra";
 
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
@@ -49,6 +51,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
     public static final String PROXIES_FOR_DATA = "proxies_for_data";
     public static final String USER_RATING_DATA = "user_rating_data";
     public static final String SET_PROXY_POSITION_DATA = "set_proxy_position";
+    public static final String USER_DATA = "user_data";
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
@@ -58,18 +61,21 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
 
     private int mSelectedItemId = -1;
     private int mTeamId;
+    private String mUserId;
     private Disposable mDisposable;
     private ImageView mAvatar;
 
 
-    public static Intent getLaunchIntent(Context context, int teamId) {
-        return new Intent(context, MainActivity.class).putExtra(TEAM_ID_EXTRA, teamId);
+    public static Intent getLaunchIntent(Context context, int teamId, String userId) {
+        return new Intent(context, MainActivity.class).putExtra(TEAM_ID_EXTRA, teamId)
+                .putExtra(USER_ID_EXTRA, userId);
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
+        mUserId = getIntent().getStringExtra(USER_ID_EXTRA);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAvatar = (ImageView) findViewById(R.id.avatar);
@@ -145,7 +151,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
             case TEAM_TAG:
                 return TeamFragment.getInstance(getIntent().getIntExtra(TEAM_ID_EXTRA, 0));
             case PROFILE_TAG:
-                return new ProfileFragment();
+                return new UserFragment();
             case PROXIES_TAG:
                 return new ProxiesFragment();
             default:
@@ -155,7 +161,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
 
     @Override
     protected String[] getDataTags() {
-        return new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA};
+        return new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA};
     }
 
     @Override
@@ -170,6 +176,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeamId));
             case SET_PROXY_POSITION_DATA:
                 return TeambrellaDataFragment.getInstance(null);
+            case USER_DATA:
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeamId, mUserId));
         }
         return null;
     }
@@ -212,6 +220,21 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost {
         if (dataFragment != null) {
             dataFragment.getPager().reload(TeambrellaUris.getUserRatingUri(mTeamId, optIn));
         }
+    }
+
+    @Override
+    public void postVote(double vote) {
+        // nothing to do
+    }
+
+    @Override
+    public void setAsProxy(boolean set) {
+        // nothing to do
+    }
+
+    @Override
+    public boolean isItMe() {
+        return true;
     }
 
     @Override

@@ -34,7 +34,7 @@
 
     <string name="limit">Limit</string>
     <string name="risk_factor">Risk Factor</string>
-    <string name="see_claims">See Claims</string>
+    <string name="see_claims_format_string">See Claims (%d)</string>
     <string name="voting_stats">Voting Stats</string>
     <string name="weight">Weight</string>
 
@@ -100,4 +100,5 @@
     <string name="you">You</string>
     <string name="opt_into_rating">Opt Into Rating</string>
     <string name="opt_out_of_rating">Opt Out of Rating</string>
+    <string name="profile">Profile</string>
 </resources>

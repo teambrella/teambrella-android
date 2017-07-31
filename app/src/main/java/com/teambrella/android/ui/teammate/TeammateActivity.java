@@ -17,6 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -132,6 +133,12 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         }
     }
 
+
+    @Override
+    public boolean isItMe() {
+        return mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId());
+    }
+
     @Override
     protected String[] getDataTags() {
         return new String[]{DATA_FRAGMENT, VOTE_FRAGMENT, PROXY_FRAGMENT};
@@ -173,4 +180,6 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
                     .blockingFirst();
         }
     }
+
+
 }

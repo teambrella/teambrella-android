@@ -14,7 +14,6 @@ import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
@@ -74,7 +73,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             claimViewHolder.mObject.setText(item.get(TeambrellaModel.ATTR_DATA_NAME).getAsString());
             claimViewHolder.mNet.setText("$" + Math.round(item.get(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT).getAsDouble()));
             claimViewHolder.itemView.setOnClickListener(v -> context.startActivity(
-                    ClaimActivity.getLaunchIntent(context, TeambrellaUris.getClaimUri(item.get(TeambrellaModel.ATTR_DATA_ID).getAsInt()),
+                    ClaimActivity.getLaunchIntent(context, item.get(TeambrellaModel.ATTR_DATA_ID).getAsInt(),
                             item.get(TeambrellaModel.ATTR_DATA_MODEL).getAsString(), mTeamId)));
         }
     }

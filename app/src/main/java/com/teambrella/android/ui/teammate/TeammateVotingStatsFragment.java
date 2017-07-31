@@ -67,6 +67,9 @@ public class TeammateVotingStatsFragment extends ADataFragment<ITeammateActivity
                     .map(JsonWrapper::new);
 
 
+            mSetProxy.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
+
+
             final Observable<Uri> uriObservable = responseObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
                     .map(jsonWrapper -> Uri.parse(jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI)));
 

@@ -18,7 +18,9 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.image.ImageViewerActivity;
+import com.teambrella.android.ui.team.claims.ClaimsActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
 
 import java.util.ArrayList;
@@ -37,10 +39,13 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
     private AmountWidget mLimit;
     private AmountWidget mNet;
     private TextView mRisk;
-    private View mSeeClaims;
+    private TextView mSeeClaims;
 
     private int mTeammateId;
     private int mTeamId;
+    private int mClaimId;
+    private int mClaimCount;
+    private String mModel;
 
 
     public static TeammateObjectFragment getInstance(String dataTag) {
@@ -60,7 +65,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
         mLimit = (AmountWidget) view.findViewById(R.id.limit);
         mNet = (AmountWidget) view.findViewById(R.id.net);
         mRisk = (TextView) view.findViewById(R.id.risk);
-        mSeeClaims = view.findViewById(R.id.see_claims);
+        mSeeClaims = (TextView) view.findViewById(R.id.see_claims);
         return view;
     }
 
@@ -73,7 +78,8 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                     .map(JsonWrapper::new);
 
             Observable<JsonWrapper> dataObservable =
-                    responseObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA));
+                    responseObservable.map(response -> response.getObject(TeambrellaModel.ATTR_DATA))
+                            .doOnNext(data -> mTeammateId = data.getInt(TeambrellaModel.ATTR_DATA_ID, mTeamId));
 
             Observable<JsonWrapper> basicObservable =
                     dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC));
@@ -84,6 +90,9 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
             objectObservable.doOnNext(objectData -> mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL)))
                     .doOnNext(objectData -> mLimit.setAmount(Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT))))
+                    .doOnNext(objectData -> mClaimId = objectData.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID, -1))
+                    .doOnNext(objectData -> mModel = objectData.getString(TeambrellaModel.ATTR_DATA_MODEL, mModel))
+                    .doOnNext(objectData -> mClaimCount = objectData.getInt(TeambrellaModel.ATTR_DATA_CLAIM_COUNT, mClaimCount))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
             ArrayList<String> photos = objectObservable.flatMap(objectData -> Observable.fromIterable(objectData.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS)))
@@ -107,16 +116,20 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
             basicObservable.doOnNext(basic -> mNet.setAmount(Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT))))
                     .doOnNext(basic -> mRisk.setText(getString(R.string.risk_format_string, basic.getFloat(TeambrellaModel.ATTR_DATA_RISK) + 0.05f)))
+                    .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, mTeamId))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
+            mSeeClaims.setEnabled(mClaimCount > 0);
+            mSeeClaims.setText(getContext().getString(R.string.see_claims_format_string, mClaimCount));
 
-//            if (objectBasic != null) {
-//                mNet.setAmount(Math.round(objectBasic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT, 0f)));
-//                mRisk.setText(getString(R.string.risk_format_string, objectBasic.getFloat(TeambrellaModel.ATTR_DATA_RISK, 0f) + 0.05f));
-//                mSeeClaims.setOnClickListener(v -> startActivity(ClaimsActivity.getLaunchIntent(getContext()
-//                        , TeambrellaUris.getClaimsUri(objectBasic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, 0), data.getInt(TeambrellaModel.ATTR_DATA_ID, 0)))));
-//
-//            }
+            mSeeClaims.setOnClickListener(v -> {
+                if (mClaimId > 0) {
+                    ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId);
+                } else {
+                    ClaimsActivity.start(getContext(), mTeamId, mTeammateId);
+                }
+            });
         }
+
     }
 }

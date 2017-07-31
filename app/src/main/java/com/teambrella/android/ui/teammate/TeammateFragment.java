@@ -60,6 +60,7 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     private String mTopicId;
 
 
+
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_teammate, container, false);

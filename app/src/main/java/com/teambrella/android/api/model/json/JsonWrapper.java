@@ -24,11 +24,15 @@ public class JsonWrapper {
      * Get String property
      */
     public String getString(String key) {
+        return getString(key, null);
+    }
+
+    public String getString(String key, String defaultValue) {
         JsonElement value = mObject.get(key);
         if (value != null && !value.isJsonNull()) {
             return value.getAsString();
         }
-        return null;
+        return defaultValue;
     }
 
     /*
