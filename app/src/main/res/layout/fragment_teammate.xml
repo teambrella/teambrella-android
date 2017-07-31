@@ -3,13 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_background_circles"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/user_profile_background" />
+
         <LinearLayout
+            android:id="@+id/header_view"
+
             style="@style/Teambrella.Teammate.HeaderView"
             android:orientation="vertical">
 
@@ -92,8 +100,10 @@
 
 
         <View
+            android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_below="@id/header_view"
             android:background="@color/paleGrey" />
 
 
@@ -101,7 +111,8 @@
             android:id="@+id/discussion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
+            android:layout_below="@id/separator"
+            android:background="@android:color/white"
             android:padding="16dp">
 
             <ImageView
@@ -194,6 +205,7 @@
             android:id="@+id/voting_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/discussion"
             android:background="@drawable/section_background"
             android:visibility="gone" />
 
@@ -202,14 +214,16 @@
             android:id="@+id/object_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/voting_container"
             android:background="@drawable/section_background" />
 
         <FrameLayout
             android:id="@+id/voting_statistics_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/object_info_container"
             android:background="@drawable/section_background" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
