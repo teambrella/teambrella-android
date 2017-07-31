@@ -20,7 +20,6 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
@@ -35,7 +34,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Teammate fragment.
  */
-public class TeammateFragment extends ADataProgressFragment<IDataHost> {
+public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
     private static final String OBJECT_FRAGMENT_TAG = "object_tag";
     private static final String VOTING_TAG = "voting_tag";
@@ -50,6 +49,9 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     private TextView mMessage;
     private TextView mUnread;
 
+
+    private View mCoverMeSection;
+    private View mCoverThemSection;
     private AmountWidget mCoverMe;
 
     private AmountWidget mCoverThem;
@@ -58,7 +60,6 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
     private String mUserId;
     private int mTeamId;
     private String mTopicId;
-
 
 
     @Override
@@ -72,6 +73,8 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
         mAvatars = (TeambrellaAvatarsWidgets) view.findViewById(R.id.avatars);
         mMessage = (TextView) view.findViewById(R.id.message);
         mUnread = (TextView) view.findViewById(R.id.unread);
+        mCoverMeSection = view.findViewById(R.id.cover_me_section);
+        mCoverThemSection = view.findViewById(R.id.cover_them_section);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -165,6 +168,10 @@ public class TeammateFragment extends ADataProgressFragment<IDataHost> {
                     .toList()
                     .subscribe(mAvatars::setAvatars, e -> {
                     });
+
+            mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
+            mCoverMeSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
+
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
         }

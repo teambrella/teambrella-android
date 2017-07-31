@@ -14,6 +14,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.widget.PercentageWidget;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -26,6 +27,13 @@ public class TeammateVotingStatsFragment extends ADataFragment<ITeammateActivity
     private TextView mWeight;
     private TextView mProxyRank;
     private TextView mSetProxy;
+    private PercentageWidget mDecisionView;
+    private PercentageWidget mDiscussionView;
+    private PercentageWidget mVotingView;
+
+    private float mDecision;
+    private float mDiscussion;
+    private float mVoting;
 
 
     public static TeammateVotingStatsFragment getInstance(String dataTag) {
@@ -44,6 +52,9 @@ public class TeammateVotingStatsFragment extends ADataFragment<ITeammateActivity
         mWeight = (TextView) view.findViewById(R.id.weight);
         mProxyRank = (TextView) view.findViewById(R.id.proxy_rank);
         mSetProxy = (TextView) view.findViewById(R.id.add_to_proxies);
+        mDecisionView = (PercentageWidget) view.findViewById(R.id.decision_stats);
+        mDiscussionView = (PercentageWidget) view.findViewById(R.id.discussion_stats);
+        mVotingView = (PercentageWidget) view.findViewById(R.id.voting_stats);
         mSetProxy.setOnClickListener(this::onClick);
         return view;
     }
@@ -91,6 +102,9 @@ public class TeammateVotingStatsFragment extends ADataFragment<ITeammateActivity
                     dataObservable.map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_STATS))
                             .doOnNext(node -> mWeight.setText(getString(R.string.risk_format_string, node.getFloat(TeambrellaModel.ATTR_DATA_WEIGHT))))
                             .doOnNext(node -> mProxyRank.setText(getString(R.string.risk_format_string, node.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK))))
+                            .doOnNext(node -> mDecision = node.getFloat(TeambrellaModel.ATTR_DATA_DECISION_FREQUENCY, mDecision))
+                            .doOnNext(node -> mDiscussion = node.getFloat(TeambrellaModel.ATTR_DATA_DISCUSSION_FREQUENCY, mDiscussion))
+                            .doOnNext(node -> mVoting = node.getFloat(TeambrellaModel.ATTR_DATA_VOTING_FREQUENCY, mVoting))
                             .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
                     dataObservable.map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
@@ -100,6 +114,61 @@ public class TeammateVotingStatsFragment extends ADataFragment<ITeammateActivity
                             .onErrorReturnItem(false).blockingFirst();
             }
 
+
+            mVotingView.setPercentage(mVoting);
+            mVotingView.setDescription(getString(getVotingStatsString(mVoting)));
+            mDecisionView.setPercentage(mDecision);
+            mDecisionView.setDescription(getString(getDecisionStatsString(mDecision)));
+            mDiscussionView.setPercentage(mDiscussion);
+            mDiscussionView.setDescription(getString(getDiscussionStatsString(mDiscussion)));
         }
     }
+
+
+    static int getVotingStatsString(float value) {
+        if (value >= 0.95f) {
+            return R.string.voting_always;
+        } else if (value >= 0.6f) {
+            return R.string.voting_regularly;
+        } else if (value >= 0.3f) {
+            return R.string.voting_often;
+        } else if (value >= 0.15f) {
+            return R.string.voting_frequently;
+        } else if (value >= 0.05f) {
+            return R.string.voting_rarely;
+        } else {
+            return R.string.voting_never;
+        }
+    }
+
+    static int getDecisionStatsString(float value) {
+        if (value >= 0.7f) {
+            return R.string.decision_harsh;
+        } else if (value >= 0.55f) {
+            return R.string.decision_severe;
+        } else if (value >= 0.45f) {
+            return R.string.decision_moderate;
+        } else if (value >= 0.3f) {
+            return R.string.decision_mild;
+        } else {
+            return R.string.decision_generous;
+        }
+    }
+
+
+    static int getDiscussionStatsString(float value) {
+        if (value >= 0.5f) {
+            return R.string.discussion_chatty;
+        } else if (value >= 0.25f) {
+            return R.string.discussion_sociable;
+        } else if (value >= 0.1f) {
+            return R.string.discussion_moderate;
+        } else if (value >= 0.03f) {
+            return R.string.discussion_reserved;
+        } else {
+            return R.string.discussion_quite;
+        }
+    }
+
+
 }
