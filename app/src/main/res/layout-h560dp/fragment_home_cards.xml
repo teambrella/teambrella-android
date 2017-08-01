@@ -39,7 +39,7 @@
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/home_sub_header"
         style="@style/Teambrella.TextAppearence.Home.SunHeader"
-        android:text="Here what's new for you"
+        android:text="@string/here_whats_new"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

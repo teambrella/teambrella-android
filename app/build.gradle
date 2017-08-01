@@ -17,6 +17,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://maven.google.com" }
 }
 
 apply plugin: 'kotlin-android'
@@ -31,12 +32,12 @@ android {
     Properties keyProperties = new Properties()
     keyProperties.load(new FileInputStream(file(project.property("KeyProperties"))))
 
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.teambrella.android"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 24
         versionName "0.0.1.24"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -90,10 +91,10 @@ dependencies {
 
     /* Support */
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7:26.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.android.support:design:26.0.0'
 
     /* Server communication */
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
@@ -121,7 +122,7 @@ dependencies {
     /* *Facebook SDK*/
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
 
-    compile 'com.google.android.gms:play-services-gcm:10.2.6'
+    compile 'com.google.android.gms:play-services-gcm:11.0.4'
 
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
