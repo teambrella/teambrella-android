@@ -2,13 +2,13 @@
     <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->
-    <string name="bottom_navigation_home">Tablero</string>
+    <string name="bottom_navigation_home">Inicio</string>
     <string name="bottom_navigation_team">Equipo</string>
     <string name="bottom_navigation_proxies">Proxies</string>
     <string name="bottom_navigation_me">Yo</string>
 
     <!-- Team's tab -->
-    <string name="team_feed">Noticias del Equipo</string>
+    <string name="team_feed">Noticias</string>
     <string name="team_members">Compañeros</string>
     <string name="team_claims">Reclamaciones</string>
 
@@ -33,7 +33,7 @@
 
     <string name="limit">Limite</string>
     <string name="risk_factor">Factor de Riesgo</string>
-    <string name="see_claims_format_string">Véase los Reclamaciones (%d)</string>
+    <string name="see_claims">Véase los Reclamaciones</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
 
@@ -50,7 +50,7 @@
     <string name="claim_details">Detalles de Reclamación</string>
     <string name="claim_amount">Cantidad Reclamada</string>
     <string name="voting">Votación</string>
-    <string name="voting_risk">Votación:Riesgo</string>
+    <string name="voting_risk">Votación: Riesgo</string>
     <string name="estimated_expenses">Gastos Estimados</string>
     <string name="deductible">Deducible</string>
     <string name="coverage">Cobertura</string>
@@ -63,7 +63,6 @@
     <string name="team_vote">Voto Del Equipo</string>
     <string name="your_vote">Tu Voto</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
-
 
     <!--- new resources -->
     <string name="vote_avg_difference_bigger_format_string">"PROM.\n+%d%%"</string>
@@ -84,6 +83,5 @@
     <string name="pet_insurance">Salud de la Mascota</string>
     <string name="claim">Reclamación</string>
     <string name="application_discussion">Discusión de Solicitud</string>
-
 
 </resources>
