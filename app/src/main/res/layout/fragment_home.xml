@@ -48,6 +48,16 @@
                 app:srcCompat="@drawable/ic_restart_white" />
 
 
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/team_logo"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="9dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
