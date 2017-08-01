@@ -1,9 +1,6 @@
 package com.teambrella.android.ui.user;
 
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -14,10 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
@@ -51,22 +47,7 @@ public class UserFragment extends Fragment {
 
         TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(((IMainDataHost) getContext()).getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        toolbar.setLogo(new BitmapDrawable(bitmap));
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
+                .into((ImageView) view.findViewById(R.id.team_logo));
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override

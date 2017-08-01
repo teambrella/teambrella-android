@@ -56,6 +56,10 @@
             android:name=".ui.chat.ChatActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.claim.ReportClaimActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="com.teambrella.android.provider"

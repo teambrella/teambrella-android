@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -18,6 +19,7 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.claim.ReportClaimActivity;
 
 import io.reactivex.Notification;
 
@@ -39,7 +41,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IDataHost> {
         mObjectModel = (TextView) view.findViewById(R.id.model);
         mObjectPicture = (ImageView) view.findViewById(R.id.object_picture);
         mCoverage = (TextView) view.findViewById(R.id.coverage);
-
+        view.findViewById(R.id.submit_claim).setOnClickListener(v -> startActivity(new Intent(getContext(), ReportClaimActivity.class)));
         return view;
     }
 

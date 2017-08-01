@@ -9,11 +9,32 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:title="@string/bottom_navigation_team"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:titleMarginStart="32dp"
-        app:titleTextColor="@android:color/white" />
+        android:background="@color/colorPrimary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/team_logo"
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/bottom_navigation_team"
+                android:textColor="@android:color/white"
+                android:textSize="17sp" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
@@ -26,7 +47,7 @@
         app:tabIndicatorHeight="4dp"
         app:tabSelectedTextColor="@android:color/white"
         app:tabTextAppearance="@style/Teambrella.TextAppearence.Tab"
-        app:tabTextColor="@android:color/white">
+        app:tabTextColor="@color/lightPeriwinkle">
 
         <android.support.design.widget.TabItem android:text="@string/team_feed" />
 
