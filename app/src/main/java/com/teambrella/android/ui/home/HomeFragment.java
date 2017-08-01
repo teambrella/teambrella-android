@@ -9,21 +9,24 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
-import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.WelcomeActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 
 import io.reactivex.Notification;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
 /**
  * Home Fragment
  */
-public class HomeFragment extends ADataFragment<IDataHost> {
+public class HomeFragment extends ADataFragment<IMainDataHost> {
 
     private static final String CARDS_FRAGMENT_TAG = "cards";
     private static final String COVERAGE_FRAGMENT_TAG = "coverage";
@@ -47,6 +50,11 @@ public class HomeFragment extends ADataFragment<IDataHost> {
             getActivity().finish();
             startActivity(new Intent(getContext(), WelcomeActivity.class));
         });
+
+        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(mDataHost.getTeamLogoUri())
+                .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
+                .into((ImageView) view.findViewById(R.id.team_logo));
+
         return view;
     }
 

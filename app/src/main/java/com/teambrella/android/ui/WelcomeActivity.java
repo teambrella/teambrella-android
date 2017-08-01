@@ -63,10 +63,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(jsonWrapper -> {
+                            JsonWrapper team = jsonWrapper.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS).get(0);
                             TeambrellaUser.get(WelcomeActivity.this).setUserId(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID));
                             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
-                                    , jsonWrapper.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS).get(0).getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
-                                    , jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)));
+                                    , team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
+                                    , jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)
+                                    , team.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)));
                             finish();
                         }
                         , e -> {

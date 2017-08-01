@@ -1,6 +1,9 @@
 package com.teambrella.android.ui.team;
 
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,11 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.teambrella.android.R;
+import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.team.claims.ClaimsFragment;
 import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
+
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Team fragment
@@ -57,6 +66,26 @@ public class TeamFragment extends Fragment {
         setTypeface(toolbar, typeface);
 
         toolbar.setTitle(getString(R.string.bottom_navigation_team));
+
+        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(((IMainDataHost) getContext()).getTeamLogoUri())
+                .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        toolbar.setLogo(new BitmapDrawable(bitmap));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
+
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

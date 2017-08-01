@@ -41,6 +41,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private static final String TEAM_ID_EXTRA = "team_id";
     private static final String USER_ID_EXTRA = "user_id_extra";
+    private static final String TEAM_LOG_EXTRA = "team_logo";
 
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
@@ -64,11 +65,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private String mUserId;
     private Disposable mDisposable;
     private ImageView mAvatar;
+    private String mTeamLogo;
 
 
-    public static Intent getLaunchIntent(Context context, int teamId, String userId) {
+    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo) {
         return new Intent(context, MainActivity.class).putExtra(TEAM_ID_EXTRA, teamId)
-                .putExtra(USER_ID_EXTRA, userId);
+                .putExtra(USER_ID_EXTRA, userId).putExtra(TEAM_LOG_EXTRA, teamLogo);
     }
 
 
@@ -76,6 +78,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
         mUserId = getIntent().getStringExtra(USER_ID_EXTRA);
+        mTeamLogo = getIntent().getStringExtra(TEAM_LOG_EXTRA);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAvatar = (ImageView) findViewById(R.id.avatar);
@@ -235,6 +238,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     @Override
     public boolean isItMe() {
         return true;
+    }
+
+
+    @Override
+    public String getTeamLogoUri() {
+        return TeambrellaServer.BASE_URL + mTeamLogo;
     }
 
     @Override
