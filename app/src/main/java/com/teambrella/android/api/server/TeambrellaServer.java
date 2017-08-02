@@ -20,6 +20,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -29,8 +30,10 @@ import javax.net.ssl.SSLSocketFactory;
 
 import io.reactivex.Observable;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -222,6 +225,7 @@ public class TeambrellaServer {
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
+            case TeambrellaUris.NEW_FILE:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -272,6 +276,8 @@ public class TeambrellaServer {
                 return mAPI.setMyProxy(requestBody);
             case TeambrellaUris.SET_PROXY_POSITION:
                 return mAPI.setProxyPosition(requestBody);
+            case TeambrellaUris.NEW_FILE:
+                return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

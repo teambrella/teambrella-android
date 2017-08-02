@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -105,6 +106,11 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("proxy/setMyProxyPosition")
     Observable<Response<JsonObject>> setProxyPosition(@Body JsonElement body);
+
+
+    @Headers("Content-Type: image/jpeg")
+    @POST("post/newUpload")
+    Observable<Response<JsonObject>> newFile(@Body RequestBody body);
 
 
 }

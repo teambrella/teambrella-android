@@ -32,6 +32,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_RATING = "rating";
     private static final String SEGMENT_SET_MY_PROXY = "setMyProxy";
     private static final String SEGMENT_SET_POSITION = "setPosition";
+    private static final String SEGMENT_NEW_FILE = "newFile";
 
 
     static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -46,6 +47,7 @@ public class TeambrellaUris {
     static final String KEY_TEXT = "Text";
     static final String KEY_VOTE = "Vote";
     static final String KEY_POSITION = "Position";
+    static final String KEY_URI = "uri";
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     public static final int TEAMMATES_LIST = 1;
@@ -68,6 +70,7 @@ public class TeambrellaUris {
     public static final int USER_RATING = 18;
     public static final int SET_MY_PROXY = 19;
     public static final int SET_PROXY_POSITION = 20;
+    static final int NEW_FILE = 21;
 
 
     static {
@@ -91,6 +94,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_RATING, USER_RATING);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_MY_PROXY, SET_MY_PROXY);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_POSITION, SET_PROXY_POSITION);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_NEW_FILE, NEW_FILE);
     }
 
 
@@ -117,6 +121,15 @@ public class TeambrellaUris {
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .build();
 
+    }
+
+
+    public static Uri getNewFileUri(String path) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendPath(SEGMENT_NEW_FILE)
+                .appendQueryParameter(KEY_URI, path)
+                .build();
     }
 
 
