@@ -1,22 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-
-    <Button
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date" />
+        android:background="@drawable/section_background"
+        tools:ignore="RtlHardcoded">
 
 
-    <Button
-        android:id="@+id/upload_file"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upload file for claim" />
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/header"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/object_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintLeft_toLeftOf="@id/header"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            tools:ignore="ContentDescription" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/object_title"
+            style="@style/Teambrella.TextAppearence.MessageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toRightOf="@id/object_icon"
+            app:layout_constraintTop_toTopOf="@id/object_icon"
+            tools:text="Ford S-MAX 2008" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:textAllCaps="true"
+            android:textColor="@color/blueGrey"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toRightOf="@id/object_icon"
+            app:layout_constraintTop_toBottomOf="@id/object_title"
+            tools:text="New York, NY, USA" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/incident_date_title"
+            style="@style/Teambrella.TextAppearence.InputTitle"
+            android:layout_marginTop="24dp"
+            android:text="@string/incident_date"
+            app:layout_constraintTop_toBottomOf="@id/object_icon" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/incident_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/default_edit_text_background"
+            android:paddingBottom="10dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/incident_date_title"
+            tools:text="18 February 20017 " />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/expenses_title"
+            style="@style/Teambrella.TextAppearence.InputTitle"
+            android:layout_marginTop="24dp"
+            android:text="@string/expenses"
+            app:layout_constraintTop_toBottomOf="@id/incident_date" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratRegularEditText
+            android:id="@+id/expenses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/default_edit_text_background"
+            android:paddingBottom="10dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/expenses_title" />
+
+
+        <LinearLayout
+            android:id="@+id/coverage_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/expenses">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.TextAppearence.InputTitle"
+                    android:gravity="left"
+                    android:text="@string/deductible"
+                    tools:ignore="RtlHardcoded" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="@color/dark"
+                    android:textSize="20sp"
+                    tools:text="$125" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.TextAppearence.InputTitle"
+                    android:gravity="center"
+                    android:text="@string/coverage" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/dark"
+                    android:textSize="20sp"
+                    tools:text="80%" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:ignore="RtlHardcoded">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.TextAppearence.InputTitle"
+                    android:gravity="right"
+                    android:text="@string/claim_amount" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:textColor="@color/dark"
+                    android:textSize="20sp"
+                    tools:text="$960" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/paleGrey"
+            app:layout_constraintTop_toBottomOf="@id/coverage_data" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/description_title"
+            style="@style/Teambrella.TextAppearence.InputTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/describe_your_case"
+            app:layout_constraintTop_toBottomOf="@id/separator" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratRegularEditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/default_edit_text_background"
+            android:gravity="top|left"
+            android:lines="6"
+            android:paddingBottom="10dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/description_title" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/photos_title"
+            style="@style/Teambrella.TextAppearence.InputTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/photos"
+            app:layout_constraintTop_toBottomOf="@id/description" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/photos"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:layout_constraintTop_toBottomOf="@id/photos_title" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/add_photos"
+            style="@style/Teambrella.TextAppearence.SectionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_photos"
+            app:layout_constraintTop_toBottomOf="@id/photos" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

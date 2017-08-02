@@ -223,6 +223,15 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="Teambrella.TextAppearence.InputTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/blueGrey</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+
     <style name="Teambrella.TextAppearence.SectionButton">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/section_button_text_color</item>
