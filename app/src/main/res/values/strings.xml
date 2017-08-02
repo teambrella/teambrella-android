@@ -84,8 +84,6 @@
     <string name="claim">Claim</string>
     <string name="application_discussion">Application Discussion</string>
 
-
-    <!--- new resources -->
     <string name="here_whats_new">"Here what's new for you"</string>
     <string name="try_demo">Try the Demo</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
@@ -123,4 +121,12 @@
     <string name="voting_often">often</string>
     <string name="voting_regularly">regularly</string>
     <string name="voting_always">always</string>
+
+    <!--- new resources -->
+    <string name="report_claim">Report claim</string>
+    <string name="report">Report</string>
+    <string name="expenses">Expenses</string>
+    <string name="describe_your_case">Describe your case</string>
+    <string name="photos">Photos</string>
+    <string name="add_photos">Add photos</string>
 </resources>

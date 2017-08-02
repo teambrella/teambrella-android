@@ -8,22 +8,20 @@ import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 
 import com.teambrella.android.R;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
-import com.teambrella.android.util.ImagePicker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,8 +42,13 @@ public class ReportClaimActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_claim);
-        findViewById(R.id.date).setOnClickListener(v -> showDatePicker());
-        findViewById(R.id.upload_file).setOnClickListener(v -> startActivityForResult(ImagePicker.getImagePickerIntent(this), 4));
+//        findViewById(R.id.date).setOnClickListener(v -> showDatePicker());
+//        findViewById(R.id.upload_file).setOnClickListener(v -> startActivityForResult(ImagePicker.getImagePickerIntent(this), 4));
+        setTitle(R.string.report_claim);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -60,20 +63,35 @@ public class ReportClaimActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.e(LOG_TAG, data.getData().toString());
-        Observable.just(data.getData())
-                .map(this::createFile)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(file -> Log.e(LOG_TAG, file));
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    private String createFile(Uri uri) throws IOException {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e(LOG_TAG, data.getAction() != null ? data.getAction() : "null");
+        Uri uri = data.getData();
+        if (uri != null) {
+            Observable.just(data.getData())
+                    .map(this::createFile)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(file -> Log.e(LOG_TAG, file.getAbsolutePath()));
+        }
+    }
+
+    private File createFile(Uri uri) throws IOException {
+
         String mimeType = getContentResolver().getType(uri);
         String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
         String name = null;
+
         Cursor cursor =
                 getContentResolver().query(uri, null, null, null, null);
 
@@ -83,29 +101,35 @@ public class ReportClaimActivity extends AppCompatActivity {
         }
 
 
-        if (name != null) {
-            
-        }
+        File file = null;
 
+        if (name != null && extension != null) {
+            file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), name);
+            copy(getContentResolver().openInputStream(uri), file);
+        }
 
         if (cursor != null) {
             cursor.close();
         }
-        return extension;
+        return file;
     }
 
-
-    private void copy(File source, File destination) throws IOException {
-
-        FileChannel in = new FileInputStream(source).getChannel();
-        FileChannel out = new FileOutputStream(destination).getChannel();
-
+    private void copy(InputStream in, File file) throws IOException {
+        OutputStream out = null;
         try {
-            in.transferTo(0, in.size(), out);
+            out = new FileOutputStream(file);
+            byte[] buffer = new byte[4096];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+
         } finally {
-            if (in != null)
-                in.close();
-            out.close();
+            if (out != null) {
+                out.close();
+            }
+            in.close();
         }
+
     }
 }

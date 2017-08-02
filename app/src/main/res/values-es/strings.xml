@@ -33,7 +33,7 @@
 
     <string name="limit">Limite</string>
     <string name="risk_factor">Factor de Riesgo</string>
-    <string name="see_claims_format_string">Véase los Reclamaciones(%d)</string>
+    <string name="see_claims">Véase los Reclamaciones</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
 
@@ -63,8 +63,7 @@
     <string name="team_vote">Voto Del Equipo</string>
     <string name="your_vote">Tu Voto</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
-
-    <!--- new resources -->
+    
     <string name="vote_avg_difference_bigger_format_string">"PROM.\n+%d%%"</string>
     <string name="vote_avg_difference_smaller_format_string">"PROM.\n%d%%"</string>
     <string name="vote_avg_difference_same">"PROM.\n0%%"</string>
@@ -84,4 +83,42 @@
     <string name="claim">Reclamación</string>
     <string name="application_discussion">Discusión de Solicitud</string>
 
+
+    <string name="here_whats_new">"Qué hay de nuevo"</string>
+    <string name="try_demo">Probar Demo</string>
+    <string name="continue_with_facebook">Continuar con Facebook</string>
+    <string name="proxy_vote">Proxy </string>
+    <string name="my_proxies">Mis Proxies</string>
+    <string name="proxy_for">Proxy Para</string>
+    <string name="user_index">Indice del Usario</string>
+    <string name="remove_from_my_proxies">Eliminar de mis proxies</string>
+    <string name="total_commission">Comisión Total</string>
+    <string name="commission_format_string">$%.2f</string>
+    <string name="i_am_proxy_for">"Eres proxy para"</string>
+    <string name="last_voted_format_string">Votó por última vez: %s</string>
+    <string name="you">Tu</string>
+    <string name="opt_into_rating">Optar en Calificación</string>
+    <string name="opt_out_of_rating">Optar por No Calificar</string>
+    <string name="profile">Perfil</string>
+
+    <string name="decision_harsh">áspero</string>
+    <string name="decision_severe">severo</string>
+    <string name="decision_moderate">moderado</string>
+    <string name="decision_mild">suave</string>
+    <string name="decision_generous">generoso</string>
+
+
+    <string name="discussion_quite">tranquilo</string>
+    <string name="discussion_reserved">reservado</string>
+    <string name="discussion_moderate">moderado</string>
+    <string name="discussion_sociable">sociable</string>
+    <string name="discussion_chatty">hablador</string>
+
+    <string name="voting_never">nunca</string>
+    <string name="voting_rarely">raramente</string>
+    <string name="voting_occasionally">de vez en cuando</string>
+    <string name="voting_frequently">frecuentemente</string>
+    <string name="voting_often">a menudo</string>
+    <string name="voting_regularly">regularmente</string>
+    <string name="voting_always">siempre</string>
 </resources>
