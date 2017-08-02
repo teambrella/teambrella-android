@@ -37,6 +37,7 @@
     <color name="paleGreyFour">#f8fafd</color>
     <color name="cloudyBlue_40">#64ced8df</color>
     <color name="cloudyBlue">#ffced8df</color>
+    <color name="cloudyBlueTwo">#ffc2cfd8</color>
     <color name="selection_color">#08000000</color>
     <color name="selection_border_color">#30000000</color>
     <color name="cornflowerBlueTwo">#5c67da</color>
