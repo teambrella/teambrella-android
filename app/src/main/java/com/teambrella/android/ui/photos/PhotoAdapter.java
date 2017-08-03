@@ -16,6 +16,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
@@ -52,6 +53,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void addPhoto(String path) {
         mPhotos.add(path);
         notifyItemInserted(mPhotos.size() - 1);
+    }
+
+
+    public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        Collections.swap(mPhotos, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
     }
 
     private void removePhoto(int position) {

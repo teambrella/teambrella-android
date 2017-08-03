@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.teambrella.android.R;
+import com.teambrella.android.data.base.TeambrellaUniversalDataFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
@@ -30,6 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
@@ -54,6 +57,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private RecyclerView mPhotos;
     private PhotoAdapter mPhotoAdapter;
     private ImagePicker mImagePicker;
+    private Disposable mDisposable;
 
 
     public static void start(Context context, String objectImageUri, String objectName) {
@@ -87,6 +91,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mPhotos.setAdapter(mPhotoAdapter);
 
 
+        new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mPhotos);
+
         final Intent intent = getIntent();
         ((TextView) findViewById(R.id.object_title)).setText(intent.getStringExtra(EXTRA_NAME));
         TeambrellaImageLoader.getInstance(this).getPicasso().load(intent.getStringExtra(EXTRA_IMAGE_URI))
@@ -97,6 +103,12 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
         mIncidentDate.setText(mDateFormat.format(new Date()));
 
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.findFragmentByTag("data") == null) {
+            fragmentManager.beginTransaction().add(new TeambrellaUniversalDataFragment(), "data").commit();
+        }
     }
 
     /**
@@ -109,6 +121,24 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         }
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        TeambrellaUniversalDataFragment fragment = (TeambrellaUniversalDataFragment) getSupportFragmentManager().findFragmentByTag("data");
+        if (fragment != null) {
+            mDisposable = fragment.getObservable().subscribe(integer -> Log.e(LOG_TAG, "" + integer));
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+        mDisposable = null;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,5 +181,45 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mCalendar.set(Calendar.MONTH, month);
         mCalendar.set(Calendar.DAY_OF_MONTH, day);
         mIncidentDate.setText(mDateFormat.format(mCalendar.getTime()));
+    }
+
+
+    private class ItemTouchCallback extends ItemTouchHelper.SimpleCallback {
+
+        ItemTouchCallback() {
+            super(ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT, 0);
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            mPhotoAdapter.exchangeItems(viewHolder, target);
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            // nothing to do
+        }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            super.onSelectedChanged(viewHolder, actionState);
+            switch (actionState) {
+                case ItemTouchHelper.ACTION_STATE_DRAG:
+                    viewHolder.itemView.setAlpha(0.5f);
+                    break;
+            }
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            viewHolder.itemView.setAlpha(1f);
+        }
     }
 }
