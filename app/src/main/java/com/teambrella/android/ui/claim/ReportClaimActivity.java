@@ -3,11 +3,7 @@ package com.teambrella.android.ui.claim;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -16,7 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,18 +24,12 @@ import com.teambrella.android.ui.photos.PhotoAdapter;
 import com.teambrella.android.util.ImagePicker;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
@@ -63,6 +53,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private TextView mIncidentDate;
     private RecyclerView mPhotos;
     private PhotoAdapter mPhotoAdapter;
+    private ImagePicker mImagePicker;
 
 
     public static void start(Context context, String objectImageUri, String objectName) {
@@ -75,13 +66,19 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_claim);
+
         setTitle(R.string.report_claim);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        findViewById(R.id.add_photos).setOnClickListener(v -> startActivityForResult(ImagePicker.getImagePickerIntent(this), 4));
-        findViewById(R.id.incident_date).setOnClickListener(v -> showDatePicker(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH)));
+
+
+        mImagePicker = new ImagePicker(this);
+
+        findViewById(R.id.add_photos).setOnClickListener(this::onClick);
+        findViewById(R.id.incident_date).setOnClickListener(this::onClick);
 
         mIncidentDate = findViewById(R.id.incident_date);
         mPhotos = findViewById(R.id.photos);
@@ -123,19 +120,27 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.add_photos:
+                mImagePicker.startPicking();
+                break;
+            case R.id.incident_date:
+                showDatePicker(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                break;
+        }
+    }
+
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Uri uri = data != null ? data.getData() : null;
-        if (uri != null) {
-            Observable.just(data.getData())
-                    .map(this::createFile)
-//                    .flatMap(file -> new TeambrellaServer(ReportClaimActivity.this, TeambrellaUser.get(ReportClaimActivity.this).getPrivateKey())
-//                            .requestObservable(TeambrellaUris.getNewFileUri(file.getAbsolutePath()), null))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(file -> mPhotoAdapter.addPhoto(file.getAbsolutePath())
-                            , throwable -> Log.e(LOG_TAG, throwable.getMessage()));
+        Observable<File> observable = mImagePicker.onActivityResult(requestCode, resultCode, data);
+        if (observable != null) {
+            observable.subscribe(file -> mPhotoAdapter.addPhoto(file.getAbsolutePath())
+                    , throwable -> Log.e(LOG_TAG, throwable.getMessage()));
         }
     }
 
@@ -146,52 +151,5 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mCalendar.set(Calendar.MONTH, month);
         mCalendar.set(Calendar.DAY_OF_MONTH, day);
         mIncidentDate.setText(mDateFormat.format(mCalendar.getTime()));
-    }
-
-    private File createFile(Uri uri) throws IOException {
-
-        String mimeType = getContentResolver().getType(uri);
-        String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-        String name = null;
-
-        Cursor cursor =
-                getContentResolver().query(uri, null, null, null, null);
-
-        if (cursor != null
-                && cursor.moveToFirst()) {
-            name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-        }
-
-
-        File file = null;
-
-        if (name != null && extension != null) {
-            file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), name);
-            copy(getContentResolver().openInputStream(uri), file);
-        }
-
-        if (cursor != null) {
-            cursor.close();
-        }
-        return file;
-    }
-
-    private void copy(InputStream in, File file) throws IOException {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
-            byte[] buffer = new byte[4096];
-            int len;
-            while ((len = in.read(buffer)) != -1) {
-                out.write(buffer, 0, len);
-            }
-
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-            in.close();
-        }
-
     }
 }

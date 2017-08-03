@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -77,7 +78,17 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
                     .centerCrop()
                     .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
-                    .into(mIcon);
+                    .into(mIcon, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
 
             mClose.setOnClickListener(v -> removePhoto(getAdapterPosition()));
         }
