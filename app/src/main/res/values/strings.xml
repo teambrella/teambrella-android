@@ -129,4 +129,6 @@
     <string name="describe_your_case">Describe your case</string>
     <string name="photos">Photos</string>
     <string name="add_photos">Add photos</string>
+    <string name="reimburse_to">reimburse to</string>
+    <string name="submit_claim">Submit</string>
 </resources>

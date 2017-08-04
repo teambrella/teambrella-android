@@ -222,6 +222,18 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POSITION, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_POSITION)));
                 break;
+            case TeambrellaUris.GET_COVERAGE_FOR_DATE:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_DATE, uri.getQueryParameter(TeambrellaUris.KEY_DATE));
+                break;
+            case TeambrellaUris.NEW_CLAIM:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_INCIDENT_DATE, uri.getQueryParameter(TeambrellaUris.KEY_DATE));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_EXPENSES, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_EXPENSES)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MESSAGE, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
+                requestBody.add(TeambrellaModel.ATTR_REQUEST_IMAGES, new Gson().fromJson(uri.getQueryParameter(TeambrellaUris.KEY_IMAGES), JsonElement.class));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ADDRESS, uri.getQueryParameter(TeambrellaUris.KEY_ADDRESS));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -278,6 +290,10 @@ public class TeambrellaServer {
                 return mAPI.setProxyPosition(requestBody);
             case TeambrellaUris.NEW_FILE:
                 return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.GET_COVERAGE_FOR_DATE:
+                return mAPI.getCoverageForDate(requestBody);
+            case TeambrellaUris.NEW_CLAIM:
+                return mAPI.newClaim(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

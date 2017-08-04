@@ -4,11 +4,15 @@ import android.content.UriMatcher;
 import android.net.Uri;
 import android.util.Pair;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Teambrella's Uris
  */
+@SuppressWarnings("WeakerAccess")
 public class TeambrellaUris {
 
     private static final String AUTHORITY = "teambrella";
@@ -33,21 +37,29 @@ public class TeambrellaUris {
     private static final String SEGMENT_SET_MY_PROXY = "setMyProxy";
     private static final String SEGMENT_SET_POSITION = "setPosition";
     private static final String SEGMENT_NEW_FILE = "newFile";
+    private static final String SEGMENT_NEW_CLAIM = "newClaim";
+    private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
 
 
-    static final String KEY_FACEBOOK_TOKEN = "facebookToken";
-    static final String KEY_OFFSET = "Offset";
-    static final String KEY_LIMIT = "Limit";
-    static final String KEY_TEAM_ID = "TeamId";
-    static final String KEY_OPT_IN = "OptIn";
+    public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
+    public static final String KEY_OFFSET = "Offset";
+    public static final String KEY_LIMIT = "Limit";
+    public static final String KEY_TEAM_ID = "TeamId";
+    public static final String KEY_OPT_IN = "OptIn";
     public static final String KEY_ADD = "add";
-    static final String KEY_TEAMMATE_ID = "TeammateId";
-    static final String KEY_SINCE = "Since";
-    static final String KEY_ID = "Id";
-    static final String KEY_TEXT = "Text";
-    static final String KEY_VOTE = "Vote";
-    static final String KEY_POSITION = "Position";
-    static final String KEY_URI = "uri";
+    public static final String KEY_TEAMMATE_ID = "TeammateId";
+    public static final String KEY_SINCE = "Since";
+    public static final String KEY_ID = "Id";
+    public static final String KEY_TEXT = "Text";
+    public static final String KEY_VOTE = "Vote";
+    public static final String KEY_POSITION = "Position";
+    public static final String KEY_URI = "uri";
+    public static final String KEY_DATE = "date";
+    public static final String KEY_EXPENSES = "expenses";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_IMAGES = "images";
+    public static final String KEY_ADDRESS = "address";
+
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     public static final int TEAMMATES_LIST = 1;
@@ -70,7 +82,9 @@ public class TeambrellaUris {
     public static final int USER_RATING = 18;
     public static final int SET_MY_PROXY = 19;
     public static final int SET_PROXY_POSITION = 20;
-    static final int NEW_FILE = 21;
+    public static final int NEW_FILE = 21;
+    public static final int GET_COVERAGE_FOR_DATE = 22;
+    public static final int NEW_CLAIM = 23;
 
 
     static {
@@ -95,6 +109,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_MY_PROXY, SET_MY_PROXY);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PROXY + "/" + SEGMENT_SET_POSITION, SET_PROXY_POSITION);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_NEW_FILE, NEW_FILE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_GET_COVERAGE_FOR_DATE, GET_COVERAGE_FOR_DATE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_NEW_CLAIM, NEW_CLAIM);
     }
 
 
@@ -184,6 +200,21 @@ public class TeambrellaUris {
     }
 
 
+    public static Uri getNewClaimUri(int teamId, String incidentDate, float expenses, String message, String images, String address) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_NEW_CLAIM)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_DATE, incidentDate)
+                .appendQueryParameter(KEY_EXPENSES, Float.toString(expenses))
+                .appendQueryParameter(KEY_MESSAGE, message)
+                .appendQueryParameter(KEY_IMAGES, images)
+                .appendQueryParameter(KEY_ADDRESS, address)
+                .build();
+    }
+
+
     public static Uri getClaimVoteUri(int claimId, int vote) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
@@ -239,6 +270,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_CHAT)
                 .appendQueryParameter(KEY_ID, Integer.toString(claimId))
+                .build();
+    }
+
+    public static Uri getCoverageForDate(int teamId, Date date) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_GET_COVERAGE_FOR_DATE)
+                .appendQueryParameter(KEY_DATE, new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(date))
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .build();
     }
 

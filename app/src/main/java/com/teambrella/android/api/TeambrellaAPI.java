@@ -113,4 +113,12 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> newFile(@Body RequestBody body);
 
 
+    @Headers("Content-Type: application/json")
+    @POST("me/getCoverageForDate")
+    Observable<Response<JsonObject>> getCoverageForDate(@Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("claim/newClaim")
+    Observable<Response<JsonObject>> newClaim(@Body JsonElement body);
 }

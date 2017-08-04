@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
-import com.squareup.picasso.Callback;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import io.reactivex.Observable;
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
@@ -26,7 +29,18 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    private ArrayList<String> mPhotos = new ArrayList<>();
+    private static class Photo {
+        String filePath;
+        String uri;
+        boolean isError;
+
+        Photo(String filePath) {
+            this.filePath = filePath;
+        }
+    }
+
+
+    private ArrayList<Photo> mPhotos = new ArrayList<>();
     private Picasso mPicasso;
     private LayoutInflater mLayoutInflater;
 
@@ -51,8 +65,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addPhoto(String path) {
-        mPhotos.add(path);
+        mPhotos.add(new Photo(path));
         notifyItemInserted(mPhotos.size() - 1);
+    }
+
+    public void updatePhoto(String filePath, String uri) {
+        Observable.range(0, mPhotos.size()).filter(index -> mPhotos.get(index).filePath.equals(filePath))
+                .doOnNext(index -> mPhotos.get(index).uri = uri)
+                .doOnNext(this::notifyItemChanged).blockingFirst(0);
     }
 
 
@@ -67,35 +87,40 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
+    public String getImages() {
+        return Observable.fromIterable(mPhotos)
+                .map(photo -> photo.uri)
+                .reduce(new JsonArray(), (jsonElements, s) -> {
+                    jsonElements.add(new JsonPrimitive(s));
+                    return jsonElements;
+                }).blockingGet().toString();
+    }
+
+
     private class ImageViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;
         private ImageView mClose;
+        private ProgressBar mProgressBar;
 
         ImageViewHolder(View itemView) {
             super(itemView);
             mIcon = itemView.findViewById(R.id.image);
             mClose = itemView.findViewById(R.id.close);
+            mProgressBar = itemView.findViewById(R.id.upload_progress);
         }
 
-        void onBind(String path) {
+        void onBind(Photo photo) {
             Context context = itemView.getContext();
             Resources resources = context.getResources();
-            mPicasso.load(Uri.fromFile(new File(path)))
+            mPicasso.load(Uri.fromFile(new File(photo.filePath)))
                     .resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
                     .centerCrop()
                     .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
-                    .into(mIcon, new Callback() {
-                        @Override
-                        public void onSuccess() {
+                    .into(mIcon);
 
-                        }
 
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+            mProgressBar.setVisibility(photo.uri != null ? View.GONE : View.VISIBLE);
 
             mClose.setOnClickListener(v -> removePhoto(getAdapterPosition()));
         }

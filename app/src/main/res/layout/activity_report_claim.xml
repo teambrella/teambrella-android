@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/section_background"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:ignore="RtlHardcoded">
 
 
@@ -147,14 +149,13 @@
                     android:text="@string/coverage" />
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/coverage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/dark"
                     android:textSize="20sp"
                     tools:text="80%" />
-
-
             </LinearLayout>
 
 
@@ -171,13 +172,13 @@
                     android:gravity="right"
                     android:text="@string/claim_amount" />
 
-                <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                    android:layout_width="match_parent"
+                <com.teambrella.android.ui.widget.AmountWidget
+                    android:id="@+id/claim_amount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:layout_gravity="right"
                     android:textColor="@color/dark"
-                    android:textSize="20sp"
-                    tools:text="$960" />
+                    android:textSize="20sp" />
 
             </LinearLayout>
         </LinearLayout>
@@ -198,6 +199,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/describe_your_case"
+            android:windowSoftInputMode="stateUnchanged"
             app:layout_constraintTop_toBottomOf="@id/separator" />
 
 
@@ -242,6 +244,29 @@
             android:layout_marginTop="16dp"
             android:text="@string/add_photos"
             app:layout_constraintTop_toBottomOf="@id/photos" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/address_title"
+            style="@style/Teambrella.TextAppearence.InputTitle"
+            android:layout_marginTop="24dp"
+            android:text="@string/reimburse_to"
+            app:layout_constraintTop_toBottomOf="@id/add_photos" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratRegularEditText
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/default_edit_text_background"
+            android:inputType="numberDecimal"
+            android:paddingBottom="10dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/address_title" />
 
 
     </android.support.constraint.ConstraintLayout>

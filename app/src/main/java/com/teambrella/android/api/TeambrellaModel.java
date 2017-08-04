@@ -80,6 +80,13 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_ADD = "add";
     public static final String ATTR_REQUEST_POSITION = "Position";
     public static final String ATTR_REQUEST_OPT_INTO = "OptInto";
+    public static final String ATTR_REQUEST_DATE = "Date";
+    public static final String ATTR_REQUEST_INCIDENT_DATE = "IncidentDate";
+    public static final String ATTR_REQUEST_EXPENSES = "Expenses";
+    public static final String ATTR_REQUEST_MESSAGE = "Message";
+    public static final String ATTR_REQUEST_IMAGES = "Images";
+    public static final String ATTR_REQUEST_ADDRESS = "Address";
+
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
     public static final String ATTR_REQUEST_TEXT = "Text";
@@ -141,6 +148,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_YEAR = "Year";
     public static final String ATTR_DATA_UNREAD = "Unread";
     public static final String ATTR_DATA_CLAIM_LIMIT = "ClaimLimit";
+    public static final String ATTR_DATA_LIMIT_ANOUNT = "LimitAmount";
     public static final String ATTR_DATA_RISK = "Risk";
     public static final String ATTR_DATA_PROXY_RANK = "ProxyRank";
     public static final String ATTR_DATA_RISK_VOTED = "RiskVoted";

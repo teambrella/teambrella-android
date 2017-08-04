@@ -15,8 +15,8 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
 
@@ -25,7 +25,7 @@ import io.reactivex.Notification;
 /**
  * Coverage and Wallet fragment.
  */
-public class HomeCoverageAndWalletFragment extends ADataFragment<IDataHost> {
+public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> {
 
 
     private ImageView mObjectPicture;
@@ -56,7 +56,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IDataHost> {
             final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
             picasso.load(objectImageUri).into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE) + 0.005) * 100))));
-            mSubmitClaim.setOnClickListener(v -> ReportClaimActivity.start(getContext(), objectImageUri, objectName));
+            mSubmitClaim.setOnClickListener(v -> ReportClaimActivity.start(getContext(), objectImageUri, objectName, mDataHost.getTeamId()));
 
         }
     }
