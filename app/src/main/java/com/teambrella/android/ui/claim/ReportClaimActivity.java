@@ -31,6 +31,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
 import com.teambrella.android.ui.widget.AmountWidget;
@@ -59,8 +60,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private static final String LOG_TAG = ReportClaimActivity.class.getSimpleName();
 
     private static final String DATE_PICKER_FRAGMENT_TAG = "date_picker";
-
     private static final String DATA_REQUEST_FRAGMENT = "data_request";
+    private static final String PLEASE_WAIT_DIALOG_FRAGMENT = "please_wait";
 
 
     private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy", new Locale("es", "ES"));
@@ -70,9 +71,13 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private TextView mIncidentDateView;
     private EditText mExpensesView;
     private TextView mCoverageView;
+    private TextView mDescriptionView;
+    private TextView mAddressView;
     private AmountWidget mClaimAmount;
     private PhotoAdapter mPhotoAdapter;
     private ImagePicker mImagePicker;
+
+
     private Disposable mDisposable;
 
 
@@ -150,8 +155,12 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (!TextUtils.isEmpty(charSequence)) {
                     mExpensesValue = Float.parseFloat(charSequence.toString());
-                    if (mCoverageValue > 0) {
-                        mClaimAmount.setAmount(mCoverageValue * mExpensesValue);
+                    if (mExpensesValue <= mLimitValue) {
+                        if (mCoverageValue > 0) {
+                            mClaimAmount.setAmount(mCoverageValue * mExpensesValue);
+                        }
+                    } else {
+                        mExpensesView.setError(getString(R.string.big_expenses_error, mLimitValue));
                     }
                 } else {
                     mExpensesValue = 0f;
@@ -165,6 +174,9 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
             }
         });
+
+        mDescriptionView = findViewById(R.id.description);
+        mAddressView = findViewById(R.id.address);
     }
 
     /**
@@ -216,7 +228,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                 finish();
                 return true;
             case R.id.report:
-                request(TeambrellaUris.getNewClaimUri(mTeamId, new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(mCalendar.getTime()), mExpensesValue, "It's not my fault", mPhotoAdapter.getImages(), "891237129832173982137"));
+                submitClaim();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -257,12 +269,11 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
 
     private void onRequestResult(Notification<JsonObject> response) {
+        String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
+                .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
+                .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
+                .blockingFirst(null);
         if (response.isOnNext()) {
-            String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
-                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
-                    .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
-                    .blockingFirst(null);
-
             if (requestUriString != null) {
                 Uri requestUri = Uri.parse(requestUriString);
                 switch (TeambrellaUris.sUriMatcher.match(requestUri)) {
@@ -283,6 +294,28 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                                 .doOnNext(jsonWrapper -> mExpensesView.setHint(Integer.toString(Math.round(mLimitValue))))
                                 .doOnNext(jsonWrapper -> mCoverageView.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round(mCoverageValue * 100)))))
                                 .blockingFirst(new JsonWrapper(null));
+                        break;
+                    case TeambrellaUris.NEW_CLAIM:
+                        int claimId = Observable.just(response.getValue()).map(JsonWrapper::new)
+                                .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
+                                .map(jsonWrapper -> jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_ID)).blockingFirst();
+                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
+                        finish();
+                        break;
+                }
+            }
+        } else {
+            if (requestUriString != null) {
+                Uri requestUri = Uri.parse(requestUriString);
+                switch (TeambrellaUris.sUriMatcher.match(requestUri)) {
+                    case TeambrellaUris.NEW_FILE:
+                        break;
+                    case TeambrellaUris.GET_COVERAGE_FOR_DATE:
+                        break;
+                    case TeambrellaUris.NEW_CLAIM:
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT)).commit();
+                        break;
                 }
             }
         }
@@ -303,7 +336,51 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mCalendar.set(Calendar.MONTH, month);
         mCalendar.set(Calendar.DAY_OF_MONTH, day);
         mIncidentDateView.setText(mDateFormat.format(mCalendar.getTime()));
+        mIncidentDateView.setError(null);
         request(TeambrellaUris.getCoverageForDate(mTeamId, mCalendar.getTime()));
+    }
+
+
+    private void submitClaim() {
+
+        if (TextUtils.isEmpty(mIncidentDateView.getText())) {
+            mIncidentDateView.setFocusable(true);
+            mIncidentDateView.setFocusableInTouchMode(true);
+            mIncidentDateView.requestFocus();
+            mIncidentDateView.setError(getString(R.string.no_incident_date_error));
+            return;
+        }
+
+        if (mExpensesValue <= 0) {
+            mExpensesView.setError(getString(R.string.no_expenses_provided_error));
+            return;
+        }
+
+        if (mExpensesValue > mLimitValue) {
+            return;
+        }
+
+        if (TextUtils.isEmpty(mDescriptionView.getText())) {
+            mDescriptionView.setError(getString(R.string.no_description_provided_error));
+            return;
+        }
+
+        if (TextUtils.isEmpty(mAddressView.getText())) {
+            mAddressView.setError(getString(R.string.no_address_provided));
+            return;
+        }
+
+
+        request(TeambrellaUris.getNewClaimUri(mTeamId, mCalendar.getTime(),
+                mExpensesValue, mDescriptionView.getText().toString(),
+                mPhotoAdapter.getImages(),
+                mAddressView.getText().toString()));
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT) == null) {
+            new ProgressDialogFragment().show(getSupportFragmentManager(), PLEASE_WAIT_DIALOG_FRAGMENT);
+        }
     }
 
 

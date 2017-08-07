@@ -146,7 +146,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             if (basic != null) {
                 String pictureUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
-                    ImageView teammatePicture = (ImageView) findViewById(R.id.teammate_picture);
+                    ImageView teammatePicture = findViewById(R.id.teammate_picture);
                     TeambrellaImageLoader.getInstance(this).getPicasso()
                             .load(pictureUri).into(teammatePicture);
                     teammatePicture.setOnClickListener(v ->

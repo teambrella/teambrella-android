@@ -48,11 +48,11 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim, container, false);
-        mClaimPictures = (ImagePager) view.findViewById(R.id.image_pager);
-        mOriginalObjectPicture = (ImageView) view.findViewById(R.id.object_picture);
-        mMessageTitle = (TextView) view.findViewById(R.id.message_title);
-        mMessageText = (TextView) view.findViewById(R.id.message_text);
-        mUnreadCount = (TextView) view.findViewById(R.id.unread);
+        mClaimPictures = view.findViewById(R.id.image_pager);
+        mOriginalObjectPicture = view.findViewById(R.id.object_picture);
+        mMessageTitle = view.findViewById(R.id.message_title);
+        mMessageText = view.findViewById(R.id.message_text);
+        mUnreadCount = view.findViewById(R.id.unread);
         mDiscussion = view.findViewById(R.id.discussion);
 
 

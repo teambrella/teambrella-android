@@ -200,13 +200,13 @@ public class TeambrellaUris {
     }
 
 
-    public static Uri getNewClaimUri(int teamId, String incidentDate, float expenses, String message, String images, String address) {
+    public static Uri getNewClaimUri(int teamId, Date date, float expenses, String message, String images, String address) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_CLAIMS)
                 .appendEncodedPath(SEGMENT_NEW_CLAIM)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
-                .appendQueryParameter(KEY_DATE, incidentDate)
+                .appendQueryParameter(KEY_DATE, new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(date))
                 .appendQueryParameter(KEY_EXPENSES, Float.toString(expenses))
                 .appendQueryParameter(KEY_MESSAGE, message)
                 .appendQueryParameter(KEY_IMAGES, images)
