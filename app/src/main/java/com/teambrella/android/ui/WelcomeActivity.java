@@ -20,6 +20,10 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.KeyChain;
+import org.bitcoinj.wallet.Wallet;
+
 import java.util.LinkedList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -102,7 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         privateKey = BuildConfig.EUGENE_PRIVATE_KEY;
                         break;
                     default:
-                        Toast.makeText(WelcomeActivity.this, "Unknown user", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WelcomeActivity.this, "Unknown user", Toast.LENGTH_LONG).show();
                         break;
                 }
 
@@ -130,6 +134,18 @@ public class WelcomeActivity extends AppCompatActivity {
         permissions.add("public_profile");
         permissions.add("email");
         loginManager.logInWithReadPermissions(this, permissions);
+    }
+
+
+    private void registerUser(String token) {
+        String key = new Wallet(MainNetParams.get())
+                .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
+        new TeambrellaServer(this, key).requestObservable(TeambrellaUris.getRegisterUri(token), null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(jsonObject -> Log.e("TEST", key)
+                        , throwable -> Log.e("TEST", throwable.toString()));
+        Log.e("TEST", key);
     }
 
 
