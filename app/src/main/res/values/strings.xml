@@ -100,6 +100,7 @@
     <string name="opt_into_rating">Opt Into Rating</string>
     <string name="opt_out_of_rating">Opt Out of Rating</string>
     <string name="profile">Profile</string>
+    :ы
 
     <string name="decision_harsh">harsh</string>
     <string name="decision_severe">severe</string>
@@ -131,4 +132,11 @@
     <string name="add_photos">Add photos</string>
     <string name="reimburse_to">reimburse to</string>
     <string name="submit_claim">Submit</string>
+    <string name="no_incident_date_error"> No incident date</string>
+    <string name="big_expenses_error">The expenses must not be greater than $%.2f.</string>
+    <string name="no_description_provided_error">No description provided.</string>
+    <string name="no_expenses_provided_error">No expenses provided.</string>
+    <string name="no_address_provided">No address provided.</string>
+    <string name="please_wait">Please wait</string>
+
 </resources>
