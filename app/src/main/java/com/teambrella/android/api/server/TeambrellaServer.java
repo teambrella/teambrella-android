@@ -189,7 +189,14 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.NEW_POST:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_TEXT));
+                String message = uri.getQueryParameter(TeambrellaUris.KEY_TEXT);
+                if (message != null) {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, message);
+                }
+                String images = uri.getQueryParameter(TeambrellaUris.KEY_IMAGES);
+                if (images != null) {
+                    requestBody.add(TeambrellaModel.ATTR_REQUEST_IMAGES, new Gson().fromJson(images, JsonElement.class));
+                }
                 break;
             case TeambrellaUris.SET_CLAIM_VOTE:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));

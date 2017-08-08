@@ -149,14 +149,22 @@ public class TeambrellaUris {
     }
 
 
-    public static Uri getNewPostUri(String topicId, String text) {
-        return new Uri.Builder()
+    public static Uri getNewPostUri(String topicId, String text, String images) {
+        Uri.Builder builder = new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_CHAT)
                 .appendEncodedPath(SEGMENT_NEW_POST)
-                .appendQueryParameter(KEY_ID, topicId)
-                .appendQueryParameter(KEY_TEXT, text)
-                .build();
+                .appendQueryParameter(KEY_ID, topicId);
+
+        if (text != null) {
+            builder.appendQueryParameter(KEY_TEXT, text);
+        }
+
+        if (images != null) {
+            builder.appendQueryParameter(KEY_IMAGES, images);
+        }
+
+        return builder.build();
     }
 
     public static Uri getHomeUri(int teamId) {

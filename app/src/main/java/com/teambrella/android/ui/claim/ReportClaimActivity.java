@@ -61,8 +61,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private static final String LOG_TAG = ReportClaimActivity.class.getSimpleName();
 
     private static final String DATE_PICKER_FRAGMENT_TAG = "date_picker";
-    private static final String DATA_REQUEST_FRAGMENT = "data_request";
-    private static final String PLEASE_WAIT_DIALOG_FRAGMENT = "please_wait";
+    private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
+    private static final String PLEASE_WAIT_DIALOG_FRAGMENT_TAG = "please_wait";
 
 
     private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy", new Locale("es", "ES"));
@@ -141,8 +141,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (fragmentManager.findFragmentByTag(DATA_REQUEST_FRAGMENT) == null) {
-            fragmentManager.beginTransaction().add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT).commit();
+        if (fragmentManager.findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG) == null) {
+            fragmentManager.beginTransaction().add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT_TAG).commit();
         }
 
 
@@ -194,7 +194,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     @Override
     protected void onStart() {
         super.onStart();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT);
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
         if (fragment != null) {
             mDisposable = fragment.getObservable().subscribe(this::onRequestResult);
             fragment.start();
@@ -204,7 +204,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     @Override
     protected void onStop() {
         super.onStop();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT);
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
         if (fragment != null) {
             fragment.stop();
         }
@@ -315,7 +315,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                     break;
                 case TeambrellaUris.NEW_CLAIM:
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT)).commit();
+                    fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG)).commit();
                     break;
             }
         }
@@ -323,7 +323,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
 
     public void request(Uri uri) {
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT);
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
         if (fragment != null) {
             fragment.request(uri);
         }
@@ -378,8 +378,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT) == null) {
-            new ProgressDialogFragment().show(getSupportFragmentManager(), PLEASE_WAIT_DIALOG_FRAGMENT);
+        if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG) == null) {
+            new ProgressDialogFragment().show(getSupportFragmentManager(), PLEASE_WAIT_DIALOG_FRAGMENT_TAG);
         }
     }
 
