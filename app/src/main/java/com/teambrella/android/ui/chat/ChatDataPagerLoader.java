@@ -60,7 +60,9 @@ class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
             if (text != null && images != null && images.size() > 0) {
                 Gson gson = new Gson();
-                List<String> slices = separate(text, 0, images.size());
+                text = text.replaceAll("<p>", "");
+                text = text.replaceAll("</p>", "");
+                List<String> slices = separate(text.trim(), 0, images.size());
                 for (String slice : slices) {
                     JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, slice);
