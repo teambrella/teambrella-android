@@ -1,19 +1,25 @@
 package com.teambrella.android.api;
 
+import android.net.Uri;
+
 /**
  * Teambrella exception
  */
 public class TeambrellaException extends Exception {
 
-    public TeambrellaException() {
+    private final Uri mUri;
+
+    public TeambrellaException(Uri uri) {
+        mUri = uri;
     }
 
-    public TeambrellaException(String message) {
-        super(message);
-    }
-
-    public TeambrellaException(String message, Throwable cause) {
+    TeambrellaException(Uri uri, String message, Throwable cause) {
         super(message, cause);
+        mUri = uri;
+    }
+
+    public Uri getUri() {
+        return mUri;
     }
 }
 

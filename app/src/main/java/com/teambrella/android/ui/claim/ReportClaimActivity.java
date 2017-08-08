@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -269,11 +270,12 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
 
     private void onRequestResult(Notification<JsonObject> response) {
-        String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
-                .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
-                .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
-                .blockingFirst(null);
+
         if (response.isOnNext()) {
+            String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
+                    .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
+                    .blockingFirst(null);
             if (requestUriString != null) {
                 Uri requestUri = Uri.parse(requestUriString);
                 switch (TeambrellaUris.sUriMatcher.match(requestUri)) {
@@ -304,19 +306,17 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                         break;
                 }
             }
-        } else {
-            if (requestUriString != null) {
-                Uri requestUri = Uri.parse(requestUriString);
-                switch (TeambrellaUris.sUriMatcher.match(requestUri)) {
-                    case TeambrellaUris.NEW_FILE:
-                        break;
-                    case TeambrellaUris.GET_COVERAGE_FOR_DATE:
-                        break;
-                    case TeambrellaUris.NEW_CLAIM:
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT)).commit();
-                        break;
-                }
+        } else if (response.isOnError()) {
+            TeambrellaException exception = (TeambrellaException) response.getError();
+            switch (TeambrellaUris.sUriMatcher.match(exception.getUri())) {
+                case TeambrellaUris.NEW_FILE:
+                    break;
+                case TeambrellaUris.GET_COVERAGE_FOR_DATE:
+                    break;
+                case TeambrellaUris.NEW_CLAIM:
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT)).commit();
+                    break;
             }
         }
     }

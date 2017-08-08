@@ -1,5 +1,7 @@
 package com.teambrella.android.api;
 
+import android.net.Uri;
+
 /**
  * Teambrella server exception
  */
@@ -29,8 +31,8 @@ public class TeambrellaServerException extends TeambrellaException {
      * @param errorCode    server result code
      * @param errorMessage server error message
      */
-    public TeambrellaServerException(int errorCode, String errorMessage, long timestamp) {
-        super();
+    public TeambrellaServerException(Uri uri, int errorCode, String errorMessage, long timestamp) {
+        super(uri);
         this.mErrorCode = errorCode;
         this.mErrorMessage = errorMessage;
         this.mTimestamp = timestamp;

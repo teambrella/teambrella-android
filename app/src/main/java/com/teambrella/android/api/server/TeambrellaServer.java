@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaAPI;
+import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
@@ -105,17 +106,17 @@ public class TeambrellaServer {
 
     public Observable<JsonObject> requestObservable(Uri uri, JsonObject requestData) {
         return getObservableObject(uri, getRequestBody(uri, requestData))
-                .map(this::checkResponse)
-                .doOnNext(this::checkStatus)
+                .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
+                .doOnNext(jsonObject -> checkStatus(uri, jsonObject))
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof TeambrellaServerException) {
                         if (((TeambrellaServerException) throwable).getErrorCode() == TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH) {
                             return getObservableObject(uri, getRequestBody(uri, requestData))
-                                    .map(this::checkResponse)
-                                    .doOnNext(TeambrellaServer.this::checkStatus);
+                                    .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
+                                    .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
                         }
                     }
-                    return Observable.error(throwable);
+                    return Observable.error(new TeambrellaClientException(uri, throwable.getMessage(), throwable));
                 });
     }
 
@@ -300,14 +301,14 @@ public class TeambrellaServer {
     }
 
 
-    private JsonObject checkResponse(Response<JsonObject> response) throws TeambrellaException {
+    private JsonObject checkResponse(Uri uri, Response<JsonObject> response) throws TeambrellaException {
         if (response.isSuccessful()) {
             return response.body();
         }
-        throw new TeambrellaException();
+        throw new TeambrellaException(uri);
     }
 
-    private boolean checkStatus(JsonObject responseBody) throws TeambrellaServerException {
+    private boolean checkStatus(Uri uri, JsonObject responseBody) throws TeambrellaServerException {
         JsonObject status = responseBody.getAsJsonObject(TeambrellaModel.ATTR_STATUS);
         if (status != null) {
             JsonElement resultCodeElement = status.get(TeambrellaModel.ATTR_STATUS_RESULT_CODE);
@@ -320,10 +321,10 @@ public class TeambrellaServer {
             if (timestamp > 0) {
                 updateTimestamp(timestamp);
             } else {
-                throw new TeambrellaServerException(TeambrellaModel.VALUE_STATUS_RESULT_CODE_FATAL, "Something went wrong", 0);
+                throw new TeambrellaServerException(uri, TeambrellaModel.VALUE_STATUS_RESULT_CODE_FATAL, "Something went wrong", 0);
             }
             if (resultCode != 0) {
-                throw new TeambrellaServerException(resultCode, errorMessage, timestamp);
+                throw new TeambrellaServerException(uri, resultCode, errorMessage, timestamp);
             }
         }
         return true;
