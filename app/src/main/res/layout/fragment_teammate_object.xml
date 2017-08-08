@@ -39,7 +39,7 @@
         style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/collision_deductible"
+        android:text="@string/collision_deductible_insurance"
         app:layout_constraintBottom_toBottomOf="@+id/object_picture"
         app:layout_constraintStart_toStartOf="@id/model"
         tools:layout_editor_absoluteX="120dp" />
