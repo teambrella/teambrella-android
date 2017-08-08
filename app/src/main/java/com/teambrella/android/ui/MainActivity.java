@@ -42,6 +42,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private static final String TEAM_ID_EXTRA = "team_id";
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_LOG_EXTRA = "team_logo";
+    private static final String TEAM_TYPE_EXTRA = "team_type";
+    private static final String TEAM_NAME_EXTRA = "team_name";
 
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
@@ -63,25 +65,34 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private int mSelectedItemId = -1;
     private int mTeamId;
     private String mUserId;
+    private int mTeamType;
+    private String mTeamName;
     private Disposable mDisposable;
     private ImageView mAvatar;
     private String mTeamLogo;
 
 
-    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo) {
-        return new Intent(context, MainActivity.class).putExtra(TEAM_ID_EXTRA, teamId)
-                .putExtra(USER_ID_EXTRA, userId).putExtra(TEAM_LOG_EXTRA, teamLogo);
+    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo, String teamName, int teamType) {
+        return new Intent(context, MainActivity.class)
+                .putExtra(TEAM_ID_EXTRA, teamId)
+                .putExtra(USER_ID_EXTRA, userId)
+                .putExtra(TEAM_LOG_EXTRA, teamLogo)
+                .putExtra(TEAM_TYPE_EXTRA, teamType)
+                .putExtra(TEAM_NAME_EXTRA, teamName);
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mTeamId = getIntent().getIntExtra(TEAM_ID_EXTRA, 0);
-        mUserId = getIntent().getStringExtra(USER_ID_EXTRA);
-        mTeamLogo = getIntent().getStringExtra(TEAM_LOG_EXTRA);
+        Intent intent = getIntent();
+        mTeamId = intent.getIntExtra(TEAM_ID_EXTRA, 0);
+        mUserId = intent.getStringExtra(USER_ID_EXTRA);
+        mTeamLogo = intent.getStringExtra(TEAM_LOG_EXTRA);
+        mTeamName = intent.getStringExtra(TEAM_NAME_EXTRA);
+        mTeamType = intent.getIntExtra(TEAM_TYPE_EXTRA, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAvatar = (ImageView) findViewById(R.id.avatar);
+        mAvatar = findViewById(R.id.avatar);
         findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
         findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
         findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
@@ -240,6 +251,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         return true;
     }
 
+
+    @Override
+    public int getTeamType() {
+        return mTeamType;
+    }
+
+    @Override
+    public String getTeamName() {
+        return mTeamName;
+    }
 
     @Override
     public String getTeamLogoUri() {

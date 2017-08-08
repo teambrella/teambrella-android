@@ -32,6 +32,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
     private TextView mObjectModel;
     private TextView mCoverage;
     private TextView mSubmitClaim;
+    private TextView mCoverageType;
 
 
     @Nullable
@@ -42,6 +43,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
         mObjectPicture = view.findViewById(R.id.object_picture);
         mCoverage = view.findViewById(R.id.coverage);
         mSubmitClaim = view.findViewById(R.id.submit_claim);
+        mCoverageType = view.findViewById(R.id.coverage_type);
         return view;
     }
 
@@ -57,6 +59,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
             picasso.load(objectImageUri).into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE) + 0.005) * 100))));
             mSubmitClaim.setOnClickListener(v -> ReportClaimActivity.start(getContext(), objectImageUri, objectName, mDataHost.getTeamId()));
+            mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(mDataHost.getTeamType()));
 
         }
     }

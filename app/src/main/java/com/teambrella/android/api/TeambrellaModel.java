@@ -1,7 +1,10 @@
 package com.teambrella.android.api;
 
+import android.support.annotation.StringRes;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.teambrella.android.R;
 
 import java.util.ArrayList;
 
@@ -9,6 +12,27 @@ import java.util.ArrayList;
  * Model
  */
 public class TeambrellaModel {
+
+
+    public static final class InsuranceType {
+        public static final int BICYCLE = 40;
+        public static final int CAR_COLLISION_DEDUCTIBLE = 100;
+        public static final int CAR_COLLISION = 101;
+        public static final int CAR_COMPREHENSIVE = 102;
+        public static final int CAR_COLLISION_AND_COMPREHENSIVE = 104;
+        public static final int THIRDPARTY = 103;
+        public static final int DRONE = 140;
+        public static final int MOBILE = 200;
+        public static final int HOME_APPLIANCES = 220;
+        public static final int PET = 240;
+        public static final int UNEMPLOYMENT = 260;
+        public static final int HEALTH_DENTAL = 280;
+        public static final int HEALTH_OTHER = 290;
+        public static final int BUSINESS_BEES = 400;
+        public static final int BUSINESS_CRIME = 440;
+        public static final int BUSINESS_LIABILITY = 460;
+    }
+
 
     /*
      * Tx  Kind
@@ -254,6 +278,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_MEMBERS = "Members";
     public static final String ATTR_DATA_POSITION = "Position";
     public static final String ATTR_DATA_TEAM_LOGO = "TeamLogo";
+    public static final String ATTR_DATA_TEAM_NAME = "TeamName";
+    public static final String ATTR_DATA_TEAM_TYPE = "TeamType";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;
@@ -293,5 +319,17 @@ public class TeambrellaModel {
         return null;
     }
 
+
+    @StringRes
+    public static int getInsuranceTypeName(int type) {
+        switch (type) {
+            case InsuranceType.CAR_COLLISION_DEDUCTIBLE:
+                return R.string.collision_deductible_insurance;
+            case InsuranceType.PET:
+                return R.string.pet_insurance;
+            default:
+                return R.string.other_insurance;
+        }
+    }
 
 }

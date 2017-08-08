@@ -72,7 +72,9 @@ public class WelcomeActivity extends AppCompatActivity {
                             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
                                     , team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
                                     , jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)
-                                    , team.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)));
+                                    , team.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)
+                                    , team.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME)
+                                    , team.getInt(TeambrellaModel.ATTR_DATA_TEAM_TYPE)));
                             finish();
                         }
                         , e -> {

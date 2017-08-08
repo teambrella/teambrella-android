@@ -30,7 +30,7 @@
 
     <string name="object">Object</string>
     <string name="coverage_type">Covered</string>
-    <string name="collision_deductible">Collision Deductible</string>
+    <string name="collision_deductible_insurance">Collision Deductible</string>
 
     <string name="limit">Limit</string>
     <string name="risk_factor">Risk Factor</string>
@@ -80,7 +80,7 @@
     <string name="welcome_user_format_string">Hi %s! </string>
     <string name="application">Application</string>
     <string name="discussion">Discussion</string>
-    <string name="pet_insurance">Pet Insurance</string>
+    <string name="pet_insurance">Pet Health</string>
     <string name="claim">Claim</string>
     <string name="application_discussion">Application Discussion</string>
 
@@ -124,6 +124,7 @@
     <string name="voting_always">always</string>
 
     <!--- new resources -->
+    <string name="other_insurance">Other insurance</string>
     <string name="report_claim">Report claim</string>
     <string name="report">Report</string>
     <string name="expenses">Expenses</string>
