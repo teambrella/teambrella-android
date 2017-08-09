@@ -39,9 +39,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IDataHost> {
         super.onDataUpdated(notification);
         if (notification.isOnNext()) {
             JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
-            if (metadata != null && metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
-                    && metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE) > 0) {
-                mList.post(() -> mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1));
+            if (metadata != null && (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
+                    || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) && metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE) > 0) {
+                mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
             }
         }
     }

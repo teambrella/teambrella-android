@@ -52,11 +52,11 @@ public class UserRatingFragment extends ADataPagerProgressFragment<IMainDataHost
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
 
-        mUserAvatar = (ImageView) view.findViewById(R.id.icon);
-        mUserName = (TextView) view.findViewById(R.id.title);
-        mRating = (TextView) view.findViewById(R.id.rating);
-        mOptToRating = (TextView) view.findViewById(R.id.opt_to_rating);
-        mPosition = (TextView) view.findViewById(R.id.position);
+        mUserAvatar = view.findViewById(R.id.icon);
+        mUserName = view.findViewById(R.id.title);
+        mRating = view.findViewById(R.id.rating);
+        mOptToRating = view.findViewById(R.id.opt_to_rating);
+        mPosition = view.findViewById(R.id.position);
 
 
         mList.addOnScrollListener(new RecyclerView.OnScrollListener() {

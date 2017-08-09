@@ -38,6 +38,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_SET_POSITION = "setPosition";
     private static final String SEGMENT_NEW_FILE = "newFile";
     private static final String SEGMENT_NEW_CLAIM = "newClaim";
+    private static final String SEGMENT_NEW_CHAT = "newChat";
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
 
 
@@ -57,6 +58,7 @@ public class TeambrellaUris {
     public static final String KEY_DATE = "date";
     public static final String KEY_EXPENSES = "expenses";
     public static final String KEY_MESSAGE = "message";
+    public static final String KEY_TITLE = "title";
     public static final String KEY_IMAGES = "images";
     public static final String KEY_ADDRESS = "address";
 
@@ -85,6 +87,7 @@ public class TeambrellaUris {
     public static final int NEW_FILE = 21;
     public static final int GET_COVERAGE_FOR_DATE = 22;
     public static final int NEW_CLAIM = 23;
+    public static final int NEW_CHAT = 24;
 
 
     static {
@@ -111,6 +114,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_NEW_FILE, NEW_FILE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_GET_COVERAGE_FOR_DATE, GET_COVERAGE_FOR_DATE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_NEW_CLAIM, NEW_CLAIM);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_NEW_CHAT, NEW_CHAT);
     }
 
 
@@ -268,6 +272,18 @@ public class TeambrellaUris {
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_ME)
                 .appendEncodedPath(SEGMENT_TEAMS)
+                .build();
+    }
+
+
+    public static Uri getNewChatUri(int teamId, String title, String message) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_NEW_CHAT)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TITLE, title)
+                .appendQueryParameter(KEY_MESSAGE, message)
                 .build();
     }
 

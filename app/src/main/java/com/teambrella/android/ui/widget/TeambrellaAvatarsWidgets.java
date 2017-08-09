@@ -79,7 +79,7 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             if (uri != null) {
                 mPicasso.load(uri).into(imageview);
             }
-            imageview.setVisibility(uri != null ? VISIBLE : INVISIBLE);
+            imageview.setVisibility(uri != null ? VISIBLE : GONE);
         }
 
     }

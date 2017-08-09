@@ -218,7 +218,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.report_claim_menu, menu);
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -228,7 +228,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.report:
+            case R.id.submit:
                 submitClaim();
                 return true;
         }

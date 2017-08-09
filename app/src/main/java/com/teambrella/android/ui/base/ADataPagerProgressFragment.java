@@ -74,8 +74,8 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                     state) {
                 try {
                     super.onLayoutChildren(recycler, state);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Throwable e) {
+                    //e.printStackTrace();
                 }
             }
         });

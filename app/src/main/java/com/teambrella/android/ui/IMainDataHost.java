@@ -18,4 +18,7 @@ public interface IMainDataHost extends IDataHost {
     void optInToRating(boolean optIn);
 
     String getTeamLogoUri();
+
+    void startNewDiscussion();
+
 }

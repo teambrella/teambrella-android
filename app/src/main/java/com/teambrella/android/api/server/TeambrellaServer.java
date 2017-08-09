@@ -242,6 +242,11 @@ public class TeambrellaServer {
                 requestBody.add(TeambrellaModel.ATTR_REQUEST_IMAGES, new Gson().fromJson(uri.getQueryParameter(TeambrellaUris.KEY_IMAGES), JsonElement.class));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ADDRESS, uri.getQueryParameter(TeambrellaUris.KEY_ADDRESS));
                 break;
+            case TeambrellaUris.NEW_CHAT:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TITLE, uri.getQueryParameter(TeambrellaUris.KEY_TITLE));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -302,6 +307,8 @@ public class TeambrellaServer {
                 return mAPI.getCoverageForDate(requestBody);
             case TeambrellaUris.NEW_CLAIM:
                 return mAPI.newClaim(requestBody);
+            case TeambrellaUris.NEW_CHAT:
+                return mAPI.newChat(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.team.feed;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -31,6 +32,7 @@ import java.util.Locale;
 
 import io.reactivex.Observable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Feed Adapter
@@ -83,24 +85,29 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
         FeedItemViewHolder(View itemView) {
             super(itemView);
-            mIcon = (ImageView) itemView.findViewById(R.id.icon);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
-            mWhen = (TextView) itemView.findViewById(R.id.when);
-            mMessage = (TextView) itemView.findViewById(R.id.message);
+            mIcon = itemView.findViewById(R.id.icon);
+            mTitle = itemView.findViewById(R.id.title);
+            mWhen = itemView.findViewById(R.id.when);
+            mMessage = itemView.findViewById(R.id.message);
             picasso = TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso();
-            mAvatarWidgets = (TeambrellaAvatarsWidgets) itemView.findViewById(R.id.avatars);
-            mUnread = (TextView) itemView.findViewById(R.id.unread);
-            mType = (TextView) itemView.findViewById(R.id.type);
+            mAvatarWidgets = itemView.findViewById(R.id.avatars);
+            mUnread = itemView.findViewById(R.id.unread);
+            mType = itemView.findViewById(R.id.type);
         }
 
         void bind(JsonWrapper item) {
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
             Context context = itemView.getContext();
+            Resources resources = context.getResources();
             RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
 
 
-            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
+            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
+                    || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHART) {
                 requestCreator.transform(new CropCircleTransformation());
+            } else {
+                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
+                        .centerCrop().transform(new MaskTransformation(context, R.drawable.teammate_object_mask));
             }
 
             requestCreator.into(mIcon);
@@ -110,12 +117,14 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             switch (itemType) {
                 case TeambrellaModel.FEED_ITEM_CLAIM:
                     mType.setText(R.string.claim);
+                    mType.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_claim), null, null, null);
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                    mType.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_discussion), null, null, null);
                     mType.setText(R.string.discussion);
                     break;
-
                 default:
+                    mType.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_application), null, null, null);
                     mType.setText(R.string.application);
                     break;
             }

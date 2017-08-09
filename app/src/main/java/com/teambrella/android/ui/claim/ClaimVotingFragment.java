@@ -38,11 +38,11 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim_voting, container, false);
 
-        mTeamVotePercents = (TextView) view.findViewById(R.id.team_vote_percent);
-        mYourVotePercents = (TextView) view.findViewById(R.id.your_vote_percent);
-        mVotingControl = (SeekBar) view.findViewById(R.id.voting_control);
-        mTeamVoteCurrency = (AmountWidget) view.findViewById(R.id.team_vote_currency);
-        mYourVoteCurrency = (AmountWidget) view.findViewById(R.id.your_vote_currency);
+        mTeamVotePercents = view.findViewById(R.id.team_vote_percent);
+        mYourVotePercents = view.findViewById(R.id.your_vote_percent);
+        mVotingControl = view.findViewById(R.id.voting_control);
+        mTeamVoteCurrency = view.findViewById(R.id.team_vote_currency);
+        mYourVoteCurrency = view.findViewById(R.id.your_vote_currency);
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
         return view;

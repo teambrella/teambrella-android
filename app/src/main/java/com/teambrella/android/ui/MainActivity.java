@@ -22,6 +22,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
@@ -37,6 +38,8 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  * Main Activity
  */
 public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
+
+    private static final int NEW_DISCUSSION_REQUEST_CODE = 102;
 
 
     private static final String TEAM_ID_EXTRA = "team_id";
@@ -275,6 +278,23 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+
+    @Override
+    public void startNewDiscussion() {
+        StartNewChatActivity.startForResult(this, mTeamId, NEW_DISCUSSION_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == NEW_DISCUSSION_REQUEST_CODE
+                && resultCode == RESULT_OK) {
+            getPager(FEED_DATA_TAG).reload();
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
 
     @Override
     protected void onDestroy() {

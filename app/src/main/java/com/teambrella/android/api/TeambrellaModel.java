@@ -113,6 +113,7 @@ public class TeambrellaModel {
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
+    public static final String ATTR_REQUEST_TITLE = "Title";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
     public static final String ATTR_REQUEST_CLAIM_ID = "claimId";

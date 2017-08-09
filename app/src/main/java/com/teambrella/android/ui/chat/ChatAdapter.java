@@ -95,8 +95,8 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
             super(itemView);
             picasso = TeambrellaImageLoader.getInstance(itemView.getContext())
                     .getPicasso();
-            mUserPicture = (ImageView) itemView.findViewById(R.id.user_picture);
-            mTime = (TextView) itemView.findViewById(R.id.time);
+            mUserPicture = itemView.findViewById(R.id.user_picture);
+            mTime = itemView.findViewById(R.id.time);
         }
 
         void bind(JsonWrapper object) {
@@ -126,7 +126,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
-            mMessage = (TextView) itemView.findViewById(R.id.message);
+            mMessage = itemView.findViewById(R.id.message);
         }
 
         @Override
@@ -141,7 +141,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
 
         ClaimChatImageViewHolder(View itemView) {
             super(itemView);
-            mImage = (ImageView) itemView.findViewById(R.id.image);
+            mImage = itemView.findViewById(R.id.image);
         }
 
         @Override

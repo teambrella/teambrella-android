@@ -121,4 +121,9 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("claim/newClaim")
     Observable<Response<JsonObject>> newClaim(@Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/newChat")
+    Observable<Response<JsonObject>> newChat(@Body JsonElement body);
 }

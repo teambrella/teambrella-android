@@ -45,7 +45,9 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
             if (notification.isOnNext()) {
                 JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
                 if (metadata != null) {
-                    if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) {
+                    if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)
+                            || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
+                            && TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION.equals(metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION))) {
                         notifyDataSetChanged();
                     } else {
                         int dataSize = mPager.getLoadedData().size();
@@ -195,8 +197,8 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
         protected AMemberViewHolder(View itemView, int teamId) {
             super(itemView);
             mTeamId = teamId;
-            mIcon = (ImageView) itemView.findViewById(R.id.icon);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
+            mIcon = itemView.findViewById(R.id.icon);
+            mTitle = itemView.findViewById(R.id.title);
         }
 
         protected void onBind(JsonWrapper item) {
