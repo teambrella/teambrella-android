@@ -124,6 +124,7 @@
     <string name="voting_always">always</string>
 
     <!--- new resources -->
+    <string name="start_discussion">Start Discussion</string>
     <string name="other_insurance">Other insurance</string>
     <string name="report_claim">Report claim</string>
     <string name="report">Report</string>
@@ -139,5 +140,8 @@
     <string name="no_expenses_provided_error">No expenses provided.</string>
     <string name="no_address_provided">No address provided.</string>
     <string name="please_wait">Please wait</string>
+    <string name="post">Post</string>
+    <string name="title">Title</string>
+    <string name="new_discussion">New Discussion</string>
 
 </resources>
