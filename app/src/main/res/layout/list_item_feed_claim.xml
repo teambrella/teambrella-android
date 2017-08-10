@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selectable_item_background"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/icon"
@@ -106,14 +104,5 @@
         app:layout_constraintStart_toEndOf="@id/avatars"
         app:layout_constraintTop_toBottomOf="@id/message_layout"
         app:layout_constraintTop_toTopOf="@id/avatars" />
-
-
-    <View
-        android:id="@+id/divider"
-        style="@style/Teambrella.ListDivider"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatars" />
 
 </android.support.constraint.ConstraintLayout>
