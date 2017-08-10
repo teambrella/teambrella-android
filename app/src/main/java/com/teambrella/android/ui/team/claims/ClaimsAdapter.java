@@ -49,7 +49,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
                 case VIEW_TYPE_REGULAR:
-                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim, parent, false));
+                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voting, parent, false));
                     break;
             }
         }

@@ -2,6 +2,7 @@ package com.teambrella.android.ui.chat;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -68,7 +69,7 @@ class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, slice);
                     newMessages.add(newObject);
                 }
-            } else {
+            } else if (!TextUtils.isEmpty(text)) {
                 newMessages.add(srcObject);
             }
         }

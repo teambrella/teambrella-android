@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/section_background"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/icon"
+        style="@style/Teambrella.ListItem.Icon"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="#100FF000"
+        android:scaleType="centerCrop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/object"
+        style="@style/Teambrella.TextAppearence.ListItem.Title"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:gravity="start|center_vertical"
+        app:layout_constraintLeft_toRightOf="@id/icon"
+        app:layout_constraintRight_toLeftOf="@+id/claimed" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/claimed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/claimed"
+        android:textAllCaps="true"
+        android:textColor="@color/blueGrey"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/object"
+        app:layout_constraintLeft_toRightOf="@id/object"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/value"
+        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/claimed" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/teammate_picture"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/icon"
+        app:layout_constraintLeft_toRightOf="@id/icon" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/teammate"
+        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@id/teammate_picture"
+        app:layout_constraintLeft_toRightOf="@id/teammate_picture"
+        app:layout_constraintTop_toTopOf="@id/teammate_picture" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/view_to_vote"
+        style="@style/Teambrella.TextAppearence.SectionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/view_to_vote"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/icon" />
+</android.support.constraint.ConstraintLayout>

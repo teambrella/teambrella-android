@@ -132,7 +132,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-            mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT)));
+            mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
         }
     }
 

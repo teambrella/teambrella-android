@@ -28,7 +28,7 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
     private JsonArray mNewMembers;
     private JsonArray mTeammates;
 
-    public TeammatesDataPagerLoader(Context context, Uri uri) {
+    TeammatesDataPagerLoader(Context context, Uri uri) {
         super(context, uri, null);
         mNewMembers = new JsonArray();
         mTeammates = new JsonArray();

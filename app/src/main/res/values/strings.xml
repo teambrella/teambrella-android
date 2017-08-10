@@ -126,7 +126,7 @@
     <!--- new resources -->
     <string name="start_discussion">Start Discussion</string>
     <string name="other_insurance">Other insurance</string>
-    <string name="report_claim">Report claim</string>
+    <string name="report_claim">Report Claim</string>
     <string name="report">Report</string>
     <string name="expenses">Expenses</string>
     <string name="describe_your_case">Describe your case</string>
@@ -143,5 +143,6 @@
     <string name="post">Post</string>
     <string name="title">Title</string>
     <string name="new_discussion">New Discussion</string>
+    <string name="view_to_vote">View to Vote</string>
 
 </resources>
