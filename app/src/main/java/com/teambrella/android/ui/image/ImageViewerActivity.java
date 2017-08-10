@@ -42,7 +42,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
         supportPostponeEnterTransition();
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         final ArrayList<String> uris = getIntent().getStringArrayListExtra(EXTRA_URIS);
         int position = getIntent().getIntExtra(EXTRA_POSITION, 0);
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -79,7 +79,6 @@ public class ImageViewerActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            imageView.setTransitionName(getArguments().getString(EXTRA_URI));
             TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView, new Callback() {
                 @Override
                 public void onSuccess() {

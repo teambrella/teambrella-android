@@ -71,7 +71,7 @@ public class ChatActivity extends ADataHostActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
         }
 
         mImagePicker = new ImagePicker(this);

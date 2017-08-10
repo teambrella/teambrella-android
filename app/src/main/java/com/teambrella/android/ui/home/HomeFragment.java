@@ -39,7 +39,7 @@ public class HomeFragment extends ADataFragment<IMainDataHost> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshable);
+        mSwipeRefreshLayout = view.findViewById(R.id.refreshable);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         mSwipeRefreshLayout.setOnRefreshListener(() -> mDataHost.load(mTags[0]));
         mDataHost.load(mTags[0]);

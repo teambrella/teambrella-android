@@ -73,7 +73,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
 
         }
         setTitle(getIntent().getStringExtra(TEAMMATE_NAME));
