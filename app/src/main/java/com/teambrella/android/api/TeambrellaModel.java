@@ -11,6 +11,7 @@ import java.util.ArrayList;
 /**
  * Model
  */
+@SuppressWarnings("ALL")
 public class TeambrellaModel {
 
 
@@ -31,6 +32,28 @@ public class TeambrellaModel {
         public static final int BUSINESS_BEES = 400;
         public static final int BUSINESS_CRIME = 440;
         public static final int BUSINESS_LIABILITY = 460;
+    }
+
+
+    public static final class ClaimStates {
+        public static final int VOTING = 0;
+        public static final int REVOTING = 10;
+        public static final int VOTED = 15;
+        public static final int DECLINED = 20;
+        public static final int IN_PAYMENT = 30;
+        public static final int PROCESSEED = 40;
+    }
+
+
+    public static final class ClaimsListItemType {
+        public static final String ITEM_VOTING_HEADER = "voting_header";
+        public static final String ITEM_VOTING = "voting";
+        public static final String ITEM_VOTED_HEADER = "voted_header";
+        public static final String ITEM_VOTED = "voted";
+        public static final String ITEM_IN_PAYMENT_HEADER = "in_payment_header";
+        public static final String ITEM_IN_PAYMENT = "in_payment";
+        public static final String ITEM_PROCESSED_HEADER = "processed_header";
+        public static final String ITEM_PROCESSED = "processed";
     }
 
 

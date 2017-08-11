@@ -57,11 +57,15 @@ public abstract class ProgressFragment extends Fragment {
     }
 
     protected void setRefreshable(@SuppressWarnings("SameParameterValue") boolean refreshable) {
-        mRefreshable.setEnabled(refreshable);
+        if (mRefreshable != null) {
+            mRefreshable.setEnabled(refreshable);
+        }
     }
 
     protected void setRefreshing(@SuppressWarnings("SameParameterValue") boolean refreshing) {
-        mRefreshable.setRefreshing(refreshing);
+        if (mRefreshable != null) {
+            mRefreshable.setRefreshing(refreshing);
+        }
     }
 
 

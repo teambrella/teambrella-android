@@ -99,7 +99,7 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IMainDataHost> {
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
             mObjectNameView.setText(objectName);
             final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            picasso.load(objectImageUri).resizeDimen(R.dimen.image_size_48, R.dimen.image_size_48)
+            picasso.load(objectImageUri).resizeDimen(R.dimen.image_size_96, R.dimen.image_size_96)
                     .centerCrop().
                     transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).
                     into(mObjectIconView);

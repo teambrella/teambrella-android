@@ -144,5 +144,10 @@
     <string name="title">Title</string>
     <string name="new_discussion">New Discussion</string>
     <string name="view_to_vote">View to Vote</string>
+    <string name="claim_header_voting">Voting</string>
+    <string name="claim_header_voted">Voted</string>
+    <string name="claim_header_being_paid">Being Paid</string>
+    <string name="claim_header_fully_paid">Fully Paid</string>
+    <string name="claim_vote_format_string">Voted (%d%%)</string>
 
 </resources>

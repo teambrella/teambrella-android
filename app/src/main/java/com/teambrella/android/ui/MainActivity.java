@@ -23,6 +23,7 @@ import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
+import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
@@ -313,7 +314,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                         TeambrellaModel.ATTR_DATA_TEAMMATES, TeammatesDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeamId),
-                        null, TeambrellaDataPagerFragment.class);
+                        null, ClaimsDataPagerFragment.class);
             case FEED_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeamId),
                         null, TeambrellaDataPagerFragment.class);

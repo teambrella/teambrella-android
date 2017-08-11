@@ -45,7 +45,7 @@ public class TeambrellaImageLoader {
 
     public static Uri getImageUri(String path) {
         if (path == null) {
-            throw new IllegalArgumentException("no path");
+            return null;
         }
         return getUriBuilder().appendEncodedPath(path).build();
     }
