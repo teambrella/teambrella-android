@@ -149,5 +149,6 @@
     <string name="claim_header_being_paid">Being Paid</string>
     <string name="claim_header_fully_paid">Fully Paid</string>
     <string name="claim_vote_format_string">Voted (%d%%)</string>
+    <string name="claim_reimbursed">Reimbursed</string>
 
 </resources>

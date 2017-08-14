@@ -303,6 +303,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEAM_LOGO = "TeamLogo";
     public static final String ATTR_DATA_TEAM_NAME = "TeamName";
     public static final String ATTR_DATA_TEAM_TYPE = "TeamType";
+    public static final String ATTR_DATA_VOTING_RES_BTC = "VotingRes_BTC";
+    public static final String ATTR_DATA_PAYMENT_RES_BTC = "PaymentRes_BTC";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

@@ -14,6 +14,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 
 /**
  * Claims Activity
@@ -81,7 +82,7 @@ public class ClaimsActivity extends ADataHostActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(mUri, null, TeambrellaDataPagerFragment.class);
+                return TeambrellaDataPagerFragment.getInstance(mUri, null, ClaimsDataPagerFragment.class);
         }
         return null;
     }

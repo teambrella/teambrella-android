@@ -17,7 +17,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
-import com.teambrella.android.ui.team.claims.ClaimsFragment;
+import com.teambrella.android.ui.team.claims.TeamClaimsFragment;
 import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
 
@@ -75,7 +75,7 @@ public class TeamFragment extends Fragment {
                     case 1:
                         return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     case 2:
-                        return ClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
+                        return TeamClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     default:
                         throw new RuntimeException();
                 }

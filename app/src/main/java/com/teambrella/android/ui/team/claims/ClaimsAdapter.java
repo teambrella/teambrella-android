@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -28,14 +29,14 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
 
-    private static final int VIEW_TYPE_VOTING_HEADER = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
-    private static final int VIEW_TYPE_VOTED_HEADER = VIEW_TYPE_REGULAR + 3;
-    private static final int VIEW_TYPE_VOTED = VIEW_TYPE_REGULAR + 4;
-    private static final int VIEW_TYPE_IN_PAYMENT_HEADER = VIEW_TYPE_REGULAR + 5;
-    private static final int VIEW_TYPE_IN_PAYMENT = VIEW_TYPE_REGULAR + 6;
-    private static final int VIEW_TYPE_PROCESSED_HEADER = VIEW_TYPE_REGULAR + 7;
-    private static final int VIEW_TYPE_PROCESSED = VIEW_TYPE_REGULAR + 8;
+    public static final int VIEW_TYPE_VOTING_HEADER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_VOTED_HEADER = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_VOTED = VIEW_TYPE_REGULAR + 4;
+    public static final int VIEW_TYPE_IN_PAYMENT_HEADER = VIEW_TYPE_REGULAR + 5;
+    public static final int VIEW_TYPE_IN_PAYMENT = VIEW_TYPE_REGULAR + 6;
+    public static final int VIEW_TYPE_PROCESSED_HEADER = VIEW_TYPE_REGULAR + 7;
+    public static final int VIEW_TYPE_PROCESSED = VIEW_TYPE_REGULAR + 8;
 
 
     private final int mTeamId;
@@ -110,9 +111,14 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_VOTING:
                     viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voting, parent, false));
                     break;
-                default:
+                case VIEW_TYPE_VOTED:
                     viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voted, parent, false));
                     break;
+                case VIEW_TYPE_IN_PAYMENT:
+                case VIEW_TYPE_PROCESSED:
+                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_iten_claim_being_paid, parent, false));
+                    break;
+
             }
         }
         return viewHolder;
@@ -135,6 +141,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         TextView mVote;
         ImageView mProxyAvatar;
         TextView mProxyName;
+        ProgressBar mPaymentProgress;
 
         ClaimViewHolder(View itemView) {
             super(itemView);
@@ -146,6 +153,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mVote = itemView.findViewById(R.id.vote);
             mProxyAvatar = itemView.findViewById(R.id.proxy_picture);
             mProxyName = itemView.findViewById(R.id.proxy);
+            mPaymentProgress = itemView.findViewById(R.id.payment_progress);
         }
 
 
@@ -191,6 +199,12 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             if (mVote != null) {
                 mVote.setText(itemView.getContext().getString(R.string.claim_vote_format_string, 30));
+            }
+
+            if (mPaymentProgress != null) {
+                float voting = item.getFloat(TeambrellaModel.ATTR_DATA_VOTING_RES_BTC);
+                float payment = item.getFloat(TeambrellaModel.ATTR_DATA_PAYMENT_RES_BTC);
+                mPaymentProgress.setProgress(Math.round((payment * 100) / voting));
             }
 
 
