@@ -50,7 +50,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 case CONNECT_ACTION:
                     URI uri = URI.create(new Uri.Builder()
                             .scheme("wss")
-                            .authority("192.168.0.222")
+                            .authority("surilla.com")
                             .appendEncodedPath("wshandler.ashx")
                             .build().toString());
                     mTeambrellaSocketClient = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey())

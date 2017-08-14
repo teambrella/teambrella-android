@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.chat;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,7 +131,8 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-            mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
+            //mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
+            mMessage.setText(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim());
         }
     }
 
