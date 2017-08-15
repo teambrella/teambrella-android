@@ -1,54 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Teambrella.ListItem"
-    android:paddingEnd="0dp"
-    android:paddingStart="0dp">
+    style="@style/Teambrella.ListItem">
 
-    <RelativeLayout
-        style="@style/Teambrella.ListItem"
-        android:background="@android:color/transparent">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/icon"
+        style="@style/Teambrella.ListItem.Icon"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/icon"
-            style="@style/Teambrella.ListItem.Icon"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true" />
+    <com.teambrella.android.ui.widget.CountDownClock
+        android:id="@+id/clock"
+        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true" />
 
-        <com.teambrella.android.ui.widget.CountDownClock
-            android:id="@+id/clock"
-            style="@style/Teambrella.TextAppearence.ListItem.Value"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/icon"
+        android:layout_toStartOf="@id/net"
+        android:gravity="center_vertical|start"
+        android:orientation="vertical"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/icon"
-            android:layout_toStartOf="@id/net"
-            android:gravity="center_vertical|start"
-            android:orientation="vertical"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/teammate"
+            style="@style/Teambrella.TextAppearence.ListItem.Title"
+            android:gravity="start|center_vertical" />
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/teammate"
-                style="@style/Teambrella.TextAppearence.ListItem.Title"
-                android:gravity="start|center_vertical" />
-
-            <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                android:id="@+id/object"
-                style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/divider"
-        style="@style/Teambrella.ListDivider"
-        android:layout_alignParentBottom="true" />
-
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/object"
+            style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
 </RelativeLayout>
