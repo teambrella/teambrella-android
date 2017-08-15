@@ -158,6 +158,12 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + (mSubmitClaim ? 1 : 0);
+    }
+
     private class ClaimViewHolder extends RecyclerView.ViewHolder {
         ImageView mIcon;
         TextView mObject;

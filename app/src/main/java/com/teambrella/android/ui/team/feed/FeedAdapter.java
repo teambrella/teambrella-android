@@ -2,7 +2,6 @@ package com.teambrella.android.ui.team.feed;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -19,7 +18,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
@@ -90,6 +88,12 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof FeedItemViewHolder) {
             ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
         }
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
     }
 
     class FeedItemViewHolder extends RecyclerView.ViewHolder {
@@ -180,19 +184,29 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
 
             itemView.setOnClickListener(v -> {
-                final Uri chatUri;
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
-                        chatUri = TeambrellaUris.getClaimChatUri(item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID));
+                        ChatActivity.startClaimChat(context
+                                , mTeamId
+                                , item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
+                                , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                                , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHART:
-                        chatUri = TeambrellaUris.getFeedChatUri(item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                        ChatActivity.startFeedChat(context
+                                , item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
+                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                     default:
-                        chatUri = TeambrellaUris.getTeammateChatUri(mTeamId, item.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID));
+                        ChatActivity.startTeammateChat(context, mTeamId
+                                , item.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
+                                , null
+                                , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
+
                 }
-                context.startActivity(ChatActivity.getLaunchIntent(context, chatUri, item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)));
             });
 
         }

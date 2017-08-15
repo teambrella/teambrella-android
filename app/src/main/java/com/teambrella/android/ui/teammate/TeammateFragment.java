@@ -65,14 +65,14 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_teammate, container, false);
-        mUserPicture = (ImageView) view.findViewById(R.id.user_picture);
-        mUserName = (TextView) view.findViewById(R.id.user_name);
-        mCoverMe = (AmountWidget) view.findViewById(R.id.cover_me);
-        mCoverThem = (AmountWidget) view.findViewById(R.id.cover_them);
-        mTeammateIcon = (ImageView) view.findViewById(R.id.teammate_icon);
-        mAvatars = (TeambrellaAvatarsWidgets) view.findViewById(R.id.avatars);
-        mMessage = (TextView) view.findViewById(R.id.message);
-        mUnread = (TextView) view.findViewById(R.id.unread);
+        mUserPicture = view.findViewById(R.id.user_picture);
+        mUserName = view.findViewById(R.id.user_name);
+        mCoverMe = view.findViewById(R.id.cover_me);
+        mCoverThem = view.findViewById(R.id.cover_them);
+        mTeammateIcon = view.findViewById(R.id.teammate_icon);
+        mAvatars = view.findViewById(R.id.avatars);
+        mMessage = view.findViewById(R.id.message);
+        mUnread = view.findViewById(R.id.unread);
         mCoverMeSection = view.findViewById(R.id.cover_me_section);
         mCoverThemSection = view.findViewById(R.id.cover_them_section);
         if (savedInstanceState == null) {
@@ -80,7 +80,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             setContentShown(false);
         }
         view.findViewById(R.id.discussion).setOnClickListener(v ->
-                startActivity(ChatActivity.getLaunchIntent(getContext(), TeambrellaUris.getTeammateChatUri(mTeamId, mUserId), mTopicId)));
+                ChatActivity.startTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId));
         return view;
     }
 

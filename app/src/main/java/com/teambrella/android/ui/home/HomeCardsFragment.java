@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.home;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -53,9 +51,9 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_cards, container, false);
-        mHeader = (TextView) view.findViewById(R.id.home_header);
-        mCardsPager = (ViewPager) view.findViewById(R.id.cards_pager);
-        mPagerIndicator = (LinearLayout) view.findViewById(R.id.page_indicator);
+        mHeader = view.findViewById(R.id.home_header);
+        mCardsPager = view.findViewById(R.id.cards_pager);
+        mPagerIndicator = view.findViewById(R.id.page_indicator);
         mCardsPager.setPageMargin(40);
         return view;
     }
@@ -174,14 +172,14 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             View view = inflater.inflate(R.layout.home_card_claim, container, false);
 
 
-            ImageView icon = (ImageView) view.findViewById(R.id.icon);
-            TextView message = (TextView) view.findViewById(R.id.message_text);
-            TextView unread = (TextView) view.findViewById(R.id.unread);
-            AmountWidget amountWidget = (AmountWidget) view.findViewById(R.id.amount_widget);
-            TextView teamVote = (TextView) view.findViewById(R.id.team_vote);
-            TextView title = (TextView) view.findViewById(R.id.title);
-            TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
-            TextView leftTitle = (TextView) view.findViewById(R.id.left_title);
+            ImageView icon = view.findViewById(R.id.icon);
+            TextView message = view.findViewById(R.id.message_text);
+            TextView unread = view.findViewById(R.id.unread);
+            AmountWidget amountWidget = view.findViewById(R.id.amount_widget);
+            TextView teamVote = view.findViewById(R.id.team_vote);
+            TextView title = view.findViewById(R.id.title);
+            TextView subtitle = view.findViewById(R.id.subtitle);
+            TextView leftTitle = view.findViewById(R.id.left_title);
 
 
             int itemType = mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
@@ -233,20 +231,29 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
 
             view.setOnClickListener(v -> {
-                final Uri chatUri;
                 Context context = getContext();
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
-                        chatUri = TeambrellaUris.getClaimChatUri(mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID));
+                        ChatActivity.startClaimChat(context
+                                , mTeamId
+                                , mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                                , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHART:
-                        chatUri = TeambrellaUris.getFeedChatUri(mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                        ChatActivity.startFeedChat(context
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                     default:
-                        chatUri = TeambrellaUris.getTeammateChatUri(mTeamId, mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID));
+                        ChatActivity.startTeammateChat(context, mTeamId
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
+                                , null
+                                , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
                 }
-                context.startActivity(ChatActivity.getLaunchIntent(context, chatUri, mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)));
             });
 
             return view;
