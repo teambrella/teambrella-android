@@ -28,10 +28,10 @@ import io.reactivex.Observable;
  */
 public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
-    private static final int VIEW_TYPE_TEAMMATE = VIEW_TYPE_REGULAR;
-    private static final int VIEW_TYPE_NEW_MEMBER = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 2;
-    private static final int VIEW_TYPE_HEADER_NEW_MEMBERS = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_TEAMMATE = VIEW_TYPE_REGULAR;
+    public static final int VIEW_TYPE_NEW_MEMBER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_HEADER_NEW_MEMBERS = VIEW_TYPE_REGULAR + 3;
 
     private final int mTeamId;
 
@@ -56,12 +56,10 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                     viewHolder = new NewMemberViewHolder(inflater.inflate(R.layout.list_item_new_teamate, parent, false));
                     break;
                 case VIEW_TYPE_HEADER_TEAMMATES:
-                    viewHolder = new RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_teammates_header, parent, false)) {
-                    };
+                    viewHolder = new Header(parent, R.string.teammates, R.string.net);
                     break;
                 case VIEW_TYPE_HEADER_NEW_MEMBERS:
-                    viewHolder = new RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_new_teammtes_header, parent, false)) {
-                    };
+                    viewHolder = new Header(parent, R.string.new_teammates, R.string.voting_ends_title);
                     break;
             }
         }
@@ -94,9 +92,6 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof ATeammateViewHolder) {
             ATeammateViewHolder aHolder = (ATeammateViewHolder) holder;
             aHolder.onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
-            if (position == mPager.getLoadedData().size()) {
-                aHolder.mDivider.setVisibility(View.INVISIBLE);
-            }
         }
     }
 
@@ -115,8 +110,6 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         TextView mTitle;
         @BindView(R.id.object)
         TextView mObject;
-        @BindView(R.id.divider)
-        View mDivider;
 
         ATeammateViewHolder(View itemView) {
             super(itemView);
