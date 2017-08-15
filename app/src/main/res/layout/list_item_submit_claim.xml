@@ -1,0 +1,58 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/object_icon"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/charcoalGrey"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toRightOf="@id/object_icon"
+        app:layout_constraintTop_toTopOf="@id/object_icon"
+        tools:text="Ford S-Max" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/subtitle"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:includeFontPadding="false"
+        android:text="Unknown Location"
+        android:textColor="@color/blueGrey"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/object_icon"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/submit_claim"
+        style="@style/Teambrella.TextAppearence.SectionButton"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/header_button"
+        android:text="@string/report_claim"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/object_icon"
+        app:layout_constraintLeft_toRightOf="@id/object_icon"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
