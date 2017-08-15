@@ -8,25 +8,19 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-import com.teambrella.android.ui.claim.ReportClaimActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claims fragment
@@ -34,13 +28,6 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost> {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
-
-
-    private ImageView mObjectIconView;
-    private TextView mObjectNameView;
-    @SuppressWarnings("unused")
-    private TextView mLocationView;
-    private View mSubmitClaimView;
 
 
     private Disposable mObjectDataDisposal;
@@ -54,13 +41,6 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-        mObjectIconView = view.findViewById(R.id.object_icon);
-        mObjectNameView = view.findViewById(R.id.title);
-        mLocationView = view.findViewById(R.id.subtitle);
-
-
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 LinearLayoutManager.VERTICAL) {
             @Override
@@ -96,23 +76,6 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
 
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
-
-        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    int firstVisiblePosition = ((LinearLayoutManager) (recyclerView.getLayoutManager())).findFirstCompletelyVisibleItemPosition();
-                    if (firstVisiblePosition == 0) {
-                        ((AppBarLayout) view.findViewById(R.id.appbar)).setExpanded(true, true);
-                        setRefreshable(true);
-                    } else {
-                        setRefreshable(false);
-                    }
-                }
-            }
-        });
-        mSubmitClaimView = view.findViewById(R.id.submit_claim);
     }
 
 
@@ -135,30 +98,17 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
 
     private void onObjectDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
-            mObjectNameView.setText(objectName);
             final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            picasso.load(objectImageUri).resizeDimen(R.dimen.image_size_96, R.dimen.image_size_96)
-                    .centerCrop().
-                    transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).
-                    into(mObjectIconView);
-
-            mSubmitClaimView.setOnClickListener(v -> ReportClaimActivity.
-                    start(getContext(), objectImageUri, objectName, mDataHost.getTeamId()));
+            ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, null);
         }
     }
 
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
-    }
-
-    @Override
-    protected int getContentLayout() {
-        return R.layout.fragment_claims;
+        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), true);
     }
 }

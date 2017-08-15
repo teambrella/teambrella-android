@@ -20,6 +20,7 @@ import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.claim.ReportClaimActivity;
 
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
@@ -29,17 +30,22 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
 
-    public static final int VIEW_TYPE_VOTING_HEADER = VIEW_TYPE_REGULAR + 1;
-    public static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
-    public static final int VIEW_TYPE_VOTED_HEADER = VIEW_TYPE_REGULAR + 3;
-    public static final int VIEW_TYPE_VOTED = VIEW_TYPE_REGULAR + 4;
-    public static final int VIEW_TYPE_IN_PAYMENT_HEADER = VIEW_TYPE_REGULAR + 5;
-    public static final int VIEW_TYPE_IN_PAYMENT = VIEW_TYPE_REGULAR + 6;
-    public static final int VIEW_TYPE_PROCESSED_HEADER = VIEW_TYPE_REGULAR + 7;
-    public static final int VIEW_TYPE_PROCESSED = VIEW_TYPE_REGULAR + 8;
+    static final int VIEW_TYPE_VOTING_HEADER = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
+    static final int VIEW_TYPE_VOTED_HEADER = VIEW_TYPE_REGULAR + 3;
+    private static final int VIEW_TYPE_VOTED = VIEW_TYPE_REGULAR + 4;
+    static final int VIEW_TYPE_IN_PAYMENT_HEADER = VIEW_TYPE_REGULAR + 5;
+    private static final int VIEW_TYPE_IN_PAYMENT = VIEW_TYPE_REGULAR + 6;
+    static final int VIEW_TYPE_PROCESSED_HEADER = VIEW_TYPE_REGULAR + 7;
+    private static final int VIEW_TYPE_PROCESSED = VIEW_TYPE_REGULAR + 8;
+    private static final int VIEW_TYPE_SUBMIT_CLAIM = VIEW_TYPE_REGULAR + 9;
 
 
     private final int mTeamId;
+    private final boolean mSubmitClaim;
+    private String mObjectImageUri;
+    private String mObjectName;
+    private String mLocation;
 
 
     /**
@@ -47,9 +53,19 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
      *
      * @param pager pager
      */
-    public ClaimsAdapter(IDataPager<JsonArray> pager, int teamId) {
+    ClaimsAdapter(IDataPager<JsonArray> pager, int teamId, boolean submitClaim) {
         super(pager);
         mTeamId = teamId;
+        mSubmitClaim = submitClaim;
+    }
+
+    void setObjectDetails(String objectImageUri, String objectName, String location) {
+        if (mSubmitClaim) {
+            mObjectImageUri = objectImageUri;
+            mObjectName = objectName;
+            mLocation = location;
+        }
+        notifyItemChanged(0);
     }
 
 
@@ -58,35 +74,39 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         int viewType = super.getItemViewType(position);
 
         if (viewType == VIEW_TYPE_REGULAR) {
-            JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
-            switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString()) {
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING_HEADER:
-                    viewType = VIEW_TYPE_VOTING_HEADER;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING:
-                    viewType = VIEW_TYPE_VOTING;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTED_HEADER:
-                    viewType = VIEW_TYPE_VOTED_HEADER;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTED:
-                    viewType = VIEW_TYPE_VOTED;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
-                    viewType = VIEW_TYPE_IN_PAYMENT_HEADER;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT:
-                    viewType = VIEW_TYPE_IN_PAYMENT;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
-                    viewType = VIEW_TYPE_PROCESSED_HEADER;
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED:
-                    viewType = VIEW_TYPE_PROCESSED;
-                    break;
+            if (mSubmitClaim && position == 0) {
+                viewType = VIEW_TYPE_SUBMIT_CLAIM;
+            } else {
+                position = mSubmitClaim ? position - 1 : position;
+                JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
+                switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString()) {
+                    case TeambrellaModel.ClaimsListItemType.ITEM_VOTING_HEADER:
+                        viewType = VIEW_TYPE_VOTING_HEADER;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_VOTING:
+                        viewType = VIEW_TYPE_VOTING;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_VOTED_HEADER:
+                        viewType = VIEW_TYPE_VOTED_HEADER;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_VOTED:
+                        viewType = VIEW_TYPE_VOTED;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
+                        viewType = VIEW_TYPE_IN_PAYMENT_HEADER;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT:
+                        viewType = VIEW_TYPE_IN_PAYMENT;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
+                        viewType = VIEW_TYPE_PROCESSED_HEADER;
+                        break;
+                    case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED:
+                        viewType = VIEW_TYPE_PROCESSED;
+                        break;
+                }
             }
         }
-
         return viewType;
     }
 
@@ -96,6 +116,9 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         if (viewHolder == null) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
+                case VIEW_TYPE_SUBMIT_CLAIM:
+                    viewHolder = new SubmitClaimViewHolder(inflater.inflate(R.layout.list_item_submit_claim, parent, false));
+                    break;
                 case VIEW_TYPE_VOTING_HEADER:
                     viewHolder = new Header(parent, R.string.claim_header_voting, -1);
                     break;
@@ -127,7 +150,10 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (holder instanceof ClaimViewHolder) {
+        if (mSubmitClaim && position == 0) {
+            ((SubmitClaimViewHolder) holder).onBind();
+        } else if (holder instanceof ClaimViewHolder) {
+            position = mSubmitClaim ? position - 1 : position;
             ((ClaimViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
@@ -212,7 +238,41 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                     ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                             item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
         }
+    }
+
+    private class SubmitClaimViewHolder extends RecyclerView.ViewHolder {
+
+        private ImageView mObjectIconView;
+        private TextView mObjectNameView;
+        private TextView mLocationView;
+        private View mSubmitClaimView;
 
 
+        SubmitClaimViewHolder(View itemView) {
+            super(itemView);
+            mObjectIconView = itemView.findViewById(R.id.object_icon);
+            mObjectNameView = itemView.findViewById(R.id.title);
+            mLocationView = itemView.findViewById(R.id.subtitle);
+            mSubmitClaimView = itemView.findViewById(R.id.submit_claim);
+        }
+
+        public void onBind() {
+
+            Context context = itemView.getContext();
+            Picasso picasso = TeambrellaImageLoader.getInstance(context).getPicasso();
+            mObjectNameView.setText(mObjectName);
+
+            if (mObjectImageUri != null) {
+                picasso.load(mObjectImageUri).resizeDimen(R.dimen.image_size_96, R.dimen.image_size_96)
+                        .centerCrop().
+                        transform(new MaskTransformation(context, R.drawable.teammate_object_mask)).
+                        into(mObjectIconView);
+            }
+
+            mLocationView.setText(mLocation);
+
+            mSubmitClaimView.setOnClickListener(v -> ReportClaimActivity.
+                    start(context, mObjectImageUri, mObjectName, mTeamId));
+        }
     }
 }

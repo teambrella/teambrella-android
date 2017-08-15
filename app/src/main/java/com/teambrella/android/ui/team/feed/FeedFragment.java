@@ -3,7 +3,6 @@ package com.teambrella.android.ui.team.feed;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,41 +35,19 @@ public class FeedFragment extends ADataPagerProgressFragment<IMainDataHost> {
                 LinearLayoutManager.VERTICAL) {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                int position = parent.getChildAdapterPosition(view);
+                if (position != parent.getAdapter().getItemCount() - 1
+                        && position != 0) {
                     super.getItemOffsets(outRect, view, parent, state);
                 }
             }
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
-
-        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    int firstVisiblePosition = ((LinearLayoutManager) (recyclerView.getLayoutManager())).findFirstCompletelyVisibleItemPosition();
-                    if (firstVisiblePosition == 0) {
-                        ((AppBarLayout) view.findViewById(R.id.appbar)).setExpanded(true, true);
-                        setRefreshable(true);
-                    } else {
-                        setRefreshable(false);
-                    }
-                }
-            }
-        });
-
-        view.findViewById(R.id.start_new_discussion).setOnClickListener(v -> mDataHost.startNewDiscussion());
     }
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new FeedAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
-    }
-
-
-    @Override
-    protected int getContentLayout() {
-        return R.layout.fragment_feed;
+        return new FeedAdapter(mDataHost, mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
     }
 }

@@ -22,6 +22,7 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
@@ -42,12 +43,27 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
+    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+
 
     private final int mTeamId;
+    private final IMainDataHost mDataHost;
 
-    FeedAdapter(IDataPager<JsonArray> pager, int teamId) {
+    FeedAdapter(IMainDataHost dataHost, IDataPager<JsonArray> pager, int teamId) {
         super(pager);
         mTeamId = teamId;
+        mDataHost = dataHost;
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        int viewType = super.getItemViewType(position);
+        if (viewType == VIEW_TYPE_REGULAR) {
+            viewType = position == 0 ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM_FEED;
+        }
+        return viewType;
     }
 
     @Override
@@ -56,9 +72,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         if (viewHolder == null) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
-                case VIEW_TYPE_REGULAR:
+                case VIEW_TYPE_ITEM_FEED:
                     viewHolder = new FeedItemViewHolder(inflater.inflate(R.layout.list_item_feed_claim, parent, false));
                     break;
+                case VIEW_TYPE_HEADER:
+                    viewHolder = new FeedHeader(inflater.inflate(R.layout.list_item_feed_header, parent, false));
+                    break;
+
             }
         }
         return viewHolder;
@@ -68,7 +88,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof FeedItemViewHolder) {
-            ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+            ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
         }
     }
 
@@ -175,6 +195,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                 context.startActivity(ChatActivity.getLaunchIntent(context, chatUri, item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)));
             });
 
+        }
+    }
+
+    private class FeedHeader extends RecyclerView.ViewHolder {
+        FeedHeader(View itemView) {
+            super(itemView);
+            itemView.findViewById(R.id.start_new_discussion).setOnClickListener(v -> mDataHost.startNewDiscussion());
         }
     }
 
