@@ -310,7 +310,7 @@ public class TeambrellaModel {
     public static final int FEED_ITEM_TEAMMATE = 0;
     public static final int FEED_ITEM_CLAIM = 1;
     public static final int FEED_ITEM_RULE = 2;
-    public static final int FEED_ITEM_TEAM_CHART = 3;
+    public static final int FEED_ITEM_TEAM_CHAT = 3;
     public static final int FEED_ITEM_TEAM_NOTIFICATION = 100;
 
 

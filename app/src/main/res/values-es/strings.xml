@@ -1,4 +1,5 @@
 <resources>
+    <string name="locale">es</string>
     <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->
@@ -63,7 +64,7 @@
     <string name="team_vote">Voto Del Equipo</string>
     <string name="your_vote">Tu Voto</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
-    
+
     <string name="vote_avg_difference_bigger_format_string">"PROM.\n+%d%%"</string>
     <string name="vote_avg_difference_smaller_format_string">"PROM.\n%d%%"</string>
     <string name="vote_avg_difference_same">"PROM.\n0%%"</string>

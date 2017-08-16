@@ -12,10 +12,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 
@@ -29,9 +26,7 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     private TextView mExpenses;
     private TextView mDeductible;
     private TextView mCoverage;
-    private TextView mInsidentDate;
-    private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL", Locale.ENGLISH);
-    private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    private TextView mIncidentDate;
 
 
     public static ClaimDetailsFragment getInstance(String[] dataTags) {
@@ -42,11 +37,11 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim_details, container, false);
-        mClaimAmount = (TextView) view.findViewById(R.id.claim_amount);
-        mExpenses = (TextView) view.findViewById(R.id.estimated_expenses);
-        mDeductible = (TextView) view.findViewById(R.id.deductible);
-        mCoverage = (TextView) view.findViewById(R.id.coverage);
-        mInsidentDate = (TextView) view.findViewById(R.id.incident_date);
+        mClaimAmount = view.findViewById(R.id.claim_amount);
+        mExpenses = view.findViewById(R.id.estimated_expenses);
+        mDeductible = view.findViewById(R.id.deductible);
+        mCoverage = view.findViewById(R.id.coverage);
+        mIncidentDate = view.findViewById(R.id.incident_date);
         return view;
     }
 
@@ -61,11 +56,11 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
                 mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES, 0f))));
                 mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE, 0f))));
                 mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_COVERAGE, 0f) * 100)));
-                try {
-                    mDataHost.setSubtitle(mDateFormat.format(mSDF.parse(basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE))));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                String date = TeambrellaDateUtils.getDatePresentation(getContext()
+                        , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                        , basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE));
+                mDataHost.setSubtitle(date);
+                mIncidentDate.setText(date);
             }
 
 

@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.home;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,12 +30,11 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.AmountWidget;
-
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Home Cards Fragment.
@@ -141,8 +141,6 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         private static final String EXTRA_DATA = "data";
         private static final String EXTRA_TEAM_ID = "team_id";
-        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy \'at\' HH:mm ", Locale.ENGLISH);
-        private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         private JsonWrapper mCard;
         private int mTeamId;
@@ -171,7 +169,6 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             View view = inflater.inflate(R.layout.home_card_claim, container, false);
 
-
             ImageView icon = view.findViewById(R.id.icon);
             TextView message = view.findViewById(R.id.message_text);
             TextView unread = view.findViewById(R.id.unread);
@@ -190,8 +187,13 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
 
-            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
+            if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
+                    || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
                 requestCreator.transform(new CropCircleTransformation());
+            } else {
+                Resources resources = getContext().getResources();
+                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
+                        .centerCrop().transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask));
             }
 
             requestCreator.into(icon);
@@ -215,7 +217,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                 case TeambrellaModel.FEED_ITEM_CLAIM:
                     title.setText(getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
                     break;
-                case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                     title.setText(mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAMMATE:
@@ -223,12 +225,9 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                     break;
             }
 
-            try {
-                subtitle.setText(mDateFormat.format(mSDF.parse(mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE))));
-            } catch (Exception e) {
-
-            }
-
+            subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
+                    , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                    , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
 
             view.setOnClickListener(v -> {
                 Context context = getContext();
@@ -241,7 +240,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
-                    case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                    case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));

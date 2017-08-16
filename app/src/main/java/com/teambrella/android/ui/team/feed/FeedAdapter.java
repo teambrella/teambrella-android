@@ -24,10 +24,12 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import io.reactivex.Observable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -54,6 +56,10 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         mDataHost = dataHost;
     }
 
+
+    static {
+        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -127,7 +133,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
-                    || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHART) {
+                    || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
                 requestCreator.transform(new CropCircleTransformation());
             } else {
                 requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
@@ -143,7 +149,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                     mType.setText(R.string.claim);
                     mType.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_claim), null, null, null);
                     break;
-                case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                     mType.setCompoundDrawablesWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_discussion), null, null, null);
                     mType.setText(R.string.discussion);
                     break;
@@ -154,7 +160,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             }
 
             switch (itemType) {
-                case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                     mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
                     break;
                 default:
@@ -168,7 +174,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
 
             try {
-                long time = mSDF.parse(item.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)).getTime();
+                long time = TeambrellaDateUtils.getServerTime(item.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE));
                 long now = System.currentTimeMillis();
                 mWhen.setText(DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
             } catch (ParseException e) {
@@ -193,7 +199,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
                         break;
-                    case TeambrellaModel.FEED_ITEM_TEAM_CHART:
+                    case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
                                 , item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
