@@ -15,8 +15,8 @@ import java.util.TimeZone;
 public class TeambrellaDateUtils {
 
     public static final String TEAMBRELLA_UI_DATE = "d LLLL yyyy";
-    public static final String TEAMBRELLA_SERVER_DATE = "yyyy-MM-dd HH:mm:ss";
-    public static SimpleDateFormat SDF = new SimpleDateFormat(TEAMBRELLA_SERVER_DATE, Locale.US);
+    private static final String TEAMBRELLA_SERVER_DATE = "yyyy-MM-dd HH:mm:ss";
+    private static SimpleDateFormat SDF = new SimpleDateFormat(TEAMBRELLA_SERVER_DATE, Locale.US);
 
     static {
         SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -29,6 +29,11 @@ public class TeambrellaDateUtils {
         } catch (ParseException e) {
             return "";
         }
+    }
+
+    public static String getDatePresentation(Context context, String formatString, long time) {
+        Locale locale = new Locale(context.getString(R.string.locale));
+        return new SimpleDateFormat(formatString, locale).format(time);
     }
 
     public static long getServerTime(String serverDate) throws ParseException {

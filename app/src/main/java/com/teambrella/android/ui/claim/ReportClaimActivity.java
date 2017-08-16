@@ -38,11 +38,10 @@ import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
 import com.teambrella.android.ui.widget.AmountWidget;
 import com.teambrella.android.util.ImagePicker;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -64,10 +63,6 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private static final String DATE_PICKER_FRAGMENT_TAG = "date_picker";
     private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
     private static final String PLEASE_WAIT_DIALOG_FRAGMENT_TAG = "please_wait";
-
-
-    private static SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL yyyy", new Locale("es", "ES"));
-
 
     private Calendar mCalendar;
     private TextView mIncidentDateView;
@@ -337,7 +332,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mCalendar.set(Calendar.YEAR, year);
         mCalendar.set(Calendar.MONTH, month);
         mCalendar.set(Calendar.DAY_OF_MONTH, day);
-        mIncidentDateView.setText(mDateFormat.format(mCalendar.getTime()));
+        mIncidentDateView.setText(TeambrellaDateUtils.getDatePresentation(this, TeambrellaDateUtils.TEAMBRELLA_UI_DATE, mCalendar.getTime().getTime()));
         mIncidentDateView.setError(null);
         request(TeambrellaUris.getCoverageForDate(mTeamId, mCalendar.getTime()));
     }
