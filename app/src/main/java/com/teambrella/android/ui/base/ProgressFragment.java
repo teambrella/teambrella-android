@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -31,13 +32,16 @@ public abstract class ProgressFragment extends Fragment {
 
     private Unbinder mUnbinder;
 
+
+    private Handler mHandler = new Handler();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mData.addView(onCreateContentView(inflater, container, savedInstanceState));
-        mRefreshable.setRefreshing(true);
+        mHandler.postDelayed(mPostponedRefreshing, 1000);
         return view;
     }
 
@@ -45,7 +49,12 @@ public abstract class ProgressFragment extends Fragment {
 
 
     protected void setContentShown(boolean shown) {
-        mRefreshable.setRefreshing(!shown);
+        if (!shown) {
+            mHandler.postDelayed(mPostponedRefreshing, 1000);
+        } else {
+            mHandler.removeCallbacks(mPostponedRefreshing);
+            mRefreshable.setRefreshing(false);
+        }
         mContent.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
@@ -74,6 +83,10 @@ public abstract class ProgressFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mHandler.removeCallbacks(mPostponedRefreshing);
         mUnbinder.unbind();
     }
+
+
+    private Runnable mPostponedRefreshing = () -> mRefreshable.setRefreshing(true);
 }

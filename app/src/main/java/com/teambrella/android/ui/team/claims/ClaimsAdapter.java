@@ -174,6 +174,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         ImageView mProxyAvatar;
         TextView mProxyName;
         ProgressBar mPaymentProgress;
+        View mViewToVote;
 
         ClaimViewHolder(View itemView) {
             super(itemView);
@@ -186,6 +187,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mProxyAvatar = itemView.findViewById(R.id.proxy_picture);
             mProxyName = itemView.findViewById(R.id.proxy);
             mPaymentProgress = itemView.findViewById(R.id.payment_progress);
+            mViewToVote = itemView.findViewById(R.id.view_to_vote);
         }
 
 
@@ -240,9 +242,15 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             }
 
 
-            itemView.setOnClickListener(v -> context.startActivity(
-                    ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                            item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+            if (mViewToVote != null) {
+                mViewToVote.setOnClickListener(v -> context.startActivity(
+                        ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+            } else {
+                itemView.setOnClickListener(v -> context.startActivity(
+                        ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+            }
         }
     }
 
