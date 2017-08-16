@@ -64,6 +64,17 @@
                         tools:layout_editor_absoluteX="72dp"
                         tools:layout_editor_absoluteY="97dp" />
 
+
+                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                        android:id="@+id/when"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="true"
+                        android:textColor="@color/blueGrey"
+                        android:textSize="10sp"
+                        app:layout_constraintBottom_toBottomOf="@id/message_title"
+                        app:layout_constraintRight_toRightOf="parent" />
+
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
                         android:id="@+id/unread"
                         android:layout_width="wrap_content"
@@ -72,10 +83,8 @@
                         android:gravity="center"
                         android:lines="1"
                         android:padding="8dp"
-                        android:text="9"
                         android:textColor="@android:color/white"
                         android:textSize="13sp"
-                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
