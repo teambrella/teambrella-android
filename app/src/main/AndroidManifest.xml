@@ -45,8 +45,7 @@
 
         <activity
             android:name=".ui.claim.ClaimActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.image.ImageViewerActivity"

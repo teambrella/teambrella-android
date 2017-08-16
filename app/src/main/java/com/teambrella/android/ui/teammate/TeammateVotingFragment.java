@@ -60,21 +60,21 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_teammate_voting, container, false);
 
-        mTeamVoteRisk = (TextView) view.findViewById(R.id.team_vote_risk);
-        mMyVoteRisk = (TextView) view.findViewById(R.id.your_vote_risk);
-        mVoterBar = (VoterBar) view.findViewById(R.id.voter_bar);
-        mLeftTeammateIcon = (ImageView) view.findViewById(R.id.left_teammate_icon);
-        mRightTeammateIcon = (ImageView) view.findViewById(R.id.right_teammate_icon);
-        mNewTeammateIcon = (ImageView) view.findViewById(R.id.new_teammate_icon);
-        mLeftTeammateRisk = (TextView) view.findViewById(R.id.left_teammate_risk);
-        mRightTeammateRisk = (TextView) view.findViewById(R.id.right_teammate_risk);
-        mNewTeammateRisk = (TextView) view.findViewById(R.id.new_teammate_risk);
-        mAVGDifferenceTeamVote = (TextView) view.findViewById(R.id.team_vote_avg_difference);
-        mAVGDifferenceMyVote = (TextView) view.findViewById(R.id.your_vote_avg_difference);
+        mTeamVoteRisk = view.findViewById(R.id.team_vote_risk);
+        mMyVoteRisk = view.findViewById(R.id.your_vote_risk);
+        mVoterBar = view.findViewById(R.id.voter_bar);
+        mLeftTeammateIcon = view.findViewById(R.id.left_teammate_icon);
+        mRightTeammateIcon = view.findViewById(R.id.right_teammate_icon);
+        mNewTeammateIcon = view.findViewById(R.id.new_teammate_icon);
+        mLeftTeammateRisk = view.findViewById(R.id.left_teammate_risk);
+        mRightTeammateRisk = view.findViewById(R.id.right_teammate_risk);
+        mNewTeammateRisk = view.findViewById(R.id.new_teammate_risk);
+        mAVGDifferenceTeamVote = view.findViewById(R.id.team_vote_avg_difference);
+        mAVGDifferenceMyVote = view.findViewById(R.id.your_vote_avg_difference);
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
-        mProxyName = (TextView) view.findViewById(R.id.proxy_name);
-        mProxyAvatar = (ImageView) view.findViewById(R.id.proxy_avatar);
-        mAvatarWidgets = (TeambrellaAvatarsWidgets) view.findViewById(R.id.team_avatars);
+        mProxyName = view.findViewById(R.id.proxy_name);
+        mProxyAvatar = view.findViewById(R.id.proxy_avatar);
+        mAvatarWidgets = view.findViewById(R.id.team_avatars);
         mVoterBar.setVoterBarListener(this);
 
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     private TextView mMessageTitle;
     private TextView mMessageText;
     private TextView mUnreadCount;
+    private TextView mWhen;
     private View mDiscussion;
 
     @Override
@@ -54,6 +56,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         mMessageText = view.findViewById(R.id.message_text);
         mUnreadCount = view.findViewById(R.id.unread);
         mDiscussion = view.findViewById(R.id.discussion);
+        mWhen = view.findViewById(R.id.when);
 
 
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
@@ -107,7 +110,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
             if (claimBasic != null) {
                 ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.BASE_URL,
-                        claimBasic.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
+                        claimBasic.getObject(), TeambrellaModel.ATTR_DATA_BIG_PHOTOS);
                 if (photos != null && photos.size() > 0) {
                     mClaimPictures.init(getChildFragmentManager(), photos);
                     smallPhoto = photos.get(0);
@@ -128,7 +131,10 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                     mMessageText.setText(text);
                 }
 
-                mUnreadCount.setText(Integer.toString(claimDiscussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, 0)));
+
+                int unread = claimDiscussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, 0);
+                mUnreadCount.setText(Integer.toString(unread));
+                mUnreadCount.setVisibility(unread > 0 ? View.VISIBLE : View.GONE);
 
                 String objectPhoto = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
                 if (objectPhoto != null) {
@@ -137,6 +143,11 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             .load(TeambrellaServer.BASE_URL + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
                             .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
                 }
+
+
+                long now = System.currentTimeMillis();
+                long when = now - 60000 * claimDiscussion.getInt(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES);
+                mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
 
 
                 final int claimId = data.getInt(TeambrellaModel.ATTR_DATA_ID);

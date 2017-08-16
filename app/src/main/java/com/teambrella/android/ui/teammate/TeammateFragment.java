@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     private TextView mUserName;
     private TextView mMessage;
     private TextView mUnread;
+    private TextView mWhen;
 
 
     private View mCoverMeSection;
@@ -75,6 +77,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
         mUnread = view.findViewById(R.id.unread);
         mCoverMeSection = view.findViewById(R.id.cover_me_section);
         mCoverThemSection = view.findViewById(R.id.cover_them_section);
+        mWhen = view.findViewById(R.id.when);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -160,6 +163,11 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(discussion -> mUnread.setVisibility(discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE))
                     .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
+                    .doOnNext(discussion -> {
+                        long now = System.currentTimeMillis();
+                        long when = now - 60000 * discussion.getInt(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES);
+                        mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+                    })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
 

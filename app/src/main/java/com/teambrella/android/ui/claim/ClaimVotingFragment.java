@@ -3,6 +3,7 @@ package com.teambrella.android.ui.claim;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private AmountWidget mYourVoteCurrency;
     private SeekBar mVotingControl;
     private float mClaimAmount;
+    private TextView mWhen;
 
 
     @Nullable
@@ -43,6 +45,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mVotingControl = view.findViewById(R.id.voting_control);
         mTeamVoteCurrency = view.findViewById(R.id.team_vote_currency);
         mYourVoteCurrency = view.findViewById(R.id.your_vote_currency);
+        mWhen = view.findViewById(R.id.when);
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
         return view;
@@ -73,6 +76,10 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
                 mYourVotePercents.setAlpha(1f);
                 mYourVoteCurrency.setAlpha(1f);
+
+                long now = System.currentTimeMillis();
+                long when = now + 60000 * voting.getInt(TeambrellaModel.ATTE_DATA_REMAINED_MINUTES);
+                mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
             }
 
         }

@@ -16,7 +16,6 @@ public class TeambrellaImageLoader {
     private static TeambrellaImageLoader sInstance;
 
     private Picasso mPicasso;
-    private TeambrellaServer mServer;
 
     public static synchronized TeambrellaImageLoader getInstance(Context context) {
         if (sInstance == null) {
@@ -27,8 +26,7 @@ public class TeambrellaImageLoader {
 
 
     private TeambrellaImageLoader(Context context, TeambrellaServer server) {
-        mServer = server;
-        mPicasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(server.getHttpClient())).loggingEnabled(false)
+        mPicasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(server.getHttpClient())).loggingEnabled(true)
                 .listener((picasso, uri, exception) -> {
                 }).build();
     }

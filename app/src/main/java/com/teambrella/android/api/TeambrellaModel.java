@@ -270,6 +270,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEAMMTES_IN_RANGE = "TeammatesInRange";
     public static final String ATTR_DATA_PROXY_AVATAR = "ProxyAvatar";
     public static final String ATTR_DATA_PROXY_NAME = "ProxyName";
+    public static final String ATTR_DATA_SINCE_LAST_POST_MINUTES = "SinceLastPostMinutes";
 
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
@@ -302,9 +303,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_POSITION = "Position";
     public static final String ATTR_DATA_TEAM_LOGO = "TeamLogo";
     public static final String ATTR_DATA_TEAM_NAME = "TeamName";
-    public static final String ATTR_DATA_TEAM_TYPE = "TeamType";
+    public static final String ATTR_DATA_COVERAGE_TYPE = "CoverageType";
     public static final String ATTR_DATA_VOTING_RES_BTC = "VotingRes_BTC";
     public static final String ATTR_DATA_PAYMENT_RES_BTC = "PaymentRes_BTC";
+    public static final String ATTE_DATA_REMAINED_MINUTES = "RemainedMinutes";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

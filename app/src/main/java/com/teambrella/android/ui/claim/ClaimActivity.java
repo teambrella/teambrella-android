@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +26,7 @@ import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Claim Activity
@@ -42,6 +45,10 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
 
     int mClaimId;
+
+    private TextView mTitle;
+    private TextView mSubtitle;
+    private ImageView mIcon;
 
 
     public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
@@ -70,10 +77,15 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
+            actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.claim_toolbar_view);
+            View view = actionBar.getCustomView();
+            mTitle = view.findViewById(R.id.title);
+            mSubtitle = view.findViewById(R.id.subtitle);
+            mIcon = view.findViewById(R.id.icon);
         }
-
-        findViewById(R.id.back).setOnClickListener(v -> finish());
-        ((TextView) findViewById(R.id.title)).setText(getIntent().getStringExtra(EXTRA_MODEL));
+        setTitle(getIntent().getStringExtra(EXTRA_MODEL));
     }
 
 
@@ -108,6 +120,17 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         return null;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected String[] getPagerTags() {
         return new String[]{};
@@ -120,12 +143,16 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     @Override
     public void setTitle(String title) {
-        ((TextView) findViewById(R.id.title)).setText(title);
+        if (mTitle != null) {
+            mTitle.setText(title);
+        }
     }
 
     @Override
     public void setSubtitle(String subtitle) {
-        ((TextView) findViewById(R.id.subtitle)).setText(subtitle);
+        if (mSubtitle != null) {
+            mSubtitle.setText(subtitle);
+        }
     }
 
 
@@ -146,10 +173,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             if (basic != null) {
                 String pictureUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
-                    ImageView teammatePicture = findViewById(R.id.teammate_picture);
                     TeambrellaImageLoader.getInstance(this).getPicasso()
-                            .load(pictureUri).into(teammatePicture);
-                    teammatePicture.setOnClickListener(v ->
+                            .load(pictureUri).transform(new CropCircleTransformation()).into(mIcon);
+                    mIcon.setOnClickListener(v ->
                             TeammateActivity.start(ClaimActivity.this
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
@@ -157,8 +183,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                                     , pictureUri));
                 }
             }
-
-
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);
 
         }
