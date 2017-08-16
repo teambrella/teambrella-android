@@ -7,17 +7,23 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.AmountWidget;
+import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
 
 /**
  * Claim Voting fragment
@@ -33,6 +39,10 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private SeekBar mVotingControl;
     private float mClaimAmount;
     private TextView mWhen;
+    private TextView mProxyName;
+    private ImageView mProxyAvatar;
+    private TeambrellaAvatarsWidgets mAvatarWidgets;
+    private View mRestVoteButton;
 
 
     @Nullable
@@ -45,7 +55,11 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mVotingControl = view.findViewById(R.id.voting_control);
         mTeamVoteCurrency = view.findViewById(R.id.team_vote_currency);
         mYourVoteCurrency = view.findViewById(R.id.your_vote_currency);
+        mProxyName = view.findViewById(R.id.proxy_name);
+        mProxyAvatar = view.findViewById(R.id.proxy_avatar);
+        mAvatarWidgets = view.findViewById(R.id.team_avatars);
         mWhen = view.findViewById(R.id.when);
+        mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
         return view;
@@ -54,6 +68,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
+            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
@@ -68,6 +83,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
                 float teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0);
                 float yourVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0);
+                String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
+                String proxyAvatar = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR);
 
                 mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
                 mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
@@ -80,6 +97,25 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 long now = System.currentTimeMillis();
                 long when = now + 60000 * voting.getInt(TeambrellaModel.ATTE_DATA_REMAINED_MINUTES);
                 mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+
+                Observable.
+                        fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
+                        .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                        .toList()
+                        .subscribe(mAvatarWidgets::setAvatars);
+
+                if (proxyName != null && proxyAvatar != null) {
+                    mProxyName.setText(proxyName);
+                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
+                            .into(mProxyAvatar);
+                    mProxyName.setVisibility(View.VISIBLE);
+                    mProxyAvatar.setVisibility(View.VISIBLE);
+                    mRestVoteButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mProxyName.setVisibility(View.INVISIBLE);
+                    mProxyAvatar.setVisibility(View.INVISIBLE);
+                    mRestVoteButton.setVisibility(yourVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                }
             }
 
         }
