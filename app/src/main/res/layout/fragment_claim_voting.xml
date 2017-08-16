@@ -144,7 +144,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@id/your_vote_title"
-            app:layout_constraintTop_toBottomOf="@id/team_vote_percent">
+            app:layout_constraintTop_toBottomOf="@id/team_vote_currency">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/proxy_avatar"
