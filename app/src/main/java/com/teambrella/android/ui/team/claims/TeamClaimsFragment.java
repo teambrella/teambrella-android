@@ -3,7 +3,6 @@ package com.teambrella.android.ui.team.claims;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +51,7 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
                     case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                    case ClaimsAdapter.VIEW_TYPE_VOTING:
                         drawDivider = false;
                 }
 
@@ -61,6 +61,7 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
                         case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                        case ClaimsAdapter.VIEW_TYPE_VOTING:
                             drawDivider = false;
                     }
                 }

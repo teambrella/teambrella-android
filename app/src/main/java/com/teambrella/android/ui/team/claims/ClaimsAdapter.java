@@ -31,7 +31,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
 
     static final int VIEW_TYPE_VOTING_HEADER = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
+    static final int VIEW_TYPE_VOTING = VIEW_TYPE_REGULAR + 2;
     static final int VIEW_TYPE_VOTED_HEADER = VIEW_TYPE_REGULAR + 3;
     private static final int VIEW_TYPE_VOTED = VIEW_TYPE_REGULAR + 4;
     static final int VIEW_TYPE_IN_PAYMENT_HEADER = VIEW_TYPE_REGULAR + 5;
@@ -236,8 +236,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             }
 
             if (mPaymentProgress != null) {
-                float voting = item.getFloat(TeambrellaModel.ATTR_DATA_VOTING_RES_BTC);
-                float payment = item.getFloat(TeambrellaModel.ATTR_DATA_PAYMENT_RES_BTC);
+                float voting = item.getFloat(TeambrellaModel.ATTR_DATA_VOTING_RES_CRYPTO);
+                float payment = item.getFloat(TeambrellaModel.ATTR_DATA_PAYMENT_RES_CRYPTO);
                 mPaymentProgress.setProgress(Math.round((payment * 100) / voting));
             }
 
