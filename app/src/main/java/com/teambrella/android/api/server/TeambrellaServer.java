@@ -3,6 +3,7 @@ package com.teambrella.android.api.server;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -30,6 +31,7 @@ import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 
 import io.reactivex.Observable;
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -120,8 +122,25 @@ public class TeambrellaServer {
                 });
     }
 
-    public OkHttpClient getHttpClient() {
-        return new OkHttpClient.Builder().addInterceptor(new HeaderInterceptor()).build();
+    public OkHttpClient getHttpClient(Context context) {
+        Cache cache = null;
+        switch (Environment.getExternalStorageState()) {
+            case Environment.MEDIA_MOUNTED:
+                File cacheDir = context.getExternalCacheDir();
+                if (cacheDir != null) {
+                    cache = new Cache(context.getExternalCacheDir(), 1024 * 1024 * 100);
+                }
+            default:
+
+        }
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(new HeaderInterceptor());
+        if (cache != null) {
+            builder.cache(cache);
+        }
+
+        return builder.build();
     }
 
 

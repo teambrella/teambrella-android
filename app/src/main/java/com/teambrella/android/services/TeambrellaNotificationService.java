@@ -58,7 +58,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     mTeambrellaSocketClient.connect();
                     return START_STICKY;
                 case STOP_ACTION:
-                    mTeambrellaSocketClient.close();
+                    if (mTeambrellaSocketClient != null) {
+                        mTeambrellaSocketClient.close();
+                    }
                     stopSelf();
                     return START_NOT_STICKY;
             }

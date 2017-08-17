@@ -60,9 +60,14 @@ public class TeamFragment extends Fragment {
 
         IMainDataHost dataHost = (IMainDataHost) getContext();
 
+        ImageView teamLogo = view.findViewById(R.id.team_logo);
+
+
         TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(dataHost.getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into((ImageView) view.findViewById(R.id.team_logo));
+                .into(teamLogo);
+
+        teamLogo.setOnClickListener(v -> dataHost.showTeamChooser());
 
         ((TextView) view.findViewById(R.id.title)).setText(dataHost.getTeamName());
 

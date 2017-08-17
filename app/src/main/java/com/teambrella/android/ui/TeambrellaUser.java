@@ -12,6 +12,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_NAME = "teambrella_user";
     private static final String PREFERENCE_PRIVATE_KEY = "private_key";
     private static final String PREFERENCE_USER_ID = "user_id_key";
+    private static final String PREFERENCE_TEAM_ID = "team_id_key";
 
 
     private static TeambrellaUser sUser;
@@ -49,5 +50,12 @@ public class TeambrellaUser {
         mPreferences.edit().putString(PREFERENCE_PRIVATE_KEY, privateKey).apply();
     }
 
+    public void setTeamId(int teamId) {
+        mPreferences.edit().putInt(PREFERENCE_TEAM_ID, teamId).apply();
+    }
+
+    public int getTeamId() {
+        return mPreferences.getInt(PREFERENCE_TEAM_ID, -1);
+    }
 
 }

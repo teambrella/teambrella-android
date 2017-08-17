@@ -51,9 +51,14 @@ public class HomeFragment extends ADataFragment<IMainDataHost> {
             startActivity(new Intent(getContext(), WelcomeActivity.class));
         });
 
+        ImageView teamLogo = view.findViewById(R.id.team_logo);
+
+
         TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(mDataHost.getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into((ImageView) view.findViewById(R.id.team_logo));
+                .into(teamLogo);
+
+        teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
 
         return view;
     }

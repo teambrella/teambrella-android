@@ -35,19 +35,24 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/AkkuratPro-Bold.otf");
         View view = inflater.inflate(R.layout.fragment_user, container, false);
-        ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ViewPager pager = view.findViewById(R.id.pager);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
 
         setTypeface(tabLayout, typeface);
         setTypeface(toolbar, typeface);
 
         toolbar.setTitle(R.string.profile);
 
+        IMainDataHost dataHost = (IMainDataHost) getContext();
 
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(((IMainDataHost) getContext()).getTeamLogoUri())
+        ImageView teamLogo = view.findViewById(R.id.team_logo);
+
+
+        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(dataHost.getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into((ImageView) view.findViewById(R.id.team_logo));
+                .into(teamLogo);
+
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override

@@ -58,12 +58,15 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     public static final String PROXIES_FOR_DATA = "proxies_for_data";
     public static final String USER_RATING_DATA = "user_rating_data";
     public static final String SET_PROXY_POSITION_DATA = "set_proxy_position";
+    public static final String TEAMS_DATA = "teams_data";
     public static final String USER_DATA = "user_data";
+
 
     private static final String HOME_TAG = "home";
     private static final String TEAM_TAG = "team";
     private static final String PROXIES_TAG = "proxies";
     private static final String PROFILE_TAG = "profile";
+    private static final String TEAM_CHOOSER_FRAGMENT_TAG = "team_chooser";
 
 
     private int mSelectedItemId = -1;
@@ -184,7 +187,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     protected String[] getPagerTags() {
-        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA};
+        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA, TEAMS_DATA};
     }
 
     @Override
@@ -297,6 +300,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     }
 
+
+    @Override
+    public String getUserId() {
+        return mUserId;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -327,11 +336,21 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             case USER_RATING_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getUserRatingUri(mTeamId),
                         "Members", TeambrellaDataPagerFragment.class);
+            case TEAMS_DATA:
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyTeams(),
+                        "MyTeams", TeambrellaDataPagerFragment.class);
         }
         return null;
     }
 
 
+    @Override
+    public void showTeamChooser() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(TEAM_CHOOSER_FRAGMENT_TAG) == null) {
+            new TeamSelectionFragment().show(fragmentManager, TEAM_CHOOSER_FRAGMENT_TAG);
+        }
+    }
 }
 
 

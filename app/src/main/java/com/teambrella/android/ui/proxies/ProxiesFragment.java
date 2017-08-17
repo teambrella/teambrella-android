@@ -44,9 +44,14 @@ public class ProxiesFragment extends Fragment {
 
         toolbar.setTitle(getString(R.string.proxy_vote));
 
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(((IMainDataHost) getContext()).getTeamLogoUri())
+        IMainDataHost dataHost = (IMainDataHost) getContext();
+
+        ImageView teamLogo = view.findViewById(R.id.team_logo);
+
+
+        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(dataHost.getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into((ImageView) view.findViewById(R.id.team_logo));
+                .into(teamLogo);
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override

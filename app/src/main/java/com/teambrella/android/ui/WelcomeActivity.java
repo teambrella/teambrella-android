@@ -60,21 +60,41 @@ public class WelcomeActivity extends AppCompatActivity {
     private void getTeams(String privateKey) {
         findViewById(R.id.facebook_login).setVisibility(View.GONE);
         findViewById(R.id.try_demo).setVisibility(View.GONE);
+        TeambrellaUser user = TeambrellaUser.get(this);
+        final int selectedTeam = TeambrellaUser.get(this).getTeamId();
         mTeamsDisposal = new TeambrellaServer(WelcomeActivity.this, privateKey)
                 .requestObservable(TeambrellaUris.getMyTeams(), null)
                 .map(JsonWrapper::new)
                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(jsonWrapper -> {
-                            JsonWrapper team = jsonWrapper.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS).get(0);
-                            TeambrellaUser.get(WelcomeActivity.this).setUserId(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID));
+                .doOnNext(jsonWrapper -> user.setUserId(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)))
+                .map(jsonWrapper -> jsonWrapper.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS))
+                .subscribe(teams -> {
+
+                            JsonWrapper team = null;
+                            for (JsonWrapper aTeam : teams) {
+                                if (aTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) == selectedTeam) {
+                                    team = aTeam;
+                                    break;
+                                }
+                            }
+
+                            if (team == null && teams.size() > 0) {
+                                team = teams.get(0);
+                            }
+
+                            if (team == null) {
+                                finish();
+                            }
+
                             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
                                     , team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
-                                    , jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)
+                                    , user.getUserId()
                                     , team.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)
                                     , team.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME)
                                     , team.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)));
+                            user.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
                             finish();
                         }
                         , e -> {
@@ -92,7 +112,6 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 String userId = loginResult.getAccessToken().getUserId();
-                Log.e("TEST", userId);
                 String privateKey = null;
                 switch (userId) {
                     case BuildConfig.DENIS_FACEEBOOK_ID:

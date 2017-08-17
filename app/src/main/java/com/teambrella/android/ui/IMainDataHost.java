@@ -21,4 +21,8 @@ public interface IMainDataHost extends IDataHost {
 
     void startNewDiscussion();
 
+    void showTeamChooser();
+
+    String getUserId();
+
 }
