@@ -84,10 +84,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
             setVoting(true);
         });
 
-        //mVotingControl = (SeekBar) view.findViewById(R.id.voting_control);
-        //mVotingControl.setMax(1000);
-        //mVotingControl.setOnSeekBarChangeListener(this);
-
         return view;
     }
 

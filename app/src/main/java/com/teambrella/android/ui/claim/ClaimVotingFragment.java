@@ -62,6 +62,14 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
+
+
+        mRestVoteButton.setOnClickListener(v -> {
+            mDataHost.postVote(-1);
+            mYourVotePercents.setAlpha(0.3f);
+            mYourVoteCurrency.setAlpha(0.3f);
+            mRestVoteButton.setAlpha(0.3f);
+        });
         return view;
     }
 
@@ -93,6 +101,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
                 mYourVotePercents.setAlpha(1f);
                 mYourVoteCurrency.setAlpha(1f);
+                mRestVoteButton.setAlpha(1f);
 
                 long now = System.currentTimeMillis();
                 long when = now + 60000 * voting.getInt(TeambrellaModel.ATTE_DATA_REMAINED_MINUTES);
@@ -129,6 +138,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         if (fromUser) {
             mYourVotePercents.setAlpha(0.3f);
             mYourVoteCurrency.setAlpha(0.3f);
+            mRestVoteButton.setAlpha(0.3f);
         }
     }
 

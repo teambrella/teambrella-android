@@ -198,10 +198,16 @@ public class TeambrellaServer {
                     requestBody.add(TeambrellaModel.ATTR_REQUEST_IMAGES, new Gson().fromJson(images, JsonElement.class));
                 }
                 break;
-            case TeambrellaUris.SET_CLAIM_VOTE:
+            case TeambrellaUris.SET_CLAIM_VOTE: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)) / 100);
-                break;
+                float vote = Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)) / 100;
+                if (vote < 0) {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, (Number) null);
+                } else {
+                    requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_VOTE, vote);
+                }
+            }
+            break;
             case TeambrellaUris.SET_TEAMMATE_VOTE:
                 Double vote = Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_VOTE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
