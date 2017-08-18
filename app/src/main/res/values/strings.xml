@@ -1,4 +1,6 @@
 <resources>
+    <string name="unknown_value">…</string>
+    <string name="object_format_string" translatable="false">%1$s,%2$s</string>
     <string name="locale">en</string>
     <string name="facebook_app_id" translatable="false">1826256607597448</string>
     <string name="app_name">Teambrella</string>
@@ -151,5 +153,6 @@
     <string name="claim_header_fully_paid">Fully Paid</string>
     <string name="claim_vote_format_string">Voted (%d%%)</string>
     <string name="claim_reimbursed">Reimbursed</string>
+    <string name="bike_insurance">Bike Coverage</string>
 
 </resources>
