@@ -133,7 +133,10 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
 
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
+            mObject.setText(itemView.getContext().getString(R.string.object_format_string
+                    , item.getString(TeambrellaModel.ATTR_DATA_MODEL)
+                    , item.getString(TeambrellaModel.ATTR_DATA_YEAR)));
+
             itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
                     item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri, mCurrency));
         }

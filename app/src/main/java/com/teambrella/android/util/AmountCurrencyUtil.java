@@ -31,7 +31,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrenncyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -41,7 +41,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrenncyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -56,7 +56,7 @@ public class AmountCurrencyUtil {
     }
 
 
-    private static class CurrenncyRelativeSizeSpan extends MetricAffectingSpan {
+    private static class CurrencyRelativeSizeSpan extends MetricAffectingSpan {
 
         @Override
         public void updateDrawState(TextPaint ds) {

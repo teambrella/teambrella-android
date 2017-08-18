@@ -41,17 +41,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:text="@string/unknown_value"
         app:layout_constraintStart_toEndOf="@id/object_picture"
         app:layout_constraintTop_toTopOf="@+id/object_picture"
-        tools:layout_editor_absoluteX="120dp"
-        tools:text="Audi A6, 2007" />
+        tools:layout_editor_absoluteX="120dp" />
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/coverage_type"
         style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/collision_deductible_insurance"
+        android:text="@string/unknown_value"
         app:layout_constraintBottom_toBottomOf="@+id/object_picture"
         app:layout_constraintStart_toStartOf="@id/model"
         tools:layout_editor_absoluteX="120dp" />
@@ -131,7 +131,7 @@
                 android:layout_below="@id/coverage_header"
                 android:layout_toEndOf="@id/coverage_icon"
                 android:includeFontPadding="false"
-                android:text="95 %" />
+                android:text="@string/unknown_value" />
 
         </RelativeLayout>
 
@@ -163,7 +163,7 @@
                 android:layout_below="@id/wallet_header"
                 android:layout_toEndOf="@id/wallet_icon"
                 android:includeFontPadding="false"
-                android:text="600" />
+                android:text="@string/unknown_value" />
 
         </RelativeLayout>
 

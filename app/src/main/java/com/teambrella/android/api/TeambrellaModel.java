@@ -355,6 +355,8 @@ public class TeambrellaModel {
                 return R.string.collision_deductible_insurance;
             case InsuranceType.PET:
                 return R.string.pet_insurance;
+            case InsuranceType.BICYCLE:
+                return R.string.bike_insurance;
             default:
                 return R.string.other_insurance;
         }
