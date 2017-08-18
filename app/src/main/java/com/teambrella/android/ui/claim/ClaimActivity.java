@@ -39,32 +39,36 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_MODEL = "model";
     private static final String EXTRA_TEAM_ID = "team_id";
+    private static final String EXTRA_CURRENCY = "currency";
 
 
     private Disposable mDisposal;
 
 
-    int mClaimId;
+    private int mClaimId;
+    private String mCurrency;
 
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
 
 
-    public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
+    public static Intent getLaunchIntent(Context context, int id, String model, int teamId, String currency) {
         return new Intent(context, ClaimActivity.class)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimUri(id))
                 .putExtra(EXTRA_MODEL, model)
-                .putExtra(EXTRA_TEAM_ID, teamId);
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_CURRENCY, currency);
     }
 
-    public static void start(Context context, int id, String model, int teamId) {
-        context.startActivity(getLaunchIntent(context, id, model, teamId));
+    public static void start(Context context, int id, String model, int teamId, String currency) {
+        context.startActivity(getLaunchIntent(context, id, model, teamId, currency));
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mCurrency = getIntent().getStringExtra(EXTRA_CURRENCY);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -120,6 +124,11 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         return null;
     }
 
+
+    @Override
+    public String getCurrency() {
+        return mCurrency;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -180,7 +189,8 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
-                                    , pictureUri));
+                                    , pictureUri
+                                    , mCurrency));
                 }
             }
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);

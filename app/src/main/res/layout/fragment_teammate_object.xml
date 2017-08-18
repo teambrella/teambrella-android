@@ -77,11 +77,13 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:text="@string/limit" />
 
-            <com.teambrella.android.ui.widget.AmountWidget
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/limit"
+                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false" />
 
         </LinearLayout>
 
@@ -96,11 +98,13 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:text="@string/net" />
 
-            <com.teambrella.android.ui.widget.AmountWidget
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/net"
+                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false" />
 
         </LinearLayout>
 

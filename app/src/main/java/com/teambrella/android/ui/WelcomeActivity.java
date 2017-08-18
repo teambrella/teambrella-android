@@ -86,6 +86,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
                             if (team == null) {
                                 finish();
+                                return;
                             }
 
                             startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
@@ -93,7 +94,8 @@ public class WelcomeActivity extends AppCompatActivity {
                                     , user.getUserId()
                                     , team.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)
                                     , team.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME)
-                                    , team.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)));
+                                    , team.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)
+                                    , team.getString(TeambrellaModel.ATTR_DATA_CURRENCY)));
                             user.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
                             finish();
                         }

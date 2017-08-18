@@ -12,4 +12,6 @@ public interface ITeammateActivity extends IDataHost {
     void setAsProxy(boolean set);
 
     boolean isItMe();
+
+    String getCurrency();
 }

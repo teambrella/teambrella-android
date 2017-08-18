@@ -31,7 +31,7 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
 
     private Disposable mObjectDataDisposal;
 
-    public static TeamClaimsFragment getInstance(String tag, int teamId) {
+    public static TeamClaimsFragment getInstance(String tag, int teamId, String currency) {
         TeamClaimsFragment fragment = ADataPagerProgressFragment.getInstance(tag, TeamClaimsFragment.class);
         fragment.getArguments().putInt(EXTRA_TEAM_ID, teamId);
         return fragment;
@@ -110,6 +110,6 @@ public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), true);
+        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency(), true);
     }
 }

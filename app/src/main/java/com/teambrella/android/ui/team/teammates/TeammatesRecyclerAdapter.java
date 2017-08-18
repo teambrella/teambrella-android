@@ -17,6 +17,7 @@ import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,13 +35,16 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
     public static final int VIEW_TYPE_HEADER_NEW_MEMBERS = VIEW_TYPE_REGULAR + 3;
 
     private final int mTeamId;
+    private final String mCurrency;
 
     /**
      * Constructor.
      */
-    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager, int teamId) {
+    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
+        mCurrency = currency;
+
     }
 
     @Override
@@ -131,7 +135,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri, mCurrency));
         }
     }
 
@@ -152,11 +156,11 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             super.onBind(item);
             Long net = Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_TOTALLY_PAID));
             if (net > 0) {
-                mNet.setText(Html.fromHtml(itemView.getContext().getString(R.string.teammate_net_format_string_plus, Math.abs(net))));
+                mNet.setText(Html.fromHtml(itemView.getContext().getString(R.string.teammate_net_format_string_plus, AmountCurrencyUtil.getCurrencySign(mCurrency), Math.abs(net))));
             } else if (net < 0) {
-                mNet.setText(Html.fromHtml(itemView.getContext().getString(R.string.teammate_net_format_string_minus, Math.abs(net))));
+                mNet.setText(Html.fromHtml(itemView.getContext().getString(R.string.teammate_net_format_string_minus, AmountCurrencyUtil.getCurrencySign(mCurrency), Math.abs(net))));
             } else {
-                mNet.setText(itemView.getContext().getString(R.string.teammate_net_format_string_zero));
+                mNet.setText(itemView.getContext().getString(R.string.teammate_net_format_string_zero, AmountCurrencyUtil.getCurrencySign(mCurrency)));
             }
 
             mRisk.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));

@@ -43,6 +43,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
     private final int mTeamId;
     private final boolean mSubmitClaim;
+    private final String mCurrency;
     private String mObjectImageUri;
     private String mObjectName;
     private String mLocation;
@@ -53,10 +54,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
      *
      * @param pager pager
      */
-    ClaimsAdapter(IDataPager<JsonArray> pager, int teamId, boolean submitClaim) {
+    ClaimsAdapter(IDataPager<JsonArray> pager, int teamId, String currency, boolean submitClaim) {
         super(pager);
         mTeamId = teamId;
         mSubmitClaim = submitClaim;
+        mCurrency = currency;
     }
 
     void setObjectDetails(String objectImageUri, String objectName, String location) {
@@ -245,11 +247,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             if (mViewToVote != null) {
                 mViewToVote.setOnClickListener(v -> context.startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId, mCurrency)));
             } else {
                 itemView.setOnClickListener(v -> context.startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId, mCurrency)));
             }
         }
     }
@@ -286,7 +288,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mLocationView.setText(mLocation);
 
             mSubmitClaimView.setOnClickListener(v -> ReportClaimActivity.
-                    start(context, mObjectImageUri, mObjectName, mTeamId));
+                    start(context, mObjectImageUri, mObjectName, mTeamId, mCurrency));
         }
     }
 }

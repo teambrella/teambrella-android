@@ -12,6 +12,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
@@ -52,10 +53,10 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             if (basic != null) {
-                mClaimAmount.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT, 0f))));
-                mExpenses.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES, 0f))));
-                mDeductible.setText(getString(R.string.amount_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE, 0f))));
-                mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_COVERAGE, 0f) * 100)));
+                mClaimAmount.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
+                mExpenses.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES))));
+                mDeductible.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE))));
+                mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_COVERAGE) * 100)));
                 String date = TeambrellaDateUtils.getDatePresentation(getContext()
                         , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
                         , basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE));

@@ -15,13 +15,12 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.image.ImageViewerActivity;
 import com.teambrella.android.ui.team.claims.ClaimsActivity;
-import com.teambrella.android.ui.widget.AmountWidget;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import java.util.ArrayList;
 
@@ -32,12 +31,12 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Teammate Object Fragment
  */
-public class TeammateObjectFragment extends ADataFragment<IDataHost> {
+public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
 
     private ImageView mObjectPicture;
     private TextView mObjectModel;
-    private AmountWidget mLimit;
-    private AmountWidget mNet;
+    private TextView mLimit;
+    private TextView mNet;
     private TextView mRisk;
     private TextView mSeeClaims;
 
@@ -60,12 +59,12 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_teammate_object, container, false);
-        mObjectModel = (TextView) view.findViewById(R.id.model);
-        mObjectPicture = (ImageView) view.findViewById(R.id.object_picture);
-        mLimit = (AmountWidget) view.findViewById(R.id.limit);
-        mNet = (AmountWidget) view.findViewById(R.id.net);
-        mRisk = (TextView) view.findViewById(R.id.risk);
-        mSeeClaims = (TextView) view.findViewById(R.id.see_claims);
+        mObjectModel = view.findViewById(R.id.model);
+        mObjectPicture = view.findViewById(R.id.object_picture);
+        mLimit = view.findViewById(R.id.limit);
+        mNet = view.findViewById(R.id.net);
+        mRisk = view.findViewById(R.id.risk);
+        mSeeClaims = view.findViewById(R.id.see_claims);
         return view;
     }
 
@@ -89,7 +88,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
                     dataObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
 
             objectObservable.doOnNext(objectData -> mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL)))
-                    .doOnNext(objectData -> mLimit.setAmount(Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT))))
+                    .doOnNext(objectData -> AmountCurrencyUtil.setAmount(mLimit, Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)), mDataHost.getCurrency()))
                     .doOnNext(objectData -> mClaimId = objectData.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID, -1))
                     .doOnNext(objectData -> mModel = objectData.getString(TeambrellaModel.ATTR_DATA_MODEL, mModel))
                     .doOnNext(objectData -> mClaimCount = objectData.getInt(TeambrellaModel.ATTR_DATA_CLAIM_COUNT, mClaimCount))
@@ -114,7 +113,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
             }
 
 
-            basicObservable.doOnNext(basic -> mNet.setAmount(Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT))))
+            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mNet, Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT)), mDataHost.getCurrency()))
                     .doOnNext(basic -> mRisk.setText(getString(R.string.risk_format_string, basic.getFloat(TeambrellaModel.ATTR_DATA_RISK) + 0.05f)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, mTeamId))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
@@ -124,7 +123,7 @@ public class TeammateObjectFragment extends ADataFragment<IDataHost> {
 
             mSeeClaims.setOnClickListener(v -> {
                 if (mClaimId > 0) {
-                    ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId);
+                    ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId, mDataHost.getCurrency());
                 } else {
                     ClaimsActivity.start(getContext(), mTeamId, mTeammateId);
                 }

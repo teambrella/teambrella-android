@@ -13,7 +13,7 @@ import io.reactivex.Notification;
 public class ProxyForFragment extends ADataPagerProgressFragment<IMainDataHost> {
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ProxyForAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
+        return new ProxyForAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
     }
 
     @Override

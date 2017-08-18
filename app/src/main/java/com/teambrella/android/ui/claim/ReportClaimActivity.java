@@ -36,7 +36,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
-import com.teambrella.android.ui.widget.AmountWidget;
+import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
@@ -57,6 +57,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private static final String EXTRA_IMAGE_URI = "image_uri";
     private static final String EXTRA_NAME = "object_name";
     private static final String EXTRA_TEAM_ID = "teamId";
+    private static final String EXTRA_CURRENCY = "currency";
 
     private static final String LOG_TAG = ReportClaimActivity.class.getSimpleName();
 
@@ -70,7 +71,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private TextView mCoverageView;
     private TextView mDescriptionView;
     private TextView mAddressView;
-    private AmountWidget mClaimAmount;
+    private TextView mClaimAmount;
     private PhotoAdapter mPhotoAdapter;
     private ImagePicker mImagePicker;
 
@@ -82,11 +83,12 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private float mCoverageValue = -1f;
     private float mExpensesValue = -1f;
     private int mTeamId;
+    private String mCurrency;
 
 
-    public static void start(Context context, String objectImageUri, String objectName, int teamId) {
+    public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
         context.startActivity(new Intent(context, ReportClaimActivity.class).putExtra(EXTRA_IMAGE_URI, objectImageUri)
-                .putExtra(EXTRA_NAME, objectName).putExtra(EXTRA_TEAM_ID, teamId));
+                .putExtra(EXTRA_NAME, objectName).putExtra(EXTRA_TEAM_ID, teamId).putExtra(EXTRA_CURRENCY, currency));
     }
 
 
@@ -116,8 +118,6 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mClaimAmount = findViewById(R.id.claim_amount);
 
 
-        mClaimAmount.setAmount(0f);
-
         RecyclerView mPhotos = findViewById(R.id.photos);
         mExpensesView = findViewById(R.id.expenses);
         mPhotoAdapter = new PhotoAdapter(this);
@@ -128,6 +128,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mPhotos);
 
         final Intent intent = getIntent();
+        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         ((TextView) findViewById(R.id.object_title)).setText(intent.getStringExtra(EXTRA_NAME));
         TeambrellaImageLoader.getInstance(this).getPicasso().load(intent.getStringExtra(EXTRA_IMAGE_URI))
@@ -142,6 +143,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             fragmentManager.beginTransaction().add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT_TAG).commit();
         }
 
+        AmountCurrencyUtil.setAmount(mClaimAmount, 0f, mCurrency);
+
 
         mExpensesView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,14 +158,14 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                     mExpensesValue = Float.parseFloat(charSequence.toString());
                     if (mExpensesValue <= mLimitValue) {
                         if (mCoverageValue > 0) {
-                            mClaimAmount.setAmount(mCoverageValue * mExpensesValue);
+                            AmountCurrencyUtil.setAmount(mClaimAmount, mCoverageValue * mExpensesValue, mCurrency);
                         }
                     } else {
-                        mExpensesView.setError(getString(R.string.big_expenses_error, mLimitValue));
+                        mExpensesView.setError(getString(R.string.big_expenses_error, AmountCurrencyUtil.getCurrencySign(mCurrency), mLimitValue));
                     }
                 } else {
                     mExpensesValue = 0f;
-                    mClaimAmount.setAmount(0);
+                    AmountCurrencyUtil.setAmount(mClaimAmount, mCoverageValue * mExpensesValue, mCurrency);
                 }
 
             }
@@ -298,7 +301,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                         int claimId = Observable.just(response.getValue()).map(JsonWrapper::new)
                                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                                 .map(jsonWrapper -> jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_ID)).blockingFirst();
-                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
+                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId, mCurrency));
                         finish();
                         break;
                 }

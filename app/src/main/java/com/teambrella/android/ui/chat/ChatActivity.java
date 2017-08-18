@@ -54,6 +54,7 @@ public class ChatActivity extends ADataHostActivity {
     private static final String EXTRA_CLAIM_ID = "claim_id";
     private static final String EXTRA_OBJECT_NAME = "object_name";
     private static final String EXTRA_TITLE = "title";
+    private static final String EXTRA_CURRENCY = "currency";
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
@@ -74,6 +75,7 @@ public class ChatActivity extends ADataHostActivity {
     private int mTeamId;
     private int mClaimId;
     private String mObjectName;
+    private String mCurrency;
 
     private Disposable mRequestDisposable;
     private Disposable mChatDisposable;
@@ -86,7 +88,7 @@ public class ChatActivity extends ADataHostActivity {
     private Picasso mPicasso;
 
 
-    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId) {
+    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, String currency) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_USER_ID, userId)
@@ -94,11 +96,12 @@ public class ChatActivity extends ADataHostActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
+                .putExtra(EXTRA_CURRENCY, currency)
                 .setAction(SHOW_TEAMMATE_CHAT_ACTION));
     }
 
 
-    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId) {
+    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, String currency) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
@@ -106,6 +109,7 @@ public class ChatActivity extends ADataHostActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
+                .putExtra(EXTRA_CURRENCY, currency)
                 .setAction(SHOW_CLAIM_CHAT_ACTION));
     }
 
@@ -131,6 +135,7 @@ public class ChatActivity extends ADataHostActivity {
         mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
         mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mObjectName = intent.getStringExtra(EXTRA_OBJECT_NAME);
+        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mAction = intent.getAction();
 
         super.onCreate(savedInstanceState);
@@ -195,7 +200,7 @@ public class ChatActivity extends ADataHostActivity {
                                 .into(mIcon);
 
                         mIcon.setOnClickListener(v -> {
-                            TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString());
+                            TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency);
                             overridePendingTransition(0, 0);
                         });
                     }
@@ -221,7 +226,7 @@ public class ChatActivity extends ADataHostActivity {
                                 .into(mIcon);
 
                         mIcon.setOnClickListener(v -> {
-                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId);
+                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId, mCurrency);
                             overridePendingTransition(0, 0);
                         });
                     }
@@ -337,7 +342,7 @@ public class ChatActivity extends ADataHostActivity {
                             }
                         }
 
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency));
 
                         mSubtitle.setText(mUserName);
                         break;

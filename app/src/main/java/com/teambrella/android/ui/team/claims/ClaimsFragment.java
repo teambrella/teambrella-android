@@ -19,10 +19,12 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
+    private static final String EXTRA_CURRENCY = "extra_currency";
 
-    public static TeamClaimsFragment getInstance(String tag, int teamId) {
-        TeamClaimsFragment fragment = ADataPagerProgressFragment.getInstance(tag, TeamClaimsFragment.class);
+    public static ClaimsFragment getInstance(String tag, int teamId, String currency) {
+        ClaimsFragment fragment = ADataPagerProgressFragment.getInstance(tag, ClaimsFragment.class);
         fragment.getArguments().putInt(EXTRA_TEAM_ID, teamId);
+        fragment.getArguments().putString(EXTRA_CURRENCY, currency);
         return fragment;
     }
 
@@ -69,6 +71,6 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), false);
+        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), getArguments().getString(EXTRA_CURRENCY), false);
     }
 }

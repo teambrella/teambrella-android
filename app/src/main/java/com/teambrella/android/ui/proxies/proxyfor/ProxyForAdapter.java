@@ -12,6 +12,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 /**
  * Proxy For Adapter
@@ -25,10 +26,12 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
     private float mTotalCommission = 0f;
     private final int mTeamId;
+    private final String mCurrency;
 
-    ProxyForAdapter(IDataPager<JsonArray> pager, int teamId) {
+    ProxyForAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
+        mCurrency = currency;
     }
 
 
@@ -97,17 +100,17 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         return super.getItemCount() + 2;
     }
 
-    private static final class CommissionViewHolder extends RecyclerView.ViewHolder {
+    private final class CommissionViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mCommission;
 
         private CommissionViewHolder(View itemView) {
             super(itemView);
-            mCommission = (TextView) itemView.findViewById(R.id.commission);
+            mCommission = itemView.findViewById(R.id.commission);
         }
 
         void setCommission(float commission) {
-            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, commission));
+            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), commission));
         }
 
     }
@@ -119,16 +122,16 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         private TextView mCommission;
 
         ProxyForViewHolder(View itemView) {
-            super(itemView, mTeamId);
-            mSubtitle = (TextView) itemView.findViewById(R.id.subtitle);
-            mCommission = (TextView) itemView.findViewById(R.id.commission);
+            super(itemView, mTeamId, mCurrency);
+            mSubtitle = itemView.findViewById(R.id.subtitle);
+            mCommission = itemView.findViewById(R.id.commission);
         }
 
         @Override
         protected void onBind(JsonWrapper item) {
             super.onBind(item);
             mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, "never"));
-            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
+            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
 
         }
 

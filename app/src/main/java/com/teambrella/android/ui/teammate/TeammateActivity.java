@@ -34,6 +34,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private static final String TEAMMATE_URI = "teammate_uri";
     private static final String TEAMMATE_NAME = "teammate_name";
     private static final String TEAMMATE_PICTURE = "teammate_picture";
+    private static final String CURRENCY = "currency";
 
     private static final String DATA_FRAGMENT = "data";
     private static final String VOTE_FRAGMENT = "vote";
@@ -44,22 +45,25 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private Disposable mDisposal;
     private int mTeammateId = -1;
     private String mUserId = null;
+    private String mCurrency;
 
 
-    public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
+    public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
         return new Intent(context, TeammateActivity.class)
                 .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
                 .putExtra(TEAMMATE_NAME, name)
-                .putExtra(TEAMMATE_PICTURE, userPictureUri);
+                .putExtra(TEAMMATE_PICTURE, userPictureUri)
+                .putExtra(CURRENCY, currency);
     }
 
-    public static void start(Context context, int teamId, String userId, String name, String userPictureUri) {
-        context.startActivity(getIntent(context, teamId, userId, name, userPictureUri));
+    public static void start(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
+        context.startActivity(getIntent(context, teamId, userId, name, userPictureUri, currency));
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mCurrency = getIntent().getStringExtra(CURRENCY);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -152,6 +156,12 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         return null;
+    }
+
+
+    @Override
+    public String getCurrency() {
+        return mCurrency;
     }
 
     @Override

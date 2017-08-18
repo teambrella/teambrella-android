@@ -40,7 +40,7 @@ public class UserRatingFragment extends ADataPagerProgressFragment<IMainDataHost
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new UserRatingAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
+        return new UserRatingAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
     }
 
 

@@ -25,8 +25,8 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.ui.widget.AmountWidget;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -54,9 +54,9 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
     private View mCoverMeSection;
     private View mCoverThemSection;
-    private AmountWidget mCoverMe;
+    private TextView mCoverMe;
 
-    private AmountWidget mCoverThem;
+    private TextView mCoverThem;
 
 
     private String mUserId;
@@ -83,7 +83,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             setContentShown(false);
         }
         view.findViewById(R.id.discussion).setOnClickListener(v ->
-                ChatActivity.startTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId));
+                ChatActivity.startTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId, mDataHost.getCurrency()));
         return view;
     }
 
@@ -133,8 +133,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             Observable<JsonWrapper> basicObservable =
                     dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC));
 
-            basicObservable.doOnNext(basic -> mCoverMe.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME)))
-                    .doOnNext(basic -> mCoverThem.setAmount(basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM)))
+            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mDataHost.getCurrency()))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mDataHost.getCurrency()))
                     .doOnNext(basic -> mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
@@ -179,7 +179,6 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
             mCoverMeSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
-
         } else {
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
         }

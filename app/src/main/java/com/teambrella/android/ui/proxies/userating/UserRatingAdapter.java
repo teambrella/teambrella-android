@@ -23,11 +23,13 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     private static final int VIEW_TYPE_USER = VIEW_TYPE_REGULAR + 3;
 
 
-    private int mTeamId;
+    private final int mTeamId;
+    private final String mCurrency;
 
-    UserRatingAdapter(IDataPager<JsonArray> pager, int teamId) {
+    UserRatingAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
+        mCurrency = currency;
     }
 
 
@@ -85,9 +87,9 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
 
         UserViewHolder(View itemView) {
-            super(itemView, mTeamId);
-            mRating = (TextView) itemView.findViewById(R.id.rating);
-            mPosition = (TextView) itemView.findViewById(R.id.position);
+            super(itemView, mTeamId, mCurrency);
+            mRating = itemView.findViewById(R.id.rating);
+            mPosition = itemView.findViewById(R.id.position);
         }
 
         @SuppressLint("SetTextI18n")

@@ -19,8 +19,8 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.widget.AmountWidget;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -34,8 +34,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
     private TextView mTeamVotePercents;
     private TextView mYourVotePercents;
-    private AmountWidget mTeamVoteCurrency;
-    private AmountWidget mYourVoteCurrency;
+    private TextView mTeamVoteCurrency;
+    private TextView mYourVoteCurrency;
     private SeekBar mVotingControl;
     private float mClaimAmount;
     private TextView mWhen;
@@ -97,8 +97,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
                 mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
                 mVotingControl.setProgress((int) (yourVote * 100));
-                mTeamVoteCurrency.setAmount(mClaimAmount * teamVote);
-                mYourVoteCurrency.setAmount(mClaimAmount * yourVote);
+                AmountCurrencyUtil.setAmount(mTeamVoteCurrency, mClaimAmount * teamVote, "USD");
+                AmountCurrencyUtil.setAmount(mYourVoteCurrency, mClaimAmount * yourVote, "USD");
                 mYourVotePercents.setAlpha(1f);
                 mYourVoteCurrency.setAlpha(1f);
                 mRestVoteButton.setAlpha(1f);
@@ -134,7 +134,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, progress)));
-        mYourVoteCurrency.setAmount((mClaimAmount * progress) / 100);
+        AmountCurrencyUtil.setAmount(mYourVoteCurrency, (mClaimAmount * progress) / 100, "USD");
         if (fromUser) {
             mYourVotePercents.setAlpha(0.3f);
             mYourVoteCurrency.setAlpha(0.3f);

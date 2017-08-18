@@ -9,14 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.teambrella.android.R;
-import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
 /**
  * Members fragment
  */
-public class MembersFragment extends ADataPagerProgressFragment<IDataHost> {
+public class MembersFragment extends ADataPagerProgressFragment<IMainDataHost> {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
 
@@ -66,6 +66,6 @@ public class MembersFragment extends ADataPagerProgressFragment<IDataHost> {
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new TeammatesRecyclerAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
+        return new TeammatesRecyclerAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency());
     }
 }

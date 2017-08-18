@@ -79,11 +79,13 @@
             app:layout_constraintStart_toStartOf="@id/team_vote_title"
             app:layout_constraintTop_toBottomOf="@id/team_vote_title" />
 
-        <com.teambrella.android.ui.widget.AmountWidget
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/team_vote_currency"
+            style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:includeFontPadding="false"
             app:layout_constraintStart_toStartOf="@id/team_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/team_vote_percent" />
 
@@ -121,11 +123,13 @@
             app:layout_constraintStart_toStartOf="@id/your_vote_title"
             app:layout_constraintTop_toBottomOf="@id/your_vote_title" />
 
-        <com.teambrella.android.ui.widget.AmountWidget
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/your_vote_currency"
+            style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:includeFontPadding="false"
             app:layout_constraintStart_toStartOf="@id/your_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/your_vote_percent" />
 

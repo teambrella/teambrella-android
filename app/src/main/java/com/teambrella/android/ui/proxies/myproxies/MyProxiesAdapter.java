@@ -23,10 +23,12 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
     private final int mTeamId;
+    private final String mCurrency;
 
-    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId) {
+    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
+        mCurrency = currency;
     }
 
     @Override
@@ -66,13 +68,13 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         private TextView mPosition;
 
         MyProxyViewHolder(View itemView) {
-            super(itemView, mTeamId);
-            mLocation = (TextView) itemView.findViewById(R.id.location);
-            mRank = (TextView) itemView.findViewById(R.id.rank);
-            mDecision = (ProgressBar) itemView.findViewById(R.id.decision_progress);
-            mDiscussion = (ProgressBar) itemView.findViewById(R.id.discussion_progress);
-            mVoting = (ProgressBar) itemView.findViewById(R.id.voting_progress);
-            mPosition = (TextView) itemView.findViewById(R.id.position);
+            super(itemView, mTeamId, mCurrency);
+            mLocation = itemView.findViewById(R.id.location);
+            mRank = itemView.findViewById(R.id.rank);
+            mDecision = itemView.findViewById(R.id.decision_progress);
+            mDiscussion = itemView.findViewById(R.id.discussion_progress);
+            mVoting = itemView.findViewById(R.id.voting_progress);
+            mPosition = itemView.findViewById(R.id.position);
         }
 
         @SuppressLint("SetTextI18n")

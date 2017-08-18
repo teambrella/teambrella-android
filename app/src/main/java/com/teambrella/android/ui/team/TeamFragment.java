@@ -80,7 +80,7 @@ public class TeamFragment extends Fragment {
                     case 1:
                         return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
                     case 2:
-                        return TeamClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID));
+                        return TeamClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getArguments().getInt(EXTRA_TEAM_ID), ((IMainDataHost) getContext()).getCurrency());
                     default:
                         throw new RuntimeException();
                 }

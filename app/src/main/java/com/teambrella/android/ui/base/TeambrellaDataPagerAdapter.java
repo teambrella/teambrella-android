@@ -191,14 +191,17 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     protected static abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
 
         private final int mTeamId;
+        private final String mCurrency;
         private final ImageView mIcon;
         private final TextView mTitle;
 
-        protected AMemberViewHolder(View itemView, int teamId) {
+        protected AMemberViewHolder(View itemView, int teamId, String currency) {
             super(itemView);
             mTeamId = teamId;
+            mCurrency = currency;
             mIcon = itemView.findViewById(R.id.icon);
             mTitle = itemView.findViewById(R.id.title);
+
         }
 
         protected void onBind(JsonWrapper item) {
@@ -211,7 +214,7 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                     .blockingFirst().getValue();
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri, mCurrency));
 
         }
 

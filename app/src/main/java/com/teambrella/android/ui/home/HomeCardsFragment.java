@@ -29,7 +29,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.ui.widget.AmountWidget;
+import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
@@ -117,7 +117,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         @Override
         public Fragment getItem(int position) {
-            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId());
+            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId(), mDataHost.getCurrency());
         }
 
         @Override
@@ -140,15 +140,18 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
     public static final class CardsFragment extends Fragment {
 
         private static final String EXTRA_DATA = "data";
+        private static final String EXTRA_CURRENCY = "currency";
         private static final String EXTRA_TEAM_ID = "team_id";
 
         private JsonWrapper mCard;
         private int mTeamId;
+        private String mCurrency;
 
-        public static CardsFragment getInstance(String data, int teamId) {
+        public static CardsFragment getInstance(String data, int teamId, String currency) {
             CardsFragment fragment = new CardsFragment();
             Bundle args = new Bundle();
             args.putString(EXTRA_DATA, data);
+            args.putString(EXTRA_CURRENCY, currency);
             args.putInt(EXTRA_TEAM_ID, teamId);
             fragment.setArguments(args);
             return fragment;
@@ -160,6 +163,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             Gson gson = new GsonBuilder().create();
             mCard = new JsonWrapper(gson.fromJson(getArguments().getString(EXTRA_DATA), JsonObject.class));
             mTeamId = getArguments().getInt(EXTRA_TEAM_ID);
+            mCurrency = getArguments().getString(EXTRA_CURRENCY);
         }
 
         @Nullable
@@ -172,7 +176,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             ImageView icon = view.findViewById(R.id.icon);
             TextView message = view.findViewById(R.id.message_text);
             TextView unread = view.findViewById(R.id.unread);
-            AmountWidget amountWidget = view.findViewById(R.id.amount_widget);
+            TextView amountWidget = view.findViewById(R.id.amount_widget);
             TextView teamVote = view.findViewById(R.id.team_vote);
             TextView title = view.findViewById(R.id.title);
             TextView subtitle = view.findViewById(R.id.subtitle);
@@ -205,7 +209,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             unread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.GONE);
             unread.setText(mCard.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
 
-            amountWidget.setAmount(mCard.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT));
+            AmountCurrencyUtil.setAmount(amountWidget, mCard.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT), getArguments().getString(EXTRA_CURRENCY));
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
                 teamVote.setText(getString(R.string.risk_format_string, mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)));
             } else {
@@ -238,7 +242,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                 , mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , mCurrency);
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
@@ -250,7 +255,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
                                 , null
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , mCurrency);
                         break;
                 }
             });

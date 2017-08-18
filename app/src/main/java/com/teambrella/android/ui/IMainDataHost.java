@@ -25,4 +25,6 @@ public interface IMainDataHost extends IDataHost {
 
     String getUserId();
 
+    String getCurrency();
+
 }

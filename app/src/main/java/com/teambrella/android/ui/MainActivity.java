@@ -48,6 +48,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private static final String TEAM_LOG_EXTRA = "team_logo";
     private static final String TEAM_TYPE_EXTRA = "team_type";
     private static final String TEAM_NAME_EXTRA = "team_name";
+    private static final String CURRENCY_EXTRA = "currency";
 
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
@@ -77,15 +78,17 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private Disposable mDisposable;
     private ImageView mAvatar;
     private String mTeamLogo;
+    private String mCurrency;
 
 
-    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo, String teamName, int teamType) {
+    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo, String teamName, int teamType, String currency) {
         return new Intent(context, MainActivity.class)
                 .putExtra(TEAM_ID_EXTRA, teamId)
                 .putExtra(USER_ID_EXTRA, userId)
                 .putExtra(TEAM_LOG_EXTRA, teamLogo)
                 .putExtra(TEAM_TYPE_EXTRA, teamType)
-                .putExtra(TEAM_NAME_EXTRA, teamName);
+                .putExtra(TEAM_NAME_EXTRA, teamName)
+                .putExtra(CURRENCY_EXTRA, currency);
     }
 
 
@@ -97,6 +100,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         mTeamLogo = intent.getStringExtra(TEAM_LOG_EXTRA);
         mTeamName = intent.getStringExtra(TEAM_NAME_EXTRA);
         mTeamType = intent.getIntExtra(TEAM_TYPE_EXTRA, 0);
+        mCurrency = intent.getStringExtra(CURRENCY_EXTRA);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAvatar = findViewById(R.id.avatar);
@@ -304,6 +308,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     @Override
     public String getUserId() {
         return mUserId;
+    }
+
+    @Override
+    public String getCurrency() {
+        return mCurrency;
     }
 
     @Override
