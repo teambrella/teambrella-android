@@ -15,9 +15,9 @@
     <string name="team_claims">Claims</string>
 
 
-    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> $%d]]></string>
-    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> $%d]]></string>
-    <string name="teammate_net_format_string_zero">$0</string>
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_zero">%s0</string>
     <string name="risk_format_string">%.1f</string>
     <string name="currency_format_string">%.0f</string>
 
@@ -58,7 +58,7 @@
     <string name="coverage">Coverage</string>
     <string name="incident_date">Incident date</string>
 
-    <string name="amount_format_string">$%d</string>
+    <string name="amount_format_string" formatted="false">%1$s%2$d</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -94,7 +94,7 @@
     <string name="user_index">User Index</string>
     <string name="remove_from_my_proxies">Remove from my proxies</string>
     <string name="total_commission">Total Commission</string>
-    <string name="commission_format_string">$%.2f</string>
+    <string name="commission_format_string">%1$s%2$.2f</string>
     <string name="i_am_proxy_for">"Who you're a proxy for"</string>
     <string name="last_voted_format_string">Last Voted: %s</string>
     <string name="you">You</string>
@@ -136,7 +136,7 @@
     <string name="reimburse_to">reimburse to</string>
     <string name="submit_claim">Submit</string>
     <string name="no_incident_date_error"> No incident date</string>
-    <string name="big_expenses_error">The expenses must not be greater than $%.2f.</string>
+    <string name="big_expenses_error">The expenses must not be greater than %1$s%2$.2f.</string>
     <string name="no_description_provided_error">No description provided.</string>
     <string name="no_expenses_provided_error">No expenses provided.</string>
     <string name="no_address_provided">No address provided.</string>
