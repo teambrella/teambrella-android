@@ -17,6 +17,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="@dimen/home_default_vertical_margin"
         android:text="@string/submit_another_claim"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
