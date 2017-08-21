@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -25,6 +24,7 @@ import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.ImagePager;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import java.util.ArrayList;
 
@@ -46,6 +46,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     private TextView mUnreadCount;
     private TextView mWhen;
     private View mDiscussion;
+
+    private boolean mIsShown;
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
-
+        mIsShown = false;
 
     }
 
@@ -173,10 +175,12 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                     view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
                 }
             }
+            setContentShown(true);
+            mIsShown = true;
         } else {
-            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+            setContentShown(true, !mIsShown);
+            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
         }
-        setContentShown(true);
     }
 }
 

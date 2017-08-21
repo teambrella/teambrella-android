@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.text.Spannable;
@@ -46,6 +48,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private int mTeammateId = -1;
     private String mUserId = null;
     private String mCurrency;
+    private Snackbar mSnackBar;
 
 
     public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
@@ -163,6 +166,29 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     public String getCurrency() {
         return mCurrency;
     }
+
+    @Override
+    public void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(findViewById(R.id.container), text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+
+            mSnackBar.show();
+        }
+    }
+
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {

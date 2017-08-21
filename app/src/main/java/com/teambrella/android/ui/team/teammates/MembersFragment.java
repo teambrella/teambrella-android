@@ -8,17 +8,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
-import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+
+import io.reactivex.Notification;
 
 /**
  * Members fragment
  */
-public class MembersFragment extends ADataPagerProgressFragment<IMainDataHost> {
+public class MembersFragment extends AMainDataPagerProgressFragment {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
+    private boolean mIsShown;
 
     public static MembersFragment getInstance(String tag, int teamId) {
         MembersFragment fragment = ADataPagerProgressFragment.getInstance(tag, MembersFragment.class);
@@ -61,6 +65,18 @@ public class MembersFragment extends ADataPagerProgressFragment<IMainDataHost> {
 
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
+    }
+
+
+    @Override
+    protected void onDataUpdated(Notification<JsonObject> notification) {
+        if (notification.isOnNext()) {
+            mIsShown = true;
+            setContentShown(true);
+        } else {
+            setContentShown(true, !mIsShown);
+            mDataHost.showSnackBar(R.string.something_went_wrong_error);
+        }
     }
 
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
@@ -51,6 +53,8 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
+
+    private Snackbar mSnackBar;
 
 
     public static Intent getLaunchIntent(Context context, int id, String model, int teamId, String currency) {
@@ -171,6 +175,29 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
+        }
+    }
+
+
+    @Override
+    public void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(findViewById(R.id.container), text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+
+            mSnackBar.show();
         }
     }
 

@@ -9,14 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.teambrella.android.R;
-import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
 /**
  * Feed Fragment
  */
-public class FeedFragment extends ADataPagerProgressFragment<IMainDataHost> {
+public class FeedFragment extends AMainDataPagerProgressFragment {
 
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
@@ -45,6 +45,7 @@ public class FeedFragment extends ADataPagerProgressFragment<IMainDataHost> {
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
     }
+
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {

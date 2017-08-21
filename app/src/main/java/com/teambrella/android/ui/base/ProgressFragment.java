@@ -48,14 +48,21 @@ public abstract class ProgressFragment extends Fragment {
     protected abstract View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
 
 
-    protected void setContentShown(boolean shown) {
+    protected void setContentShown(boolean shown, boolean error) {
         if (!shown) {
             mHandler.postDelayed(mPostponedRefreshing, 1000);
         } else {
             mHandler.removeCallbacks(mPostponedRefreshing);
             mRefreshable.setRefreshing(false);
         }
+
         mContent.setVisibility(shown ? View.VISIBLE : View.GONE);
+        mData.setVisibility(error ? View.GONE : View.VISIBLE);
+        mError.setVisibility(error ? View.VISIBLE : View.GONE);
+    }
+
+    protected void setContentShown(boolean shown) {
+        setContentShown(shown, false);
     }
 
     @Override

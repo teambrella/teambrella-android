@@ -1,5 +1,7 @@
 package com.teambrella.android.ui;
 
+import android.support.annotation.StringRes;
+
 import com.teambrella.android.data.base.IDataHost;
 
 /**
@@ -30,5 +32,7 @@ public interface IMainDataHost extends IDataHost {
     int getTeamAccessLevel();
 
     boolean isFullTeamAccess();
+
+    void showSnackBar(@StringRes int text);
 
 }

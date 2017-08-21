@@ -18,8 +18,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.IMainDataHost;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
 import io.reactivex.Notification;
@@ -29,7 +28,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * User Rating Fragment
  */
-public class UserRatingFragment extends ADataPagerProgressFragment<IMainDataHost> {
+public class UserRatingFragment extends AMainDataPagerProgressFragment {
 
     private ImageView mUserAvatar;
     private TextView mUserName;

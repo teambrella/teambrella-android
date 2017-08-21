@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -72,6 +74,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private Disposable mDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
+    private Snackbar mSnackBar;
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -113,6 +116,10 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             return false;
         }
 
+        if (mSnackBar != null) {
+            mSnackBar.dismiss();
+        }
+
         if (mSelectedItemId != -1) {
             findViewById(mSelectedItemId).setSelected(false);
         }
@@ -136,6 +143,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         transaction.commit();
         fragmentManager.executePendingTransactions();
         mSelectedItemId = view.getId();
+
         return true;
     }
 
@@ -350,6 +358,28 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         return null;
     }
 
+
+    @Override
+    public void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(findViewById(R.id.coordinator), text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+
+            mSnackBar.show();
+        }
+    }
 
     @Override
     public void showTeamChooser() {

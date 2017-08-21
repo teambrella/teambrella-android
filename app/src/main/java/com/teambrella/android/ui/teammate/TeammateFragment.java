@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
@@ -27,6 +26,7 @@ import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -62,6 +62,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     private String mUserId;
     private int mTeamId;
     private String mTopicId;
+
+    private boolean mIsShown;
 
 
     @Override
@@ -109,6 +111,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
+
+        mIsShown = false;
     }
 
     @Override
@@ -179,10 +183,13 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
             mCoverMeSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
+            setContentShown(true);
+            mIsShown = true;
         } else {
-            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+            setContentShown(true, !mIsShown);
+            //noinspection ConstantConditions
+            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
         }
-        setContentShown(true);
     }
 
 

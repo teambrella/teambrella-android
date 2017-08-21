@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.claim;
 
+import android.support.annotation.StringRes;
+
 import com.teambrella.android.data.base.IDataHost;
 
 /**
@@ -14,5 +16,8 @@ public interface IClaimActivity extends IDataHost {
     void postVote(int vote);
 
     String getCurrency();
+
+
+    void showSnackBar(@StringRes int text);
 
 }

@@ -13,7 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
@@ -24,7 +24,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Claims fragment
  */
-public class TeamClaimsFragment extends ADataPagerProgressFragment<IMainDataHost> {
+public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
 

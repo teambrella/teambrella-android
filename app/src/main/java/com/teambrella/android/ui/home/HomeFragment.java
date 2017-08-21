@@ -18,6 +18,7 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.WelcomeActivity;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
 import jp.wasabeef.picasso.transformations.MaskTransformation;
@@ -93,10 +94,14 @@ public class HomeFragment extends ADataFragment<IMainDataHost> {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         mSwipeRefreshLayout.removeCallbacks(mRefreshingRunnable);
         mSwipeRefreshLayout.setRefreshing(false);
+        if (notification.isOnError()) {
+            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
+        }
     }
 
 
