@@ -18,6 +18,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -172,8 +173,18 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
 
     class NewMemberViewHolder extends ATeammateViewHolder {
+        private TextView mEndsIn;
+
         NewMemberViewHolder(View itemView) {
             super(itemView);
+            mEndsIn = itemView.findViewById(R.id.ends_in);
+        }
+
+
+        @Override
+        void onBind(JsonWrapper item) {
+            super.onBind(item);
+            mEndsIn.setText(TeambrellaDateUtils.getRelativeTime(item.getInt(TeambrellaModel.ATTR_DATA_VOTING_ENDS_IN)));
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.teambrella.android.util;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 
 import com.teambrella.android.R;
 
@@ -38,5 +39,11 @@ public class TeambrellaDateUtils {
 
     public static long getServerTime(String serverDate) throws ParseException {
         return SDF.parse(serverDate).getTime();
+    }
+
+    public static String getRelativeTime(int remainedMinutes) {
+        long now = System.currentTimeMillis();
+        long when = now + 60000 * remainedMinutes;
+        return DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE).toString();
     }
 }

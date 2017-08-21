@@ -27,4 +27,8 @@ public interface IMainDataHost extends IDataHost {
 
     String getCurrency();
 
+    int getTeamAccessLevel();
+
+    boolean isFullTeamAccess();
+
 }

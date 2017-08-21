@@ -58,6 +58,8 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
             final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
             picasso.load(objectImageUri).into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)) * 100))));
+            mSubmitClaim.setVisibility(mDataHost.getTeamAccessLevel() == TeambrellaModel.TeamAccessLevel.FULL_ACCESS
+                    ? View.VISIBLE : View.INVISIBLE);
             mSubmitClaim.setOnClickListener(v -> ReportClaimActivity.start(getContext(), objectImageUri, objectName, mDataHost.getTeamId(), mDataHost.getCurrency()));
             mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(mDataHost.getTeamType()));
 

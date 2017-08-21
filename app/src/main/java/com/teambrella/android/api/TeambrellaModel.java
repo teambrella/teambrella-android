@@ -57,6 +57,15 @@ public class TeambrellaModel {
     }
 
 
+    public static final class TeamAccessLevel {
+        public static final int NO_ACCESS = 0;
+        public static final int HIDDEN_DETAILS_AND_EDIT_MINE = 1;
+        public static final int READ_ONLY = 2;
+        public static final int READ_ALL_AND_EDIT_MINE = 3;
+        public static final int FULL_ACCESS = 4;
+    }
+
+
     /*
      * Tx  Kind
      */
@@ -307,7 +316,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CURRENCY = "Currency";
     public static final String ATTR_DATA_VOTING_RES_CRYPTO = "VotingRes_Crypto";
     public static final String ATTR_DATA_PAYMENT_RES_CRYPTO = "PaymentRes_Crypto";
-    public static final String ATTE_DATA_REMAINED_MINUTES = "RemainedMinutes";
+    public static final String ATTR_DATA_REMAINED_MINUTES = "RemainedMinutes";
+    public static final String ATTR_DATA_TEAM_ACCESS_LEVEL = "TeamAccessLevel";
+    public static final String ATTR_DATA_VOTING_ENDS_IN = "VotingEndsIn";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

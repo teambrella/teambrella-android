@@ -3,7 +3,6 @@ package com.teambrella.android.ui.claim;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -103,9 +103,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mYourVoteCurrency.setAlpha(1f);
                 mRestVoteButton.setAlpha(1f);
 
-                long now = System.currentTimeMillis();
-                long when = now + 60000 * voting.getInt(TeambrellaModel.ATTE_DATA_REMAINED_MINUTES);
-                mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+                mWhen.setText(TeambrellaDateUtils.getRelativeTime(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)));
 
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))

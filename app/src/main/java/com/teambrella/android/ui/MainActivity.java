@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -42,13 +44,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private static final int NEW_DISCUSSION_REQUEST_CODE = 102;
 
-
-    private static final String TEAM_ID_EXTRA = "team_id";
     private static final String USER_ID_EXTRA = "user_id_extra";
-    private static final String TEAM_LOG_EXTRA = "team_logo";
-    private static final String TEAM_TYPE_EXTRA = "team_type";
-    private static final String TEAM_NAME_EXTRA = "team_name";
-    private static final String CURRENCY_EXTRA = "currency";
+    private static final String TEAM_EXTRA = "team_extra";
 
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
@@ -71,36 +68,28 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     private int mSelectedItemId = -1;
-    private int mTeamId;
     private String mUserId;
-    private int mTeamType;
-    private String mTeamName;
     private Disposable mDisposable;
     private ImageView mAvatar;
-    private String mTeamLogo;
-    private String mCurrency;
+    private JsonWrapper mTeam;
 
 
-    public static Intent getLaunchIntent(Context context, int teamId, String userId, String teamLogo, String teamName, int teamType, String currency) {
+    public static Intent getLaunchIntent(Context context, String userId, String team) {
         return new Intent(context, MainActivity.class)
-                .putExtra(TEAM_ID_EXTRA, teamId)
-                .putExtra(USER_ID_EXTRA, userId)
-                .putExtra(TEAM_LOG_EXTRA, teamLogo)
-                .putExtra(TEAM_TYPE_EXTRA, teamType)
-                .putExtra(TEAM_NAME_EXTRA, teamName)
-                .putExtra(CURRENCY_EXTRA, currency);
+                .putExtra(TEAM_EXTRA, team)
+                .putExtra(USER_ID_EXTRA, userId);
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
-        mTeamId = intent.getIntExtra(TEAM_ID_EXTRA, 0);
         mUserId = intent.getStringExtra(USER_ID_EXTRA);
-        mTeamLogo = intent.getStringExtra(TEAM_LOG_EXTRA);
-        mTeamName = intent.getStringExtra(TEAM_NAME_EXTRA);
-        mTeamType = intent.getIntExtra(TEAM_TYPE_EXTRA, 0);
-        mCurrency = intent.getStringExtra(CURRENCY_EXTRA);
+
+        mTeam = new JsonWrapper(new Gson()
+                .fromJson(intent.getStringExtra(TEAM_EXTRA)
+                        , JsonObject.class));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAvatar = findViewById(R.id.avatar);
@@ -112,7 +101,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
         if (savedInstanceState == null) {
             startService(new Intent(this, TeambrellaNotificationService.class)
-                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, mTeamId)
+                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .setAction(TeambrellaNotificationService.CONNECT_ACTION));
         }
     }
@@ -174,7 +163,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             case HOME_TAG:
                 return ADataFragment.getInstance(HOME_DATA_TAG, HomeFragment.class);
             case TEAM_TAG:
-                return TeamFragment.getInstance(getIntent().getIntExtra(TEAM_ID_EXTRA, 0));
+                return TeamFragment.getInstance(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
             case PROFILE_TAG:
                 return new UserFragment();
             case PROXIES_TAG:
@@ -198,11 +187,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case HOME_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeamId));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
             case SET_PROXY_POSITION_DATA:
                 return TeambrellaDataFragment.getInstance(null);
             case USER_DATA:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeamId, mUserId));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId));
         }
         return null;
     }
@@ -225,7 +214,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public int getTeamId() {
-        return mTeamId;
+        return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID);
     }
 
 
@@ -234,7 +223,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         FragmentManager fragmentManager = getSupportFragmentManager();
         TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(SET_PROXY_POSITION_DATA);
         if (dataFragment != null) {
-            dataFragment.load(TeambrellaUris.getSetProxyPositionUri(position, userId, mTeamId));
+            dataFragment.load(TeambrellaUris.getSetProxyPositionUri(position, userId, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
         }
     }
 
@@ -243,7 +232,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         FragmentManager fragmentManager = getSupportFragmentManager();
         TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(USER_RATING_DATA);
         if (dataFragment != null) {
-            dataFragment.getPager().reload(TeambrellaUris.getUserRatingUri(mTeamId, optIn));
+            dataFragment.getPager().reload(TeambrellaUris.getUserRatingUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), optIn));
         }
     }
 
@@ -265,17 +254,17 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public int getTeamType() {
-        return mTeamType;
+        return mTeam.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE);
     }
 
     @Override
     public String getTeamName() {
-        return mTeamName;
+        return mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME);
     }
 
     @Override
     public String getTeamLogoUri() {
-        return TeambrellaServer.BASE_URL + mTeamLogo;
+        return TeambrellaServer.BASE_URL + mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO);
     }
 
     @Override
@@ -289,7 +278,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void startNewDiscussion() {
-        StartNewChatActivity.startForResult(this, mTeamId, NEW_DISCUSSION_REQUEST_CODE);
+        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), NEW_DISCUSSION_REQUEST_CODE);
     }
 
     @Override
@@ -304,6 +293,15 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     }
 
+    @Override
+    public int getTeamAccessLevel() {
+        return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL);
+    }
+
+    @Override
+    public boolean isFullTeamAccess() {
+        return getTeamAccessLevel() == TeambrellaModel.TeamAccessLevel.FULL_ACCESS;
+    }
 
     @Override
     public String getUserId() {
@@ -312,7 +310,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public String getCurrency() {
-        return mCurrency;
+        return mTeam.getString(TeambrellaModel.ATTR_DATA_CURRENCY);
     }
 
     @Override
@@ -328,22 +326,22 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getTeamUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         TeambrellaModel.ATTR_DATA_TEAMMATES, TeammatesDataPagerFragment.class);
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getClaimsUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         null, ClaimsDataPagerFragment.class);
             case FEED_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         null, TeambrellaDataPagerFragment.class);
             case MY_PROXIES_DATA:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyProxiesUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyProxiesUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         null, TeambrellaDataPagerFragment.class);
             case PROXIES_FOR_DATA:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getProxyForUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getProxyForUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         "Members", TeambrellaDataPagerFragment.class);
             case USER_RATING_DATA:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getUserRatingUri(mTeamId),
+                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getUserRatingUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         "Members", TeambrellaDataPagerFragment.class);
             case TEAMS_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyTeams(),

@@ -43,8 +43,8 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
-    public static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+    private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
 
 
     private final int mTeamId;
@@ -65,7 +65,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     public int getItemViewType(int position) {
         int viewType = super.getItemViewType(position);
         if (viewType == VIEW_TYPE_REGULAR) {
-            viewType = position == 0 ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM_FEED;
+            viewType = position == 0 && mDataHost.isFullTeamAccess() ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM_FEED;
         }
         return viewType;
     }
@@ -92,14 +92,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof FeedItemViewHolder) {
-            ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
+            ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position - (mDataHost.isFullTeamAccess() ? 1 : 0)).getAsJsonObject()));
         }
     }
 
-
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        return super.getItemCount() + (mDataHost.isFullTeamAccess() ? 1 : 0);
     }
 
     class FeedItemViewHolder extends RecyclerView.ViewHolder {
