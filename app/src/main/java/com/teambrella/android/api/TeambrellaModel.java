@@ -260,6 +260,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ONE_STATS = "StatsPart";
     public static final String ATTR_DATA_ONE_RISK_SCALE = "RiskScalePart";
     public static final String ATTR_DATA_ONE_TEAM = "TeamPart";
+    public static final String ATTR_DATA_ONE_TRAMMATE = "TeammatePart";
 
     public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpenses";
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";
@@ -271,6 +272,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CREATED = "Created";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+    public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
+    public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";
 
 
     public static final String ATTR_DATA_RANGES = "Ranges";

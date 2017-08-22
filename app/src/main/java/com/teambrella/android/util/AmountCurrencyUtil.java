@@ -37,7 +37,8 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, float amount, String currency) {
         final Context context = textView.getContext();
-        final SpannableString text = new SpannableString(String.format(Locale.US, "%.2f", amount) + " " + currency);
+        final SpannableString text = amount < 100f ? new SpannableString(String.format(Locale.US, "%.2f", amount) + " " + currency)
+                : new SpannableString(String.format(Locale.US, "%d", Math.round(amount)) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

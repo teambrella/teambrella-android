@@ -8,7 +8,6 @@ import android.view.View;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
@@ -18,12 +17,12 @@ import io.reactivex.Notification;
 /**
  * Claim Chat Fragment
  */
-public class ChatFragment extends ADataPagerProgressFragment<IDataHost> {
+public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
 
     @Override
     protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ChatAdapter(mDataHost.getPager(mTag));
+        return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
     }
 
 

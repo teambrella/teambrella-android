@@ -43,7 +43,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Claim chat
  */
-public class ChatActivity extends ADataHostActivity {
+public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";
@@ -201,7 +201,6 @@ public class ChatActivity extends ADataHostActivity {
 
                         mIcon.setOnClickListener(v -> {
                             TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency);
-                            overridePendingTransition(0, 0);
                         });
                     }
 
@@ -375,6 +374,10 @@ public class ChatActivity extends ADataHostActivity {
         }
     }
 
+    @Override
+    public int getTeamId() {
+        return mTeamId;
+    }
 
     @Override
     protected String[] getDataTags() {

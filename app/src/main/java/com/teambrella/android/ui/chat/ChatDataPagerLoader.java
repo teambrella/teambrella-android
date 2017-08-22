@@ -58,9 +58,8 @@ class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
             JsonWrapper message = new JsonWrapper(srcObject);
             String text = message.getString(TeambrellaModel.ATTR_DATA_TEXT);
             JsonArray images = message.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
-
+            Gson gson = new Gson();
             if (text != null && images != null && images.size() > 0) {
-                Gson gson = new Gson();
                 text = text.replaceAll("<p>", "");
                 text = text.replaceAll("</p>", "");
                 List<String> slices = separate(text.trim(), 0, images.size());
@@ -70,7 +69,13 @@ class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                     newMessages.add(newObject);
                 }
             } else if (!TextUtils.isEmpty(text)) {
-                newMessages.add(srcObject);
+                text = text.replaceAll("<p>", "");
+                text = text.replaceAll("</p>", "");
+                if (!TextUtils.isEmpty(text)) {
+                    JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
+                    newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, text);
+                    newMessages.add(newObject);
+                }
             }
         }
 

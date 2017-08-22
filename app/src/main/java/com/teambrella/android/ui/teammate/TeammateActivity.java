@@ -36,6 +36,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private static final String TEAMMATE_URI = "teammate_uri";
     private static final String TEAMMATE_NAME = "teammate_name";
     private static final String TEAMMATE_PICTURE = "teammate_picture";
+    private static final String TEAMMATE_USER_ID = "teammate_user_id";
     private static final String CURRENCY = "currency";
 
     private static final String DATA_FRAGMENT = "data";
@@ -53,6 +54,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
         return new Intent(context, TeammateActivity.class)
+                .putExtra(TEAMMATE_USER_ID, userId)
                 .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
                 .putExtra(TEAMMATE_NAME, name)
                 .putExtra(TEAMMATE_PICTURE, userPictureUri)
@@ -67,6 +69,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mCurrency = getIntent().getStringExtra(CURRENCY);
+        mUserId = getIntent().getStringExtra(TEAMMATE_USER_ID);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
         FragmentManager fragmentManager = getSupportFragmentManager();

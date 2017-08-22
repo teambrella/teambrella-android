@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.chat;
 
+import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,8 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.image.ImageViewerActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
@@ -32,8 +36,12 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
     private static final String FORMAT_STRING = "<img src=\"%d\">";
     private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;
 
-    ChatAdapter(IDataPager<JsonArray> pager) {
+
+    private final int mTeamId;
+
+    ChatAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
 
@@ -84,8 +92,8 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
     }
 
 
-    private static class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private static SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL", Locale.ENGLISH);
+    private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
+        private SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
         Picasso picasso;
@@ -110,17 +118,20 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
                     }, () -> {
                     });
 
+            mUserPicture.setOnClickListener(v -> {
+                String userId = object.getString(TeambrellaModel.ATTR_DATA_USER_ID);
+                JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
+                String name = teammate.getString(TeambrellaModel.ATTR_DATA_NAME);
+                String uri = TeambrellaImageLoader.getImageUri(teammate.getString(TeambrellaModel.ATTR_DATA_AVATAR)).toString();
+                TeammateActivity.start(itemView.getContext(), mTeamId, userId, name, uri, null);
+            });
 
-//            picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL,
-//                    object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART).getObject(),
-//                    TeambrellaModel.ATTR_DATA_AVATAR))
-//                    .into(mUserPicture);
             mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
         }
     }
 
 
-    private static class ClaimChatMessageViewHolder extends ClaimChatViewHolder {
+    private class ClaimChatMessageViewHolder extends ClaimChatViewHolder {
         TextView mMessage;
 
         ClaimChatMessageViewHolder(View itemView) {
@@ -131,28 +142,38 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-            //mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
             mMessage.setText(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim());
         }
     }
 
-    private static class ClaimChatImageViewHolder extends ClaimChatViewHolder {
+    private class ClaimChatImageViewHolder extends ClaimChatViewHolder {
         ImageView mImage;
+        final int width;
 
         ClaimChatImageViewHolder(View itemView) {
             super(itemView);
             mImage = itemView.findViewById(R.id.image);
+            width = itemView.getContext().getResources().getDimensionPixelSize(R.dimen.chat_image_width);
         }
 
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
+
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
             ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
+                        JsonArray imageRatios = object.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS);
+                        float ratio = imageRatios.get(i).getAsFloat();
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mImage.getLayoutParams();
+                        params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
+                        mImage.setLayoutParams(params);
                         picasso.load(images.get(i)).into(mImage);
+                        final int position = i;
+                        Context context = itemView.getContext();
+                        mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
                         break;
                     }
                 }

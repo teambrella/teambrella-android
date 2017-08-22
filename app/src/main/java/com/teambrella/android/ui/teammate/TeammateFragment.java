@@ -62,6 +62,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     private String mUserId;
     private int mTeamId;
     private String mTopicId;
+    private String mCurrency;
 
     private boolean mIsShown;
 
@@ -137,12 +138,20 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             Observable<JsonWrapper> basicObservable =
                     dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC));
 
-            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mDataHost.getCurrency()))
-                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mDataHost.getCurrency()))
+
+            dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
+                    .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY)).
+                    onErrorReturnItem(new JsonWrapper(new JsonObject())).blockingFirst();
+
+
+            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
                     .doOnNext(basic -> mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
-                    .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+                    .subscribe(jsonWrapper -> {
+                    }, Throwable::printStackTrace, () -> {
+                    });
 
 
             basicObservable.map(basic -> TeambrellaServer.BASE_URL + basic.getString(TeambrellaModel.ATTR_DATA_AVATAR))
@@ -167,7 +176,9 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(discussion -> mUnread.setVisibility(discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE))
                     .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
-                    .doOnNext(discussion -> mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0))))
+                    .doOnNext(discussion -> {
+                        mWhen.setText(TeambrellaDateUtils.getRelativeTime(discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0)));
+                    })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
 
