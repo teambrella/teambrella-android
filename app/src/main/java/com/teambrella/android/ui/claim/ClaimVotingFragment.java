@@ -45,6 +45,9 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private View mRestVoteButton;
 
 
+    private String mCurrency;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,11 +84,14 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+            JsonWrapper team = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
 
             if (basic != null) {
                 mClaimAmount = basic.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT, mClaimAmount);
             }
 
+
+            mCurrency = team != null ? team.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency) : mCurrency;
 
             if (voting != null) {
 
@@ -97,8 +103,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
                 mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
                 mVotingControl.setProgress((int) (yourVote * 100));
-                AmountCurrencyUtil.setAmount(mTeamVoteCurrency, mClaimAmount * teamVote, "USD");
-                AmountCurrencyUtil.setAmount(mYourVoteCurrency, mClaimAmount * yourVote, "USD");
+                AmountCurrencyUtil.setAmount(mTeamVoteCurrency, mClaimAmount * teamVote, mCurrency);
+                AmountCurrencyUtil.setAmount(mYourVoteCurrency, mClaimAmount * yourVote, mCurrency);
                 mYourVotePercents.setAlpha(1f);
                 mYourVoteCurrency.setAlpha(1f);
                 mRestVoteButton.setAlpha(1f);

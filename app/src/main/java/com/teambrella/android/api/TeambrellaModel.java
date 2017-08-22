@@ -259,6 +259,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ONE_OBJECT = "ObjectPart";
     public static final String ATTR_DATA_ONE_STATS = "StatsPart";
     public static final String ATTR_DATA_ONE_RISK_SCALE = "RiskScalePart";
+    public static final String ATTR_DATA_ONE_TEAM = "TeamPart";
 
     public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpenses";
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";

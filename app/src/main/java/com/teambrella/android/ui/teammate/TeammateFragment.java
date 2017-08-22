@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.ConnectivityUtils;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -167,11 +167,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(discussion -> mUnread.setVisibility(discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE))
                     .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
-                    .doOnNext(discussion -> {
-                        long now = System.currentTimeMillis();
-                        long when = now - 60000 * discussion.getInt(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES);
-                        mWhen.setText(DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
-                    })
+                    .doOnNext(discussion -> mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0))))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
 

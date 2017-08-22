@@ -52,10 +52,13 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
-            if (basic != null) {
-                mClaimAmount.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
-                mExpenses.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES))));
-                mDeductible.setText(getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency()), Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE))));
+            JsonWrapper team = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
+            if (basic != null && team != null) {
+                String currency = team.getString(TeambrellaModel.ATTR_DATA_CURRENCY);
+                String sign = AmountCurrencyUtil.getCurrencySign(currency);
+                mClaimAmount.setText(getString(R.string.amount_format_string, sign, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
+                mExpenses.setText(getString(R.string.amount_format_string, sign, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_ESTIMATED_EXPENSES))));
+                mDeductible.setText(getString(R.string.amount_format_string, sign, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_DEDUCTIBLE))));
                 mCoverage.setText(getString(R.string.percentage_format_string, Math.round(basic.getDouble(TeambrellaModel.ATTR_DATA_COVERAGE) * 100)));
                 String date = TeambrellaDateUtils.getDatePresentation(getContext()
                         , TeambrellaDateUtils.TEAMBRELLA_UI_DATE

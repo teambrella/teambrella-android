@@ -39,6 +39,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
     private TextView mNet;
     private TextView mRisk;
     private TextView mSeeClaims;
+    private TextView mCoverageType;
 
     private int mTeammateId;
     private int mTeamId;
@@ -65,6 +66,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
         mNet = view.findViewById(R.id.net);
         mRisk = view.findViewById(R.id.risk);
         mSeeClaims = view.findViewById(R.id.see_claims);
+        mCoverageType = view.findViewById(R.id.coverage_type);
         return view;
     }
 
@@ -87,9 +89,16 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             Observable<JsonWrapper> objectObservable =
                     dataObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
 
+
+            dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
+                    .doOnNext(jsonWrapper -> mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))))
+                    .onErrorReturnItem(new JsonWrapper(null))
+                    .blockingFirst();
+
+
             objectObservable.doOnNext(objectData -> mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL)))
                     .doOnNext(objectData -> AmountCurrencyUtil.setAmount(mLimit, Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)), mDataHost.getCurrency()))
-                    .doOnNext(objectData -> mClaimId = objectData.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID, -1))
+                    .doOnNext(objectData -> mClaimId = objectData.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID, mClaimId))
                     .doOnNext(objectData -> mModel = objectData.getString(TeambrellaModel.ATTR_DATA_MODEL, mModel))
                     .doOnNext(objectData -> mClaimCount = objectData.getInt(TeambrellaModel.ATTR_DATA_CLAIM_COUNT, mClaimCount))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();

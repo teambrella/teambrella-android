@@ -15,9 +15,6 @@ public interface IClaimActivity extends IDataHost {
 
     void postVote(int vote);
 
-    String getCurrency();
-
-
     void showSnackBar(@StringRes int text);
 
 }

@@ -41,7 +41,7 @@ public class TeambrellaDateUtils {
         return SDF.parse(serverDate).getTime();
     }
 
-    public static String getRelativeTime(int remainedMinutes) {
+    public static String getRelativeTime(long remainedMinutes) {
         long now = System.currentTimeMillis();
         long when = now + 60000 * remainedMinutes;
         return DateUtils.getRelativeTimeSpanString(when, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE).toString();

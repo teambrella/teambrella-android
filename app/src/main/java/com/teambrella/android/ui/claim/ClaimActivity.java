@@ -128,12 +128,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         return null;
     }
 
-
-    @Override
-    public String getCurrency() {
-        return mCurrency;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
