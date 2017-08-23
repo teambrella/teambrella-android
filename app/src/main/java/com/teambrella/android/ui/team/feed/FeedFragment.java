@@ -37,7 +37,8 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 int position = parent.getChildAdapterPosition(view);
                 if (position != parent.getAdapter().getItemCount() - 1
-                        && position != 0) {
+                        && position != 0 && mDataHost.isFullTeamAccess()
+                        || position == 0 && !mDataHost.isFullTeamAccess()) {
                     super.getItemOffsets(outRect, view, parent, state);
                 }
             }
