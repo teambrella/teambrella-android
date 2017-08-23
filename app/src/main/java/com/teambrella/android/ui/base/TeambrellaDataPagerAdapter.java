@@ -214,7 +214,7 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                     .blockingFirst().getValue();
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri, mCurrency));
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
 
         }
 

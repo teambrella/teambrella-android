@@ -301,7 +301,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                         int claimId = Observable.just(response.getValue()).map(JsonWrapper::new)
                                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                                 .map(jsonWrapper -> jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_ID)).blockingFirst();
-                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId, mCurrency));
+                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
                         finish();
                         break;
                 }

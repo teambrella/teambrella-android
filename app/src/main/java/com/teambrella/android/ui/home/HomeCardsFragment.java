@@ -106,7 +106,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
     }
 
 
-    public final class CardAdapter extends FragmentStatePagerAdapter {
+    public class CardAdapter extends FragmentStatePagerAdapter {
 
         private JsonArray mCards;
 
@@ -117,7 +117,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         @Override
         public Fragment getItem(int position) {
-            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId(), mDataHost.getCurrency());
+            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId(), mDataHost.getCurrency(), mDataHost.getTeamAccessLevel());
         }
 
         @Override
@@ -142,17 +142,20 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         private static final String EXTRA_DATA = "data";
         private static final String EXTRA_CURRENCY = "currency";
         private static final String EXTRA_TEAM_ID = "team_id";
+        private static final String EXTRA_TEAM_ACCESS_LEVEL = "team_access_level";
 
         private JsonWrapper mCard;
         private int mTeamId;
         private String mCurrency;
+        private int mTeamAccessLevel;
 
-        public static CardsFragment getInstance(String data, int teamId, String currency) {
+        public static CardsFragment getInstance(String data, int teamId, String currency, int teamAccessLevel) {
             CardsFragment fragment = new CardsFragment();
             Bundle args = new Bundle();
             args.putString(EXTRA_DATA, data);
             args.putString(EXTRA_CURRENCY, currency);
             args.putInt(EXTRA_TEAM_ID, teamId);
+            args.putInt(EXTRA_TEAM_ACCESS_LEVEL, teamAccessLevel);
             fragment.setArguments(args);
             return fragment;
         }
@@ -164,6 +167,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             mCard = new JsonWrapper(gson.fromJson(getArguments().getString(EXTRA_DATA), JsonObject.class));
             mTeamId = getArguments().getInt(EXTRA_TEAM_ID);
             mCurrency = getArguments().getString(EXTRA_CURRENCY);
+            mTeamAccessLevel = getArguments().getInt(EXTRA_TEAM_ACCESS_LEVEL);
         }
 
         @Nullable
@@ -243,12 +247,13 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mCurrency);
+                                , mTeamAccessLevel);
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , mTeamAccessLevel);
                         break;
                     default:
                         ChatActivity.startTeammateChat(context, mTeamId
@@ -256,7 +261,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                 , null
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mCurrency);
+                                , mTeamAccessLevel);
                         break;
                 }
             });

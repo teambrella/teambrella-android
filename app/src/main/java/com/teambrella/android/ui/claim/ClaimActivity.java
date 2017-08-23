@@ -57,16 +57,15 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private Snackbar mSnackBar;
 
 
-    public static Intent getLaunchIntent(Context context, int id, String model, int teamId, String currency) {
+    public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
         return new Intent(context, ClaimActivity.class)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimUri(id))
                 .putExtra(EXTRA_MODEL, model)
-                .putExtra(EXTRA_TEAM_ID, teamId)
-                .putExtra(EXTRA_CURRENCY, currency);
+                .putExtra(EXTRA_TEAM_ID, teamId);
     }
 
-    public static void start(Context context, int id, String model, int teamId, String currency) {
-        context.startActivity(getLaunchIntent(context, id, model, teamId, currency));
+    public static void start(Context context, int id, String model, int teamId) {
+        context.startActivity(getLaunchIntent(context, id, model, teamId));
     }
 
 
@@ -210,8 +209,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
-                                    , pictureUri
-                                    , mCurrency));
+                                    , pictureUri));
                 }
             }
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);

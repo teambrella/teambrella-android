@@ -26,6 +26,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
@@ -53,8 +54,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String EXTRA_IMAGE_URI = "image_uri";
     private static final String EXTRA_CLAIM_ID = "claim_id";
     private static final String EXTRA_OBJECT_NAME = "object_name";
+    private static final String EXTRA_TEAM_ACCESS_LEVEL = "team_access_level";
     private static final String EXTRA_TITLE = "title";
-    private static final String EXTRA_CURRENCY = "currency";
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
@@ -75,7 +76,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private int mTeamId;
     private int mClaimId;
     private String mObjectName;
-    private String mCurrency;
+
 
     private Disposable mRequestDisposable;
     private Disposable mChatDisposable;
@@ -88,7 +89,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private Picasso mPicasso;
 
 
-    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, String currency) {
+    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_USER_ID, userId)
@@ -96,12 +97,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
-                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_TEAMMATE_CHAT_ACTION));
     }
 
 
-    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, String currency) {
+    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
@@ -109,16 +110,17 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
-                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_CLAIM_CHAT_ACTION));
     }
 
 
-    public static void startFeedChat(Context context, String title, String topicId) {
+    public static void startFeedChat(Context context, String title, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_FEED_CHAT_ACTION));
     }
 
@@ -135,7 +137,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
         mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mObjectName = intent.getStringExtra(EXTRA_OBJECT_NAME);
-        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mAction = intent.getAction();
 
         super.onCreate(savedInstanceState);
@@ -199,9 +200,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
 
-                        mIcon.setOnClickListener(v -> {
-                            TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency);
-                        });
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
                     }
 
                     break;
@@ -225,7 +224,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                                 .into(mIcon);
 
                         mIcon.setOnClickListener(v -> {
-                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId, mCurrency);
+                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId);
                             overridePendingTransition(0, 0);
                         });
                     }
@@ -234,6 +233,18 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             }
         }
 
+        switch (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
+            case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
+                findViewById(R.id.input).setVisibility(View.VISIBLE);
+                break;
+            default:
+                if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
+                    findViewById(R.id.input).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.input).setVisibility(View.GONE);
+                }
+                break;
+        }
     }
 
     @Override
@@ -341,7 +352,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                             }
                         }
 
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency));
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
 
                         mSubtitle.setText(mUserName);
                         break;

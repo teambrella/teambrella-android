@@ -123,7 +123,7 @@ class ChatAdapter extends TeambrellaDataPagerAdapter {
                 JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
                 String name = teammate.getString(TeambrellaModel.ATTR_DATA_NAME);
                 String uri = TeambrellaImageLoader.getImageUri(teammate.getString(TeambrellaModel.ATTR_DATA_AVATAR)).toString();
-                TeammateActivity.start(itemView.getContext(), mTeamId, userId, name, uri, null);
+                TeammateActivity.start(itemView.getContext(), mTeamId, userId, name, uri);
             });
 
             mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));

@@ -197,12 +197,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getCurrency());
+                                , mDataHost.getTeamAccessLevel());
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
                                 , item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
-                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , mDataHost.getTeamAccessLevel());
                         break;
                     default:
                         ChatActivity.startTeammateChat(context, mTeamId
@@ -210,7 +211,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , null
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getCurrency());
+                                , mDataHost.getTeamAccessLevel());
                         break;
 
                 }

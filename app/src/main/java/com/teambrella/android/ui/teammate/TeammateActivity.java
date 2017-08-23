@@ -52,17 +52,16 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private Snackbar mSnackBar;
 
 
-    public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
+    public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
         return new Intent(context, TeammateActivity.class)
                 .putExtra(TEAMMATE_USER_ID, userId)
                 .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
                 .putExtra(TEAMMATE_NAME, name)
-                .putExtra(TEAMMATE_PICTURE, userPictureUri)
-                .putExtra(CURRENCY, currency);
+                .putExtra(TEAMMATE_PICTURE, userPictureUri);
     }
 
-    public static void start(Context context, int teamId, String userId, String name, String userPictureUri, String currency) {
-        context.startActivity(getIntent(context, teamId, userId, name, userPictureUri, currency));
+    public static void start(Context context, int teamId, String userId, String name, String userPictureUri) {
+        context.startActivity(getIntent(context, teamId, userId, name, userPictureUri));
     }
 
 
