@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.base;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -177,13 +178,27 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
     protected static class Header extends RecyclerView.ViewHolder {
+
+
         public Header(ViewGroup parent, @StringRes int titleResId, @StringRes int subtitleResId) {
+            this(parent, titleResId, subtitleResId, -1);
+        }
+
+        public Header(ViewGroup parent, @StringRes int titleResId, @StringRes int subtitleResId, @DrawableRes int backgroundResId) {
             super(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_header, parent, false));
+            TextView titleView = itemView.findViewById(R.id.status_title);
+            TextView subtitleView = itemView.findViewById(R.id.status_subtitle);
+
             if (titleResId > 0)
-                ((TextView) itemView.findViewById(R.id.status_title)).setText(titleResId);
+                titleView.setText(titleResId);
 
             if (subtitleResId > 0)
-                ((TextView) itemView.findViewById(R.id.status_subtitle)).setText(subtitleResId);
+                subtitleView.setText(subtitleResId);
+
+
+            if (backgroundResId > 0) {
+                itemView.setBackgroundResource(backgroundResId);
+            }
         }
     }
 
@@ -191,14 +206,12 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     protected static abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
 
         private final int mTeamId;
-        private final String mCurrency;
         private final ImageView mIcon;
         private final TextView mTitle;
 
         protected AMemberViewHolder(View itemView, int teamId, String currency) {
             super(itemView);
             mTeamId = teamId;
-            mCurrency = currency;
             mIcon = itemView.findViewById(R.id.icon);
             mTitle = itemView.findViewById(R.id.title);
 

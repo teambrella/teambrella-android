@@ -5,5 +5,5 @@
     <dimen name="home_top_background_length">221dp</dimen>
     <dimen name="home_cards_top_margin">16dp</dimen>
     <dimen name="home_coverage_and_wallet_height">64dp</dimen>
-    <dimen name="home_default_vertical_margin">16dp</dimen>
+    <dimen name="home_default_vertical_margin">12dp</dimen>
 </resources>

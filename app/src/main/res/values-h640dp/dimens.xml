@@ -6,4 +6,6 @@
     <dimen name="home_cards_top_margin">24dp</dimen>
     <dimen name="home_coverage_and_wallet_height">64dp</dimen>
     <dimen name="home_default_vertical_margin">16dp</dimen>
+    <dimen name="home_and_coverage_max_height">300dp</dimen>
+    <dimen name="home_submit_claim_margin_bottom">48dp</dimen>
 </resources>

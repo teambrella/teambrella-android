@@ -45,6 +45,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
     private static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+    private static final int VIEW_TYPE_ITEM_BOTTOM = VIEW_TYPE_REGULAR + 3;
 
 
     private final int mTeamId;
@@ -65,7 +66,15 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     public int getItemViewType(int position) {
         int viewType = super.getItemViewType(position);
         if (viewType == VIEW_TYPE_REGULAR) {
-            viewType = position == 0 && mDataHost.isFullTeamAccess() ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM_FEED;
+
+            if (position == 0 && mDataHost.isFullTeamAccess()) {
+                return VIEW_TYPE_HEADER;
+            } else if (position == getItemCount() - 1) {
+                return VIEW_TYPE_ITEM_BOTTOM;
+            } else {
+                return VIEW_TYPE_ITEM_FEED;
+            }
+
         }
         return viewType;
     }
@@ -82,6 +91,10 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_HEADER:
                     viewHolder = new FeedHeader(inflater.inflate(R.layout.list_item_feed_header, parent, false));
                     break;
+                case VIEW_TYPE_ITEM_BOTTOM:
+                    viewHolder = new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
+                    break;
+
 
             }
         }
@@ -98,7 +111,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + (mDataHost.isFullTeamAccess() ? 1 : 0);
+        return super.getItemCount() + (mDataHost.isFullTeamAccess() ? 2 : 1);
     }
 
     class FeedItemViewHolder extends RecyclerView.ViewHolder {

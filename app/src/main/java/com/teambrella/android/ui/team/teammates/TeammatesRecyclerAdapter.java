@@ -101,10 +101,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
     }
 
 
-    @Override
-    protected boolean hasHeader() {
-        return false;
-    }
+
 
 
     abstract class ATeammateViewHolder extends RecyclerView.ViewHolder {

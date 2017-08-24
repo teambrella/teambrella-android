@@ -54,7 +54,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         mHeader = view.findViewById(R.id.home_header);
         mCardsPager = view.findViewById(R.id.cards_pager);
         mPagerIndicator = view.findViewById(R.id.page_indicator);
-        mCardsPager.setPageMargin(40);
+        mCardsPager.setPageMargin(20);
         return view;
     }
 

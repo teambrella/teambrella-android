@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/paleGreyFour"
+    android:background="@drawable/list_item_header_background_middle"
     android:gravity="bottom"
     android:paddingBottom="7dp"
     android:paddingEnd="16dp"
@@ -26,6 +26,5 @@
         android:textColor="@color/blueGrey"
         android:textSize="10sp"
         tools:ignore="SmallSp" />
-
 
 </LinearLayout>

@@ -9,6 +9,7 @@
         android:id="@+id/page_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/home_pager_indicator_background"
         android:gravity="center"
         android:minHeight="24dp"
         android:orientation="horizontal"
