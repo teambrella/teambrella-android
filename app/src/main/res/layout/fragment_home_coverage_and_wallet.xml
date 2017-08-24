@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:maxHeight="250dp">
+    android:background="@drawable/home_section_background"
+    android:maxHeight="@dimen/home_and_coverage_max_height">
+
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/submit_claim"
         style="@style/Teambrella.TextAppearence.SectionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/home_submit_claim_margin_bottom"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="@dimen/home_default_vertical_margin"
@@ -90,6 +91,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <View
             android:id="@+id/vertical_divider"
