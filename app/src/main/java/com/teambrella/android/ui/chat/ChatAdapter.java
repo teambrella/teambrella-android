@@ -17,7 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ChatDataPagerAdapter;
 import com.teambrella.android.ui.image.ImageViewerActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.TimeUtils;
@@ -31,7 +31,7 @@ import io.reactivex.Observable;
 /**
  * Claim Chat Adapter
  */
-class ChatAdapter extends TeambrellaDataPagerAdapter {
+class ChatAdapter extends ChatDataPagerAdapter {
 
     private static final String FORMAT_STRING = "<img src=\"%d\">";
     private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;

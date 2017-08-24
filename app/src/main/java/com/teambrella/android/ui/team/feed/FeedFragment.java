@@ -11,7 +11,7 @@ import android.view.View;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 /**
  * Feed Fragment
@@ -49,7 +49,7 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
 
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new FeedAdapter(mDataHost, mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
     }
 }

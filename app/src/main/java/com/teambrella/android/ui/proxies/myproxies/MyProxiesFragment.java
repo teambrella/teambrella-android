@@ -5,9 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
-import com.teambrella.android.ui.IMainDataHost;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 /**
  * My Proxies Fragment
@@ -15,7 +13,7 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 public class MyProxiesFragment extends AMainDataPagerProgressFragment {
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
     }
 

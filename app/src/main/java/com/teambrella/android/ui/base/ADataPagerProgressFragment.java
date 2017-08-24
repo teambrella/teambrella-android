@@ -31,7 +31,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected T mDataHost;
     private Disposable mDisposable;
     protected RecyclerView mList;
-    protected TeambrellaDataPagerAdapter mAdapter;
+    protected ATeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
 
     boolean a = false;
@@ -171,7 +171,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
 
-    protected abstract TeambrellaDataPagerAdapter getAdapter();
+    protected abstract ATeambrellaDataPagerAdapter getAdapter();
 
 
     private class ItemTouchCallback extends ItemTouchHelper.SimpleCallback {

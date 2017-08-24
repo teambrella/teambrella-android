@@ -11,7 +11,7 @@ import android.view.View;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 /**
  * Claims fragment
@@ -70,7 +70,7 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
     }
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), getArguments().getString(EXTRA_CURRENCY), false);
     }
 }
