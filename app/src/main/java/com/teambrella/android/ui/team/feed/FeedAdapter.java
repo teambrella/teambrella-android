@@ -43,9 +43,9 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
-    private static final int VIEW_TYPE_ITEM_BOTTOM = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_ITEM_BOTTOM = VIEW_TYPE_REGULAR + 3;
 
 
     private final int mTeamId;

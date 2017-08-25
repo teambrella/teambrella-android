@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import io.reactivex.Observable;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claim Chat Adapter
@@ -159,7 +160,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-
+            Context context = itemView.getContext();
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
             ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
             if (text != null && images != null && images.size() > 0) {
@@ -170,9 +171,11 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mImage.getLayoutParams();
                         params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
                         mImage.setLayoutParams(params);
-                        picasso.load(images.get(i)).into(mImage);
+                        picasso.load(images.get(i))
+                                .resize(width, 0)
+                                .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
+                                .into(mImage);
                         final int position = i;
-                        Context context = itemView.getContext();
                         mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
                         break;
                     }
