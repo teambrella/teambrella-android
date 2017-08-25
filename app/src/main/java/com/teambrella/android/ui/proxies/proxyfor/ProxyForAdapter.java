@@ -19,9 +19,9 @@ import com.teambrella.android.util.AmountCurrencyUtil;
  */
 class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
-    private final static int VIEW_TYPE_COMMISSION = VIEW_TYPE_REGULAR + 1;
-    private final static int VIEW_TYPE_TEAMMATES = VIEW_TYPE_REGULAR + 2;
-    private final static int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 3;
+    public final static int VIEW_TYPE_COMMISSION = VIEW_TYPE_REGULAR + 1;
+    public final static int VIEW_TYPE_TEAMMATES = VIEW_TYPE_REGULAR + 2;
+    public final static int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 3;
 
 
     private float mTotalCommission = 0f;
@@ -51,14 +51,18 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_COMMISSION:
                     return new CommissionViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_commission, parent, false));
                 case VIEW_TYPE_HEADER:
-                    return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_commission_header, parent, false)) {
-                    };
+                    return new Header(parent, R.string.i_am_proxy_for, -1, R.drawable.list_item_header_background_top);
                 case VIEW_TYPE_TEAMMATES:
                     return new ProxyForViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_proxy_for, parent, false));
             }
         }
 
         return holder;
+    }
+
+    @Override
+    protected int getHeadersCount() {
+        return 2;
     }
 
     @Override
@@ -80,25 +84,14 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
             case 1:
                 return VIEW_TYPE_HEADER;
             default:
-                if (position == getItemCount() - 1) {
-                    if (mPager.hasNext() || mPager.isNextLoading()) {
-                        return VIEW_TYPE_LOADING;
-                    } else if (mPager.hasNextError()) {
-                        return VIEW_TYPE_ERROR;
-                    } else {
-                        return VIEW_TYPE_TEAMMATES;
-                    }
-                } else {
-                    return VIEW_TYPE_TEAMMATES;
+                int viewType = super.getItemViewType(position);
+                if (viewType == VIEW_TYPE_REGULAR) {
+                    viewType = VIEW_TYPE_TEAMMATES;
                 }
+                return viewType;
         }
     }
 
-
-    @Override
-    public int getItemCount() {
-        return super.getItemCount() + 2;
-    }
 
     private final class CommissionViewHolder extends RecyclerView.ViewHolder {
 

@@ -42,6 +42,11 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                     case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                    case ClaimsAdapter.VIEW_TYPE_VOTING:
+                    case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                    case ClaimsAdapter.VIEW_TYPE_ERROR:
+                    case ClaimsAdapter.VIEW_TYPE_LOADING:
+
                         drawDivider = false;
                 }
 
@@ -51,6 +56,10 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                         case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                        case ClaimsAdapter.VIEW_TYPE_VOTING:
+                        case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                        case ClaimsAdapter.VIEW_TYPE_ERROR:
+                        case ClaimsAdapter.VIEW_TYPE_LOADING:
                             drawDivider = false;
                     }
                 }
@@ -62,8 +71,6 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                     outRect.set(0, 0, 0, 0);
                 }
             }
-
-
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);

@@ -52,6 +52,10 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
                     case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING:
+                    case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                    case ClaimsAdapter.VIEW_TYPE_ERROR:
+                    case ClaimsAdapter.VIEW_TYPE_LOADING:
+
                         drawDivider = false;
                 }
 
@@ -62,6 +66,9 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
                         case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING:
+                        case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                        case ClaimsAdapter.VIEW_TYPE_ERROR:
+                        case ClaimsAdapter.VIEW_TYPE_LOADING:
                             drawDivider = false;
                     }
                 }

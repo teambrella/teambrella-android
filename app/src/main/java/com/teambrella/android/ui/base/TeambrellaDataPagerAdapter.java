@@ -27,12 +27,14 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_LOADING = 1;
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_ERROR = 2;
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_REGULAR = 3;
+
+    public static final int VIEW_TYPE_LOADING = 1;
+
+    public static final int VIEW_TYPE_ERROR = 2;
+
+    public static final int VIEW_TYPE_BOTTOM = 3;
+
+    public static final int VIEW_TYPE_REGULAR = 4;
 
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
@@ -42,21 +44,15 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     @Override
     public int getItemViewType(int position) {
 
-        int size = mPager.getLoadedData().size();
+        int size = mPager.getLoadedData().size() + getHeadersCount();
 
-        if (position == 0) {
-            if (mPager.hasPreviousError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasPrevious() || mPager.isPreviousLoading()) {
-                return VIEW_TYPE_LOADING;
-            }
-
-        } else if ((position == size) && !mPager.hasPrevious() && !mPager.isPreviousLoading() && !mPager.hasPreviousError()
-                || ((mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious()) && position == size + 1)) {
+        if (position == size) {
             if (mPager.hasNextError()) {
                 return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isNextLoading()) {
+            } else if (mPager.hasNext()) {
                 return VIEW_TYPE_LOADING;
+            } else {
+                return VIEW_TYPE_BOTTOM;
             }
         }
 
@@ -82,6 +78,8 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                 return new LoadingViewHolder(inflater.inflate(R.layout.list_item_loading, parent, false));
             case VIEW_TYPE_ERROR:
                 return new ErrorViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
+            case VIEW_TYPE_BOTTOM:
+                return new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
         }
         return null;
     }
@@ -93,11 +91,6 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             mPager.loadNext(false);
         }
 
-        if (mPager.hasPrevious() && !mPager.isNextLoading() && !mPager.hasNextError() && position < 10) {
-            mPager.loadPrevious(false);
-        }
-
-
         if (holder instanceof ErrorViewHolder) {
             holder.itemView.setOnClickListener(v -> {
                 mPager.loadNext(false);
@@ -107,18 +100,15 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     }
 
 
+    protected int getHeadersCount() {
+        return 0;
+    }
+
+
     @Override
     public int getItemCount() {
-        return mPager.getLoadedData().size() + (hasFooter() ? 1 : 0) + (hasHeader() ? 1 : 0);
-
-    }
-
-    protected boolean hasHeader() {
-        return mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious();
-    }
-
-    protected boolean hasFooter() {
-        return mPager.hasNextError() || mPager.isNextLoading() || mPager.hasNext();
+        return mPager.getLoadedData().size() + getHeadersCount()
+                + 1;
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {

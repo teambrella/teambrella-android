@@ -155,15 +155,14 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         if (mSubmitClaim && position == 0) {
             ((SubmitClaimViewHolder) holder).onBind();
         } else if (holder instanceof ClaimViewHolder) {
-            position = mSubmitClaim ? position - 1 : position;
+            position -= getHeadersCount();
             ((ClaimViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
 
-
     @Override
-    public int getItemCount() {
-        return super.getItemCount() + (mSubmitClaim ? 1 : 0);
+    protected int getHeadersCount() {
+        return mSubmitClaim ? 1 : 0;
     }
 
     private class ClaimViewHolder extends RecyclerView.ViewHolder {

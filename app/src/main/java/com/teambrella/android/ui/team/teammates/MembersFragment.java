@@ -50,6 +50,9 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
                     switch (parent.getAdapter().getItemViewType(position + 1)) {
                         case TeammatesRecyclerAdapter.VIEW_TYPE_HEADER_NEW_MEMBERS:
                         case TeammatesRecyclerAdapter.VIEW_TYPE_HEADER_TEAMMATES:
+                        case TeammatesRecyclerAdapter.VIEW_TYPE_LOADING:
+                        case TeammatesRecyclerAdapter.VIEW_TYPE_ERROR:
+                        case TeammatesRecyclerAdapter.VIEW_TYPE_BOTTOM:
                             drawDivider = false;
                     }
                 }

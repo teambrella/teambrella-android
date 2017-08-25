@@ -39,21 +39,17 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
             case 0:
                 return VIEW_TYPE_HEADER;
             default:
-                if (position == getItemCount()) {
-                    if (mPager.hasNext() || mPager.isNextLoading()) {
-                        return VIEW_TYPE_LOADING;
-                    } else {
-                        return VIEW_TYPE_ERROR;
-                    }
-                } else {
-                    return VIEW_TYPE_USER;
+                int viewType = super.getItemViewType(position);
+                if (viewType == VIEW_TYPE_REGULAR) {
+                    viewType = VIEW_TYPE_USER;
                 }
+                return viewType;
         }
     }
 
     @Override
-    public int getItemCount() {
-        return super.getItemCount();
+    protected int getHeadersCount() {
+        return 1;
     }
 
     @Override
@@ -75,7 +71,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof UserViewHolder) {
-            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+            ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - getHeadersCount()).getAsJsonObject()));
         }
     }
 
