@@ -5,11 +5,11 @@
     <dimen name="claim_object_picture_height">40dp</dimen>
     <dimen name="claim_object_picture_with">40dp</dimen>
     <dimen name="home_horizontal_separator_offset">230dp</dimen>
-    <dimen name="home_cards_height">150dp</dimen>
+    <dimen name="home_cards_height">170dp</dimen>
     <dimen name="home_cards_top_margin">8dp</dimen>
     <dimen name="home_top_background_length">190dp</dimen>
     <dimen name="home_coverage_and_wallet_height">48dp</dimen>
-    <dimen name="home_default_vertical_margin">0dp</dimen>
+    <dimen name="home_default_vertical_margin">8dp</dimen>
     <dimen name="home_and_coverage_max_height">250dp</dimen>
     <dimen name="home_submit_claim_margin_bottom">32dp</dimen>
     <dimen name="chat_image_width">220dp</dimen>
