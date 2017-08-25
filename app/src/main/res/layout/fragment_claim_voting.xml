@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@drawable/voter_bar_background">
+        android:background="@drawable/voting_results_claim">
 
         <android.support.constraint.Guideline
             android:id="@+id/vote_info_divider"
@@ -52,7 +52,6 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/your_vote_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/vote_info_divider"
