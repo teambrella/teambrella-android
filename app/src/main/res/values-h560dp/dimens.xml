@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="home_horizontal_separator_offset">275dp</dimen>
-    <dimen name="home_cards_height">160dp</dimen>
+    <dimen name="home_cards_height">180dp</dimen>
     <dimen name="home_top_background_length">221dp</dimen>
-    <dimen name="home_cards_top_margin">16dp</dimen>
+    <dimen name="home_cards_top_margin">8dp</dimen>
     <dimen name="home_coverage_and_wallet_height">64dp</dimen>
     <dimen name="home_default_vertical_margin">12dp</dimen>
 </resources>

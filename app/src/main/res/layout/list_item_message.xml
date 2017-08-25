@@ -19,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/bubble"
+        android:background="@drawable/chat_bubble_them"
         android:gravity="end"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,10 +31,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="5dp"
-            android:padding="8dp"
-            android:paddingEnd="16dp"
-            android:paddingStart="32dp"
-            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
             android:textColor="@color/charcoalGrey"
             android:textSize="14sp" />
 
