@@ -6,14 +6,8 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/member_card_full"
         android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/user_profile_background" />
 
         <LinearLayout
             android:id="@+id/header_view"
@@ -102,21 +96,12 @@
 
         </LinearLayout>
 
-
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/header_view"
-            android:background="@color/paleGrey" />
-
-
         <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/discussion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/separator"
-            android:background="@android:color/white"
+            android:layout_below="@id/header_view"
+            android:background="@drawable/block_discussion_top"
             android:padding="16dp">
 
             <ImageView
@@ -220,14 +205,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/voting_container"
-            android:background="@drawable/section_background" />
+            android:background="@drawable/block_first" />
 
         <FrameLayout
             android:id="@+id/voting_statistics_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/object_info_container"
-            android:background="@drawable/section_background" />
+            android:background="@drawable/block_last" />
 
 
     </RelativeLayout>
