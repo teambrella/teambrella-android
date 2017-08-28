@@ -43,7 +43,7 @@
                     android:id="@+id/discussion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/block_discussion_top"
+                    android:background="@drawable/discussion_background_top"
                     android:paddingBottom="32dp"
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp"
