@@ -37,12 +37,17 @@ class ChatAdapter extends ChatDataPagerAdapter {
     private static final String FORMAT_STRING = "<img src=\"%d\">";
     private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;
 
+    public static final int MODE_CLAIM = 1;
+    public static final int MODE_APPLICATION = 2;
+    public static final int MODE_DISCUSSION = 3;
 
     private final int mTeamId;
+    private final int mMode;
 
-    ChatAdapter(IDataPager<JsonArray> pager, int teamId) {
+    ChatAdapter(IDataPager<JsonArray> pager, int teamId, int mode) {
         super(pager);
         mTeamId = teamId;
+        mMode = mode;
     }
 
 
@@ -134,16 +139,47 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
     private class ClaimChatMessageViewHolder extends ClaimChatViewHolder {
         TextView mMessage;
+        TextView mTeammateName;
+        TextView mVote;
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
             mMessage = itemView.findViewById(R.id.message);
+            mTeammateName = itemView.findViewById(R.id.teammate_name);
+            mVote = itemView.findViewById(R.id.vote);
         }
 
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
             mMessage.setText(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim());
+            JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
+            String name = teammate != null ? teammate.getString(TeambrellaModel.ATTR_DATA_NAME) : null;
+            mTeammateName.setText(name);
+            float vote = teammate != null ? teammate.getFloat(TeambrellaModel.ATTR_DATA_VOTE, -1f) : -1f;
+
+            switch (mMode) {
+                case MODE_DISCUSSION:
+                    mVote.setVisibility(View.GONE);
+                    break;
+                case MODE_CLAIM:
+                    mVote.setVisibility(View.VISIBLE);
+                    if (vote > 0) {
+                        mVote.setText(itemView.getContext().getString(R.string.claim_chat_vote, Math.round(vote * 100)));
+                    } else {
+                        mVote.setText(R.string.chat_not_voted_yet);
+                    }
+                    break;
+                case MODE_APPLICATION:
+                    mVote.setVisibility(View.VISIBLE);
+                    if (vote > 0) {
+                        mVote.setText(itemView.getContext().getString(R.string.application_chat_vote, vote));
+                    } else {
+                        mVote.setText(R.string.chat_not_voted_yet);
+                    }
+                    break;
+            }
+
         }
     }
 

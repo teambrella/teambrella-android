@@ -301,6 +301,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
+    @Override
+    public Uri getChatUri() {
+        return getIntent().getParcelableExtra(EXTRA_URI);
+    }
+
     private void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)

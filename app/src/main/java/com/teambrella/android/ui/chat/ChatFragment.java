@@ -8,6 +8,7 @@ import android.view.View;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
@@ -22,7 +23,16 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
+        int mode = ChatAdapter.MODE_DISCUSSION;
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                mode = ChatAdapter.MODE_CLAIM;
+                break;
+            case TeambrellaUris.TEAMMATE_CHAT:
+                mode = ChatAdapter.MODE_APPLICATION;
+                break;
+        }
+        return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mode);
     }
 
 

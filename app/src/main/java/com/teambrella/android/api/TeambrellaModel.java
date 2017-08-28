@@ -294,6 +294,7 @@ public class TeambrellaModel {
 
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
     public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
+    public static final String ATTR_DATA_VOTE = "Vote";
     public static final String ATTR_DATA_OTHER_AVATARS = "OtherAvatars";
     public static final String ATTR_DATA_CARDS = "Cards";
     public static final String ATTR_DATA_SMALL_PHOTO_OR_AVATAR = "SmallPhotoOrAvatar";
