@@ -21,6 +21,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
@@ -250,7 +251,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mClaimAmount.setText("$" + Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)));
+            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
 
 
             if (mVote != null) {
