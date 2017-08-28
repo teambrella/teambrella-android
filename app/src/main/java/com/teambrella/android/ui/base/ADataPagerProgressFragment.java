@@ -66,7 +66,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentLayout(), container, false);
-        mList = (RecyclerView) view.findViewById(R.id.list);
+        mList = view.findViewById(R.id.list);
         new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mList);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
@@ -75,7 +75,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                 try {
                     super.onLayoutChildren(recycler, state);
                 } catch (Throwable e) {
-                    //e.printStackTrace();
+
                 }
             }
         });

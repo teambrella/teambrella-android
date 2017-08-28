@@ -61,10 +61,10 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                     viewHolder = new NewMemberViewHolder(inflater.inflate(R.layout.list_item_new_teamate, parent, false));
                     break;
                 case VIEW_TYPE_HEADER_TEAMMATES:
-                    viewHolder = new Header(parent, R.string.teammates, R.string.net);
+                    viewHolder = new Header(parent, R.string.teammates, R.string.net, R.drawable.list_item_header_background_middle);
                     break;
                 case VIEW_TYPE_HEADER_NEW_MEMBERS:
-                    viewHolder = new Header(parent, R.string.new_teammates, R.string.voting_ends_title);
+                    viewHolder = new Header(parent, R.string.new_teammates, R.string.voting_ends_title, R.drawable.list_item_header_background_middle);
                     break;
             }
         }
@@ -99,9 +99,6 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
             aHolder.onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
-
-
-
 
 
     abstract class ATeammateViewHolder extends RecyclerView.ViewHolder {

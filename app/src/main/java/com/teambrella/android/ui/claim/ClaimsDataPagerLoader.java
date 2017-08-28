@@ -44,7 +44,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
     protected void onAddNewData(JsonArray newData) {
         if (mArray.size() == 0) {
             if (mVotingClaims.size() == 0) {
-                mVotingClaims.add(VOTING_HEADER_ITEM);
+                //mVotingClaims.add(VOTING_HEADER_ITEM);
             }
 
             if (mVotedClaims.size() == 0) {
@@ -86,19 +86,9 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mVotingClaims.size() > 0) {
-            String itemType = mVotingClaims.get(0).getAsJsonObject().get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString();
-            switch (itemType) {
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING_HEADER:
-                    if (mVotingClaims.size() > 1) {
-                        mArray.addAll(mVotingClaims);
-                        mVotingClaims = new JsonArray();
-                    }
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING:
-                    mArray.addAll(mVotingClaims);
-                    mVotingClaims = new JsonArray();
-                    break;
-            }
+            mArray.addAll(mVotingClaims);
+            mVotingClaims = new JsonArray();
+
         }
 
         if (mVotedClaims.size() > 0) {

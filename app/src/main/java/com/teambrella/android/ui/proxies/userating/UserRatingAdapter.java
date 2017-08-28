@@ -69,7 +69,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_USER:
                     return new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_user, parent, false));
                 case VIEW_TYPE_HEADER:
-                    return new Header(parent, R.string.team_members, R.string.proxy_rank);
+                    return new Header(parent, R.string.team_members, R.string.proxy_rank, R.drawable.list_item_header_background_middle);
             }
         }
         return holder;
