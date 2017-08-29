@@ -160,7 +160,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
             switch (mMode) {
                 case MODE_DISCUSSION:
-                    mVote.setVisibility(View.GONE);
+                    mVote.setVisibility(View.INVISIBLE);
                     break;
                 case MODE_CLAIM:
                     mVote.setVisibility(View.VISIBLE);
