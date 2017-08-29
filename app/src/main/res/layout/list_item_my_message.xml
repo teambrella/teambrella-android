@@ -1,33 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_picture"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
+    android:layout_marginBottom="16dp"
+    android:layout_marginTop="16dp">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="4dp"
-        android:background="@drawable/chat_bubble_them"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/chat_bubble_me"
         android:maxWidth="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/user_picture"
-        app:layout_constraintWidth_default="wrap">
+        app:layout_constraintWidth_default="wrap"
+        tools:ignore="RtlHardcoded">
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/teammate_name"
+            android:id="@+id/you"
             style="@style/Teambrella.TextAppearence.MessageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,6 +27,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:paddingTop="4dp"
+            android:text="@string/you"
             android:textColor="@color/darkSkyBlue"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -49,9 +42,9 @@
             android:gravity="end"
             android:includeFontPadding="false"
             android:padding="8dp"
-            app:layout_constraintBaseline_toBaselineOf="@id/teammate_name"
+            app:layout_constraintBaseline_toBaselineOf="@id/you"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintLeft_toRightOf="@id/teammate_name"
+            app:layout_constraintLeft_toRightOf="@id/you"
             app:layout_constraintRight_toRightOf="parent" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -65,7 +58,7 @@
             android:textColor="@color/charcoalGrey"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/teammate_name" />
+            app:layout_constraintTop_toBottomOf="@id/you" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/time"
@@ -82,5 +75,4 @@
             app:layout_constraintTop_toBottomOf="@id/message" />
     </android.support.constraint.ConstraintLayout>
 
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
