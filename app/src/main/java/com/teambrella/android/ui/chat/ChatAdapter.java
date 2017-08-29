@@ -35,19 +35,24 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 class ChatAdapter extends ChatDataPagerAdapter {
 
     private static final String FORMAT_STRING = "<img src=\"%d\">";
-    private static final int VIEW_TYPE_REGULAR_IMAGE = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_MESSAGE_ME = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_MESSAGE_THEM = VIEW_TYPE_REGULAR + 2;
+    private static final int VIEW_TYPE_IMAGE_ME = VIEW_TYPE_REGULAR + 3;
+    private static final int VIEW_TYPE_IMAGE_THEM = VIEW_TYPE_REGULAR + 4;
 
-    public static final int MODE_CLAIM = 1;
-    public static final int MODE_APPLICATION = 2;
-    public static final int MODE_DISCUSSION = 3;
+    static final int MODE_CLAIM = 1;
+    static final int MODE_APPLICATION = 2;
+    static final int MODE_DISCUSSION = 3;
 
     private final int mTeamId;
     private final int mMode;
+    private final String mUserId;
 
-    ChatAdapter(IDataPager<JsonArray> pager, int teamId, int mode) {
+    ChatAdapter(IDataPager<JsonArray> pager, int teamId, int mode, String userId) {
         super(pager);
         mTeamId = teamId;
         mMode = mode;
+        mUserId = userId;
     }
 
 
@@ -57,15 +62,20 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
         if (viewType == VIEW_TYPE_REGULAR) {
             JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject());
+            boolean isItMine = mUserId.equals(item.getString(TeambrellaModel.ATTR_DATA_USER_ID));
             JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
             String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
-                        viewType = VIEW_TYPE_REGULAR_IMAGE;
+                        viewType = isItMine ? VIEW_TYPE_IMAGE_ME : VIEW_TYPE_IMAGE_THEM;
                         break;
                     }
                 }
+            }
+
+            if (viewType == VIEW_TYPE_REGULAR) {
+                viewType = isItMine ? VIEW_TYPE_MESSAGE_ME : VIEW_TYPE_MESSAGE_THEM;
             }
         }
 
@@ -78,11 +88,17 @@ class ChatAdapter extends ChatDataPagerAdapter {
         if (viewHolder == null) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType) {
-                case VIEW_TYPE_REGULAR:
+                case VIEW_TYPE_MESSAGE_THEM:
                     viewHolder = new ClaimChatMessageViewHolder(inflater.inflate(R.layout.list_item_message, parent, false));
                     break;
-                case VIEW_TYPE_REGULAR_IMAGE:
+                case VIEW_TYPE_MESSAGE_ME:
+                    viewHolder = new ClaimChatMessageViewHolder(inflater.inflate(R.layout.list_item_my_message, parent, false));
+                    break;
+                case VIEW_TYPE_IMAGE_THEM:
                     viewHolder = new ClaimChatImageViewHolder(inflater.inflate(R.layout.list_item_message_image, parent, false));
+                    break;
+                case VIEW_TYPE_IMAGE_ME:
+                    viewHolder = new ClaimChatImageViewHolder(inflater.inflate(R.layout.list_item_my_message_image, parent, false));
                     break;
             }
         }
@@ -113,24 +129,27 @@ class ChatAdapter extends ChatDataPagerAdapter {
         }
 
         void bind(JsonWrapper object) {
-            Observable.fromArray(object)
-                    .map(item -> item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART))
-                    .map(item -> TeambrellaServer.BASE_URL + item.getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .map(uri -> picasso.load(uri))
-                    .doOnNext(requestCreator -> requestCreator.into(mUserPicture))
-                    .map(requestCreator -> true)
-                    .subscribe(b -> {
-                    }, e -> {
-                    }, () -> {
-                    });
 
-            mUserPicture.setOnClickListener(v -> {
-                String userId = object.getString(TeambrellaModel.ATTR_DATA_USER_ID);
-                JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
-                String name = teammate.getString(TeambrellaModel.ATTR_DATA_NAME);
-                String uri = TeambrellaImageLoader.getImageUri(teammate.getString(TeambrellaModel.ATTR_DATA_AVATAR)).toString();
-                TeammateActivity.start(itemView.getContext(), mTeamId, userId, name, uri);
-            });
+            if (mUserPicture != null) {
+                Observable.fromArray(object)
+                        .map(item -> item.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART))
+                        .map(item -> TeambrellaServer.BASE_URL + item.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                        .map(uri -> picasso.load(uri))
+                        .doOnNext(requestCreator -> requestCreator.into(mUserPicture))
+                        .map(requestCreator -> true)
+                        .subscribe(b -> {
+                        }, e -> {
+                        }, () -> {
+                        });
+
+                mUserPicture.setOnClickListener(v -> {
+                    String userId = object.getString(TeambrellaModel.ATTR_DATA_USER_ID);
+                    JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
+                    String name = teammate.getString(TeambrellaModel.ATTR_DATA_NAME);
+                    String uri = TeambrellaImageLoader.getImageUri(teammate.getString(TeambrellaModel.ATTR_DATA_AVATAR)).toString();
+                    TeammateActivity.start(itemView.getContext(), mTeamId, userId, name, uri);
+                });
+            }
 
             mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
         }
@@ -155,7 +174,11 @@ class ChatAdapter extends ChatDataPagerAdapter {
             mMessage.setText(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim());
             JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
             String name = teammate != null ? teammate.getString(TeambrellaModel.ATTR_DATA_NAME) : null;
-            mTeammateName.setText(name);
+
+            if (mTeammateName != null) {
+                mTeammateName.setText(name);
+            }
+
             float vote = teammate != null ? teammate.getFloat(TeambrellaModel.ATTR_DATA_VOTE, -1f) : -1f;
 
             switch (mMode) {
