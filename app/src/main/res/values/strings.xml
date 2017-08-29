@@ -159,4 +159,5 @@
     <string name="chat_not_voted_yet">Not voted yet</string>
     <string name="claim_chat_vote">Voted:%d%%</string>
     <string name="application_chat_vote">Voted:%.2f</string>
+    <string name="slogan">Not insurance. A lot better.</string>
 </resources>
