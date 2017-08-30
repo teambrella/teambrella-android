@@ -153,7 +153,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                     .subscribe(jsonWrapper -> {
-                    }, Throwable::printStackTrace, () -> {
+                    }, throwable -> {
+                    }, () -> {
                     });
 
 
