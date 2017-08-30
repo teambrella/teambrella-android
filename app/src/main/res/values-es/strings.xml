@@ -32,7 +32,7 @@
     <string name="coverage_type">Está cubierto</string>
     <string name="collision_deductible_insurance">Deducible por Colisión</string>
 
-    <string name="limit">Limite</string>
+    <string name="limit">Límite</string>
     <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
     <string name="voting_stats">Estadísticas de votación</string>
@@ -43,7 +43,7 @@
 
     <string name="decisions">Decisiones</string>
     <string name="discussions">Discusiones</string>
-    <string name="voting_frequency">Frecuencia de Votación</string>
+    <string name="voting_frequency">Frec. de Votación</string>
     <string name="add_to_my_proxies">Añadir a Mis Proxies</string>
 
 
@@ -65,9 +65,9 @@
     <string name="your_vote">Tu Voto</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
 
-    <string name="vote_avg_difference_bigger_format_string">"PROM.\n+%d%%"</string>
-    <string name="vote_avg_difference_smaller_format_string">"PROM.\n%d%%"</string>
-    <string name="vote_avg_difference_same">"PROM.\n0%%"</string>
+    <string name="vote_avg_difference_bigger_format_string">"PROMEDIO\n+%d%%"</string>
+    <string name="vote_avg_difference_smaller_format_string">"PROMEDIO\n%d%%"</string>
+    <string name="vote_avg_difference_same">"PROMEDIO\n0%%"</string>
     <string name="reset_vote">Reiniciar Votación</string>
     <string name="no_teammate_vote_value">. . .</string>
 
@@ -91,7 +91,7 @@
     <string name="proxy_vote">Proxy </string>
     <string name="my_proxies">Mis Proxies</string>
     <string name="proxy_for">Proxy Para</string>
-    <string name="user_index">Indice del Usario</string>
+    <string name="user_index">Indice</string>
     <string name="remove_from_my_proxies">Eliminar de mis proxies</string>
     <string name="total_commission">Comisión Total</string>
     <string name="commission_format_string">%1$s%2$.2f</string>
@@ -132,7 +132,7 @@
     <string name="add_photos">Cargar las fotos</string>
     <string name="reimburse_to">Reembolso a</string>
     <string name="submit_claim">Enviar</string>
-    <string name="no_incident_date_error"> No hay fecha del incidente</string>
+    <string name="no_incident_date_error">No hay fecha del incidente</string>
     <string name="big_expenses_error">Los gastos no deben ser más grande que %1$s%2$.2f.</string>
     <string name="no_description_provided_error">Ninguna descripción proporcionada</string>
     <string name="no_expenses_provided_error">Ningunos gastos proporcionados</string>
@@ -146,7 +146,7 @@
     <string name="claim_header_voted">Votado</string>
     <string name="claim_header_being_paid">Está pagando</string>
     <string name="claim_header_fully_paid">Completamente pagado</string>
-    <string name="claim_vote_format_string">Votado (%d%%)</string>
+    <string name="claim_vote_format_string">Votado(%d%%)</string>
     <string name="claim_reimbursed">Reembolsado</string>
     <string name="bike_insurance">Cobertura para bicicleta</string>
     <string name="something_went_wrong_error">¡Oops, algo no ha ido bien…</string>
@@ -154,4 +154,6 @@
     <string name="chat_not_voted_yet">No votado aún</string>
     <string name="claim_chat_vote">Votado:%d%%</string>
     <string name="application_chat_vote">Votado:%.2f</string>
+    <string name="slogan">No es un seguro. Es mucho mejor.</string>
+
 </resources>
