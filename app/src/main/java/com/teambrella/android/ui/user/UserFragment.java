@@ -20,7 +20,7 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateFragment;
-import com.teambrella.android.ui.user.coverage.CoverageFragmnet;
+import com.teambrella.android.ui.user.coverage.CoverageFragment;
 import com.teambrella.android.ui.user.wallet.WalletFragment;
 
 import jp.wasabeef.picasso.transformations.MaskTransformation;
@@ -61,7 +61,7 @@ public class UserFragment extends Fragment {
                     case 0:
                         return ADataProgressFragment.getInstance(MainActivity.USER_DATA, TeammateFragment.class);
                     case 1:
-                        return new CoverageFragmnet();
+                        return new CoverageFragment();
                     case 2:
                         return new WalletFragment();
                     default:

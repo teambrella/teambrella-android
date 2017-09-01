@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/coverage_panel"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/cover_top">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/fund_wallet"
+                style="@style/Teambrella.TextAppearence.SectionButton"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/fund_wallet"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <View
+                android:id="@+id/vertical_divider"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/fund_wallet"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/coverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark"
+                android:textSize="88sp"
+                app:layout_constraintBottom_toTopOf="@id/fund_wallet"
+                app:layout_constraintEnd_toStartOf="@id/vertical_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/fund_wallet"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/vertical_divider"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cover_rain" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cover_how_top"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coverage_panel">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="16dp"
+                android:text="@string/coverage_explanation_title"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white" />
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="42dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/coverage_explanation_description"
+                android:textColor="@color/paleGreyTwo" />
+
+        </LinearLayout>
+
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cover_how_bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
