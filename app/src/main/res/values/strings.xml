@@ -163,4 +163,7 @@
     <string name="fund_wallet">Fund the wallet to increase</string>
     <string name="coverage_explanation_title">How it works</string>
     <string name="coverage_explanation_description">Use the slider to understand how expenses impact your maximum reimbursement.</string>
+    <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
+    <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
+    <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
 </resources>

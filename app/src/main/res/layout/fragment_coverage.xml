@@ -92,27 +92,154 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="42dp"
+                android:lineSpacingExtra="4dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
+                android:paddingTop="4dp"
                 android:text="@string/coverage_explanation_description"
                 android:textColor="@color/paleGreyTwo" />
 
         </LinearLayout>
 
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/cover_how_bottom"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    android:id="@+id/max_expenses_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/coverage_explanation_max_expenses_covered"
+                    android:textColor="@color/charcoalGrey"
+                    android:textSize="14sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/max_expenses_value"
+                    app:layout_constraintEnd_toStartOf="@+id/max_expenses_value"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@id/max_expenses_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="1200"
+                    android:textColor="@color/dark"
+                    android:textSize="23sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/max_expenses_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/max_expenses_title"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="spread" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    android:id="@+id/possible_expenses_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/coverage_explanation_possible_expenses"
+                    android:textColor="@color/charcoalGrey"
+                    android:textSize="14sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/possible_expenses_value"
+                    app:layout_constraintEnd_toStartOf="@+id/possible_expenses_value"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/possible_expenses_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="1400"
+                    android:textColor="@color/dark"
+                    android:textSize="23sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/possible_expenses_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/possible_expenses_title" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/coverage_slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:thumb="@drawable/seek_bar_thumb" />`
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    android:id="@+id/team_pay_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/coverage_explanation_team_would_pay"
+                    android:textColor="@color/charcoalGrey"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_chainStyle="spread" />
+
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/team_pay_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="1500"
+                    android:textColor="@color/dark"
+                    android:textSize="23sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/team_pay_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/team_pay_title"
+                    app:layout_constraintVertical_chainStyle="spread" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </LinearLayout>
 
 
     </LinearLayout>
