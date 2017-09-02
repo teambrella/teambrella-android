@@ -18,6 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
@@ -61,7 +62,7 @@ public class UserFragment extends Fragment {
                     case 0:
                         return ADataProgressFragment.getInstance(MainActivity.USER_DATA, TeammateFragment.class);
                     case 1:
-                        return new CoverageFragment();
+                        return ADataFragment.getInstance(MainActivity.HOME_DATA_TAG, CoverageFragment.class);
                     case 2:
                         return new WalletFragment();
                     default:
