@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.gson.JsonObject;
@@ -22,6 +23,7 @@ import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 import io.reactivex.Notification;
@@ -103,10 +105,19 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_message, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.inbox:
+                ChatActivity.startConversationChat(this, mUserId, null, null);
                 return true;
         }
         return super.onOptionsItemSelected(item);

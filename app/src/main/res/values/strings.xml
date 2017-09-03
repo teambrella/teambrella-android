@@ -166,4 +166,5 @@
     <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
     <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
     <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
+    <string name="inbox">Inbox</string>
 </resources>

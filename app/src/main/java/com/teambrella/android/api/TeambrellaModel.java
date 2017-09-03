@@ -274,6 +274,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_IMAGES = "Images";
     public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
     public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";
+    public static final String ATTR_DATA_MESSAGES = "Messages";
 
 
     public static final String ATTR_DATA_RANGES = "Ranges";
@@ -284,6 +285,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_PROXY_AVATAR = "ProxyAvatar";
     public static final String ATTR_DATA_PROXY_NAME = "ProxyName";
     public static final String ATTR_DATA_SINCE_LAST_POST_MINUTES = "SinceLastPostMinutes";
+    public static final String ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES = "SinceLastMessageMinutes";
 
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";

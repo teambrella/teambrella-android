@@ -28,6 +28,7 @@ import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.chat.inbox.ConversationDataPagerFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -65,6 +66,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
+    private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
 
 
     private Uri mUri;
@@ -122,6 +124,16 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
                 .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_FEED_CHAT_ACTION));
+    }
+
+
+    public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
+        context.startActivity(new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .setAction(SHOW_CONVERSATION_CHAT));
     }
 
 
@@ -415,6 +427,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case DATA_FRAGMENT_TAG:
+                switch (mAction) {
+                    case SHOW_CONVERSATION_CHAT:
+                        return ChatPagerFragment.getInstance(mUri, null, ConversationDataPagerFragment.class);
+                }
                 return ChatPagerFragment.getInstance(mUri, null, ChatPagerFragment.class);
         }
         return null;

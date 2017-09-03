@@ -41,19 +41,18 @@
                 android:id="@+id/exit"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
-                android:background="?attr/selectableItemBackground"
                 android:scaleType="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_restart_white" />
+                app:srcCompat="@drawable/ic_message" />
 
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/team_logo"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:padding="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

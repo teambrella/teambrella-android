@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.chat;
+package com.teambrella.android.ui.chat.inbox;
 
 import android.content.Context;
 import android.net.Uri;
@@ -18,23 +18,21 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Claim chat pager loader
+ * Conversation Data Pager Loader
  */
-public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
+public class ConversationDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     private static final String SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))";
 
-    private static final String LOG_TAG = ChatDataPagerLoader.class.getSimpleName();
-
-    public ChatDataPagerLoader(Context context, Uri uri) {
+    ConversationDataPagerLoader(Context context, Uri uri) {
         super(context, uri);
     }
 
     @Override
     protected JsonArray getPageableData(JsonObject src) {
-        return src.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
-                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
-                .get(TeambrellaModel.ATTR_DATA_CHAT).getAsJsonArray();
+        return src.get(TeambrellaModel.ATTR_DATA)
+                .getAsJsonObject().get(TeambrellaModel.ATTR_DATA_MESSAGES)
+                .getAsJsonArray();
     }
 
     @Override
@@ -45,8 +43,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
         object.add(TeambrellaModel.ATTR_METADATA_, metadata);
 
         object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
-                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
-                .remove(TeambrellaModel.ATTR_DATA_CHAT);
+                .remove(TeambrellaModel.ATTR_DATA_MESSAGES);
 
 
         JsonArray newMessages = new JsonArray();
@@ -80,8 +77,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
         }
 
         object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
-                .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
-                .add(TeambrellaModel.ATTR_DATA_CHAT, newMessages);
+                .add(TeambrellaModel.ATTR_DATA_MESSAGES, newMessages);
 
 
         return super.postProcess(object);
@@ -111,4 +107,6 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
         return list;
     }
+
+
 }

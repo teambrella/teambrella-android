@@ -40,6 +40,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_NEW_CLAIM = "newClaim";
     private static final String SEGMENT_NEW_CHAT = "newChat";
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
+    private static final String SEGMENT_PRIVATE_MESSAGE = "privateMessage";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -88,6 +89,8 @@ public class TeambrellaUris {
     public static final int GET_COVERAGE_FOR_DATE = 22;
     public static final int NEW_CLAIM = 23;
     public static final int NEW_CHAT = 24;
+    public static final int INBOX = 25;
+    public static final int CONVERSATION_CHAT = 26;
 
 
     static {
@@ -115,6 +118,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_GET_COVERAGE_FOR_DATE, GET_COVERAGE_FOR_DATE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_NEW_CLAIM, NEW_CLAIM);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_NEW_CHAT, NEW_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_LIST, INBOX);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_CHAT, CONVERSATION_CHAT);
     }
 
 
@@ -396,6 +401,23 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_SET_MY_PROXY)
                 .appendQueryParameter(KEY_ID, userId)
                 .appendQueryParameter(KEY_ADD, Boolean.toString(add))
+                .build();
+    }
+
+    public static Uri getInbox() {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_LIST)
+                .build();
+    }
+
+    public static Uri getConversationChat(String userId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendQueryParameter(KEY_ID, userId)
                 .build();
     }
 

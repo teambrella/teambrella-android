@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.team;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.chat.inbox.InboxActivity;
 import com.teambrella.android.ui.team.claims.TeamClaimsFragment;
 import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
@@ -70,6 +72,9 @@ public class TeamFragment extends Fragment {
         teamLogo.setOnClickListener(v -> dataHost.showTeamChooser());
 
         ((TextView) view.findViewById(R.id.title)).setText(dataHost.getTeamName());
+
+
+        view.findViewById(R.id.inbox).setOnClickListener(v -> startActivity(new Intent(getContext(), InboxActivity.class)));
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
