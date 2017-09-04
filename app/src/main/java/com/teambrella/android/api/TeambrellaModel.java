@@ -152,6 +152,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
     public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
+    public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";

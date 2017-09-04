@@ -32,6 +32,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
             case TeambrellaUris.TEAMMATE_CHAT:
                 mode = ChatAdapter.MODE_APPLICATION;
                 break;
+            case TeambrellaUris.CONVERSATION_CHAT:
+                mode = ChatAdapter.MODE_CONVERSATION;
+                break;
         }
         return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mode, TeambrellaUser.get(getContext()).getUserId());
     }

@@ -310,7 +310,13 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-                request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                switch (mAction) {
+                    case SHOW_CONVERSATION_CHAT:
+                        request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                        break;
+                    default:
+                        request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                }
                 break;
             case R.id.send_image:
                 mImagePicker.startPicking();

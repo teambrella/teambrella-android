@@ -139,4 +139,9 @@ public interface TeambrellaAPI {
     @POST("privatemessage/getChat")
     Observable<Response<JsonObject>> getConversationChat(@Body JsonElement body);
 
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("privatemessage/newMessage")
+    Observable<Response<JsonObject>> newConversationMessage(@Body JsonElement body);
 }

@@ -91,6 +91,7 @@ public class TeambrellaUris {
     public static final int NEW_CHAT = 24;
     public static final int INBOX = 25;
     public static final int CONVERSATION_CHAT = 26;
+    public static final int NEW_PRIVATE_MESSAGE = 27;
 
 
     static {
@@ -120,6 +121,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_NEW_CHAT, NEW_CHAT);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_LIST, INBOX);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_CHAT, CONVERSATION_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_POST, NEW_PRIVATE_MESSAGE);
     }
 
 
@@ -418,6 +420,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
                 .appendEncodedPath(SEGMENT_CHAT)
                 .appendQueryParameter(KEY_ID, userId)
+                .build();
+    }
+
+    public static Uri getNewConversationMessage(String userId, String text) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_NEW_POST)
+                .appendQueryParameter(KEY_ID, userId)
+                .appendQueryParameter(KEY_MESSAGE, text)
                 .build();
     }
 

@@ -43,6 +43,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
     static final int MODE_CLAIM = 1;
     static final int MODE_APPLICATION = 2;
     static final int MODE_DISCUSSION = 3;
+    static final int MODE_CONVERSATION = 4;
 
     private final int mTeamId;
     private final int mMode;
@@ -199,6 +200,12 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         mVote.setText(itemView.getContext().getString(R.string.application_chat_vote, vote));
                     } else {
                         mVote.setText(R.string.chat_not_voted_yet);
+                    }
+                    break;
+                case MODE_CONVERSATION:
+                    mVote.setVisibility(View.INVISIBLE);
+                    if (mUserPicture != null) {
+                        mUserPicture.setVisibility(View.GONE);
                     }
                     break;
             }
