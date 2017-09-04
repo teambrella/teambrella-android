@@ -28,7 +28,6 @@ import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
-import com.teambrella.android.ui.chat.inbox.ConversationDataPagerFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -427,10 +426,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case DATA_FRAGMENT_TAG:
-                switch (mAction) {
-                    case SHOW_CONVERSATION_CHAT:
-                        return ChatPagerFragment.getInstance(mUri, null, ConversationDataPagerFragment.class);
-                }
                 return ChatPagerFragment.getInstance(mUri, null, ChatPagerFragment.class);
         }
         return null;
