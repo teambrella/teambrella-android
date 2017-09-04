@@ -171,11 +171,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             case HOME_TAG:
                 return ADataFragment.getInstance(HOME_DATA_TAG, HomeFragment.class);
             case TEAM_TAG:
-                return TeamFragment.getInstance(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
+                return ADataFragment.getInstance(HOME_DATA_TAG, TeamFragment.class);
             case PROFILE_TAG:
-                return new UserFragment();
+                return ADataFragment.getInstance(HOME_DATA_TAG, UserFragment.class);
             case PROXIES_TAG:
-                return new ProxiesFragment();
+                return ADataFragment.getInstance(HOME_DATA_TAG, ProxiesFragment.class);
             default:
                 throw new RuntimeException("unknown tag " + tag);
         }
