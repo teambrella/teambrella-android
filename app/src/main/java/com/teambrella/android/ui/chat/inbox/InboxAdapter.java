@@ -15,6 +15,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -78,6 +79,10 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
             mUnreadCount.setText(item.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
             mUnreadCount.setVisibility(item.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE);
             mWhen.setText(TeambrellaDateUtils.getRelativeTime(-item.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES, 0)));
+
+            itemView.setOnClickListener(v -> ChatActivity.startConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
+                    , item.getString(TeambrellaModel.ATTR_DATA_NAME)
+                    , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR))));
         }
     }
 }
