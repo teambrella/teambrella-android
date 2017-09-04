@@ -74,6 +74,7 @@ public class HomeFragment extends AMainLandingFragment {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
+        super.onDataUpdated(notification);
         mSwipeRefreshLayout.removeCallbacks(mRefreshingRunnable);
         mSwipeRefreshLayout.setRefreshing(false);
         if (notification.isOnError()) {
