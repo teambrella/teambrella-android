@@ -241,6 +241,21 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     }
 
                     break;
+
+                case SHOW_CONVERSATION_CHAT:
+
+                    if (mTitle != null) {
+                        mTitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
+                    }
+
+                    if (mImageUri != null && mIcon != null) {
+                        mPicasso.load(mImageUri)
+                                .transform(new CropCircleTransformation())
+                                .into(mIcon);
+
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
+                    }
+                    break;
             }
         }
 
