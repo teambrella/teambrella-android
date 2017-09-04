@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +45,21 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
 
         mTitle = view.findViewById(R.id.title);
         mUnreadCount = view.findViewById(R.id.unread_count);
+
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.getMenu().add(0, R.id.exit, 0, "Exit");
+        toolbar.setOverflowIcon(getContext().getResources().getDrawable(R.drawable.ic_more_vert));
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.exit:
+                    TeambrellaUser.get(getContext()).setPrivateKey(null);
+                    getActivity().finish();
+                    startActivity(new Intent(getContext(), WelcomeActivity.class));
+            }
+            return true;
+        });
+
 
         view.findViewById(R.id.inbox).setOnClickListener(v -> startActivity(new Intent(getContext(), InboxActivity.class)));
     }
