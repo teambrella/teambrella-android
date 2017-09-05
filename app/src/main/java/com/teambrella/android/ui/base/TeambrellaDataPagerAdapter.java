@@ -1,8 +1,10 @@
 package com.teambrella.android.ui.base;
 
+import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +36,9 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     public static final int VIEW_TYPE_BOTTOM = 3;
 
-    public static final int VIEW_TYPE_REGULAR = 4;
+    public static final int VIEW_TYPE_EMPTY = 4;
+
+    public static final int VIEW_TYPE_REGULAR = 5;
 
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
@@ -43,20 +47,25 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     @Override
     public int getItemViewType(int position) {
+        int count = mPager.getLoadedData().size();
 
-        int size = mPager.getLoadedData().size() + getHeadersCount();
+        if (count > 0) {
+            int size = mPager.getLoadedData().size() + getHeadersCount();
 
-        if (position == size) {
-            if (mPager.hasNextError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext()) {
-                return VIEW_TYPE_LOADING;
-            } else {
-                return VIEW_TYPE_BOTTOM;
+            if (position == size) {
+                if (mPager.hasNextError()) {
+                    return VIEW_TYPE_ERROR;
+                } else if (mPager.hasNext()) {
+                    return VIEW_TYPE_LOADING;
+                } else {
+                    return VIEW_TYPE_BOTTOM;
+                }
             }
-        }
 
-        return VIEW_TYPE_REGULAR;
+            return VIEW_TYPE_REGULAR;
+        } else {
+            return VIEW_TYPE_EMPTY;
+        }
     }
 
     public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -80,6 +89,8 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                 return new ErrorViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
             case VIEW_TYPE_BOTTOM:
                 return new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
+            case VIEW_TYPE_EMPTY:
+                return createEmptyViewHolder(parent);
         }
         return null;
     }
@@ -107,8 +118,16 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     @Override
     public int getItemCount() {
-        return mPager.getLoadedData().size() + getHeadersCount()
-                + 1;
+        if (mPager.getLoadedData().size() > 0) {
+            return mPager.getLoadedData().size() + getHeadersCount()
+                    + 1;
+        } else {
+            return 1;
+        }
+    }
+
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, -1);
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
@@ -177,8 +196,17 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                     item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
 
         }
+    }
 
 
+    protected static class DefaultEmptyViewHolder extends RecyclerView.ViewHolder {
+        public DefaultEmptyViewHolder(Context context, ViewGroup parent, @StringRes int text) {
+            super(LayoutInflater.from(context).inflate(R.layout.list_item_empty, parent, false));
+            if (text > 0) {
+                TextView prompt = itemView.findViewById(R.id.prompt);
+                prompt.setText(Html.fromHtml(context.getString(text)));
+            }
+        }
     }
 
 }
