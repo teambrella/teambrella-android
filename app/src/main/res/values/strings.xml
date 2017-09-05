@@ -167,4 +167,5 @@
     <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
     <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
     <string name="inbox">Inbox</string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
 </resources>
