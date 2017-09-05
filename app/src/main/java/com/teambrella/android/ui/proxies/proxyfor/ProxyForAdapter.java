@@ -77,19 +77,26 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
 
     @Override
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.proxies_for_empty_prompt);
+    }
+
+    @Override
     public int getItemViewType(int position) {
-        switch (position) {
-            case 0:
-                return VIEW_TYPE_COMMISSION;
-            case 1:
-                return VIEW_TYPE_HEADER;
-            default:
-                int viewType = super.getItemViewType(position);
-                if (viewType == VIEW_TYPE_REGULAR) {
+        int viewType = super.getItemViewType(position);
+        if (viewType == VIEW_TYPE_REGULAR) {
+            switch (position) {
+                case 0:
+                    viewType = VIEW_TYPE_COMMISSION;
+                    break;
+                case 1:
+                    viewType = VIEW_TYPE_HEADER;
+                    break;
+                default:
                     viewType = VIEW_TYPE_TEAMMATES;
-                }
-                return viewType;
+            }
         }
+        return viewType;
     }
 
 

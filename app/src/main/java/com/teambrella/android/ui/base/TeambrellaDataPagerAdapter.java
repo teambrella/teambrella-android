@@ -48,10 +48,8 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     @Override
     public int getItemViewType(int position) {
         int count = mPager.getLoadedData().size();
-
         if (count > 0) {
             int size = mPager.getLoadedData().size() + getHeadersCount();
-
             if (position == size) {
                 if (mPager.hasNextError()) {
                     return VIEW_TYPE_ERROR;
@@ -61,7 +59,6 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                     return VIEW_TYPE_BOTTOM;
                 }
             }
-
             return VIEW_TYPE_REGULAR;
         } else {
             return VIEW_TYPE_EMPTY;
@@ -102,6 +99,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             mPager.loadNext(false);
         }
 
+
         if (holder instanceof ErrorViewHolder) {
             holder.itemView.setOnClickListener(v -> {
                 mPager.loadNext(false);
@@ -119,8 +117,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     @Override
     public int getItemCount() {
         if (mPager.getLoadedData().size() > 0) {
-            return mPager.getLoadedData().size() + getHeadersCount()
-                    + 1;
+            return mPager.getLoadedData().size() + getHeadersCount() + 1;
         } else {
             return 1;
         }
