@@ -13,7 +13,6 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 
 /**
@@ -22,23 +21,31 @@ import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 public class ClaimsActivity extends ADataHostActivity {
 
     private static final String EXTRA_URI = "uri";
+    private static final String EXTRA_TEAM_ID = "teamId";
+    private static final String EXTRA_TEAMMATE_ID = "teammateId";
+    private static final String EXTRA_CURRENCY = "currency";
     private static final String CLAIMS_DATA_TAG = "claims_data_tag";
     private static final String CLAIMS_UI_TAG = "claims_ui_tag";
 
 
     private Uri mUri;
 
-    public static Intent getLaunchIntent(Context context, int teamId, int teammateId) {
-        return new Intent(context, ClaimsActivity.class).putExtra(EXTRA_URI, TeambrellaUris.getClaimsUri(teamId, teammateId));
+    public static Intent getLaunchIntent(Context context, int teamId, int teammateId, String currency) {
+        return new Intent(context, ClaimsActivity.class)
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_TEAMMATE_ID, teammateId)
+                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_URI, TeambrellaUris.getClaimsUri(teamId, teammateId));
     }
 
-    public static void start(Context context, int teamId, int teammateId) {
-        context.startActivity(new Intent(context, ClaimsActivity.class).putExtra(EXTRA_URI, TeambrellaUris.getClaimsUri(teamId, teammateId)));
+    public static void start(Context context, int teamId, int teammateId, String currency) {
+        context.startActivity(getLaunchIntent(context, teamId, teammateId, currency));
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mUri = getIntent().getParcelableExtra(EXTRA_URI);
+        Intent intent = getIntent();
+        mUri = intent.getParcelableExtra(EXTRA_URI);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_fragment);
         ActionBar actionBar = getSupportActionBar();
@@ -48,7 +55,7 @@ public class ClaimsActivity extends ADataHostActivity {
         }
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.container, ADataPagerProgressFragment.getInstance(CLAIMS_DATA_TAG, ClaimsFragment.class), CLAIMS_UI_TAG)
+                .add(R.id.container, ClaimsFragment.getInstance(CLAIMS_DATA_TAG, intent.getIntExtra(EXTRA_TEAM_ID, 0), intent.getStringExtra(EXTRA_CURRENCY)), CLAIMS_UI_TAG)
                 .commit();
     }
 

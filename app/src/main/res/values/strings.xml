@@ -169,4 +169,5 @@
     <string name="inbox">Inbox</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>
+    <string name="private_conversation">Private Conversation</string>
 </resources>

@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -163,6 +165,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 mTitle = view.findViewById(R.id.title);
                 mSubtitle = view.findViewById(R.id.subtitle);
                 mIcon = view.findViewById(R.id.icon);
+                Toolbar parent = (Toolbar) view.getParent();
+                parent.setPadding(0, 0, 0, 0);
+                parent.setContentInsetsAbsolute(0, 0);
             } else {
                 setTitle(intent.getStringExtra(EXTRA_TITLE));
             }
@@ -245,7 +250,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case SHOW_CONVERSATION_CHAT:
 
                     if (mTitle != null) {
-                        mTitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
+                        mTitle.setText(R.string.private_conversation);
+                    }
+                    
+                    if (mSubtitle != null) {
+                        mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
                     }
 
                     if (mImageUri != null && mIcon != null) {
@@ -312,7 +321,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             case R.id.send_text:
                 switch (mAction) {
                     case SHOW_CONVERSATION_CHAT:
-                        request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                        String text = mMessageView.getText().toString().trim();
+                        if (!TextUtils.isEmpty(text)) {
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                        }
+                        mMessageView.setText(null);
                         break;
                     default:
                         request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
