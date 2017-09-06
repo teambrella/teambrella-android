@@ -158,5 +158,9 @@
 
     <!-- -->
     <string name="fund_wallet">Fund the wallet to increase</string>
+    <string name="notification_claim_header">Nueva reclamación en %1$s</string>
+    <string name="notification_claim_text">%1$s para %2$s</string>
+    <string name="notification_messages_since">%d nuevos mensajes</string>
+    <string name="notification_funded_header">Tu monedero está financiado</string>
 
 </resources>

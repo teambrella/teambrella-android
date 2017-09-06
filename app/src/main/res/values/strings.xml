@@ -112,7 +112,7 @@
     <string name="decision_generous">generous</string>
 
 
-    <string name="discussion_quite">quite</string>
+    <string name="discussion_quite">quiet</string>
     <string name="discussion_reserved">reserved</string>
     <string name="discussion_moderate">moderate</string>
     <string name="discussion_sociable">sociable</string>
@@ -166,4 +166,8 @@
     <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
     <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
     <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
+    <string name="notification_claim_header">New claim in %1$s</string>
+    <string name="notification_claim_text">%1$s for %2$s</string>
+    <string name="notification_messages_since">%d new messages</string>
+    <string name="notification_funded_header">You wallet is funded</string>
 </resources>
