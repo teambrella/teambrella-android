@@ -43,6 +43,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String EXTRA_MODEL = "model";
     private static final String EXTRA_TEAM_ID = "team_id";
     private static final String EXTRA_CURRENCY = "currency";
+    private static final String EXTRA_CLAIM_ID = "claimId";
 
 
     private Disposable mDisposal;
@@ -50,7 +51,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     private int mClaimId;
     private String mCurrency;
-
+    private int mTeamId;
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
@@ -62,6 +63,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         return new Intent(context, ClaimActivity.class)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimUri(id))
                 .putExtra(EXTRA_MODEL, model)
+                .putExtra(EXTRA_CLAIM_ID, id)
                 .putExtra(EXTRA_TEAM_ID, teamId);
     }
 
@@ -72,7 +74,10 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mCurrency = getIntent().getStringExtra(EXTRA_CURRENCY);
+        final Intent intent = getIntent();
+        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
+        mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, -1);
+        mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -196,6 +201,16 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
             mSnackBar.show();
         }
+    }
+
+    @Override
+    public int getClaimId() {
+        return mClaimId;
+    }
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
     }
 
     protected void onDataUpdated(Notification<JsonObject> notification) {

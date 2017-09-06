@@ -67,6 +67,9 @@
         <activity
             android:name=".ui.chat.inbox.InboxActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.votes.AllVotesActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"

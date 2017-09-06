@@ -283,6 +283,18 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 break;
+            case TeambrellaUris.APPLICATION_VOTES:
+                String teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                String teammateIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAMMATE_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID, Integer.parseInt(teammateIdString));
+                break;
+            case TeambrellaUris.CLAIMS_VOTES:
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                String claimIdString = uri.getQueryParameter(TeambrellaUris.KEY_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(claimIdString));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -352,6 +364,10 @@ public class TeambrellaServer {
                 return mAPI.getConversationChat(requestBody);
             case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                 return mAPI.newConversationMessage(requestBody);
+            case TeambrellaUris.APPLICATION_VOTES:
+                return mAPI.getApplicationVotes(requestBody);
+            case TeambrellaUris.CLAIMS_VOTES:
+                return mAPI.getClaimVotes(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

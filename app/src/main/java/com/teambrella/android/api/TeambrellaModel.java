@@ -148,7 +148,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TITLE = "Title";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
-    public static final String ATTR_REQUEST_CLAIM_ID = "claimId";
+    public static final String ATTR_REQUEST_CLAIM_ID = "ClaimId";
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
     public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
@@ -252,7 +252,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";
     public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";
-
+    public static final String ATTT_DATA_VOTERS = "Voters";
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
     public static final String ATTR_DATA_ONE_BASIC = "BasicPart";

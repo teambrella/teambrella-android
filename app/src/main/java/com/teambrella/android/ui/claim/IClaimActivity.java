@@ -17,4 +17,8 @@ public interface IClaimActivity extends IDataHost {
 
     void showSnackBar(@StringRes int text);
 
+    int getClaimId();
+
+    int getTeamId();
+
 }

@@ -18,6 +18,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -148,6 +149,9 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                     mProxyAvatar.setVisibility(View.INVISIBLE);
                     mRestVoteButton.setVisibility(yourVote > 0 ? View.VISIBLE : View.INVISIBLE);
                 }
+
+
+                mAvatarWidgets.setOnClickListener(view -> AllVotesActivity.startClaimAllVotes(view.getContext(), mDataHost.getTeamId(), mDataHost.getClaimId()));
             }
 
         }

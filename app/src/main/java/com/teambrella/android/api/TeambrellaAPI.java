@@ -144,4 +144,16 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("privatemessage/newMessage")
     Observable<Response<JsonObject>> newConversationMessage(@Body JsonElement body);
+
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("teammate/getAllVotesList")
+    Observable<Response<JsonObject>> getApplicationVotes(@Body JsonElement body);
+
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("claim/getAllVotesList")
+    Observable<Response<JsonObject>> getClaimVotes(@Body JsonElement body);
 }
