@@ -112,7 +112,7 @@
     <string name="decision_generous">generous</string>
 
 
-    <string name="discussion_quite">quiet</string>
+    <string name="discussion_quite">quite</string>
     <string name="discussion_reserved">reserved</string>
     <string name="discussion_moderate">moderate</string>
     <string name="discussion_sociable">sociable</string>
@@ -170,4 +170,11 @@
     <string name="notification_claim_text">%1$s for %2$s</string>
     <string name="notification_messages_since">%d new messages</string>
     <string name="notification_funded_header">You wallet is funded</string>
+    <string name="inbox">Inbox</string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
+    <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>
+    <string name="private_conversation">Private Conversation</string>
+    <string name="ends_in">Ends %s</string>
+    <string name="ended_ago">Ended %s</string>
+    <string name="declined">Declined</string>
 </resources>
