@@ -49,6 +49,10 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+    @Override
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.my_proxies_empty_prompt);
+    }
 
     @SuppressLint("SetTextI18n")
     @Override

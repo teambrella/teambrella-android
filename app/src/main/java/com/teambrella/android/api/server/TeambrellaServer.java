@@ -272,10 +272,22 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TITLE, uri.getQueryParameter(TeambrellaUris.KEY_TITLE));
                 break;
+            case TeambrellaUris.CONVERSATION_CHAT:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                sinceParam = uri.getQueryParameter(TeambrellaUris.KEY_SINCE);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SINCE, sinceParam != null ? Long.parseLong(sinceParam) : null);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                break;
+            case TeambrellaUris.NEW_PRIVATE_MESSAGE:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
             case TeambrellaUris.NEW_FILE:
+            case TeambrellaUris.INBOX:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -334,6 +346,12 @@ public class TeambrellaServer {
                 return mAPI.newClaim(requestBody);
             case TeambrellaUris.NEW_CHAT:
                 return mAPI.newChat(requestBody);
+            case TeambrellaUris.INBOX:
+                return mAPI.getInbox(requestBody);
+            case TeambrellaUris.CONVERSATION_CHAT:
+                return mAPI.getConversationChat(requestBody);
+            case TeambrellaUris.NEW_PRIVATE_MESSAGE:
+                return mAPI.newConversationMessage(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

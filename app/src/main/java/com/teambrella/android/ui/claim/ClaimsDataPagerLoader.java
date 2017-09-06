@@ -69,7 +69,6 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_VOTING);
                     mVotingClaims.add(element);
                     break;
-                case TeambrellaModel.ClaimStates.DECLINED:
                 case TeambrellaModel.ClaimStates.VOTED:
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_VOTED);
                     mVotedClaims.add(element);
@@ -79,6 +78,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
                     mProcessingClaims.add(element);
                     break;
                 case TeambrellaModel.ClaimStates.PROCESSEED:
+                case TeambrellaModel.ClaimStates.DECLINED:
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED);
                     mProcessedClaims.add(element);
                     break;
@@ -130,7 +130,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
                     if (mProcessedClaims.size() > 1) {
-                        mArray.addAll(mProcessingClaims);
+                        mArray.addAll(mProcessedClaims);
                         mProcessedClaims = new JsonArray();
                     }
                     break;

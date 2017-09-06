@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -9,25 +8,20 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.IMainDataHost;
-import com.teambrella.android.ui.TeambrellaUser;
-import com.teambrella.android.ui.WelcomeActivity;
+import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
 /**
  * Home Fragment
  */
-public class HomeFragment extends ADataFragment<IMainDataHost> {
+public class HomeFragment extends AMainLandingFragment {
 
     private static final String CARDS_FRAGMENT_TAG = "cards";
     private static final String COVERAGE_FRAGMENT_TAG = "coverage";
@@ -44,23 +38,6 @@ public class HomeFragment extends ADataFragment<IMainDataHost> {
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         mSwipeRefreshLayout.setOnRefreshListener(() -> mDataHost.load(mTags[0]));
         mDataHost.load(mTags[0]);
-
-
-        view.findViewById(R.id.exit).setOnClickListener(v -> {
-            TeambrellaUser.get(getContext()).setPrivateKey(null);
-            getActivity().finish();
-            startActivity(new Intent(getContext(), WelcomeActivity.class));
-        });
-
-        ImageView teamLogo = view.findViewById(R.id.team_logo);
-
-
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(mDataHost.getTeamLogoUri())
-                .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into(teamLogo);
-
-        teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
-
         return view;
     }
 
@@ -97,6 +74,7 @@ public class HomeFragment extends ADataFragment<IMainDataHost> {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
+        super.onDataUpdated(notification);
         mSwipeRefreshLayout.removeCallbacks(mRefreshingRunnable);
         mSwipeRefreshLayout.setRefreshing(false);
         if (notification.isOnError()) {

@@ -5,37 +5,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/teambrella_main_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/team_logo"
-                android:layout_width="32dp"
-                android:layout_height="32dp" />
+    </FrameLayout>
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/bottom_navigation_team"
-                android:textColor="@android:color/white"
-                android:textSize="17sp" />
-
-
-        </LinearLayout>
-
-
-    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"

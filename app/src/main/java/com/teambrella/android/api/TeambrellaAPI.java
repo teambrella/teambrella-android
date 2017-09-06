@@ -126,4 +126,22 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("feed/newChat")
     Observable<Response<JsonObject>> newChat(@Body JsonElement body);
+
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("privatemessage/getList")
+    Observable<Response<JsonObject>> getInbox(@Body JsonElement body);
+
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("privatemessage/getChat")
+    Observable<Response<JsonObject>> getConversationChat(@Body JsonElement body);
+
+
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("privatemessage/newMessage")
+    Observable<Response<JsonObject>> newConversationMessage(@Body JsonElement body);
 }

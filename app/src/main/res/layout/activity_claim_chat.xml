@@ -21,7 +21,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
-            app:srcCompat="@drawable/ic_insert_photo" />
+            app:srcCompat="@drawable/ic_attachment" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/send_text"
@@ -30,7 +30,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
-            app:srcCompat="@drawable/ic_send" />
+            app:srcCompat="@drawable/ic_sendbutton" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularEditText
             android:id="@+id/text"

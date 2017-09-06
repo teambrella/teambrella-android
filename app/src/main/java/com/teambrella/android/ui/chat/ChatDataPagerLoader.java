@@ -20,13 +20,13 @@ import java.util.Locale;
 /**
  * Claim chat pager loader
  */
-class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
+public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     private static final String SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))";
 
     private static final String LOG_TAG = ChatDataPagerLoader.class.getSimpleName();
 
-    ChatDataPagerLoader(Context context, Uri uri) {
+    public ChatDataPagerLoader(Context context, Uri uri) {
         super(context, uri);
     }
 

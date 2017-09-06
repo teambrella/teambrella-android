@@ -169,7 +169,9 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         JsonArray newData = getPageableData(data);
 
         if (mSince == -1) {
-            mSince = response.getObject(TeambrellaModel.ATTR_DATA).getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getLong(TeambrellaModel.ATTR_DATA_LAST_READ, 0);
+            JsonWrapper dataObject = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper discussionObject = dataObject != null ? dataObject.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION) : null;
+            mSince = discussionObject != null ? discussionObject.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, 0) : 0;
             if (newData.size() == 0) {
                 mHasNext = false;
                 loadPrevious(true);

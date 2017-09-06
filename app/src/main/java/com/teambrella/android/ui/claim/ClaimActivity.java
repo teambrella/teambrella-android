@@ -8,6 +8,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -91,6 +92,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             mTitle = view.findViewById(R.id.title);
             mSubtitle = view.findViewById(R.id.subtitle);
             mIcon = view.findViewById(R.id.icon);
+            Toolbar parent = (Toolbar) view.getParent();
+            parent.setPadding(0, 0, 0, 0);
+            parent.setContentInsetsAbsolute(0, 0);
         }
         setTitle(getIntent().getStringExtra(EXTRA_MODEL));
     }

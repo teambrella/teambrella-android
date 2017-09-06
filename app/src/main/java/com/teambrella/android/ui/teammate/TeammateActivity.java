@@ -2,15 +2,17 @@ package com.teambrella.android.ui.teammate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.text.Spannable;
-import android.text.SpannableString;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -19,10 +21,11 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
-import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
+import com.teambrella.android.ui.chat.ChatActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -48,8 +51,11 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private Disposable mDisposal;
     private int mTeammateId = -1;
     private String mUserId = null;
+    private String mUserName = null;
+    private Uri mAvatar = null;
     private String mCurrency;
     private Snackbar mSnackBar;
+    private TextView mTitleView;
 
 
     public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
@@ -71,6 +77,8 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         mUserId = getIntent().getStringExtra(TEAMMATE_USER_ID);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
+
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT) == null) {
@@ -83,6 +91,22 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
+            actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.teammate_toolbar_view);
+            View customView = actionBar.getCustomView();
+            Toolbar parent = (Toolbar) customView.getParent();
+            parent.setPadding(0, 0, 0, 0);
+            parent.setContentInsetsAbsolute(0, 0);
+            mTitleView = customView.findViewById(R.id.title);
+
+
+            View sendMessageView = customView.findViewById(R.id.send_message);
+            if (TeambrellaUser.get(this).getUserId().equals(mUserId)) {
+                sendMessageView.setVisibility(View.GONE);
+            } else {
+                customView.findViewById(R.id.send_message).setOnClickListener(v ->
+                        ChatActivity.startConversationChat(this, mUserId, mUserName, mAvatar));
+            }
 
         }
         setTitle(getIntent().getStringExtra(TEAMMATE_NAME));
@@ -115,12 +139,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     @Override
     public void setTitle(CharSequence title) {
-        if (title != null) {
-            SpannableString s = new SpannableString(title);
-            s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            super.setTitle(s);
-        }
+        mTitleView.setText(title);
     }
 
 
@@ -214,6 +233,8 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
                     .doOnNext(node -> mTeammateId = node.getInt(TeambrellaModel.ATTR_DATA_ID))
                     .map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
                     .doOnNext(node -> mUserId = node.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                    .doOnNext(node -> mUserName = node.getString(TeambrellaModel.ATTR_DATA_NAME))
+                    .doOnNext(node -> mAvatar = TeambrellaImageLoader.getImageUri(node.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
         }

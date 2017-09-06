@@ -7,28 +7,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
 import com.teambrella.android.ui.user.wallet.WalletFragment;
 
-import jp.wasabeef.picasso.transformations.MaskTransformation;
-
 /**
  * User Fragment
  */
-public class UserFragment extends Fragment {
+public class UserFragment extends AMainLandingFragment {
 
     @Nullable
     @Override
@@ -37,22 +33,8 @@ public class UserFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
         ViewPager pager = view.findViewById(R.id.pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
 
         setTypeface(tabLayout, typeface);
-        setTypeface(toolbar, typeface);
-
-        toolbar.setTitle(R.string.profile);
-
-        IMainDataHost dataHost = (IMainDataHost) getContext();
-
-        ImageView teamLogo = view.findViewById(R.id.team_logo);
-
-
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(dataHost.getTeamLogoUri())
-                .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into(teamLogo);
-
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
@@ -61,7 +43,7 @@ public class UserFragment extends Fragment {
                     case 0:
                         return ADataProgressFragment.getInstance(MainActivity.USER_DATA, TeammateFragment.class);
                     case 1:
-                        return new CoverageFragment();
+                        return ADataFragment.getInstance(MainActivity.HOME_DATA_TAG, CoverageFragment.class);
                     case 2:
                         return new WalletFragment();
                     default:
@@ -92,6 +74,12 @@ public class UserFragment extends Fragment {
         tabLayout.setupWithViewPager(pager);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setTitle(mDataHost.getTeamName());
     }
 
 

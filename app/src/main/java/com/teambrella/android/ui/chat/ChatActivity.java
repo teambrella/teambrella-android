@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -65,6 +67,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
+    private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
 
 
     private Uri mUri;
@@ -125,6 +128,16 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
+    public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
+        context.startActivity(new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .setAction(SHOW_CONVERSATION_CHAT));
+    }
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -152,6 +165,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 mTitle = view.findViewById(R.id.title);
                 mSubtitle = view.findViewById(R.id.subtitle);
                 mIcon = view.findViewById(R.id.icon);
+                Toolbar parent = (Toolbar) view.getParent();
+                parent.setPadding(0, 0, 0, 0);
+                parent.setContentInsetsAbsolute(0, 0);
             } else {
                 setTitle(intent.getStringExtra(EXTRA_TITLE));
             }
@@ -230,6 +246,25 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     }
 
                     break;
+
+                case SHOW_CONVERSATION_CHAT:
+
+                    if (mTitle != null) {
+                        mTitle.setText(R.string.private_conversation);
+                    }
+
+                    if (mSubtitle != null) {
+                        mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
+                    }
+
+                    if (mImageUri != null && mIcon != null) {
+                        mPicasso.load(mImageUri)
+                                .transform(new CropCircleTransformation())
+                                .into(mIcon);
+
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
+                    }
+                    break;
             }
         }
 
@@ -284,7 +319,19 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-                request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+
+                String text = mMessageView.getText().toString().trim();
+                if (!TextUtils.isEmpty(text)) {
+                    request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                    switch (mAction) {
+                        case SHOW_CONVERSATION_CHAT:
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                            break;
+                        default:
+                            request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                    }
+                }
+                mMessageView.setText(null);
                 break;
             case R.id.send_image:
                 mImagePicker.startPicking();

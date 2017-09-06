@@ -136,7 +136,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
                 if (mClaimId > 0) {
                     ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId);
                 } else {
-                    ClaimsActivity.start(getContext(), mTeamId, mTeammateId);
+                    ClaimsActivity.start(getContext(), mTeamId, mTeammateId, mCurrency);
                 }
             });
         }
