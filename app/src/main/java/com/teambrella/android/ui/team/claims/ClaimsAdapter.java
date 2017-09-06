@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.team.claims;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -198,6 +199,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         TextView mProxyName;
         ProgressBar mPaymentProgress;
         View mViewToVote;
+        TextView mResultView;
 
         ClaimViewHolder(View itemView) {
             super(itemView);
@@ -211,6 +213,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mProxyName = itemView.findViewById(R.id.proxy);
             mPaymentProgress = itemView.findViewById(R.id.payment_progress);
             mViewToVote = itemView.findViewById(R.id.view_to_vote);
+            mResultView = itemView.findViewById(R.id.result);
         }
 
 
@@ -274,6 +277,24 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                                 item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             }
+
+            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
+                case TeambrellaModel.ClaimStates.VOTING:
+                case TeambrellaModel.ClaimStates.VOTED:
+                    break;
+                case TeambrellaModel.ClaimStates.IN_PAYMENT:
+                case TeambrellaModel.ClaimStates.PROCESSEED:
+                    mResultView.setText(R.string.claim_reimbursed);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.VISIBLE);
+                    break;
+                case TeambrellaModel.ClaimStates.DECLINED:
+                    mResultView.setText(R.string.declined);
+                    mResultView.setTextColor(Color.RED);
+                    mPaymentProgress.setVisibility(View.INVISIBLE);
+                    break;
+            }
+
         }
     }
 
