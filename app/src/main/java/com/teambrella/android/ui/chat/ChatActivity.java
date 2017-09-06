@@ -252,7 +252,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     if (mTitle != null) {
                         mTitle.setText(R.string.private_conversation);
                     }
-                    
+
                     if (mSubtitle != null) {
                         mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
                     }
@@ -319,17 +319,19 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-                switch (mAction) {
-                    case SHOW_CONVERSATION_CHAT:
-                        String text = mMessageView.getText().toString().trim();
-                        if (!TextUtils.isEmpty(text)) {
+
+                String text = mMessageView.getText().toString().trim();
+                if (!TextUtils.isEmpty(text)) {
+                    request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                    switch (mAction) {
+                        case SHOW_CONVERSATION_CHAT:
                             request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
-                        }
-                        mMessageView.setText(null);
-                        break;
-                    default:
-                        request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                            break;
+                        default:
+                            request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                    }
                 }
+                mMessageView.setText(null);
                 break;
             case R.id.send_image:
                 mImagePicker.startPicking();
