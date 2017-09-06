@@ -173,4 +173,5 @@
     <string name="ends_in">Ends %s</string>
     <string name="ended_ago">Ended %s</string>
     <string name="declined">Declined</string>
+    <string name="all_votes">All Votes</string>
 </resources>
