@@ -75,7 +75,7 @@
     <string name="no_teammate_vote_value">. . .</string>
 
     <string name="wallet">Wallet</string>
-    <string name="submit_another_claim">Submit Claim</string>
+    <string name="submit_another_claim">Submit Another Claim</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
     <string name="your_claim">Your claim</string>
@@ -166,6 +166,10 @@
     <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
     <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
     <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
+    <string name="notification_claim_header">New claim in %1$s</string>
+    <string name="notification_claim_text">%1$s for %2$s</string>
+    <string name="notification_messages_since">%d new messages</string>
+    <string name="notification_funded_header">You wallet is funded</string>
     <string name="inbox">Inbox</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>

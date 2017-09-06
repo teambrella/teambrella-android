@@ -25,8 +25,11 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         super.onAttach(context);
         if (mNewMessageBroadcastReceiver == null) {
             mNewMessageBroadcastReceiver = new NewMessageBroadcastReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(TeambrellaNotificationService.ON_CREATED_POST);
+            intentFilter.addAction(TeambrellaNotificationService.ON_DELETED_POST);
             LocalBroadcastManager.getInstance(context).registerReceiver(mNewMessageBroadcastReceiver
-                    , new IntentFilter(TeambrellaNotificationService.ON_NEW_MESSAGE_RECEIVED));
+                    , intentFilter);
         }
     }
 
