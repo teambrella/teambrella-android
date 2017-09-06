@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -19,7 +20,7 @@ import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 /**
  * All Votes Activity
  */
-public class AllVotesActivity extends ADataHostActivity {
+public class AllVotesActivity extends ADataHostActivity implements IAllVoteActivity {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
     private static final String EXTRA_TEAMMATE_ID = "extra_teammate_id";
@@ -76,6 +77,17 @@ public class AllVotesActivity extends ADataHostActivity {
         }
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected String[] getDataTags() {
         return new String[0];
@@ -99,5 +111,10 @@ public class AllVotesActivity extends ADataHostActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
     }
 }

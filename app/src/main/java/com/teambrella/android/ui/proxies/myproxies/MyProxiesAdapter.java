@@ -72,7 +72,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         private TextView mPosition;
 
         MyProxyViewHolder(View itemView) {
-            super(itemView, mTeamId, mCurrency);
+            super(itemView, mTeamId);
             mLocation = itemView.findViewById(R.id.location);
             mRank = itemView.findViewById(R.id.rank);
             mDecision = itemView.findViewById(R.id.decision_progress);
@@ -82,7 +82,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         }
 
         @SuppressLint("SetTextI18n")
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             super.onBind(item);
             mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION);

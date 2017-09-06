@@ -322,7 +322,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
                 String text = mMessageView.getText().toString().trim();
                 if (!TextUtils.isEmpty(text)) {
-                    request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
                     switch (mAction) {
                         case SHOW_CONVERSATION_CHAT:
                             request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));

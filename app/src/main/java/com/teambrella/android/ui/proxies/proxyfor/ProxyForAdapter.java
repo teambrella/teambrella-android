@@ -122,13 +122,13 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         private TextView mCommission;
 
         ProxyForViewHolder(View itemView) {
-            super(itemView, mTeamId, mCurrency);
+            super(itemView, mTeamId);
             mSubtitle = itemView.findViewById(R.id.subtitle);
             mCommission = itemView.findViewById(R.id.commission);
         }
 
         @Override
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             super.onBind(item);
             mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, "never"));
             mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));

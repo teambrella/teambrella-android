@@ -172,15 +172,14 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         private final ImageView mIcon;
         private final TextView mTitle;
 
-        protected AMemberViewHolder(View itemView, int teamId, String currency) {
+        protected AMemberViewHolder(View itemView, int teamId) {
             super(itemView);
             mTeamId = teamId;
             mIcon = itemView.findViewById(R.id.icon);
             mTitle = itemView.findViewById(R.id.title);
-
         }
 
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
                     .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {

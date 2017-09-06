@@ -93,14 +93,14 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
 
         UserViewHolder(View itemView) {
-            super(itemView, mTeamId, mCurrency);
+            super(itemView, mTeamId);
             mRating = itemView.findViewById(R.id.rating);
             mPosition = itemView.findViewById(R.id.position);
             mOptToRating = itemView.findViewById(R.id.opt_to_rating);
         }
 
         @SuppressLint("SetTextI18n")
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             super.onBind(item);
             int ratingPosition = item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1);
             mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
