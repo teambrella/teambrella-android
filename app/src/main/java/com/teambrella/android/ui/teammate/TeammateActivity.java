@@ -99,8 +99,14 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
             parent.setContentInsetsAbsolute(0, 0);
             mTitleView = customView.findViewById(R.id.title);
 
-            customView.findViewById(R.id.send_message).setOnClickListener(v ->
-                    ChatActivity.startConversationChat(this, mUserId, mUserName, mAvatar));
+
+            View sendMessageView = customView.findViewById(R.id.send_message);
+            if (TeambrellaUser.get(this).getUserId().equals(mUserId)) {
+                sendMessageView.setVisibility(View.GONE);
+            } else {
+                customView.findViewById(R.id.send_message).setOnClickListener(v ->
+                        ChatActivity.startConversationChat(this, mUserId, mUserName, mAvatar));
+            }
 
         }
         setTitle(getIntent().getStringExtra(TEAMMATE_NAME));

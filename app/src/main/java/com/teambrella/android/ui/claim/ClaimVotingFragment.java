@@ -95,21 +95,40 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
             if (voting != null) {
 
-                float teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, 0);
-                float yourVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, 0);
+                float teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED, -1);
+                float yourVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1);
                 String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
                 String proxyAvatar = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR);
 
-                mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
-                mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
-                mVotingControl.setProgress((int) (yourVote * 100));
-                AmountCurrencyUtil.setAmount(mTeamVoteCurrency, mClaimAmount * teamVote, mCurrency);
-                AmountCurrencyUtil.setAmount(mYourVoteCurrency, mClaimAmount * yourVote, mCurrency);
+
+                if (teamVote >= 0) {
+                    mTeamVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (teamVote * 100))));
+                    AmountCurrencyUtil.setAmount(mTeamVoteCurrency, mClaimAmount * teamVote, mCurrency);
+                    mTeamVoteCurrency.setVisibility(View.VISIBLE);
+
+                } else {
+                    mTeamVotePercents.setText(R.string.no_teammate_vote_value);
+                    mTeamVoteCurrency.setVisibility(View.INVISIBLE);
+                }
+
+
+                if (yourVote >= 0) {
+                    mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (yourVote * 100))));
+                    mVotingControl.setProgress((int) (yourVote * 100));
+                    AmountCurrencyUtil.setAmount(mYourVoteCurrency, mClaimAmount * yourVote, mCurrency);
+                    mYourVoteCurrency.setVisibility(View.VISIBLE);
+                } else {
+                    mYourVotePercents.setText(R.string.no_teammate_vote_value);
+                    mYourVoteCurrency.setVisibility(View.INVISIBLE);
+                    mVotingControl.setProgress(0);
+                }
+
+
                 mYourVotePercents.setAlpha(1f);
                 mYourVoteCurrency.setAlpha(1f);
                 mRestVoteButton.setAlpha(1f);
 
-                mWhen.setText(TeambrellaDateUtils.getRelativeTime(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)));
+                mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTime(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
 
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
@@ -137,9 +156,9 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, progress)));
-        AmountCurrencyUtil.setAmount(mYourVoteCurrency, (mClaimAmount * progress) / 100, "USD");
         if (fromUser) {
+            mYourVotePercents.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, progress)));
+            AmountCurrencyUtil.setAmount(mYourVoteCurrency, (mClaimAmount * progress) / 100, mCurrency);
             mYourVotePercents.setAlpha(0.3f);
             mYourVoteCurrency.setAlpha(0.3f);
             mRestVoteButton.setAlpha(0.3f);
