@@ -454,7 +454,7 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_TEAMMATE)
                 .appendEncodedPath(SEGMENT_VOTES)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
-                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
                 .build();
     }
 

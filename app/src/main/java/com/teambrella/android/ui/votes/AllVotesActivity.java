@@ -42,7 +42,7 @@ public class AllVotesActivity extends ADataHostActivity implements IAllVoteActiv
                 .putExtra(EXTRA_URI, TeambrellaUris.getAllVotesForClaim(teamId, claimId)));
     }
 
-    public static void startTeamamteAllVotes(Context context, int teamId, int teammateId) {
+    public static void startTeammateAllVotes(Context context, int teamId, int teammateId) {
         context.startActivity(new Intent(context, AllVotesActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_TEAMMATE_ID, teammateId)
@@ -107,7 +107,7 @@ public class AllVotesActivity extends ADataHostActivity implements IAllVoteActiv
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case ALL_VOTES_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(mUri, TeambrellaModel.ATTT_DATA_VOTERS, TeambrellaDataPagerFragment.class);
+                return TeambrellaDataPagerFragment.getInstance(mUri, TeambrellaModel.ATTR_DATA_VOTERS, TeambrellaDataPagerFragment.class);
         }
 
         return null;
@@ -116,5 +116,11 @@ public class AllVotesActivity extends ADataHostActivity implements IAllVoteActiv
     @Override
     public int getTeamId() {
         return mTeamId;
+    }
+
+
+    @Override
+    public Uri getUri() {
+        return mUri;
     }
 }

@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
+import com.teambrella.android.ui.votes.AllVotesActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -41,6 +43,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private static final String TEAMMATE_PICTURE = "teammate_picture";
     private static final String TEAMMATE_USER_ID = "teammate_user_id";
     private static final String CURRENCY = "currency";
+    private static final String TEAM_ID = "team_id";
 
     private static final String DATA_FRAGMENT = "data";
     private static final String VOTE_FRAGMENT = "vote";
@@ -52,6 +55,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private int mTeammateId = -1;
     private String mUserId = null;
     private String mUserName = null;
+    private int mTeamId;
     private Uri mAvatar = null;
     private String mCurrency;
     private Snackbar mSnackBar;
@@ -63,6 +67,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
                 .putExtra(TEAMMATE_USER_ID, userId)
                 .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
                 .putExtra(TEAMMATE_NAME, name)
+                .putExtra(TEAM_ID, teamId)
                 .putExtra(TEAMMATE_PICTURE, userPictureUri);
     }
 
@@ -75,6 +80,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mCurrency = getIntent().getStringExtra(CURRENCY);
         mUserId = getIntent().getStringExtra(TEAMMATE_USER_ID);
+        mTeamId = getIntent().getIntExtra(TEAM_ID, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
 
@@ -126,11 +132,21 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         }
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.votes, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.votes:
+                AllVotesActivity.startTeammateAllVotes(this, mTeamId, mTeammateId);
                 return true;
         }
         return super.onOptionsItemSelected(item);

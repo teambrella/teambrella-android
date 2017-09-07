@@ -179,4 +179,5 @@
     <string name="declined">Declined</string>
     <string name="all_votes">All Votes</string>
     <string name="weight_format_string"><![CDATA[Weight <b>%.1f</b>]]></string>
+    <string name="votes">Votes</string>
 </resources>
