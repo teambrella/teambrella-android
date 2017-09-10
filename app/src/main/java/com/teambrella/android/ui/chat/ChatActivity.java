@@ -365,7 +365,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     request(TeambrellaUris.getNewPostUri(mTopicId, null, array.toString()));
                     break;
                 case TeambrellaUris.NEW_POST:
-                    mMessageView.setText(null);
+                case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                     getPager(DATA_FRAGMENT_TAG).loadNext(true);
                     break;
             }

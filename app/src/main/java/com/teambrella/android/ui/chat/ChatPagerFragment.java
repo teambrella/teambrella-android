@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.data.base.IDataPager;
@@ -28,7 +27,8 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(TeambrellaNotificationService.ON_CREATED_POST);
             intentFilter.addAction(TeambrellaNotificationService.ON_DELETED_POST);
-            LocalBroadcastManager.getInstance(context).registerReceiver(mNewMessageBroadcastReceiver
+            intentFilter.addAction(TeambrellaNotificationService.ON_PRIVATE_MSG);
+            context.registerReceiver(mNewMessageBroadcastReceiver
                     , intentFilter);
         }
     }
@@ -42,7 +42,7 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
     @Override
     public void onDetach() {
         if (getActivity().isFinishing()) {
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mNewMessageBroadcastReceiver);
+            getContext().unregisterReceiver(mNewMessageBroadcastReceiver);
         }
         super.onDetach();
     }

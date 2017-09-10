@@ -2,22 +2,14 @@ package com.teambrella.android.services;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.teambrella.android.R;
@@ -59,7 +51,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     public static final String EXTRA_FIAT_AMOUNT = "EXTRA_FIAT_AMOUNT";
 
 
-
     public static final String ON_CREATED_POST = "ON_CREATED_POST";
     public static final String ON_DELETED_POST = "ON_DELETED_POST";
     public static final String ON_TYPING = "ON_TYPING";
@@ -88,8 +79,14 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             }
         }
 
-        NotificationTypes(int id) { this.id = id; }
-        public int getValue() { return id; }
+        NotificationTypes(int id) {
+            this.id = id;
+        }
+
+        public int getValue() {
+            return id;
+        }
+
         public static NotificationTypes valueOf(int id) {
             return map.get(id);
         }
@@ -147,7 +144,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         Intent intent = null;
 
         NotificationTypes type = NotificationTypes.valueOf(Integer.parseInt(messageParts[0]));
-        switch (type){
+        switch (type) {
             case CREATED_POST:
                 intent = new Intent(ON_CREATED_POST);
                 break;
@@ -196,7 +193,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 break;
         }
 
-        sendOrderedBroadcast(intent,null, new BroadcastReceiver() {
+        sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.e(LOG_TAG, "on last recieve");
@@ -252,7 +249,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                         intent.getIntExtra(EXTRA_TEAM_ID, 0));
 
                 mBuilder.setContentTitle(getString(R.string.notification_funded_header));
-                mBuilder.setContentText("+ " + intent.getStringExtra(EXTRA_FIAT_AMOUNT)+ "mETH");
+                mBuilder.setContentText("+ " + intent.getStringExtra(EXTRA_FIAT_AMOUNT) + "mETH");
                 mNotificationId = 3;
                 break;
 
@@ -261,18 +258,18 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 break;
         }
 
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-        Notification notification = mBuilder.build();
-        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, notification);
+//        PendingIntent resultPendingIntent =
+//                PendingIntent.getActivity(
+//                        this,
+//                        0,
+//                        resultIntent,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//
+//        mBuilder.setContentIntent(resultPendingIntent);
+//        Notification notification = mBuilder.build();
+//        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        mNotifyMgr.notify(mNotificationId, notification);
     }
 
     @Override
