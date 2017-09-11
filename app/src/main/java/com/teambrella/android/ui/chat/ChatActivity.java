@@ -28,6 +28,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
@@ -88,9 +89,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
-
     private Picasso mPicasso;
-
+    private ChatNotificationClient mClient;
 
     public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
@@ -280,6 +280,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 }
                 break;
         }
+
+
+        mClient = new ChatNotificationClient(this);
+        mClient.connect();
     }
 
     @Override
@@ -314,6 +318,13 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         }
 
         mChatDisposable = null;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mClient.disconnect();
     }
 
     private void onClick(View v) {
@@ -472,5 +483,39 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         super.setTitle(s);
+    }
+
+
+    private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
+
+        ChatNotificationClient(Context context) {
+            super(context);
+        }
+
+
+        @Override
+        public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
+            if (mAction.equals(SHOW_CONVERSATION_CHAT)
+                    && userId.equals(mUserId)) {
+                getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onPostCreated(int teamId, int teammateId, String topicId, String postId, String name, String avatar, String text) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                case SHOW_FEED_CHAT_ACTION:
+                case SHOW_TEAMMATE_CHAT_ACTION:
+                    if (topicId.equals(mTopicId)) {
+                        getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                        return true;
+                    }
+            }
+            return false;
+        }
     }
 }
