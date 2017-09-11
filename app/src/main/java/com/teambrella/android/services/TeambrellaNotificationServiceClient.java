@@ -51,6 +51,9 @@ public class TeambrellaNotificationServiceClient implements TeambrellaNotificati
         } else if (mState == State.CONNECTING) {
             mState = State.DISCONNECTED;
         }
+        if (mBinder != null) {
+            mBinder.unregisterListener(this);
+        }
     }
 
     @Override

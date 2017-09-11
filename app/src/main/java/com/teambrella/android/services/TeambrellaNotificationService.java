@@ -2,9 +2,14 @@ package com.teambrella.android.services;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -14,6 +19,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -122,6 +128,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
     private TeambrellaServer.TeambrellaSocketClient mTeambrellaSocketClient;
+    private int mTeamId;
 
 
     @Nullable
@@ -205,34 +212,53 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mConnectivityBroadcastReceiver, filter);
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(mConnectivityBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : null;
 
         if (action != null) {
             switch (action) {
                 case CONNECT_ACTION:
-                    URI uri = URI.create(new Uri.Builder()
-                            .scheme("wss")
-                            .authority("surilla.com")
-                            .appendEncodedPath("wshandler.ashx")
-                            .build().toString());
-                    mTeambrellaSocketClient = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey())
-                            .createSocketClient(uri, intent.getIntExtra(EXTRA_TEAM_ID, 0), this);
-                    mTeambrellaSocketClient.connect();
+                    if (mTeambrellaSocketClient == null) {
+                        URI uri = URI.create(new Uri.Builder()
+                                .scheme("wss")
+                                .authority("surilla.com")
+                                .appendEncodedPath("wshandler.ashx")
+                                .build().toString());
+                        mTeambrellaSocketClient = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey())
+                                .createSocketClient(uri, intent.getIntExtra(EXTRA_TEAM_ID, 0), this);
+                        mTeambrellaSocketClient.connect();
+                        mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
+                    }
                     return START_STICKY;
                 case STOP_ACTION:
                     if (mTeambrellaSocketClient != null) {
                         mTeambrellaSocketClient.close();
+                        mTeambrellaSocketClient = null;
                     }
                     stopSelf();
                     return START_NOT_STICKY;
 
-                case MESSAGE_ACTION:
-                    String message = intent.getStringExtra(EXTRA_MESSAGE);
-                    onMessage(message);
-                    Log.e("TEST", message);
-                    return START_STICKY;
-
+//                case MESSAGE_ACTION:
+//                    String message = intent.getStringExtra(EXTRA_MESSAGE);
+//                    onMessage(message);
+//                    Log.e("TEST", message);
+//                    return START_STICKY;
+                case Intent.ACTION_BOOT_COMPLETED:
+                    Log.e(LOG_TAG, "boot complete");
             }
         }
 
@@ -242,6 +268,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     @Override
     public void onMessage(String message) {
+        Log.e(LOG_TAG, message);
         String messageParts[] = message.split(";");
         Intent intent = null;
 
@@ -412,15 +439,46 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 //        mNotifyMgr.notify(mNotificationId, notification);
     }
 
+
+    @Override
+    public void onOpen() {
+        Log.e(LOG_TAG, "on Open");
+    }
+
     @Override
     public void onClose(int code, String reason, boolean remote) {
         Log.e(LOG_TAG, "on close " + reason);
+        if (mTeambrellaSocketClient != null) {
+            mTeambrellaSocketClient = null;
+        }
     }
 
     @Override
     public void onError(Exception ex) {
-        Log.e(LOG_TAG, "on error");
+        Log.e(LOG_TAG, "on error " + ex.getMessage());
+        if (mTeambrellaSocketClient != null) {
+            mTeambrellaSocketClient.close();
+            mTeambrellaSocketClient = null;
+        }
     }
+
+
+    private BroadcastReceiver mConnectivityBroadcastReceiver = new BroadcastReceiver() {
+
+        private Handler mHandler = new Handler();
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ConnectivityUtils.isNetworkAvailable(TeambrellaNotificationService.this)) {
+                mHandler.removeCallbacks(mRunnable);
+                mHandler.postDelayed(mRunnable, 1000);
+            }
+        }
+
+        private Runnable mRunnable = () ->
+                startService(new Intent(TeambrellaNotificationService.this, TeambrellaNotificationService.class).setAction(CONNECT_ACTION)
+                        .putExtra(EXTRA_TEAM_ID, mTeamId));
+    };
 
 
 }

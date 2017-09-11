@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
 
 import io.reactivex.Observable;
 import okhttp3.Cache;
@@ -438,6 +438,8 @@ public class TeambrellaServer {
 
     public interface SocketClientListener {
 
+        void onOpen();
+
         void onMessage(String message);
 
         void onClose(int code, String reason, boolean remote);
@@ -453,7 +455,7 @@ public class TeambrellaServer {
 
 
         TeambrellaSocketClient(URI serverUri, int mTeamId, Map<String, String> httpHeaders, SocketClientListener listener) {
-            super(serverUri, new Draft_6455(), httpHeaders, 0);
+            super(serverUri, new Draft_6455(), httpHeaders, 1000 * 30);
             this.mTeamId = mTeamId;
             this.mListener = listener;
         }
@@ -462,8 +464,10 @@ public class TeambrellaServer {
         @Override
         public void connect() {
             try {
-                setSocket(SSLSocketFactory.getDefault().createSocket());
-            } catch (IOException e) {
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, null, null);
+                setSocket(context.getSocketFactory().createSocket());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             super.connect();
@@ -471,7 +475,8 @@ public class TeambrellaServer {
 
         @Override
         public void onOpen(ServerHandshake handshakeData) {
-            send("0;" + mTeamId + ";1");
+            send("0;" + mTeamId);
+            mListener.onOpen();
         }
 
         @Override
