@@ -137,6 +137,15 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .setAction(SHOW_CONVERSATION_CHAT));
     }
 
+    public static Intent getConversationChat(Context context, String userId, String userName, Uri imageUri) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .setAction(SHOW_CONVERSATION_CHAT);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

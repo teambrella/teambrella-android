@@ -129,6 +129,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     private TeambrellaServer.TeambrellaSocketClient mTeambrellaSocketClient;
     private int mTeamId;
+    private TeambrellaNotificationManager mTeambrellaNotificationManager;
 
 
     @Nullable
@@ -217,6 +218,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mConnectivityBroadcastReceiver, filter);
+        mTeambrellaNotificationManager = new TeambrellaNotificationManager(this);
     }
 
     @Override
@@ -340,11 +342,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 String imgUrl = messageParts[3];
                 String text = messageParts[4];
                 if (!notifyPrivateMessage(userId, name, imgUrl, text)) {
-                    intent = new Intent(ON_PRIVATE_MSG);
-                    intent.putExtra(EXTRA_USER_ID, userId);
-                    intent.putExtra(EXTRA_NAME, name);
-                    intent.putExtra(EXTRA_IMGURL, imgUrl);
-                    intent.putExtra(EXTRA_MESSAGE, text);
+                    mTeambrellaNotificationManager.showPrivateMessageNotification(userId, name, imgUrl, text);
                 }
             }
             break;

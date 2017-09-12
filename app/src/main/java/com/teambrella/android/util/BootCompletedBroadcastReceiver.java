@@ -13,7 +13,10 @@ public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION)
-                .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, 2006));
+        String action = intent != null ? intent.getAction() : null;
+        if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
+            context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION)
+                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, 2006));
+        }
     }
 }
