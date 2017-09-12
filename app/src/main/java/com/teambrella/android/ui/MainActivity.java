@@ -24,6 +24,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationService;
+import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
@@ -75,6 +76,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private ImageView mAvatar;
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
+    private MainNotificationClient mClient;
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -106,6 +108,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             if (savedInstanceState == null) {
                 startService(new Intent(this, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
             }
+
+            mClient = new MainNotificationClient(this);
+            mClient.connect();
         } else {
             finish();
             startActivity(new Intent(this, WelcomeActivity.class));
@@ -292,6 +297,14 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mClient != null) {
+            mClient.disconnect();
+            mClient = null;
+        }
+    }
 
     @Override
     public void startNewDiscussion() {
@@ -386,6 +399,26 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(TEAM_CHOOSER_FRAGMENT_TAG) == null) {
             new TeamSelectionFragment().show(fragmentManager, TEAM_CHOOSER_FRAGMENT_TAG);
+        }
+    }
+
+
+    private class MainNotificationClient extends TeambrellaNotificationServiceClient {
+
+        MainNotificationClient(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
+            load(HOME_DATA_TAG);
+            return false;
+        }
+
+        @Override
+        public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
+            getPager(FEED_DATA_TAG).reload();
+            return false;
         }
     }
 }
