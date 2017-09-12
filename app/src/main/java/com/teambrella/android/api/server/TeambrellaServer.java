@@ -424,7 +424,7 @@ public class TeambrellaServer {
     }
 
 
-    public TeambrellaSocketClient createSocketClient(URI uri, int teamId, SocketClientListener listener) {
+    public TeambrellaSocketClient createSocketClient(URI uri, SocketClientListener listener) {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = mKey.getPublicKeyAsHex();
         String signature = mKey.signMessage(Long.toString(timestamp));
@@ -432,7 +432,7 @@ public class TeambrellaServer {
         headers.put("t", Long.toString(timestamp));
         headers.put("key", publicKey);
         headers.put("sig", signature);
-        return new TeambrellaSocketClient(uri, teamId, headers, listener);
+        return new TeambrellaSocketClient(uri, headers, listener);
     }
 
 
@@ -449,14 +449,11 @@ public class TeambrellaServer {
 
     public static class TeambrellaSocketClient extends WebSocketClient {
 
-
-        private final int mTeamId;
         private final SocketClientListener mListener;
 
 
-        TeambrellaSocketClient(URI serverUri, int mTeamId, Map<String, String> httpHeaders, SocketClientListener listener) {
+        TeambrellaSocketClient(URI serverUri, Map<String, String> httpHeaders, SocketClientListener listener) {
             super(serverUri, new Draft_6455(), httpHeaders, 1000 * 30);
-            this.mTeamId = mTeamId;
             this.mListener = listener;
         }
 
@@ -475,7 +472,7 @@ public class TeambrellaServer {
 
         @Override
         public void onOpen(ServerHandshake handshakeData) {
-            send("0;" + mTeamId);
+            send("0");
             mListener.onOpen();
         }
 

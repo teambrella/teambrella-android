@@ -15,8 +15,7 @@ public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent != null ? intent.getAction() : null;
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION)
-                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, 2006));
+            context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
         }
     }
 }

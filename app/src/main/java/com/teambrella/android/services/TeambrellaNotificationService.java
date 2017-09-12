@@ -12,19 +12,15 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
-import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.util.ConnectivityUtils;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -38,17 +34,17 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
         interface INotificationServiceListener {
 
-            boolean onPostCreated(int teamId, int teammateId, String topicId, String postId, String name, String avatar, String text);
+            boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text);
 
-            boolean onPostDeleted(int teamId, int teammateId, String topicId, String postId);
+            boolean onPostDeleted(int teamId, String userId, String topicId, String postId);
 
-            boolean onTyping(int teamId, int teammateId, String topicId, String name);
+            boolean onTyping(int teamId, String userId, String topicId, String name);
 
-            boolean onNewClaim(int teamId, int teammateId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName);
+            boolean onNewClaim(int teamId, String userId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName);
 
             boolean onPrivateMessage(String userId, String name, String avatar, String text);
 
-            boolean onWalletFunded(int teammateId, String userId, String cryptoAmount, String currencyAmount, String teamUrl, String teamName);
+            boolean onWalletFunded(int teamId, String userId, String cryptoAmount, String currencyAmount, String teamUrl, String teamName);
 
             boolean onPostsSinceInteracted(int count);
 
@@ -64,32 +60,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     public static final String CONNECT_ACTION = "connect";
     public static final String MESSAGE_ACTION = "message";
-    public static final String STOP_ACTION = "stop";
 
-    public static final String EXTRA_CLAIM_ID = "EXTRA_CLAIM_ID";
-    public static final String EXTRA_TEAM_ID = "EXTRA_TEAM_ID";
-    public static final String EXTRA_USER_ID = "EXTRA_USER_ID";
-    public static final String EXTRA_TEAMMATE_ID = "EXTRA_TEAMMATE_ID";
-    public static final String EXTRA_TOPIC_ID = "EXTRA_TOPIC_ID";
-    public static final String EXTRA_POST_ID = "EXTRA_POST_ID";
-    public static final String EXTRA_TEAMNAME = "EXTRA_TEAMNAME";
-    public static final String EXTRA_NAME = "EXTRA_NAME";
-    public static final String EXTRA_IMGURL = "EXTRA_IMGURL";
-    public static final String EXTRA_TEAM_IMGURL = "EXTRA_TEAMIMGURL";
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-    public static final String EXTRA_COUNT = "EXTRA_COUNT";
-    public static final String EXTRA_CRYPTO_AMOUNT = "EXTRA_CRYPTO_AMOUNT";
-    public static final String EXTRA_FIAT_AMOUNT = "EXTRA_FIAT_AMOUNT";
-
-
-    public static final String ON_CREATED_POST = "ON_CREATED_POST";
-    public static final String ON_DELETED_POST = "ON_DELETED_POST";
-    public static final String ON_TYPING = "ON_TYPING";
-    public static final String ON_NEW_CLAIM = "ON_NEW_CLAIM";
-    public static final String ON_PRIVATE_MSG = "ON_PRIVATE_MSG";
-    public static final String ON_WALLET_FUNDED = "ON_WALLET_FUNDED";
-    public static final String ON_POSTS_SINCE_INTERACTED = "ON_POSTS_SINCE_INTERACTED";
-
 
     private CopyOnWriteArrayList<ITeambrellaNotificationServiceBinder.INotificationServiceListener> mListeners = new CopyOnWriteArrayList<>();
 
@@ -97,7 +69,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     public enum NotificationTypes {
         CREATED_POST(1),
         DELETED_POST(2),
-        TYPING(3),
+        TYPING(13),
         NEW_CLAIM(4),
         PRIVATE_MSG(5),
         WALLET_FUNDED(6),
@@ -128,7 +100,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
     private TeambrellaServer.TeambrellaSocketClient mTeambrellaSocketClient;
-    private int mTeamId;
     private TeambrellaNotificationManager mTeambrellaNotificationManager;
 
 
@@ -155,34 +126,34 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
 
-    private boolean notifyPostCreated(int teamId, int teammateId, String topicId, String postId, String name, String avatar, String text) {
+    private boolean notifyPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
         boolean result = false;
         for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
-            result |= listener.onPostCreated(teamId, teammateId, topicId, postId, name, avatar, text);
+            result |= listener.onPostCreated(teamId, userId, topicId, postId, name, avatar, text);
         }
         return result;
     }
 
-    private boolean notifyPostDeleted(int teamId, int teammateId, String topicId, String postId) {
+    private boolean notifyPostDeleted(int teamId, String userId, String topicId, String postId) {
         boolean result = false;
         for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
-            result |= listener.onPostDeleted(teamId, teammateId, topicId, postId);
+            result |= listener.onPostDeleted(teamId, userId, topicId, postId);
         }
         return result;
     }
 
-    private boolean notifyTyping(int teamId, int teammateId, String topicId, String name) {
+    private boolean notifyTyping(int teamId, String userId, String topicId, String name) {
         boolean result = false;
         for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
-            result |= listener.onTyping(teamId, teammateId, topicId, name);
+            result |= listener.onTyping(teamId, userId, topicId, name);
         }
         return result;
     }
 
-    private boolean notifyNewClaim(int teamId, int teammateId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName) {
+    private boolean notifyNewClaim(int teamId, String userId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName) {
         boolean result = false;
         for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
-            result |= listener.onNewClaim(teamId, teammateId, claimId, name, avatar, amount, teamUrl, teamName);
+            result |= listener.onNewClaim(teamId, userId, claimId, name, avatar, amount, teamUrl, teamName);
         }
         return result;
     }
@@ -241,24 +212,15 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
                         mTeambrellaSocketClient = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey())
-                                .createSocketClient(uri, intent.getIntExtra(EXTRA_TEAM_ID, 0), this);
+                                .createSocketClient(uri, this);
                         mTeambrellaSocketClient.connect();
-                        mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
                     }
                     return START_STICKY;
-                case STOP_ACTION:
-                    if (mTeambrellaSocketClient != null) {
-                        mTeambrellaSocketClient.close();
-                        mTeambrellaSocketClient = null;
-                    }
-                    stopSelf();
-                    return START_NOT_STICKY;
-
-//                case MESSAGE_ACTION:
-//                    String message = intent.getStringExtra(EXTRA_MESSAGE);
-//                    onMessage(message);
-//                    Log.e("TEST", message);
-//                    return START_STICKY;
+                case MESSAGE_ACTION:
+                    String message = intent.getStringExtra(EXTRA_MESSAGE);
+                    Log.e(LOG_TAG, message);
+                    onMessage(message);
+                    return START_STICKY;
                 case Intent.ACTION_BOOT_COMPLETED:
                     Log.e(LOG_TAG, "boot complete");
             }
@@ -270,68 +232,60 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     @Override
     public void onMessage(String message) {
-        Log.e(LOG_TAG, message);
-        String messageParts[] = message.split(";");
-        Intent intent = null;
+        try {
+            processMessage(message);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.toString());
+        }
 
+    }
+
+    private void processMessage(String message) {
+        Log.d(LOG_TAG, message);
+        String messageParts[] = message.split(";");
         NotificationTypes type = NotificationTypes.valueOf(Integer.parseInt(messageParts[0]));
         switch (type) {
             case CREATED_POST: {
                 int teamId = Integer.parseInt(messageParts[1]);
-                int teammateId = Integer.parseInt(messageParts[2]);
+                String userId = messageParts[2];
                 String topicId = messageParts[3];
                 String postId = messageParts[4];
                 String name = messageParts[5];
                 String avatar = messageParts[6];
                 String text = messageParts[7];
-                if (!notifyPostCreated(teamId, teammateId, topicId, postId, name, avatar, text)) {
-                    intent = new Intent(ON_CREATED_POST);
-                }
+                notifyPostCreated(teamId, userId, topicId, postId, name, avatar, text);
             }
             break;
 
             case DELETED_POST: {
                 int teamId = Integer.parseInt(messageParts[1]);
-                int teammateId = Integer.parseInt(messageParts[2]);
+                String userId = messageParts[2];
                 String topicId = messageParts[3];
                 String postId = messageParts[4];
-                if (!notifyPostDeleted(teamId, teammateId, topicId, postId)) {
-                    intent = new Intent(ON_DELETED_POST);
-                }
+                notifyPostDeleted(teamId, userId, topicId, postId);
             }
             break;
 
             case TYPING: {
                 int teamId = Integer.parseInt(messageParts[1]);
-                int teammateId = Integer.parseInt(messageParts[2]);
+                String userId = messageParts[2];
                 String topicId = messageParts[3];
                 String name = messageParts[4];
-                if (!notifyTyping(teamId, teammateId, topicId, name)) {
-                    intent = new Intent(ON_TYPING);
-                }
+                notifyTyping(teamId, userId, topicId, name);
             }
             break;
 
             case NEW_CLAIM: {
                 int teamId = Integer.parseInt(messageParts[1]);
-                int teammateId = Integer.parseInt(messageParts[2]);
+                String userId = messageParts[2];
                 int claimId = Integer.parseInt(messageParts[3]);
                 String name = messageParts[4];
                 String imageUrl = messageParts[5];
                 String amount = messageParts[6];
                 String teamImgUrl = messageParts[7];
                 String teamName = messageParts[8];
-
-                if (!notifyNewClaim(teamId, teammateId, claimId, name, imageUrl, amount, teamImgUrl, teamName)) {
-                    intent = new Intent(ON_NEW_CLAIM);
-                    intent.putExtra(EXTRA_TEAM_ID, teamId);
-                    intent.putExtra(EXTRA_TEAMMATE_ID, teammateId);
-                    intent.putExtra(EXTRA_CLAIM_ID, claimId);
-                    intent.putExtra(EXTRA_NAME, name);
-                    intent.putExtra(EXTRA_IMGURL, imageUrl);
-                    intent.putExtra(EXTRA_FIAT_AMOUNT, amount);
-                    intent.putExtra(EXTRA_TEAM_IMGURL, teamImgUrl);
-                    intent.putExtra(EXTRA_TEAMNAME, teamName);
+                if (!notifyNewClaim(teamId, userId, claimId, name, imageUrl, amount, teamImgUrl, teamName)) {
+                    mTeambrellaNotificationManager.showNewClaimNotification(teamId, claimId, name, amount, teamName);
                 }
             }
             break;
@@ -347,94 +301,26 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             }
             break;
 
-            case WALLET_FUNDED:
-                intent = new Intent(ON_WALLET_FUNDED);
-                intent.putExtra(EXTRA_TEAM_ID, Integer.parseInt(messageParts[1]));
-                intent.putExtra(EXTRA_USER_ID, messageParts[2]);
-                intent.putExtra(EXTRA_CRYPTO_AMOUNT, messageParts[3]);
-                intent.putExtra(EXTRA_FIAT_AMOUNT, messageParts[4]);
-                intent.putExtra(EXTRA_TEAM_IMGURL, messageParts[4]);
-                intent.putExtra(EXTRA_TEAMNAME, messageParts[5]);
-                break;
+            case WALLET_FUNDED: {
+                int teamId = Integer.parseInt(messageParts[1]);
+                String userId = messageParts[2];
+                String mEthAmount = messageParts[3];
+                String amount = messageParts[4];
+                String teamImgUrl = messageParts[5];
+                String teamName = messageParts[6];
+                if (!notifyWalletFunded(teamId, userId, mEthAmount, amount, teamImgUrl, teamName)) {
+                    mTeambrellaNotificationManager.showWalletIsFundedNotification(mEthAmount);
+                }
+            }
+            break;
 
             case POSTS_SINCE_INTERACTED:
-                intent = new Intent(ON_POSTS_SINCE_INTERACTED);
-                intent.putExtra(EXTRA_COUNT, Integer.parseInt(messageParts[1]));
+                int count = Integer.parseInt(messageParts[1]);
+                if (!notifyPostsSinceInteracted(count)) {
+                    mTeambrellaNotificationManager.showNewMessagesSinceLastVisit(count);
+                }
                 break;
         }
-
-        if (intent != null) {
-            processMessage(intent);
-        }
-
-    }
-
-    private void processMessage(Intent intent) {
-        String action = intent != null ? intent.getAction() : null;
-
-        if (action == null) {
-            return;
-        }
-
-        if (!Objects.equals(action, ON_NEW_CLAIM)
-                && !action.equals(ON_PRIVATE_MSG)
-                && !action.equals(ON_WALLET_FUNDED)
-                && !action.equals(ON_POSTS_SINCE_INTERACTED)) {
-            return;
-        }
-
-        Intent resultIntent = null;
-        int mNotificationId = 1;
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_teambrella_status)
-                        .setAutoCancel(true);
-
-
-        switch (action) {
-            case ON_NEW_CLAIM:
-                resultIntent = ClaimActivity.getLaunchIntent(this,
-                        intent.getIntExtra(EXTRA_CLAIM_ID, 0),
-                        null,
-                        intent.getIntExtra(EXTRA_TEAM_ID, 0));
-
-                mBuilder.setContentTitle(getString(R.string.notification_claim_header, intent.getStringExtra(EXTRA_TEAMNAME)));
-                mBuilder.setContentText(getString(R.string.notification_claim_text, intent.getStringExtra(EXTRA_NAME), intent.getStringExtra(EXTRA_FIAT_AMOUNT)));
-                mNotificationId = 1;
-                break;
-
-            case ON_PRIVATE_MSG:
-                mNotificationId = 2;
-                break;
-
-            case ON_WALLET_FUNDED:
-                resultIntent = ClaimActivity.getLaunchIntent(this,
-                        intent.getIntExtra(EXTRA_CLAIM_ID, 0),
-                        null,
-                        intent.getIntExtra(EXTRA_TEAM_ID, 0));
-
-                mBuilder.setContentTitle(getString(R.string.notification_funded_header));
-                mBuilder.setContentText("+ " + intent.getStringExtra(EXTRA_FIAT_AMOUNT) + "mETH");
-                mNotificationId = 3;
-                break;
-
-            case ON_POSTS_SINCE_INTERACTED:
-                mNotificationId = 4;
-                break;
-        }
-
-//        PendingIntent resultPendingIntent =
-//                PendingIntent.getActivity(
-//                        this,
-//                        0,
-//                        resultIntent,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//
-//        mBuilder.setContentIntent(resultPendingIntent);
-//        Notification notification = mBuilder.build();
-//        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        mNotifyMgr.notify(mNotificationId, notification);
     }
 
 
@@ -474,8 +360,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         }
 
         private Runnable mRunnable = () ->
-                startService(new Intent(TeambrellaNotificationService.this, TeambrellaNotificationService.class).setAction(CONNECT_ACTION)
-                        .putExtra(EXTRA_TEAM_ID, mTeamId));
+                startService(new Intent(TeambrellaNotificationService.this, TeambrellaNotificationService.class).setAction(CONNECT_ACTION));
     };
 
 

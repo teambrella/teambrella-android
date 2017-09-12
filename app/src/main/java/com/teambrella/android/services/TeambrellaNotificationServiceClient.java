@@ -57,22 +57,22 @@ public class TeambrellaNotificationServiceClient implements TeambrellaNotificati
     }
 
     @Override
-    public boolean onPostCreated(int teamId, int teammateId, String topicId, String postId, String name, String avatar, String text) {
+    public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
         return false;
     }
 
     @Override
-    public boolean onPostDeleted(int teamId, int teammateId, String topicId, String postId) {
+    public boolean onPostDeleted(int teamId, String userId, String topicId, String postId) {
         return false;
     }
 
     @Override
-    public boolean onTyping(int teamId, int teammateId, String topicId, String name) {
+    public boolean onTyping(int teamId, String userId, String topicId, String name) {
         return false;
     }
 
     @Override
-    public boolean onNewClaim(int teamId, int teammateId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName) {
+    public boolean onNewClaim(int teamId, String userId, int claimId, String name, String avatar, String amount, String teamUrl, String teamName) {
         return false;
     }
 

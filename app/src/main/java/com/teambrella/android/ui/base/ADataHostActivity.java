@@ -71,6 +71,11 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
         return null;
     }
 
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+    }
+
     protected abstract String[] getDataTags();
 
     protected abstract String[] getPagerTags();

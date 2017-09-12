@@ -140,11 +140,11 @@ public class TeamSelectionFragment extends DialogFragment {
                     .into(mIcon);
 
             itemView.setOnClickListener(v -> {
+                getActivity().finish();
                 startActivity(MainActivity.getLaunchIntent(getContext()
                         , mDataHost.getUserId()
                         , item.getObject().toString()));
                 TeambrellaUser.get(getContext()).setTeamId(item.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
-                getActivity().finish();
             });
 
 

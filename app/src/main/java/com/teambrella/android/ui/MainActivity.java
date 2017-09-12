@@ -89,26 +89,34 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         Intent intent = getIntent();
         mUserId = intent.getStringExtra(USER_ID_EXTRA);
 
-        mTeam = new JsonWrapper(new Gson()
+        mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
-                        , JsonObject.class));
+                        , JsonObject.class)) : null;
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mAvatar = findViewById(R.id.avatar);
-        findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
-        findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
-        findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
-        findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
-        onNavigationItemSelected(findViewById(R.id.home));
 
-        if (savedInstanceState == null) {
-            startService(new Intent(this, TeambrellaNotificationService.class)
-                    .putExtra(TeambrellaNotificationService.EXTRA_TEAM_ID, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
-                    .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+        if (mTeam != null) {
+            setContentView(R.layout.activity_main);
+            mAvatar = findViewById(R.id.avatar);
+            findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
+            findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
+            findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
+            findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
+            onNavigationItemSelected(findViewById(R.id.home));
+            if (savedInstanceState == null) {
+                startService(new Intent(this, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
+            }
+        } else {
+            finish();
+            startActivity(new Intent(this, WelcomeActivity.class));
         }
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
 
     private boolean onNavigationItemSelected(View view) {
 
@@ -183,12 +191,13 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     protected String[] getDataTags() {
-        return new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA};
+        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA} : new String[]{};
     }
 
     @Override
     protected String[] getPagerTags() {
-        return new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA, TEAMS_DATA};
+        return mTeam != null ? new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA, TEAMS_DATA}
+                : new String[]{};
     }
 
     @Override
@@ -321,14 +330,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         return mTeam.getString(TeambrellaModel.ATTR_DATA_CURRENCY);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            startService(new Intent(this, TeambrellaNotificationService.class)
-                    .setAction(TeambrellaNotificationService.STOP_ACTION));
-        }
-    }
 
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
@@ -376,7 +377,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                     mSnackBar = null;
                 }
             });
-
             mSnackBar.show();
         }
     }

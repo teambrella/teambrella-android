@@ -514,7 +514,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         }
 
         @Override
-        public boolean onPostCreated(int teamId, int teammateId, String topicId, String postId, String name, String avatar, String text) {
+        public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
             switch (mAction) {
                 case SHOW_CLAIM_CHAT_ACTION:
                 case SHOW_FEED_CHAT_ACTION:

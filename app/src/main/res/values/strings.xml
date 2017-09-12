@@ -180,4 +180,5 @@
     <string name="all_votes">All Votes</string>
     <string name="weight_format_string"><![CDATA[Weight <b>%.1f</b>]]></string>
     <string name="votes">Votes</string>
+    <string name="private_message_notification_title">%s (new message)</string>
 </resources>
