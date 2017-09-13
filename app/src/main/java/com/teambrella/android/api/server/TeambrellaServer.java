@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaAPI;
 import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaException;
@@ -87,7 +88,7 @@ public class TeambrellaServer {
                 .create();
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HeaderInterceptor())
                 .addInterceptor(interceptor)
