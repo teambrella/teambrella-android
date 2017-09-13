@@ -42,6 +42,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
     private static final String SEGMENT_PRIVATE_MESSAGE = "privateMessage";
     private static final String SEGMENT_VOTES = "votes";
+    private static final String SEGMENT_WALLET = "wallet";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -95,6 +96,7 @@ public class TeambrellaUris {
     public static final int NEW_PRIVATE_MESSAGE = 27;
     public static final int APPLICATION_VOTES = 28;
     public static final int CLAIMS_VOTES = 29;
+    public static final int WALLET = 30;
 
 
     static {
@@ -127,6 +129,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_POST, NEW_PRIVATE_MESSAGE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTES, APPLICATION_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
     }
 
 
@@ -455,6 +458,15 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_VOTES)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
+                .build();
+    }
+
+    public static Uri getWallet(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_WALLET)
+                .appendEncodedPath(SEGMENT_ONE)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .build();
     }
 
