@@ -1,30 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/chat_background" />
-    </FrameLayout>
-
+    android:animateLayoutChanges="true">
 
     <RelativeLayout
         android:id="@+id/input"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/paleGreyFour">
 
         <android.support.v7.widget.AppCompatImageView
@@ -34,7 +21,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
-            app:srcCompat="@drawable/ic_insert_photo" />
+            app:srcCompat="@drawable/ic_attachment" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/send_text"
@@ -43,12 +30,12 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
-            app:srcCompat="@drawable/ic_send" />
+            app:srcCompat="@drawable/ic_sendbutton" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularEditText
             android:id="@+id/text"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
@@ -57,10 +44,35 @@
             android:background="@drawable/default_edit_text_background"
             android:gravity="center_vertical|left"
             android:maxLines="3"
+            android:minHeight="38dp"
+            android:paddingBottom="4dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
+            android:paddingTop="4dp"
             android:textSize="15sp"
             tools:ignore="RtlHardcoded" />
     </RelativeLayout>
 
-</LinearLayout>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/input">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/chat_background" />
+    </FrameLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/input"
+        android:background="@drawable/edit_top_shadow" />
+
+
+</RelativeLayout>

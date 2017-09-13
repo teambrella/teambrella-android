@@ -19,9 +19,9 @@ import com.teambrella.android.util.AmountCurrencyUtil;
  */
 class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
-    private final static int VIEW_TYPE_COMMISSION = VIEW_TYPE_REGULAR + 1;
-    private final static int VIEW_TYPE_TEAMMATES = VIEW_TYPE_REGULAR + 2;
-    private final static int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 3;
+    public final static int VIEW_TYPE_COMMISSION = VIEW_TYPE_REGULAR + 1;
+    public final static int VIEW_TYPE_TEAMMATES = VIEW_TYPE_REGULAR + 2;
+    public final static int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 3;
 
 
     private float mTotalCommission = 0f;
@@ -51,14 +51,18 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_COMMISSION:
                     return new CommissionViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_commission, parent, false));
                 case VIEW_TYPE_HEADER:
-                    return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_commission_header, parent, false)) {
-                    };
+                    return new Header(parent, R.string.i_am_proxy_for, -1, R.drawable.list_item_header_background_top);
                 case VIEW_TYPE_TEAMMATES:
                     return new ProxyForViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_proxy_for, parent, false));
             }
         }
 
         return holder;
+    }
+
+    @Override
+    protected int getHeadersCount() {
+        return 2;
     }
 
     @Override
@@ -73,32 +77,28 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
 
     @Override
-    public int getItemViewType(int position) {
-        switch (position) {
-            case 0:
-                return VIEW_TYPE_COMMISSION;
-            case 1:
-                return VIEW_TYPE_HEADER;
-            default:
-                if (position == getItemCount() - 1) {
-                    if (mPager.hasNext() || mPager.isNextLoading()) {
-                        return VIEW_TYPE_LOADING;
-                    } else if (mPager.hasNextError()) {
-                        return VIEW_TYPE_ERROR;
-                    } else {
-                        return VIEW_TYPE_TEAMMATES;
-                    }
-                } else {
-                    return VIEW_TYPE_TEAMMATES;
-                }
-        }
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.proxies_for_empty_prompt);
     }
-
 
     @Override
-    public int getItemCount() {
-        return super.getItemCount() + 2;
+    public int getItemViewType(int position) {
+        int viewType = super.getItemViewType(position);
+        if (viewType == VIEW_TYPE_REGULAR) {
+            switch (position) {
+                case 0:
+                    viewType = VIEW_TYPE_COMMISSION;
+                    break;
+                case 1:
+                    viewType = VIEW_TYPE_HEADER;
+                    break;
+                default:
+                    viewType = VIEW_TYPE_TEAMMATES;
+            }
+        }
+        return viewType;
     }
+
 
     private final class CommissionViewHolder extends RecyclerView.ViewHolder {
 
@@ -122,13 +122,13 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         private TextView mCommission;
 
         ProxyForViewHolder(View itemView) {
-            super(itemView, mTeamId, mCurrency);
+            super(itemView, mTeamId);
             mSubtitle = itemView.findViewById(R.id.subtitle);
             mCommission = itemView.findViewById(R.id.commission);
         }
 
         @Override
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             super.onBind(item);
             mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, "never"));
             mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));

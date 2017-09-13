@@ -8,8 +8,10 @@ import android.view.View;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 import io.reactivex.Notification;
 
@@ -21,8 +23,20 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
-        return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
+    protected ATeambrellaDataPagerAdapter getAdapter() {
+        int mode = ChatAdapter.MODE_DISCUSSION;
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                mode = ChatAdapter.MODE_CLAIM;
+                break;
+            case TeambrellaUris.TEAMMATE_CHAT:
+                mode = ChatAdapter.MODE_APPLICATION;
+                break;
+            case TeambrellaUris.CONVERSATION_CHAT:
+                mode = ChatAdapter.MODE_CONVERSATION;
+                break;
+        }
+        return new ChatAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mode, TeambrellaUser.get(getContext()).getUserId());
     }
 
 

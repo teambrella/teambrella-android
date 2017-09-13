@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected T mDataHost;
     private Disposable mDisposable;
     protected RecyclerView mList;
-    protected TeambrellaDataPagerAdapter mAdapter;
+    protected ATeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
 
     boolean a = false;
@@ -66,7 +67,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentLayout(), container, false);
-        mList = (RecyclerView) view.findViewById(R.id.list);
+        mList = view.findViewById(R.id.list);
         new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mList);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
@@ -75,7 +76,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                 try {
                     super.onLayoutChildren(recycler, state);
                 } catch (Throwable e) {
-                    //e.printStackTrace();
+                    Log.e("TEST", e.toString());
                 }
             }
         });
@@ -171,7 +172,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
 
-    protected abstract TeambrellaDataPagerAdapter getAdapter();
+    protected abstract ATeambrellaDataPagerAdapter getAdapter();
 
 
     private class ItemTouchCallback extends ItemTouchHelper.SimpleCallback {

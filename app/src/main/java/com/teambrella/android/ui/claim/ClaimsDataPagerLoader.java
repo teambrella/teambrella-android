@@ -44,7 +44,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
     protected void onAddNewData(JsonArray newData) {
         if (mArray.size() == 0) {
             if (mVotingClaims.size() == 0) {
-                mVotingClaims.add(VOTING_HEADER_ITEM);
+                //mVotingClaims.add(VOTING_HEADER_ITEM);
             }
 
             if (mVotedClaims.size() == 0) {
@@ -69,7 +69,6 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_VOTING);
                     mVotingClaims.add(element);
                     break;
-                case TeambrellaModel.ClaimStates.DECLINED:
                 case TeambrellaModel.ClaimStates.VOTED:
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_VOTED);
                     mVotedClaims.add(element);
@@ -79,6 +78,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
                     mProcessingClaims.add(element);
                     break;
                 case TeambrellaModel.ClaimStates.PROCESSEED:
+                case TeambrellaModel.ClaimStates.DECLINED:
                     item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED);
                     mProcessedClaims.add(element);
                     break;
@@ -86,19 +86,9 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mVotingClaims.size() > 0) {
-            String itemType = mVotingClaims.get(0).getAsJsonObject().get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString();
-            switch (itemType) {
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING_HEADER:
-                    if (mVotingClaims.size() > 1) {
-                        mArray.addAll(mVotingClaims);
-                        mVotingClaims = new JsonArray();
-                    }
-                    break;
-                case TeambrellaModel.ClaimsListItemType.ITEM_VOTING:
-                    mArray.addAll(mVotingClaims);
-                    mVotingClaims = new JsonArray();
-                    break;
-            }
+            mArray.addAll(mVotingClaims);
+            mVotingClaims = new JsonArray();
+
         }
 
         if (mVotedClaims.size() > 0) {
@@ -140,7 +130,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
                     if (mProcessedClaims.size() > 1) {
-                        mArray.addAll(mProcessingClaims);
+                        mArray.addAll(mProcessedClaims);
                         mProcessedClaims = new JsonArray();
                     }
                     break;

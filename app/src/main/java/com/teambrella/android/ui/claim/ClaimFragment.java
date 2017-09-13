@@ -49,6 +49,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
     private boolean mIsShown;
 
+    private int mTeamAccessLevel = TeambrellaModel.TeamAccessLevel.FULL_ACCESS;
+
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim, container, false);
@@ -107,6 +109,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper claimBasic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            JsonWrapper team = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
 
             final String smallPhoto;
 
@@ -156,6 +159,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 final String topicId = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
                 final Uri uri = claimId > 0 ? TeambrellaUris.getClaimChatUri(claimId) : null;
 
+                mTeamAccessLevel = team != null ? team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, mTeamAccessLevel) : mTeamAccessLevel;
 
                 if (uri != null) {
                     mDiscussion.setOnClickListener(v -> ChatActivity.startClaimChat(getContext()
@@ -164,7 +168,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null
                             , smallPhoto != null ? Uri.parse(smallPhoto) : null
                             , topicId
-                            , null));
+                            , mTeamAccessLevel));
                 }
             }
 

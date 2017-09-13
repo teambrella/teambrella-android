@@ -40,6 +40,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_NEW_CLAIM = "newClaim";
     private static final String SEGMENT_NEW_CHAT = "newChat";
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
+    private static final String SEGMENT_PRIVATE_MESSAGE = "privateMessage";
+    private static final String SEGMENT_VOTES = "votes";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -88,6 +90,11 @@ public class TeambrellaUris {
     public static final int GET_COVERAGE_FOR_DATE = 22;
     public static final int NEW_CLAIM = 23;
     public static final int NEW_CHAT = 24;
+    public static final int INBOX = 25;
+    public static final int CONVERSATION_CHAT = 26;
+    public static final int NEW_PRIVATE_MESSAGE = 27;
+    public static final int APPLICATION_VOTES = 28;
+    public static final int CLAIMS_VOTES = 29;
 
 
     static {
@@ -115,6 +122,11 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_GET_COVERAGE_FOR_DATE, GET_COVERAGE_FOR_DATE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_NEW_CLAIM, NEW_CLAIM);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_NEW_CHAT, NEW_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_LIST, INBOX);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_CHAT, CONVERSATION_CHAT);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_POST, NEW_PRIVATE_MESSAGE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTES, APPLICATION_VOTES);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
     }
 
 
@@ -399,6 +411,53 @@ public class TeambrellaUris {
                 .build();
     }
 
+    public static Uri getInbox() {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_LIST)
+                .build();
+    }
+
+    public static Uri getConversationChat(String userId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendQueryParameter(KEY_ID, userId)
+                .build();
+    }
+
+    public static Uri getNewConversationMessage(String userId, String text) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_NEW_POST)
+                .appendQueryParameter(KEY_ID, userId)
+                .appendQueryParameter(KEY_MESSAGE, text)
+                .build();
+    }
+
+    public static Uri getAllVotesForClaim(int teamId, int claimId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_VOTES)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_ID, Integer.toString(claimId))
+                .build();
+    }
+
+    public static Uri getAllVotesForTeammate(int teamId, int teammateId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_TEAMMATE)
+                .appendEncodedPath(SEGMENT_VOTES)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
+                .build();
+    }
+
 
     /**
      * Get updates Uri
@@ -409,6 +468,7 @@ public class TeambrellaUris {
         return new Uri.Builder().authority(AUTHORITY).appendEncodedPath(SEGMENT_ME)
                 .appendEncodedPath(SEGMENT_UPDATES).build();
     }
+
 
     static int getTeamId(Uri uri) {
         return Integer.parseInt(uri.getPathSegments().get(1));

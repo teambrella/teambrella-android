@@ -14,7 +14,8 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#F8FAFD">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,8 +43,11 @@
                     android:id="@+id/discussion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:padding="16dp">
+                    android:background="@drawable/discussion_background_top"
+                    android:paddingBottom="32dp"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp">
 
                     <ImageView
                         android:id="@+id/object_picture"
@@ -78,15 +82,13 @@
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
                         android:id="@+id/unread"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/unread_message_count_background"
                         android:gravity="center"
                         android:lines="1"
-                        android:padding="8dp"
                         android:textColor="@android:color/white"
                         android:textSize="13sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/message_title"
                         app:layout_constraintVertical_bias="0.67"
@@ -115,14 +117,14 @@
                     android:id="@+id/voting_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/section_background"
+                    android:background="@drawable/block_first"
                     android:visibility="gone" />
 
                 <FrameLayout
                     android:id="@+id/details_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/section_background" />
+                    android:background="@drawable/block_last" />
 
             </LinearLayout>
 

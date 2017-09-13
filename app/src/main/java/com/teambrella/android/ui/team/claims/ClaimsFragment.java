@@ -11,7 +11,7 @@ import android.view.View;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 /**
  * Claims fragment
@@ -42,6 +42,14 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                     case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                    case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER_TOP:
+                    case ClaimsAdapter.VIEW_TYPE_IN_PAYMENT_HEADER_TOP:
+                    case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER_TOP:
+                    case ClaimsAdapter.VIEW_TYPE_VOTING:
+                    case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                    case ClaimsAdapter.VIEW_TYPE_ERROR:
+                    case ClaimsAdapter.VIEW_TYPE_LOADING:
+
                         drawDivider = false;
                 }
 
@@ -51,6 +59,13 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                         case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                        case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER_TOP:
+                        case ClaimsAdapter.VIEW_TYPE_IN_PAYMENT_HEADER_TOP:
+                        case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER_TOP:
+                        case ClaimsAdapter.VIEW_TYPE_VOTING:
+                        case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                        case ClaimsAdapter.VIEW_TYPE_ERROR:
+                        case ClaimsAdapter.VIEW_TYPE_LOADING:
                             drawDivider = false;
                     }
                 }
@@ -62,15 +77,13 @@ public class ClaimsFragment extends ADataPagerProgressFragment<IDataHost> {
                     outRect.set(0, 0, 0, 0);
                 }
             }
-
-
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
     }
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), getArguments().getString(EXTRA_CURRENCY), false);
     }
 }

@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:background="@drawable/voter_bar_background">
+        android:background="@drawable/voting_results">
 
         <android.support.constraint.Guideline
             android:id="@+id/vote_info_divider"
@@ -39,15 +39,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/your_vote_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/vote_info_divider"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/team_vote_title"
@@ -173,36 +164,45 @@
             app:layout_constraintTop_toTopOf="@id/voter_bar" />
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/new_teammate_info"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"
-            android:translationY="-8dp"
+            android:layout_height="156dp"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/voter_bar">
+            app:layout_constraintTop_toTopOf="@id/voter_bar">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/new_teammate_icon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:translationY="4dp" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/pear_shape">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/new_teammate_icon"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:translationY="-6dp" />
+
+            </FrameLayout>
+
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/new_teammate_risk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:background="@drawable/risk_background_light_blue"
-                android:paddingEnd="2dp"
-                android:paddingStart="2dp"
+                android:paddingBottom="1dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="1dp"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <LinearLayout
@@ -210,7 +210,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            android:translationY="-8dp"
             app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
             app:layout_constraintLeft_toRightOf="@id/new_teammate_info">
 
@@ -226,9 +225,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/risk_background_warm_blue"
-                android:paddingEnd="2dp"
-                android:paddingStart="2dp"
-                android:text="1.65"
+                android:paddingBottom="1dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="1dp"
                 android:textColor="@android:color/white"
                 android:textSize="9sp"
                 android:visibility="invisible" />
@@ -241,7 +241,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            android:translationY="-8dp"
             app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
             app:layout_constraintEnd_toStartOf="@id/new_teammate_info">
 
@@ -257,8 +256,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/risk_background_warm_blue"
-                android:paddingEnd="2dp"
-                android:paddingStart="2dp"
+                android:paddingBottom="1dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="1dp"
                 android:text="1.60"
                 android:textColor="@android:color/white"
                 android:textSize="9sp"

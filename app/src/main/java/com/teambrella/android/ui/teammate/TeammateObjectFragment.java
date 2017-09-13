@@ -46,6 +46,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
     private int mClaimId;
     private int mClaimCount;
     private String mModel;
+    private String mCurrency;
 
 
     public static TeammateObjectFragment getInstance(String dataTag) {
@@ -92,12 +93,13 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
 
             dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
                     .doOnNext(jsonWrapper -> mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))))
+                    .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
 
 
             objectObservable.doOnNext(objectData -> mObjectModel.setText(objectData.getString(TeambrellaModel.ATTR_DATA_MODEL)))
-                    .doOnNext(objectData -> AmountCurrencyUtil.setAmount(mLimit, Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)), mDataHost.getCurrency()))
+                    .doOnNext(objectData -> AmountCurrencyUtil.setAmount(mLimit, Math.round(objectData.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)), mCurrency))
                     .doOnNext(objectData -> mClaimId = objectData.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID, mClaimId))
                     .doOnNext(objectData -> mModel = objectData.getString(TeambrellaModel.ATTR_DATA_MODEL, mModel))
                     .doOnNext(objectData -> mClaimCount = objectData.getInt(TeambrellaModel.ATTR_DATA_CLAIM_COUNT, mClaimCount))
@@ -122,7 +124,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             }
 
 
-            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mNet, Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT)), mDataHost.getCurrency()))
+            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mNet, Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT)), mCurrency))
                     .doOnNext(basic -> mRisk.setText(getString(R.string.risk_format_string, basic.getFloat(TeambrellaModel.ATTR_DATA_RISK) + 0.05f)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, mTeamId))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
@@ -132,9 +134,9 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
 
             mSeeClaims.setOnClickListener(v -> {
                 if (mClaimId > 0) {
-                    ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId, mDataHost.getCurrency());
+                    ClaimActivity.start(getContext(), mClaimId, mModel, mTeamId);
                 } else {
-                    ClaimsActivity.start(getContext(), mTeamId, mTeammateId);
+                    ClaimsActivity.start(getContext(), mTeamId, mTeammateId, mCurrency);
                 }
             });
         }

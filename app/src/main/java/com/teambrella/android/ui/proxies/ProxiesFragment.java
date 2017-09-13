@@ -11,47 +11,34 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.proxies.myproxies.MyProxiesFragment;
 import com.teambrella.android.ui.proxies.proxyfor.ProxyForFragment;
 import com.teambrella.android.ui.proxies.userating.UserRatingFragment;
 
-import jp.wasabeef.picasso.transformations.MaskTransformation;
-
 /**
  * Proxies
  */
-public class ProxiesFragment extends Fragment {
+public class ProxiesFragment extends AMainLandingFragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/AkkuratPro-Bold.otf");
         View view = inflater.inflate(R.layout.fragment_proxies, container, false);
-        ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ViewPager pager = view.findViewById(R.id.pager);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
 
         setTypeface(tabLayout, typeface);
         setTypeface(toolbar, typeface);
 
         toolbar.setTitle(getString(R.string.proxy_vote));
-
-        IMainDataHost dataHost = (IMainDataHost) getContext();
-
-        ImageView teamLogo = view.findViewById(R.id.team_logo);
-
-
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(dataHost.getTeamLogoUri())
-                .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
-                .into(teamLogo);
 
         pager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
@@ -91,6 +78,13 @@ public class ProxiesFragment extends Fragment {
         tabLayout.setupWithViewPager(pager);
 
         return view;
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setTitle(mDataHost.getTeamName());
     }
 
 

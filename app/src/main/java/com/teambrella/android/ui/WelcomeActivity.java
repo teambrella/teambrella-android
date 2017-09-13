@@ -128,6 +128,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     case BuildConfig.STASIA_FACEBOOK_ID:
                         privateKey = BuildConfig.STASIA_PRIVATE_KEY;
                         break;
+                    case BuildConfig.VLAD_FACEBOOK_ID:
+                        privateKey = BuildConfig.VLAD_PRIVATE_KEY;
+                        break;
                     default:
                         Toast.makeText(WelcomeActivity.this, "Unknown user", Toast.LENGTH_LONG).show();
                         break;

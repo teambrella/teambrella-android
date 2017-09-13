@@ -43,8 +43,9 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
-    private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_ITEM_FEED = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_ITEM_BOTTOM = VIEW_TYPE_REGULAR + 3;
 
 
     private final int mTeamId;
@@ -65,7 +66,12 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     public int getItemViewType(int position) {
         int viewType = super.getItemViewType(position);
         if (viewType == VIEW_TYPE_REGULAR) {
-            viewType = position == 0 && mDataHost.isFullTeamAccess() ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM_FEED;
+            if (position == 0 && mDataHost.isFullTeamAccess()) {
+                return VIEW_TYPE_HEADER;
+            } else {
+                return VIEW_TYPE_ITEM_FEED;
+            }
+
         }
         return viewType;
     }
@@ -82,10 +88,20 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_HEADER:
                     viewHolder = new FeedHeader(inflater.inflate(R.layout.list_item_feed_header, parent, false));
                     break;
+                case VIEW_TYPE_ITEM_BOTTOM:
+                    viewHolder = new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
+                    break;
+
 
             }
         }
         return viewHolder;
+    }
+
+
+    @Override
+    protected int getHeadersCount() {
+        return mDataHost.isFullTeamAccess() ? 1 : 0;
     }
 
     @Override
@@ -94,11 +110,6 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof FeedItemViewHolder) {
             ((FeedItemViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get(position - (mDataHost.isFullTeamAccess() ? 1 : 0)).getAsJsonObject()));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return super.getItemCount() + (mDataHost.isFullTeamAccess() ? 1 : 0);
     }
 
     class FeedItemViewHolder extends RecyclerView.ViewHolder {
@@ -197,12 +208,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getCurrency());
+                                , mDataHost.getTeamAccessLevel());
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         ChatActivity.startFeedChat(context
                                 , item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
-                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID));
+                                , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , mDataHost.getTeamAccessLevel());
                         break;
                     default:
                         ChatActivity.startTeammateChat(context, mTeamId
@@ -210,7 +222,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , null
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getCurrency());
+                                , mDataHost.getTeamAccessLevel());
                         break;
 
                 }

@@ -11,7 +11,7 @@ import android.view.View;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 /**
  * Feed Fragment
@@ -36,19 +36,41 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 int position = parent.getChildAdapterPosition(view);
+                boolean drawDivider = true;
+                switch (parent.getAdapter().getItemViewType(position)) {
+                    case FeedAdapter.VIEW_TYPE_HEADER:
+                    case FeedAdapter.VIEW_TYPE_LOADING:
+                    case FeedAdapter.VIEW_TYPE_ERROR:
+                    case FeedAdapter.VIEW_TYPE_BOTTOM:
+                        drawDivider = false;
+                }
+
+                if (position + 1 < parent.getAdapter().getItemCount()) {
+                    switch (parent.getAdapter().getItemViewType(position + 1)) {
+                        case FeedAdapter.VIEW_TYPE_HEADER:
+                        case FeedAdapter.VIEW_TYPE_LOADING:
+                        case FeedAdapter.VIEW_TYPE_ERROR:
+                        case FeedAdapter.VIEW_TYPE_BOTTOM:
+                            drawDivider = false;
+                    }
+                }
+
                 if (position != parent.getAdapter().getItemCount() - 1
-                        && position != 0) {
+                        && drawDivider) {
                     super.getItemOffsets(outRect, view, parent, state);
+                } else {
+                    outRect.set(0, 0, 0, 0);
                 }
             }
         };
+
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new FeedAdapter(mDataHost, mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID));
     }
 }

@@ -150,10 +150,11 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TITLE = "Title";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
-    public static final String ATTR_REQUEST_CLAIM_ID = "claimId";
+    public static final String ATTR_REQUEST_CLAIM_ID = "ClaimId";
     public static final String ATTR_REQUEST_TEAMMATE_ID_FILTER = "TeammateIdFilter";
     public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
+    public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";
@@ -257,6 +258,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_BLOCKCHAIN_TX_ID = "BlockchainTxId";
     public static final String ATTR_DATA_CRYPTO_CONTRACT = "CryptoContracts";
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";
+    public static final String ATTR_DATA_VOTERS = "Voters";
+    public static final String ATTR_DATA_ME = "Me";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -280,6 +283,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_IMAGES = "Images";
     public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
     public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";
+    public static final String ATTR_DATA_MESSAGES = "Messages";
 
 
     public static final String ATTR_DATA_RANGES = "Ranges";
@@ -290,6 +294,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_PROXY_AVATAR = "ProxyAvatar";
     public static final String ATTR_DATA_PROXY_NAME = "ProxyName";
     public static final String ATTR_DATA_SINCE_LAST_POST_MINUTES = "SinceLastPostMinutes";
+    public static final String ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES = "SinceLastMessageMinutes";
 
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
@@ -300,6 +305,7 @@ public class TeambrellaModel {
 
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
     public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
+    public static final String ATTR_DATA_VOTE = "Vote";
     public static final String ATTR_DATA_OTHER_AVATARS = "OtherAvatars";
     public static final String ATTR_DATA_CARDS = "Cards";
     public static final String ATTR_DATA_SMALL_PHOTO_OR_AVATAR = "SmallPhotoOrAvatar";

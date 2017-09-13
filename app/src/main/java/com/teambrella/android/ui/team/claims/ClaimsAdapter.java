@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.team.claims;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import jp.wasabeef.picasso.transformations.MaskTransformation;
 
@@ -39,6 +41,9 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     static final int VIEW_TYPE_PROCESSED_HEADER = VIEW_TYPE_REGULAR + 7;
     private static final int VIEW_TYPE_PROCESSED = VIEW_TYPE_REGULAR + 8;
     private static final int VIEW_TYPE_SUBMIT_CLAIM = VIEW_TYPE_REGULAR + 9;
+    static final int VIEW_TYPE_VOTED_HEADER_TOP = VIEW_TYPE_REGULAR + 10;
+    static final int VIEW_TYPE_IN_PAYMENT_HEADER_TOP = VIEW_TYPE_REGULAR + 11;
+    static final int VIEW_TYPE_PROCESSED_HEADER_TOP = VIEW_TYPE_REGULAR + 12;
 
 
     private final int mTeamId;
@@ -89,19 +94,31 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                         viewType = VIEW_TYPE_VOTING;
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_VOTED_HEADER:
-                        viewType = VIEW_TYPE_VOTED_HEADER;
+                        if (position == 0) {
+                            viewType = VIEW_TYPE_VOTED_HEADER;
+                        } else {
+                            viewType = VIEW_TYPE_VOTED_HEADER_TOP;
+                        }
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_VOTED:
                         viewType = VIEW_TYPE_VOTED;
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
-                        viewType = VIEW_TYPE_IN_PAYMENT_HEADER;
+                        if (position == 0 || getItemViewType(position - 1) != VIEW_TYPE_VOTING) {
+                            viewType = VIEW_TYPE_IN_PAYMENT_HEADER;
+                        } else {
+                            viewType = VIEW_TYPE_IN_PAYMENT_HEADER_TOP;
+                        }
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT:
                         viewType = VIEW_TYPE_IN_PAYMENT;
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
-                        viewType = VIEW_TYPE_PROCESSED_HEADER;
+                        if (position == 0 || getItemViewType(position - 1) != VIEW_TYPE_VOTING) {
+                            viewType = VIEW_TYPE_PROCESSED_HEADER;
+                        } else {
+                            viewType = VIEW_TYPE_PROCESSED_HEADER_TOP;
+                        }
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED:
                         viewType = VIEW_TYPE_PROCESSED;
@@ -122,16 +139,22 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                     viewHolder = new SubmitClaimViewHolder(inflater.inflate(R.layout.list_item_submit_claim, parent, false));
                     break;
                 case VIEW_TYPE_VOTING_HEADER:
-                    viewHolder = new Header(parent, R.string.claim_header_voting, -1);
+                    viewHolder = new Header(parent, R.string.claim_header_voting, -1, R.drawable.list_item_header_background_top);
                     break;
                 case VIEW_TYPE_VOTED_HEADER:
-                    viewHolder = new Header(parent, R.string.claim_header_voted, -1);
+                case VIEW_TYPE_VOTED_HEADER_TOP:
+                    viewHolder = new Header(parent, R.string.claim_header_voted, -1, viewType == VIEW_TYPE_VOTED_HEADER_TOP
+                            ? R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
                     break;
                 case VIEW_TYPE_IN_PAYMENT_HEADER:
-                    viewHolder = new Header(parent, R.string.claim_header_being_paid, -1);
+                case VIEW_TYPE_IN_PAYMENT_HEADER_TOP:
+                    viewHolder = new Header(parent, R.string.claim_header_being_paid, -1, viewType == VIEW_TYPE_IN_PAYMENT_HEADER_TOP ?
+                            R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
                     break;
                 case VIEW_TYPE_PROCESSED_HEADER:
-                    viewHolder = new Header(parent, R.string.claim_header_fully_paid, -1);
+                case VIEW_TYPE_PROCESSED_HEADER_TOP:
+                    viewHolder = new Header(parent, R.string.claim_header_fully_paid, -1, viewType == VIEW_TYPE_PROCESSED_HEADER_TOP
+                            ? R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
                     break;
                 case VIEW_TYPE_VOTING:
                     viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voting, parent, false));
@@ -155,15 +178,14 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         if (mSubmitClaim && position == 0) {
             ((SubmitClaimViewHolder) holder).onBind();
         } else if (holder instanceof ClaimViewHolder) {
-            position = mSubmitClaim ? position - 1 : position;
+            position -= getHeadersCount();
             ((ClaimViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
 
-
     @Override
-    public int getItemCount() {
-        return super.getItemCount() + (mSubmitClaim ? 1 : 0);
+    protected int getHeadersCount() {
+        return mSubmitClaim ? 1 : 0;
     }
 
     private class ClaimViewHolder extends RecyclerView.ViewHolder {
@@ -177,6 +199,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         TextView mProxyName;
         ProgressBar mPaymentProgress;
         View mViewToVote;
+        TextView mResultView;
 
         ClaimViewHolder(View itemView) {
             super(itemView);
@@ -190,6 +213,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mProxyName = itemView.findViewById(R.id.proxy);
             mPaymentProgress = itemView.findViewById(R.id.payment_progress);
             mViewToVote = itemView.findViewById(R.id.view_to_vote);
+            mResultView = itemView.findViewById(R.id.result);
         }
 
 
@@ -230,11 +254,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mClaimAmount.setText("$" + Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)));
+            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
 
 
             if (mVote != null) {
-                mVote.setText(itemView.getContext().getString(R.string.claim_vote_format_string, 30));
+                mVote.setText(itemView.getContext().getString(R.string.claim_vote_format_string, Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) * 100)));
             }
 
             if (mPaymentProgress != null) {
@@ -247,12 +271,30 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             if (mViewToVote != null) {
                 mViewToVote.setOnClickListener(v -> context.startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId, mCurrency)));
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             } else {
                 itemView.setOnClickListener(v -> context.startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId, mCurrency)));
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             }
+
+            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
+                case TeambrellaModel.ClaimStates.VOTING:
+                case TeambrellaModel.ClaimStates.VOTED:
+                    break;
+                case TeambrellaModel.ClaimStates.IN_PAYMENT:
+                case TeambrellaModel.ClaimStates.PROCESSEED:
+                    mResultView.setText(R.string.claim_reimbursed);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.VISIBLE);
+                    break;
+                case TeambrellaModel.ClaimStates.DECLINED:
+                    mResultView.setText(R.string.declined);
+                    mResultView.setTextColor(Color.RED);
+                    mPaymentProgress.setVisibility(View.INVISIBLE);
+                    break;
+            }
+
         }
     }
 

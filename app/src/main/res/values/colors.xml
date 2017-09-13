@@ -13,6 +13,7 @@
     <color name="blueBlue">#2e3dcb</color>
     <color name="blurple">#3745ce</color>
     <color name="blurpleTwo">#3644cd</color>
+    <color name="blurpleThree">#3240cc</color>
     <color name="sapphire">#1c29b0</color>
     <color name="paleLilac">#e1e3ff</color>
     <color name="blueGrey">#95a5b1</color>
@@ -47,4 +48,5 @@
     <color name="softBlue">#6874e7</color>
     <color name="perrywinkleTwo">#7882e5</color>
     <color name="veryLightBlueThree">#dceaff</color>
+    <color name="paleGreyTwo">#f2f4f7</color>
 </resources>

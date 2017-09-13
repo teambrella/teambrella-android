@@ -9,6 +9,7 @@
         android:id="@+id/page_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/home_pager_indicator_background"
         android:gravity="center"
         android:minHeight="24dp"
         android:orientation="horizontal"
@@ -42,9 +43,9 @@
         android:layout_height="@dimen/home_cards_height"
         android:layout_marginTop="@dimen/home_cards_top_margin"
         android:clipToPadding="false"
-        android:paddingEnd="24dp"
-        android:paddingStart="24dp"
-        app:layout_constraintBottom_toTopOf="@id/page_indicator"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/home_header" />
 
 </android.support.constraint.ConstraintLayout>

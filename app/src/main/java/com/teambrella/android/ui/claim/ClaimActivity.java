@@ -8,6 +8,8 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.ui.votes.AllVotesActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -42,6 +45,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String EXTRA_MODEL = "model";
     private static final String EXTRA_TEAM_ID = "team_id";
     private static final String EXTRA_CURRENCY = "currency";
+    private static final String EXTRA_CLAIM_ID = "claimId";
 
 
     private Disposable mDisposal;
@@ -49,7 +53,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
     private int mClaimId;
     private String mCurrency;
-
+    private int mTeamId;
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
@@ -57,22 +61,25 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private Snackbar mSnackBar;
 
 
-    public static Intent getLaunchIntent(Context context, int id, String model, int teamId, String currency) {
+    public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
         return new Intent(context, ClaimActivity.class)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimUri(id))
                 .putExtra(EXTRA_MODEL, model)
-                .putExtra(EXTRA_TEAM_ID, teamId)
-                .putExtra(EXTRA_CURRENCY, currency);
+                .putExtra(EXTRA_CLAIM_ID, id)
+                .putExtra(EXTRA_TEAM_ID, teamId);
     }
 
-    public static void start(Context context, int id, String model, int teamId, String currency) {
-        context.startActivity(getLaunchIntent(context, id, model, teamId, currency));
+    public static void start(Context context, int id, String model, int teamId) {
+        context.startActivity(getLaunchIntent(context, id, model, teamId));
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mCurrency = getIntent().getStringExtra(EXTRA_CURRENCY);
+        final Intent intent = getIntent();
+        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
+        mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, -1);
+        mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -92,6 +99,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             mTitle = view.findViewById(R.id.title);
             mSubtitle = view.findViewById(R.id.subtitle);
             mIcon = view.findViewById(R.id.icon);
+            Toolbar parent = (Toolbar) view.getParent();
+            parent.setPadding(0, 0, 0, 0);
+            parent.setContentInsetsAbsolute(0, 0);
         }
         setTitle(getIntent().getStringExtra(EXTRA_MODEL));
     }
@@ -110,6 +120,13 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             mDisposal.dispose();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.votes, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     @Override
     protected String[] getDataTags() {
@@ -133,6 +150,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.votes:
+                AllVotesActivity.startClaimAllVotes(this, mTeamId, mClaimId);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -195,6 +215,16 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         }
     }
 
+    @Override
+    public int getClaimId() {
+        return mClaimId;
+    }
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
+    }
+
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
@@ -210,8 +240,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
-                                    , pictureUri
-                                    , mCurrency));
+                                    , pictureUri));
                 }
             }
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);

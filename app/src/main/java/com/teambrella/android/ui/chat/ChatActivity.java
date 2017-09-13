@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +28,8 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationServiceClient;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
@@ -53,8 +57,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String EXTRA_IMAGE_URI = "image_uri";
     private static final String EXTRA_CLAIM_ID = "claim_id";
     private static final String EXTRA_OBJECT_NAME = "object_name";
+    private static final String EXTRA_TEAM_ACCESS_LEVEL = "team_access_level";
     private static final String EXTRA_TITLE = "title";
-    private static final String EXTRA_CURRENCY = "currency";
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
@@ -64,6 +68,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
+    private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
 
 
     private Uri mUri;
@@ -75,7 +80,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private int mTeamId;
     private int mClaimId;
     private String mObjectName;
-    private String mCurrency;
+
 
     private Disposable mRequestDisposable;
     private Disposable mChatDisposable;
@@ -84,11 +89,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
-
     private Picasso mPicasso;
+    private ChatNotificationClient mClient;
 
-
-    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, String currency) {
+    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_USER_ID, userId)
@@ -96,12 +100,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
-                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_TEAMMATE_CHAT_ACTION));
     }
 
 
-    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, String currency) {
+    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
@@ -109,17 +113,37 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
-                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_CLAIM_CHAT_ACTION));
     }
 
 
-    public static void startFeedChat(Context context, String title, String topicId) {
+    public static void startFeedChat(Context context, String title, String topicId, int accessLevel) {
         context.startActivity(new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .setAction(SHOW_FEED_CHAT_ACTION));
+    }
+
+
+    public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
+        context.startActivity(new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .setAction(SHOW_CONVERSATION_CHAT));
+    }
+
+    public static Intent getConversationChat(Context context, String userId, String userName, Uri imageUri) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .setAction(SHOW_CONVERSATION_CHAT);
     }
 
 
@@ -135,7 +159,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
         mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mObjectName = intent.getStringExtra(EXTRA_OBJECT_NAME);
-        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mAction = intent.getAction();
 
         super.onCreate(savedInstanceState);
@@ -151,6 +174,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 mTitle = view.findViewById(R.id.title);
                 mSubtitle = view.findViewById(R.id.subtitle);
                 mIcon = view.findViewById(R.id.icon);
+                Toolbar parent = (Toolbar) view.getParent();
+                parent.setPadding(0, 0, 0, 0);
+                parent.setContentInsetsAbsolute(0, 0);
             } else {
                 setTitle(intent.getStringExtra(EXTRA_TITLE));
             }
@@ -199,9 +225,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
 
-                        mIcon.setOnClickListener(v -> {
-                            TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency);
-                        });
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
                     }
 
                     break;
@@ -225,15 +249,50 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                                 .into(mIcon);
 
                         mIcon.setOnClickListener(v -> {
-                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId, mCurrency);
+                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId);
                             overridePendingTransition(0, 0);
                         });
                     }
 
                     break;
+
+                case SHOW_CONVERSATION_CHAT:
+
+                    if (mTitle != null) {
+                        mTitle.setText(R.string.private_conversation);
+                    }
+
+                    if (mSubtitle != null) {
+                        mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
+                    }
+
+                    if (mImageUri != null && mIcon != null) {
+                        mPicasso.load(mImageUri)
+                                .transform(new CropCircleTransformation())
+                                .into(mIcon);
+
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
+                    }
+                    break;
             }
         }
 
+        switch (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
+            case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
+                findViewById(R.id.input).setVisibility(View.VISIBLE);
+                break;
+            default:
+                if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
+                    findViewById(R.id.input).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.input).setVisibility(View.GONE);
+                }
+                break;
+        }
+
+
+        mClient = new ChatNotificationClient(this);
+        mClient.connect();
     }
 
     @Override
@@ -270,10 +329,28 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         mChatDisposable = null;
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mClient.disconnect();
+    }
+
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-                request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+
+                String text = mMessageView.getText().toString().trim();
+                if (!TextUtils.isEmpty(text)) {
+                    switch (mAction) {
+                        case SHOW_CONVERSATION_CHAT:
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                            break;
+                        default:
+                            request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                    }
+                }
+                mMessageView.setText(null);
                 break;
             case R.id.send_image:
                 mImagePicker.startPicking();
@@ -290,6 +367,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
+    @Override
+    public Uri getChatUri() {
+        return getIntent().getParcelableExtra(EXTRA_URI);
+    }
+
     private void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
@@ -303,7 +385,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     request(TeambrellaUris.getNewPostUri(mTopicId, null, array.toString()));
                     break;
                 case TeambrellaUris.NEW_POST:
-                    mMessageView.setText(null);
+                case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                     getPager(DATA_FRAGMENT_TAG).loadNext(true);
                     break;
             }
@@ -341,7 +423,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                             }
                         }
 
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString(), mCurrency));
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
 
                         mSubtitle.setText(mUserName);
                         break;
@@ -410,5 +492,39 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         super.setTitle(s);
+    }
+
+
+    private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
+
+        ChatNotificationClient(Context context) {
+            super(context);
+        }
+
+
+        @Override
+        public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
+            if (mAction.equals(SHOW_CONVERSATION_CHAT)
+                    && userId.equals(mUserId)) {
+                getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                case SHOW_FEED_CHAT_ACTION:
+                case SHOW_TEAMMATE_CHAT_ACTION:
+                    if (topicId.equals(mTopicId)) {
+                        getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                        return true;
+                    }
+            }
+            return false;
+        }
     }
 }

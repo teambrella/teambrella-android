@@ -12,6 +12,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
 /**
@@ -19,17 +20,20 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
  */
 public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
-    private static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 2;
-    private static final int VIEW_TYPE_USER = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 2;
+    public static final int VIEW_TYPE_USER = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_ME = VIEW_TYPE_REGULAR + 4;
 
 
     private final int mTeamId;
     private final String mCurrency;
+    private final IMainDataHost mDataHost;
 
-    UserRatingAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
+    UserRatingAdapter(IMainDataHost dataHost, IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
         mCurrency = currency;
+        mDataHost = dataHost;
     }
 
 
@@ -37,23 +41,21 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     public int getItemViewType(int position) {
         switch (position) {
             case 0:
+                return VIEW_TYPE_ME;
+            case 1:
                 return VIEW_TYPE_HEADER;
             default:
-                if (position == getItemCount()) {
-                    if (mPager.hasNext() || mPager.isNextLoading()) {
-                        return VIEW_TYPE_LOADING;
-                    } else {
-                        return VIEW_TYPE_ERROR;
-                    }
-                } else {
-                    return VIEW_TYPE_USER;
+                int viewType = super.getItemViewType(position);
+                if (viewType == VIEW_TYPE_REGULAR) {
+                    viewType = VIEW_TYPE_USER;
                 }
+                return viewType;
         }
     }
 
     @Override
-    public int getItemCount() {
-        return super.getItemCount();
+    protected int getHeadersCount() {
+        return 1;
     }
 
     @Override
@@ -62,10 +64,12 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
         if (holder == null) {
             switch (viewType) {
+                case VIEW_TYPE_ME:
+                    return new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_me_in_rating, parent, false));
                 case VIEW_TYPE_USER:
                     return new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_user, parent, false));
                 case VIEW_TYPE_HEADER:
-                    return new Header(parent, R.string.team_members, R.string.proxy_rank);
+                    return new Header(parent, R.string.team_members, R.string.proxy_rank, R.drawable.list_item_header_background_middle);
             }
         }
         return holder;
@@ -75,6 +79,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof UserViewHolder) {
+            position = position != 0 ? position - 1 : position;
             ((UserViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
@@ -84,19 +89,27 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
         private TextView mRating;
         private TextView mPosition;
+        private TextView mOptToRating;
 
 
         UserViewHolder(View itemView) {
-            super(itemView, mTeamId, mCurrency);
+            super(itemView, mTeamId);
             mRating = itemView.findViewById(R.id.rating);
             mPosition = itemView.findViewById(R.id.position);
+            mOptToRating = itemView.findViewById(R.id.opt_to_rating);
         }
 
         @SuppressLint("SetTextI18n")
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             super.onBind(item);
+            int ratingPosition = item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1);
             mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
-            mPosition.setText(Integer.toString(item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1)));
+            mPosition.setText(Integer.toString(ratingPosition));
+            if (mOptToRating != null) {
+                mOptToRating.setText(ratingPosition > 0 ? R.string.opt_out_of_rating : R.string.opt_into_rating);
+                mOptToRating.setOnClickListener(v -> mDataHost.optInToRating(ratingPosition < 0));
+            }
+            mPosition.setVisibility(ratingPosition > 0 ? View.VISIBLE : View.INVISIBLE);
         }
 
     }

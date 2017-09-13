@@ -16,7 +16,7 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -50,8 +50,15 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
                     case ClaimsAdapter.VIEW_TYPE_IN_PAYMENT_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
+                    case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER_TOP:
+                    case ClaimsAdapter.VIEW_TYPE_IN_PAYMENT_HEADER_TOP:
+                    case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER_TOP:
                     case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
                     case ClaimsAdapter.VIEW_TYPE_VOTING:
+                    case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                    case ClaimsAdapter.VIEW_TYPE_ERROR:
+                    case ClaimsAdapter.VIEW_TYPE_LOADING:
+
                         drawDivider = false;
                 }
 
@@ -61,7 +68,13 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
                         case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER:
                         case ClaimsAdapter.VIEW_TYPE_VOTING_HEADER:
+                        case ClaimsAdapter.VIEW_TYPE_VOTED_HEADER_TOP:
+                        case ClaimsAdapter.VIEW_TYPE_IN_PAYMENT_HEADER_TOP:
+                        case ClaimsAdapter.VIEW_TYPE_PROCESSED_HEADER_TOP:
                         case ClaimsAdapter.VIEW_TYPE_VOTING:
+                        case ClaimsAdapter.VIEW_TYPE_BOTTOM:
+                        case ClaimsAdapter.VIEW_TYPE_ERROR:
+                        case ClaimsAdapter.VIEW_TYPE_LOADING:
                             drawDivider = false;
                     }
                 }
@@ -109,7 +122,7 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
 
 
     @Override
-    protected TeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter getAdapter() {
         return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency(), mDataHost.isFullTeamAccess());
     }
 }

@@ -63,6 +63,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     private int mTeamId;
     private String mTopicId;
     private String mCurrency;
+    private int mTeamAccessLevel;
 
     private boolean mIsShown;
 
@@ -86,7 +87,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             setContentShown(false);
         }
         view.findViewById(R.id.discussion).setOnClickListener(v ->
-                ChatActivity.startTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId, mDataHost.getCurrency()));
+                ChatActivity.startTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId, mTeamAccessLevel));
         return view;
     }
 
@@ -94,6 +95,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FragmentManager fragmentManager = getChildFragmentManager();
+
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(OBJECT_FRAGMENT_TAG) == null) {
             transaction.add(R.id.object_info_container, ADataFragment.getInstance(mTags, TeammateObjectFragment.class), OBJECT_FRAGMENT_TAG);
@@ -140,8 +142,9 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
 
             dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
-                    .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY)).
-                    onErrorReturnItem(new JsonWrapper(new JsonObject())).blockingFirst();
+                    .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency))
+                    .doOnNext(jsonWrapper -> mTeamAccessLevel = jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, mTeamAccessLevel))
+                    .onErrorReturnItem(new JsonWrapper(new JsonObject())).blockingFirst();
 
 
             basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
@@ -150,7 +153,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                     .subscribe(jsonWrapper -> {
-                    }, Throwable::printStackTrace, () -> {
+                    }, throwable -> {
+                    }, () -> {
                     });
 
 
@@ -177,7 +181,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                     .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
                     .doOnNext(discussion -> {
-                        mWhen.setText(TeambrellaDateUtils.getRelativeTime(discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0)));
+                        mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0)));
                     })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 

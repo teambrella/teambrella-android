@@ -1,7 +1,10 @@
 package com.teambrella.android.ui.base;
 
+import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,85 +22,47 @@ import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teambrella Data Pager Adapter
  */
-public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_LOADING = 1;
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_ERROR = 2;
-    @SuppressWarnings("WeakerAccess")
-    protected static final int VIEW_TYPE_REGULAR = 3;
+public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
 
-    protected final IDataPager<JsonArray> mPager;
-    private final Disposable mDisposal;
+    public static final int VIEW_TYPE_LOADING = 1;
+
+    public static final int VIEW_TYPE_ERROR = 2;
+
+    public static final int VIEW_TYPE_BOTTOM = 3;
+
+    public static final int VIEW_TYPE_EMPTY = 4;
+
+    public static final int VIEW_TYPE_REGULAR = 5;
 
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
-        mPager = pager;
-        mDisposal = mPager.getObservable().subscribe(notification -> {
-            if (notification.isOnNext()) {
-                JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
-                if (metadata != null) {
-                    if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)
-                            || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
-                            && TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION.equals(metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION))) {
-                        notifyDataSetChanged();
-                    } else {
-                        int dataSize = mPager.getLoadedData().size();
-                        int addedSize = metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE);
-                        int shift = hasHeader() ? 1 : 0;
-
-                        if (addedSize > 0) {
-                            switch (metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)) {
-                                case TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION:
-                                    notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
-                                    break;
-
-                                case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
-                                    notifyItemChanged(0);
-                                    notifyItemRangeInserted(0, addedSize);
-                                    break;
-                            }
-                        } else {
-                            notifyDataSetChanged();
-                        }
-                    }
-                }
-            } else {
-                notifyDataSetChanged();
-            }
-        });
+        super(pager);
     }
 
     @Override
     public int getItemViewType(int position) {
-
-        int size = mPager.getLoadedData().size();
-
-        if (position == 0) {
-            if (mPager.hasPreviousError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasPrevious() || mPager.isPreviousLoading()) {
-                return VIEW_TYPE_LOADING;
+        int count = mPager.getLoadedData().size();
+        if (count > 0) {
+            int size = mPager.getLoadedData().size() + getHeadersCount();
+            if (position == size) {
+                if (mPager.hasNextError()) {
+                    return VIEW_TYPE_ERROR;
+                } else if (mPager.hasNext()) {
+                    return VIEW_TYPE_LOADING;
+                } else {
+                    return VIEW_TYPE_BOTTOM;
+                }
             }
-
-        } else if ((position == size) && !mPager.hasPrevious() && !mPager.isPreviousLoading() && !mPager.hasPreviousError()
-                || ((mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious()) && position == size + 1)) {
-            if (mPager.hasNextError()) {
-                return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isNextLoading()) {
-                return VIEW_TYPE_LOADING;
-            }
+            return VIEW_TYPE_REGULAR;
+        } else {
+            return VIEW_TYPE_EMPTY;
         }
-
-        return VIEW_TYPE_REGULAR;
     }
 
     public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -119,6 +84,10 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                 return new LoadingViewHolder(inflater.inflate(R.layout.list_item_loading, parent, false));
             case VIEW_TYPE_ERROR:
                 return new ErrorViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
+            case VIEW_TYPE_BOTTOM:
+                return new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
+            case VIEW_TYPE_EMPTY:
+                return createEmptyViewHolder(parent);
         }
         return null;
     }
@@ -130,10 +99,6 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
             mPager.loadNext(false);
         }
 
-        if (mPager.hasPrevious() && !mPager.isNextLoading() && !mPager.hasNextError() && position < 10) {
-            mPager.loadPrevious(false);
-        }
-
 
         if (holder instanceof ErrorViewHolder) {
             holder.itemView.setOnClickListener(v -> {
@@ -143,24 +108,23 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
-    public void destroy() {
-        if (mDisposal != null && !mDisposal.isDisposed()) {
-            mDisposal.dispose();
-        }
+
+    protected int getHeadersCount() {
+        return 0;
     }
+
 
     @Override
     public int getItemCount() {
-        return mPager.getLoadedData().size() + (hasFooter() ? 1 : 0) + (hasHeader() ? 1 : 0);
-
+        if (mPager.getLoadedData().size() > 0) {
+            return mPager.getLoadedData().size() + getHeadersCount() + 1;
+        } else {
+            return 1;
+        }
     }
 
-    protected boolean hasHeader() {
-        return mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious();
-    }
-
-    protected boolean hasFooter() {
-        return mPager.hasNextError() || mPager.isNextLoading() || mPager.hasNext();
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, -1);
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
@@ -177,13 +141,27 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
     protected static class Header extends RecyclerView.ViewHolder {
+
+
         public Header(ViewGroup parent, @StringRes int titleResId, @StringRes int subtitleResId) {
+            this(parent, titleResId, subtitleResId, -1);
+        }
+
+        public Header(ViewGroup parent, @StringRes int titleResId, @StringRes int subtitleResId, @DrawableRes int backgroundResId) {
             super(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_header, parent, false));
+            TextView titleView = itemView.findViewById(R.id.status_title);
+            TextView subtitleView = itemView.findViewById(R.id.status_subtitle);
+
             if (titleResId > 0)
-                ((TextView) itemView.findViewById(R.id.status_title)).setText(titleResId);
+                titleView.setText(titleResId);
 
             if (subtitleResId > 0)
-                ((TextView) itemView.findViewById(R.id.status_subtitle)).setText(subtitleResId);
+                subtitleView.setText(subtitleResId);
+
+
+            if (backgroundResId > 0) {
+                itemView.setBackgroundResource(backgroundResId);
+            }
         }
     }
 
@@ -191,20 +169,17 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
     protected static abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
 
         private final int mTeamId;
-        private final String mCurrency;
         private final ImageView mIcon;
         private final TextView mTitle;
 
-        protected AMemberViewHolder(View itemView, int teamId, String currency) {
+        protected AMemberViewHolder(View itemView, int teamId) {
             super(itemView);
             mTeamId = teamId;
-            mCurrency = currency;
             mIcon = itemView.findViewById(R.id.icon);
             mTitle = itemView.findViewById(R.id.title);
-
         }
 
-        protected void onBind(JsonWrapper item) {
+        public void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
                     .subscribe(requestCreator -> requestCreator.transform(new CropCircleTransformation()).resize(200, 200).into(mIcon), throwable -> {
@@ -214,11 +189,20 @@ public class TeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerVie
                     .blockingFirst().getValue();
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri, mCurrency));
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
 
         }
+    }
 
 
+    protected static class DefaultEmptyViewHolder extends RecyclerView.ViewHolder {
+        public DefaultEmptyViewHolder(Context context, ViewGroup parent, @StringRes int text) {
+            super(LayoutInflater.from(context).inflate(R.layout.list_item_empty, parent, false));
+            if (text > 0) {
+                TextView prompt = itemView.findViewById(R.id.prompt);
+                prompt.setText(Html.fromHtml(context.getString(text)));
+            }
+        }
     }
 
 }
