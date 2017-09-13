@@ -15,10 +15,14 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.QRCodeUtils;
 
 import java.util.Locale;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Wallet Fragment
@@ -32,6 +36,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private TextView mReservedValueView;
     private TextView mAvailableValueView;
     private ImageView mQRCodeView;
+    private TextView mMaxCoverageCryptoValue;
+    private TextView mUninterruptedCoverageCryptoValue;
+    private TextView mMaxCoverageCurrencyValue;
+    private TextView mUninterruptedCoverageCurrencyValue;
 
 
     @Override
@@ -43,6 +51,11 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mReservedValueView = view.findViewById(R.id.reserved_value);
         mAvailableValueView = view.findViewById(R.id.available_value);
         mQRCodeView = view.findViewById(R.id.qr_code);
+        mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
+        mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
+        mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
+        mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
+
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -77,8 +90,25 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(cryptoBalance * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
-            
-            //mQRCodeView.setImageBitmap(QRCodeUtils.createBitmap("qdsdasdasd"));
+
+            Observable.just(data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)).map(QRCodeUtils::createBitmap)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mQRCodeView::setImageBitmap, throwable -> {
+                    });
+
+            float forMaxCoverage = Math.abs(data.getFloat(TeambrellaModel.ATTR_DATA_NEED_CRYPTO));
+            AmountCurrencyUtil.setCryptoAmount(mMaxCoverageCryptoValue, forMaxCoverage);
+            mMaxCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
+                    , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
+                    , Math.round(forMaxCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
+
+
+            float forUninterruptedCoverage = Math.abs(data.getFloat(TeambrellaModel.ATTR_DATA_RECOMMENDED_CRYPTO));
+            AmountCurrencyUtil.setCryptoAmount(mUninterruptedCoverageCryptoValue, forUninterruptedCoverage);
+            mUninterruptedCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
+                    , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
+                    , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
         } else {
 

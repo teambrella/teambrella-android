@@ -263,6 +263,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CRYPTO_BALANCE = "CryptoBalance";
     public static final String ATTR_DATA_CRYPTO_RESERVED = "CryptoReserved";
     public static final String ATTR_DATA_CURRENCY_RATE = "CurrencyRate";
+    public static final String ATTR_DATA_FUND_ADDRESS = "FundAddress";
+    public static final String ATTR_DATA_NEED_CRYPTO = "NeedCrypto";
+    public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -273,6 +276,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ONE_RISK_SCALE = "RiskScalePart";
     public static final String ATTR_DATA_ONE_TEAM = "TeamPart";
     public static final String ATTR_DATA_ONE_TRAMMATE = "TeammatePart";
+    public static final String ATTR_DATA_ONE_COVERAGE = "CoveragePart";
 
     public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpenses";
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";

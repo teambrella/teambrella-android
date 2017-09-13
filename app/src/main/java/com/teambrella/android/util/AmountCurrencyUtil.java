@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class AmountCurrencyUtil {
 
-    private static final String DEFAULT_TEXT = "1A";
+    private static final String DEFAULT_TEXT = "123456789";
     private static final float DEFAULT_PROPORTION = 0.5f;
 
     private static final String USD = "USD";

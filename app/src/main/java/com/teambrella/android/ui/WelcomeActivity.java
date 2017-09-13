@@ -49,7 +49,13 @@ public class WelcomeActivity extends AppCompatActivity {
         TeambrellaUser user = TeambrellaUser.get(this);
         setContentView(R.layout.acivity_welcome);
         findViewById(R.id.facebook_login).setOnClickListener(this::onFacebookLogin);
-        findViewById(R.id.try_demo).setOnClickListener(this::onTryDemo);
+        View tryDemoView = findViewById(R.id.try_demo);
+        if (BuildConfig.DEBUG) {
+            tryDemoView.setOnClickListener(this::onTryDemo);
+        } else {
+            tryDemoView.setVisibility(View.INVISIBLE);
+            tryDemoView.setEnabled(false);
+        }
         if (user.getPrivateKey() != null) {
             getTeams(user.getPrivateKey());
         }

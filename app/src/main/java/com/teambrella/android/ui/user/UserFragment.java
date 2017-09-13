@@ -43,7 +43,7 @@ public class UserFragment extends AMainLandingFragment {
                     case 0:
                         return ADataProgressFragment.getInstance(MainActivity.USER_DATA, TeammateFragment.class);
                     case 1:
-                        return ADataFragment.getInstance(MainActivity.HOME_DATA_TAG, CoverageFragment.class);
+                        return ADataFragment.getInstance(MainActivity.WALLET_DATA, CoverageFragment.class);
                     case 2:
                         return ADataProgressFragment.getInstance(MainActivity.WALLET_DATA, WalletFragment.class);
                     default:
