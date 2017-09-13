@@ -163,7 +163,7 @@
     <string name="claim_chat_vote">Voted:%d%%</string>
     <string name="application_chat_vote">Voted:%.2f</string>
     <string name="slogan">Not insurance. A lot better.</string>
-    <string name="fund_wallet">Fund the wallet to increase</string>
+    <string name="fund_wallet_to_inc">Fund the wallet to increase</string>
     <string name="coverage_explanation_title">How it works</string>
     <string name="coverage_explanation_description">Use the slider to understand how expenses impact your maximum reimbursement.</string>
     <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
@@ -187,4 +187,8 @@
     <string name="withdraw">Withdraw</string>
     <string name="reserved">Reserved</string>
     <string name="available">Available</string>
+    <string name="fund_wallet">Fund wallet</string>
+    <string name="for_max_coverage">For max coverage (100%)</string>
+    <string name="for_uninterrupted_coverage">For uninterrupted coverage</string>
+
 </resources>
