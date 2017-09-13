@@ -1,11 +1,12 @@
 .gradle/
 .idea/
 app/build/
-build/android-profile/
+!app/build.gradle
 build/
+!build.gradle
 local.properties
 teambrella.keystore
-app/app.iml
+*.iml
 keys.properties
 keystore.properties
 gradle.properties
