@@ -1,4 +1,7 @@
 <resources>
+    <string name="ethereum" translatable="false">ETH</string>
+    <string name="milli_ethereum" translatable="false">mETH</string>
+
     <string name="unknown_value">…</string>
     <string name="object_format_string" translatable="false">%1$s,%2$s</string>
     <string name="locale">en</string>
@@ -181,4 +184,7 @@
     <string name="weight_format_string"><![CDATA[Weight <b>%.1f</b>]]></string>
     <string name="votes">Votes</string>
     <string name="private_message_notification_title">%s (new message)</string>
+    <string name="withdraw">Withdraw</string>
+    <string name="reserved">Reserved</string>
+    <string name="available">Available</string>
 </resources>

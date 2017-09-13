@@ -61,6 +61,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     public static final String SET_PROXY_POSITION_DATA = "set_proxy_position";
     public static final String TEAMS_DATA = "teams_data";
     public static final String USER_DATA = "user_data";
+    public static final String WALLET_DATA = "wallet_data";
 
 
     private static final String HOME_TAG = "home";
@@ -108,7 +109,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             if (savedInstanceState == null) {
                 startService(new Intent(this, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
             }
-
             mClient = new MainNotificationClient(this);
             mClient.connect();
         } else {
@@ -196,7 +196,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     protected String[] getDataTags() {
-        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA} : new String[]{};
+        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA} : new String[]{};
     }
 
     @Override
@@ -214,6 +214,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                 return TeambrellaDataFragment.getInstance(null);
             case USER_DATA:
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId));
+            case WALLET_DATA:
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
         }
         return null;
     }

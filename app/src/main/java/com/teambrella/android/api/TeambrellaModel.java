@@ -254,6 +254,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";
     public static final String ATTR_DATA_VOTERS = "Voters";
     public static final String ATTR_DATA_ME = "Me";
+    public static final String ATTR_DATA_CRYPTO_BALANCE = "CryptoBalance";
+    public static final String ATTR_DATA_CRYPTO_RESERVED = "CryptoReserved";
+    public static final String ATTR_DATA_CURRENCY_RATE = "CurrencyRate";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";

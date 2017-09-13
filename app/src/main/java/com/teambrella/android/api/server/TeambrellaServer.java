@@ -295,6 +295,11 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(claimIdString));
                 break;
+            case TeambrellaUris.WALLET: {
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+            }
+            break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -368,6 +373,8 @@ public class TeambrellaServer {
                 return mAPI.getApplicationVotes(requestBody);
             case TeambrellaUris.CLAIMS_VOTES:
                 return mAPI.getClaimVotes(requestBody);
+            case TeambrellaUris.WALLET:
+                return mAPI.getWallet(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

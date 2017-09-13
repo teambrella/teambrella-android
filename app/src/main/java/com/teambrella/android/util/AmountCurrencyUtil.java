@@ -46,6 +46,21 @@ public class AmountCurrencyUtil {
         textView.setText(text);
     }
 
+
+    public static void setCryptoAmount(TextView textView, float amount) {
+        final Context context = textView.getContext();
+        int stringId = amount > 1 ? R.string.ethereum : R.string.milli_ethereum;
+        String cryptoCurrency = context.getString(stringId);
+        switch (stringId) {
+            case R.string.ethereum:
+                setAmount(textView, amount, cryptoCurrency);
+                break;
+            case R.string.milli_ethereum:
+                setAmount(textView, Math.round(amount * 1000), cryptoCurrency);
+                break;
+        }
+    }
+
     public static String getCurrencySign(String currency) {
         if (USD.equalsIgnoreCase(currency)) {
             return "$";

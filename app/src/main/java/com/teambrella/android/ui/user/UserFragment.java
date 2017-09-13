@@ -45,7 +45,7 @@ public class UserFragment extends AMainLandingFragment {
                     case 1:
                         return ADataFragment.getInstance(MainActivity.HOME_DATA_TAG, CoverageFragment.class);
                     case 2:
-                        return new WalletFragment();
+                        return ADataProgressFragment.getInstance(MainActivity.WALLET_DATA, WalletFragment.class);
                     default:
                         throw new RuntimeException();
                 }

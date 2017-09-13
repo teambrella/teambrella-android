@@ -19,6 +19,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
+import com.teambrella.android.util.AmountCurrencyUtil;
 
 import io.reactivex.Notification;
 
@@ -33,6 +34,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
     private TextView mCoverage;
     private TextView mSubmitClaim;
     private TextView mCoverageType;
+    private TextView mWalletAmount;
 
 
     @Nullable
@@ -44,6 +46,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
         mCoverage = view.findViewById(R.id.coverage);
         mSubmitClaim = view.findViewById(R.id.submit_claim);
         mCoverageType = view.findViewById(R.id.coverage_type);
+        mWalletAmount = view.findViewById(R.id.wallet_amount);
         return view;
     }
 
@@ -62,6 +65,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
                     ? View.VISIBLE : View.INVISIBLE);
             mSubmitClaim.setOnClickListener(v -> ReportClaimActivity.start(getContext(), objectImageUri, objectName, mDataHost.getTeamId(), mDataHost.getCurrency()));
             mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(mDataHost.getTeamType()));
+            AmountCurrencyUtil.setCryptoAmount(mWalletAmount, data.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE));
 
         }
     }
