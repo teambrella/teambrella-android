@@ -27,8 +27,8 @@ public class JsonTX extends JsonWrapper implements ITx {
     }
 
     @Override
-    public float getBTCAmount() {
-        return getFloat(TeambrellaModel.ATTR_DATA_BTC_AMOUNT, 0f);
+    public float getCryptoAmount() {
+        return getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_AMOUNT, 0f);
     }
 
     @Override

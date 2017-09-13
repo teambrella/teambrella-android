@@ -2,7 +2,7 @@ package com.teambrella.android.util;
 
 import com.subgraph.orchid.encoders.Hex;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.content.model.BTCAddress;
+import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.TXSignature;
 import com.teambrella.android.content.model.Tx;
@@ -37,9 +37,9 @@ class SignHelper {
     private static final String LOG_TAG = SignHelper.class.getSimpleName();
 
 
-    static Script getRedeemScript(BTCAddress btcAddress, List<Cosigner> cosigners) {
+    static Script getRedeemScript(Multisig multisig, List<Cosigner> cosigners) {
         ScriptBuilder builder = new ScriptBuilder();
-        builder.data(Hex.decode(btcAddress.teammatePublicKey)).op(ScriptOpCodes.OP_CHECKSIGVERIFY);
+        builder.data(Hex.decode(multisig.teammatePublicKey)).op(ScriptOpCodes.OP_CHECKSIGVERIFY);
         int size = cosigners.size();
         if (size > 6) {
             builder.op(ScriptOpCodes.OP_3);
@@ -55,7 +55,7 @@ class SignHelper {
         }
         builder.op(ScriptOpCodes.OP_RESERVED + size);
         builder.op(ScriptOpCodes.OP_CHECKMULTISIG);
-        builder.number(Long.parseLong(btcAddress.teamId));
+        builder.number(multisig.teamId);
         builder.op(ScriptOpCodes.OP_DROP);
         return builder.build();
     }
@@ -75,7 +75,7 @@ class SignHelper {
             transaction = new Transaction(params);
 
             for (TxInput txInput : tx.txInputs) {
-                totalBTCAmount = totalBTCAmount.add(new BigDecimal(txInput.btcAmount, MathContext.UNLIMITED));
+                totalBTCAmount = totalBTCAmount.add(new BigDecimal(txInput.cryptoAmount, MathContext.UNLIMITED));
                 TransactionOutPoint outpoint = new TransactionOutPoint(params, txInput.previousTxIndex,
                         Sha256Hash.wrap(txInput.previousTxId));
                 transaction.addInput(new TransactionInput(params, transaction, new byte[0], outpoint))
@@ -84,7 +84,7 @@ class SignHelper {
 
             totalBTCAmount = totalBTCAmount.subtract(new BigDecimal("0.0001", MathContext.UNLIMITED));
 
-            if (totalBTCAmount.compareTo(new BigDecimal(tx.btcAmount)) == -1) {
+            if (totalBTCAmount.compareTo(new BigDecimal(tx.cryptoAmount)) == -1) {
                 return null;
             }
 
@@ -100,26 +100,26 @@ class SignHelper {
 
                 for (TxOutput txOutput : tx.txOutputs) {
                     Address address = Address.fromBase58(params, txOutput.address);
-                    transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(new BigDecimal(txOutput.btcAmount).toString()), address));
-                    outputSum = outputSum.add(new BigDecimal(txOutput.btcAmount));
+                    transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(new BigDecimal(txOutput.cryptoAmount).toString()), address));
+                    outputSum = outputSum.add(new BigDecimal(txOutput.cryptoAmount));
                 }
 
                 BigDecimal changeAmount = totalBTCAmount.subtract(outputSum);
 
                 if (changeAmount.compareTo(new BigDecimal("0.0001", MathContext.UNLIMITED)) == 1) {
-                    BTCAddress current = tx.teammate.getCurrentAddress();
+                    Multisig current = tx.teammate.getCurrentAddress();
                     if (current != null) {
                         transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(changeAmount.toString()),
                                 Address.fromBase58(params, current.address)));
                     }
                 } else if (tx.kind == TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET) {
-                    BTCAddress next = tx.teammate.getNextAddress();
+                    Multisig next = tx.teammate.getNextAddress();
                     if (next != null) {
                         transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(totalBTCAmount.toString()),
                                 Address.fromBase58(params, next.address)));
                     }
                 } else if (tx.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET) {
-                    BTCAddress current = tx.teammate.getCurrentAddress();
+                    Multisig current = tx.teammate.getCurrentAddress();
                     if (current != null) {
                         transaction.addOutput(new TransactionOutput(params, null, Coin.parseCoin(totalBTCAmount.toString()),
                                 Address.fromBase58(params, current.address)));

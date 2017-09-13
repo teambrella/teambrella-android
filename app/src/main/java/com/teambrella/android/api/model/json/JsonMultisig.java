@@ -2,21 +2,24 @@ package com.teambrella.android.api.model.json;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.api.model.IBTCAddress;
+import com.teambrella.android.api.model.IMultisig;
 
 /**
- * Json BTCAddress
+ * Json Multisig
  */
-public class JsonBTCAddress extends JsonWrapper implements IBTCAddress {
+public class JsonMultisig extends JsonWrapper implements IMultisig {
 
-    public JsonBTCAddress(JsonObject object) {
+    public JsonMultisig(JsonObject object) {
         super(object);
     }
 
     @Override
-    public String getAddress() {
-        return getString(TeambrellaModel.ATTR_DATA_ADDRESS);
+    public int getId() {
+        return getInt(TeambrellaModel.ATTR_DATA_ID);
     }
+
+    @Override
+    public String getAddress() { return getString(TeambrellaModel.ATTR_DATA_ADDRESS); }
 
     @Override
     public String getTeammateId() {

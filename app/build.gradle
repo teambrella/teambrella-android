@@ -113,8 +113,9 @@ dependencies {
 
     compile 'org.chalup.microorm:microorm:0.8.0'
 
-    /* Bitcoin */
+    /* Ethereum */
     compile 'org.bitcoinj:bitcoinj-core:0.14.4'
+    compile 'org.ethereum:geth:1.6.7'
 
     /* Utils */
     compile 'com.jakewharton:butterknife:8.5.1'

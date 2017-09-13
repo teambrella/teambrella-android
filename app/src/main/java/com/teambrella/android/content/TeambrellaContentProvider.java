@@ -40,7 +40,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             case TeambrellaRepository.TX_OUTPUT:
                 return db.rawQuery("SELECT " + TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + " AS " + TeambrellaRepository.TXOutput.ID + ","
                         + TeambrellaRepository.TXOutput.TX_ID + ","
-                        + TeambrellaRepository.TXOutput.AMOUNT_BTC + ","
+                        + TeambrellaRepository.TXOutput.AMOUNT_CRYPTO + ","
                         + TeambrellaRepository.PayTo.ADDRESS + ","
                         + TeambrellaRepository.PayTo.IS_DEFAULT + ","
                         + TeambrellaRepository.PayTo.TEAMMATE_ID + ","
@@ -48,9 +48,15 @@ public class TeambrellaContentProvider extends ContentProvider {
                         + TeambrellaRepository.PayTo.KNOWN_SINCE
                         + " FROM " + TeambrellaRepository.TX_OUTPUT_TABLE + " INNER JOIN " + TeambrellaRepository.PAY_TO_TABLE +
                         " ON " + TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.PAY_TO_ID + "=" + TeambrellaRepository.PAY_TO_TABLE + "." + TeambrellaRepository.PayTo.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
-            case TeambrellaRepository.BTC_ADDRESS:
-                return db.rawQuery("SELECT * FROM " + TeambrellaRepository.BTC_ADDRESS_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
-                        " ON " + TeambrellaRepository.BTCAddress.TEAMMATE_ID + "=" + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
+            case TeambrellaRepository.MULTISIG:
+                return db.rawQuery("SELECT " +
+                        TeambrellaRepository.MULTISIG_TABLE + ".*" + ", "
+                        + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + " AS " + TeambrellaRepository.Multisig.TEAMMATE_ID + ","
+                        + TeambrellaRepository.Teammate.NAME + ","
+                        + TeambrellaRepository.Teammate.PUBLIC_KEY + ","
+                        + TeambrellaRepository.Teammate.TEAM_ID
+                        + " FROM " + TeambrellaRepository.MULTISIG_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
+                        " ON " + TeambrellaRepository.MULTISIG_TABLE + "." + TeambrellaRepository.Multisig.TEAMMATE_ID + "=" + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
             case TeambrellaRepository.COSIGNER:
                 return db.rawQuery("SELECT * FROM " + TeambrellaRepository.COSIGNER_TABLE + " INNER JOIN " + TeambrellaRepository.TEAMMATE_TABLE +
                         " ON " + TeambrellaRepository.Cosigner.TEAMMATE_ID + "=" + TeambrellaRepository.Teammate.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
@@ -59,6 +65,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + " AS " + TeambrellaRepository.Teammate.ID + ","
                         + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.NAME + " AS " + TeambrellaRepository.Teammate.NAME + ","
                         + TeambrellaRepository.Teammate.PUBLIC_KEY + ","
+                        + TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS + ","
                         + TeambrellaRepository.Teammate.FB_NAME + ","
                         + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + " AS " + TeambrellaRepository.Teammate.TEAM_ID + ","
                         + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.NAME + " AS " + "TeamName" + ","
@@ -89,8 +96,8 @@ public class TeambrellaContentProvider extends ContentProvider {
             case TeambrellaRepository.TEAMMATE:
                 rowId = db.insertWithOnConflict(TeambrellaRepository.TEAMMATE_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 break;
-            case TeambrellaRepository.BTC_ADDRESS:
-                rowId = db.insertWithOnConflict(TeambrellaRepository.BTC_ADDRESS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            case TeambrellaRepository.MULTISIG:
+                rowId = db.insertWithOnConflict(TeambrellaRepository.MULTISIG_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 break;
             case TeambrellaRepository.TX_INPUT:
                 rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
@@ -136,8 +143,8 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private String getTableName(Uri uri) {
         switch (TeambrellaRepository.sUriMatcher.match(uri)) {
-            case TeambrellaRepository.BTC_ADDRESS:
-                return TeambrellaRepository.BTC_ADDRESS_TABLE;
+            case TeambrellaRepository.MULTISIG:
+                return TeambrellaRepository.MULTISIG_TABLE;
             case TeambrellaRepository.CONNECTION:
                 return TeambrellaRepository.CONNECTION_TABLE;
             case TeambrellaRepository.COSIGNER:
@@ -164,7 +171,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private static class TeambrellaSQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final int VERSION = 1;
+        private static final int VERSION = 2;
         private static final String NAME = "teambrella";
 
 
@@ -175,11 +182,14 @@ public class TeambrellaContentProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase db) {
 
-            db.execSQL("CREATE TABLE BTCAddress (" +
-                    "Address TEXT PRIMARY KEY UNIQUE NOT NULL, " +
+            db.execSQL("CREATE TABLE Multisig (" +
+                    "Id INTEGER PRIMARY KEY UNIQUE NOT NULL, " +
+                    "Address TEXT, " +
+                    "CreationTx TEXT, " +
                     "TeammateId INTEGER NOT NULL REFERENCES Teammate (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "Status INTEGER NOT NULL, " +
-                    "DateCreated DATETIME" +
+                    "DateCreated DATETIME, " +
+                    "NeedUpdateServer boolean NOT NULL" +
                     ")");
 
             db.execSQL("CREATE TABLE Connection (" +
@@ -191,9 +201,9 @@ public class TeambrellaContentProvider extends ContentProvider {
 
             db.execSQL("CREATE TABLE Cosigner (" +
                     "TeammateId INTEGER DEFAULT (0) NOT NULL REFERENCES Teammate (Id) DEFERRABLE INITIALLY DEFERRED, " +
-                    "AddressId TEXT NOT NULL REFERENCES BTCAddress (Address) DEFERRABLE INITIALLY DEFERRED, " +
+                    "MultisigId INTEGER NOT NULL REFERENCES Multisig (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "KeyOrder INTEGER NOT NULL DEFAULT (0), " +
-                    "PRIMARY KEY (AddressId, KeyOrder)" +
+                    "PRIMARY KEY (MultisigId, KeyOrder)" +
                     ")");
 
             db.execSQL("CREATE TABLE PayTo (" +
@@ -221,19 +231,20 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "TeamId INTEGER NOT NULL REFERENCES Team (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "Name TEXT, " +
                     "FBName TEXT, " +
-                    "PublicKey TEXT" +
+                    "PublicKey TEXT," +
+                    "PublicKeyAddress TEXT" +
                     ")");
 
 
             db.execSQL("CREATE TABLE [Tx] ( " +
                     "[Id] varchar PRIMARY KEY NOT NULL, " +
                     "[TeammateId] integer NOT NULL, " +
-                    "[AmountBTC] TEXT, " +
-                    "[FeeBTC] TEXT, " +
+                    "[AmountCrypto] TEXT, " +
+                    "[FeeCrypto] TEXT, " +
                     "[WithdrawReqId] integer, " +
                     "[ClaimId] integer, " +
                     "[ClaimTeammateId] integer, " +
-                    "[MoveToAddressId] string, " +
+                    "[MoveToMultisigId] integer, " +
                     "[Kind] integer NOT NULL, " +
                     "[State] integer NOT NULL, " +
                     "[InitiatedTime] datetime NOT NULL, " +
@@ -246,7 +257,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "[ClientResolutionTime] datetime, " +
                     "CONSTRAINT [FK_Tx_0_0] FOREIGN KEY ([TeammateId]) REFERENCES [Teammate] ([Id]) MATCH NONE ON UPDATE NO ACTION ON DELETE NO ACTION, " +
                     "CONSTRAINT [FK_Tx_1_0] FOREIGN KEY ([ClaimTeammateId]) REFERENCES [Teammate] ([Id]) MATCH NONE ON UPDATE NO ACTION ON DELETE NO ACTION, " +
-                    "CONSTRAINT [FK_Tx_2_0] FOREIGN KEY ([MoveToAddressId]) REFERENCES [BTCAddress] ([Address]) MATCH NONE ON UPDATE NO ACTION ON DELETE NO ACTION " +
+                    "CONSTRAINT [FK_Tx_2_0] FOREIGN KEY ([MoveToMultisigId]) REFERENCES [Multisig] ([Id]) MATCH NONE ON UPDATE NO ACTION ON DELETE NO ACTION " +
                     ")");
 
             db.execSQL("CREATE TABLE TxInput (" +
@@ -254,14 +265,14 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "TxId VARCHAR NOT NULL REFERENCES Tx (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "PrevTxId TEXT NOT NULL, " +
                     "PrevTxIndex INTEGER NOT NULL, " +
-                    "AmountBTC TEXT NOT NULL" +
+                    "AmountCrypto TEXT NOT NULL" +
                     ")");
 
             db.execSQL("CREATE TABLE TxOutput (" +
                     "Id VARCHAR PRIMARY KEY UNIQUE NOT NULL, " +
                     "TxId VARCHAR NOT NULL REFERENCES Tx (Id) DEFERRABLE INITIALLY DEFERRED, " +
                     "PayToId VARCHAR NOT NULL REFERENCES PayTo (Id) DEFERRABLE INITIALLY DEFERRED, " +
-                    "AmountBTC TEXT NOT NULL" +
+                    "AmountCrypto TEXT NOT NULL" +
                     ")");
 
             db.execSQL("CREATE TABLE TxSignature (" +
@@ -283,7 +294,24 @@ public class TeambrellaContentProvider extends ContentProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // nothing to do
+
+            if (oldVersion < 2
+                    ){
+                db.execSQL("DROP TABLE IF EXISTS Multisig");
+                db.execSQL("DROP TABLE IF EXISTS Connection");
+                db.execSQL("DROP TABLE IF EXISTS Cosigner");
+                db.execSQL("DROP TABLE IF EXISTS PayTo");
+                db.execSQL("DROP TABLE IF EXISTS [Team]");
+                db.execSQL("DROP TABLE IF EXISTS Teammate");
+                db.execSQL("DROP TABLE IF EXISTS [Tx]");
+                db.execSQL("DROP TABLE IF EXISTS TxInput");
+                db.execSQL("DROP TABLE IF EXISTS TxOutput");
+                db.execSQL("DROP TABLE IF EXISTS TxSignature");
+                db.execSQL("DROP TABLE IF EXISTS User");
+
+                onCreate(db);
+            }
+
         }
     }
 }

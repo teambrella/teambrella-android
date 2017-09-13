@@ -22,9 +22,9 @@ public class Tx {
     @SerializedName(TeambrellaModel.ATTR_DATA_TEAMMATE_ID)
     public long teammateId;
 
-    @Column(TeambrellaRepository.Tx.AMOUNT_BTC)
-    @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public String btcAmount;
+    @Column(TeambrellaRepository.Tx.AMOUNT_CRYPTO)
+    @SerializedName(TeambrellaModel.ATTR_DATA_CRYPTO_AMOUNT)
+    public String cryptoAmount;
 
     @Column(TeambrellaRepository.Tx.CLAIM_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_CLAIM_ID)
@@ -67,7 +67,7 @@ public class Tx {
     public List<Cosigner> cosigners;
 
 
-    public BTCAddress getFromAddress() {
+    public Multisig getFromAddress() {
         return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getPreviousAddress() :
                 this.teammate.getCurrentAddress();
     }

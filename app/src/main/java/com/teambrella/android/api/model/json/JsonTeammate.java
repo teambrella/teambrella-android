@@ -37,4 +37,7 @@ public class JsonTeammate extends JsonWrapper implements ITeammate {
     public String getPublicKey() {
         return getString(TeambrellaModel.ATTR_DATA_PUBLIC_KEY);
     }
+
+    @Override
+    public String getPublicKeyAddress() { return getString(TeambrellaModel.ATTR_DATA_PUBLIC_KEY_ADDRESS); }
 }

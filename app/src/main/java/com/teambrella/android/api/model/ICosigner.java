@@ -7,7 +7,7 @@ public interface ICosigner {
 
     long getTeammateId();
 
-    String getAddressId();
+    long getMultisigId();
 
     int getKeyOrder();
 }

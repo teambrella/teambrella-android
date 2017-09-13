@@ -22,9 +22,9 @@ public class TxOutput {
     @Column(TeambrellaRepository.TXOutput.PAY_TO_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_PAY_TO_ID)
     public String payToId;
-    @Column(TeambrellaRepository.TXOutput.AMOUNT_BTC)
-    @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public String btcAmount;
+    @Column(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO)
+    @SerializedName(TeambrellaModel.ATTR_DATA_CRYPTO_AMOUNT)
+    public String cryptoAmount;
 
     @Column(TeambrellaRepository.PayTo.TEAMMATE_ID)
     public long teammateId;
