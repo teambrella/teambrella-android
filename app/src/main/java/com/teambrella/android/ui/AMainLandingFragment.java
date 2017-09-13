@@ -49,7 +49,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
 
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.getMenu().add(0, R.id.exit, 0, "Exit");
-        toolbar.setOverflowIcon(getContext().getResources().getDrawable(R.drawable.ic_more_vert));
+        //toolbar.setOverflowIcon(getContext().getResources().getDrawable(R.drawable.ic_more_vert));
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.exit:
