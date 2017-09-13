@@ -558,6 +558,7 @@ public class TeambrellaContentProviderClient {
     public List<com.teambrella.android.content.model.Multisig> getMultisigsToCreate(String publicKey) throws RemoteException {
         List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
                 TeambrellaRepository.Multisig.ADDRESS + " IS NULL AND " +
+                        TeambrellaRepository.Multisig.STATUS + " = " + TeambrellaModel.USER_MULTISIG_STATUS_CURRENT + " AND " +
                 TeambrellaRepository.Teammate.PUBLIC_KEY + "=?",
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
         Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;

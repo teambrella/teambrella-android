@@ -19,8 +19,8 @@ import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.blockchain.BlockchainServer;
-import com.teambrella.android.blockchain.EtherServer;
+import com.teambrella.android.blockchain.BlockchainNode;
+import com.teambrella.android.blockchain.EtherNode;
 import com.teambrella.android.blockchain.Scan;
 import com.teambrella.android.blockchain.TxReceiptResult;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
@@ -233,8 +233,9 @@ public class TeambrellaUtilService extends GcmTaskService {
             Multisig sameTeammateMultisig = getMyTeamMultisigIfAny(myPublicKey, m.teammateId, myUncreatedMultisigs);
             if (sameTeammateMultisig != null) {
 
-                boolean needServerUpdate = (sameTeammateMultisig.address != null);
-                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
+                // todo: move "cosigner list", and send to the server the move tx (not creation tx).
+                ////boolean needServerUpdate = (sameTeammateMultisig.address != null);
+                ////operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
 
             } else {
                 String txHex = createOneWallet(myNonce, m, gasLimit);
@@ -316,14 +317,14 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private boolean verifyIfWalletIsCreated(long gasLimit) throws RemoteException, OperationApplicationException {
 
-        EtherServer server = new EtherServer(true);
+        EtherNode blockchain = new EtherNode(true);
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> creationTxes = mTeambrellaClient.getMultisigsInCreation(myPublicKey);
         for (Multisig m : creationTxes){
 
-            Scan<TxReceiptResult> receipt = server.checkTx(m.creationTx);
+            Scan<TxReceiptResult> receipt = blockchain.checkTx(m.creationTx);
             if (receipt != null){
                 TxReceiptResult res = receipt.result;
                 boolean allGasIsUsed = false;
@@ -452,12 +453,12 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException {
-        BlockchainServer server = new BlockchainServer(true);
+        BlockchainNode blockchain = new BlockchainNode(true);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
         for (Tx tx : txs) {
             Transaction transaction = SignHelper.getTransactionToPublish(tx);
-            if (transaction != null && server.checkTransaction(transaction.getHashAsString()) || server.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
+            if (transaction != null && blockchain.checkTransaction(transaction.getHashAsString()) || blockchain.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
                 operations.add(TeambrellaContentProviderClient.setTxPublished(tx));
                 mClient.applyBatch(operations);
             }
@@ -589,8 +590,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private long getNonce(String addressHex){
-        EtherServer server = new EtherServer(true);
-        return server.checkNonce(addressHex);
+        EtherNode blockchain = new EtherNode(true);
+        return blockchain.checkNonce(addressHex);
     }
 
     private String publishCryptoTx(org.ethereum.geth.Transaction cryptoTx) throws RemoteException {
@@ -599,8 +600,8 @@ public class TeambrellaUtilService extends GcmTaskService {
             Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
             String hex = "0x" + toHexString(rlp);
 
-            EtherServer server = new EtherServer(true);
-            return server.pushTx(hex);
+            EtherNode blockchain = new EtherNode(true);
+            return blockchain.pushTx(hex);
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "", e);

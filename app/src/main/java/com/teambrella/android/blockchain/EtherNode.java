@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -20,16 +19,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class EtherServer {
+public class EtherNode {
 
-    private static final String LOG_TAG = EtherServer.class.getSimpleName();
+    private static final String LOG_TAG = EtherNode.class.getSimpleName();
 
     private final List<EtherAPI> mEtherAPIs = new LinkedList<>();
     private final boolean mIsTestNet;
     private static final String[] TEST_AUTHORITIES = new String[]{"https://ropsten.etherscan.io"};
     private static final String[] MAIN_AUTHORITIES = new String[]{"https://etherscan.io"};
 
-    public EtherServer(boolean testNet) {
+    public EtherNode(boolean testNet) {
         this.mIsTestNet = testNet;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

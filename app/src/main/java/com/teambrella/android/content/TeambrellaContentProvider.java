@@ -171,7 +171,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private static class TeambrellaSQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final int VERSION = 2;
+        private static final int VERSION = 201;
         private static final String NAME = "teambrella";
 
 
@@ -295,7 +295,7 @@ public class TeambrellaContentProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            if (oldVersion < 2
+            if (oldVersion < 201
                     ){
                 db.execSQL("DROP TABLE IF EXISTS Multisig");
                 db.execSQL("DROP TABLE IF EXISTS Connection");
