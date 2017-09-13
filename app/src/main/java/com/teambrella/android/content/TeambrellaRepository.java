@@ -11,7 +11,7 @@ public class TeambrellaRepository {
 
     public static String AUTHORITY = "com.teambrella.android.provider";
 
-    static final String BTC_ADDRESS_TABLE = "BTCAddress";
+    public static final String MULTISIG_TABLE = "Multisig";
     static final String CONNECTION_TABLE = "Connection";
     static final String COSIGNER_TABLE = "Cosigner";
     static final String PAY_TO_TABLE = "PayTo";
@@ -26,7 +26,7 @@ public class TeambrellaRepository {
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 
-    static final int BTC_ADDRESS = 1;
+    static final int MULTISIG = 1;
     static final int CONNECTION = 2;
     static final int COSIGNER = 3;
     static final int PAY_TO = 4;
@@ -39,7 +39,7 @@ public class TeambrellaRepository {
 
 
     static {
-        sUriMatcher.addURI(AUTHORITY, BTC_ADDRESS_TABLE, BTC_ADDRESS);
+        sUriMatcher.addURI(AUTHORITY, MULTISIG_TABLE, MULTISIG);
         sUriMatcher.addURI(AUTHORITY, CONNECTION_TABLE, CONNECTION);
         sUriMatcher.addURI(AUTHORITY, COSIGNER_TABLE, COSIGNER);
         sUriMatcher.addURI(AUTHORITY, PAY_TO_TABLE, PAY_TO);
@@ -52,14 +52,17 @@ public class TeambrellaRepository {
 
     }
 
-    public static final class BTCAddress {
+    public static final class Multisig {
         public static final Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
-                .encodedPath(BTC_ADDRESS_TABLE).build();
+                .encodedPath(MULTISIG_TABLE).build();
 
+        public static final String ID = "Id";
         public static final String ADDRESS = "Address";
+        public static final String CREATION_TX = "CreationTx";
         public static final String TEAMMATE_ID = "TeammateId";
         public static final String STATUS = "Status";
         public static final String DATE_CREATED = "DateCreated";
+        public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
 
 
     }
@@ -75,7 +78,7 @@ public class TeambrellaRepository {
     public static class Cosigner {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(COSIGNER_TABLE).build();
-        public static final String ADDRESS_ID = "AddressId";
+        public static final String MULTISIG_ID = "MultisigId";
         public static final String TEAMMATE_ID = "TeammateId";
         public static final String KEY_ORDER = "KeyOrder";
     }
@@ -99,6 +102,7 @@ public class TeambrellaRepository {
         public static final String NAME = "Name";
         public static final String FB_NAME = "FBName";
         public static final String PUBLIC_KEY = "PublicKey";
+        public static final String PUBLIC_KEY_ADDRESS = "PublicKeyAddress";
         public static final String TEAM_NAME = "TeamName";
     }
 
@@ -107,15 +111,15 @@ public class TeambrellaRepository {
                 .encodedPath(TX_TABLE).build();
         public static final String ID = "Id";
         public static final String TEAMMATE_ID = "TeammateId";
-        public static final String AMOUNT_BTC = "AmountBTC";
-        public static final String FEE_BTC = "FeeBTC";
+        public static final String AMOUNT_CRYPTO = "AmountCrypto";
+        public static final String FEE_CRYPTO = "FeeCrypto";
         public static final String CLAIM_ID = "ClaimId";
         public static final String CLAIM_TEAMMATE_ID = "ClaimTeammateId";
         public static final String WITHDRAW_REQ_ID = "WithdrawReqId";
         public static final String KIND = "Kind";
         public static final String STATE = "State";
         public static final String INITIATED_TIME = "InitiatedTime";
-        public static final String MOVE_TO_ADDRESS_ID = "MoveToAddressId";
+        public static final String MOVE_TO_MULTISIG_ID = "MoveToMultisigId";
         public static final String UPDATE_TIME = "UpdateTime";
         public static final String RECEIVED_TIME = "ReceivedTime";
         public static final String RESOLUTION_TIME = "ResolutionTime";
@@ -132,7 +136,7 @@ public class TeambrellaRepository {
         public static final String TX_ID = "TxId";
         public static final String PREV_TX_ID = "PrevTxId";
         public static final String PREV_TX_INDEX = "PrevTxIndex";
-        public static final String AMMOUNT_BTC = "AmountBTC";
+        public static final String AMOUNT_CRYPTO = "AmountCrypto";
     }
 
     public static final class TXOutput {
@@ -141,7 +145,7 @@ public class TeambrellaRepository {
         public static final String ID = "Id";
         public static final String TX_ID = "TxId";
         public static final String PAY_TO_ID = "PayToId";
-        public static final String AMOUNT_BTC = "AmountBTC";
+        public static final String AMOUNT_CRYPTO = "AmountCrypto";
     }
 
     public static final class TXSignature {

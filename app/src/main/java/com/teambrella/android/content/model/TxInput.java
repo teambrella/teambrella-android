@@ -23,9 +23,9 @@ public class TxInput implements Comparable<TxInput> {
     @Column(TeambrellaRepository.TXInput.TX_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_TX_ID)
     public UUID txId;
-    @Column(TeambrellaRepository.TXInput.AMMOUNT_BTC)
-    @SerializedName(TeambrellaModel.ATTR_DATA_BTC_AMOUNT)
-    public String btcAmount;
+    @Column(TeambrellaRepository.TXInput.AMOUNT_CRYPTO)
+    @SerializedName(TeambrellaModel.ATTR_DATA_CRYPTO_AMOUNT)
+    public String cryptoAmount;
     @Column(TeambrellaRepository.TXInput.PREV_TX_ID)
     @SerializedName(TeambrellaModel.ATTR_DATA_PREVIOUS_TX_ID)
     public String previousTxId;

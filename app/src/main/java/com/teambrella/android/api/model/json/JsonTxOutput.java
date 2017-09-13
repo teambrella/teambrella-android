@@ -29,7 +29,7 @@ public class JsonTxOutput extends JsonWrapper implements ITxOutput {
     }
 
     @Override
-    public float getBTCAmount() {
-        return getFloat(TeambrellaModel.ATTR_DATA_BTC_AMOUNT, -1);
+    public float getCryptoAmount() {
+        return getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_AMOUNT, -1);
     }
 }

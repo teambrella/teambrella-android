@@ -8,8 +8,8 @@ import com.teambrella.android.api.TeambrellaModel;
  */
 public class ServerUpdates {
 
-    @SerializedName(TeambrellaModel.ATTR_DATA_BTC_ADDRESSES)
-    public BTCAddress[] btcAddresses;
+    @SerializedName(TeambrellaModel.ATTR_DATA_MULTISIGS)
+    public Multisig[] multisigs;
 
     @SerializedName(TeambrellaModel.ATTR_DATA_COSIGNERS)
     public Cosigner[] cosigners;

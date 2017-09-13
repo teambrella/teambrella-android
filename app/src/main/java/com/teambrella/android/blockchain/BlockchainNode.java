@@ -19,16 +19,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class BlockchainServer {
+public class BlockchainNode {
 
-    private static final String LOG_TAG = BlockchainServer.class.getSimpleName();
+    private static final String LOG_TAG = BlockchainNode.class.getSimpleName();
 
     private final List<BlockchainAPI> mBlockchainAPIs = new LinkedList<>();
     private final boolean mIsTestNet;
     private static final String[] TEST_AUTHORITIES = new String[]{"https://test-insight.bitpay.com", "https://testnet.blockexplorer.com"};
     private static final String[] MAIN_AUTHORITIES = new String[]{"https://insight.bitpay.com", "https://blockexplorer.com", "https://blockchain.info"};
 
-    public BlockchainServer(boolean testNet) {
+    public BlockchainNode(boolean testNet) {
         this.mIsTestNet = testNet;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

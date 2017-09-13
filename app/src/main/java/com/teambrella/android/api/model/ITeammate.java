@@ -14,4 +14,6 @@ public interface ITeammate {
     String getFacebookName();
 
     String getPublicKey();
+
+    String getPublicKeyAddress();
 }

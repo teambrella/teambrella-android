@@ -120,11 +120,13 @@ public class TeambrellaModel {
     public static final int TX_SIGNING_STATE_SIGNED = 5;
 
 
-    /* User address status*/
-    public static final int USER_ADDRESS_STATUS_PREVIOUS = 0;
-    public static final int USER_ADDRESS_STATUS_CURRENT = 1;
-    public static final int USER_ADDRESS_STATUS_NEXT = 3;
-    public static final int USER_ADDRESS_STATUS_ARCHIVE = 4;
+    /* User multisig (address) status*/
+    public static final int USER_MULTISIG_STATUS_PREVIOUS = 0;
+    public static final int USER_MULTISIG_STATUS_CURRENT = 1;
+    public static final int USER_MULTISIG_STATUS_NEXT = 3;
+    public static final int USER_MULTISIG_STATUS_ARCHIVE = 4;
+
+    public static final int USER_MULTISIG_STATUS_CREATION_FAILED = -400;
 
 
     /*Request*/
@@ -216,13 +218,15 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CLAIMS_COUNT = "ClaimsCount";
     public static final String ATTR_DATA_TEST_NET = "Testnet";
     public static final String ATTR_DATA_PUBLIC_KEY = "PublicKey";
+    public static final String ATTR_DATA_PUBLIC_KEY_ADDRESS = "CryptoAddress";
     public static final String ATTR_DATA_ADDRESS = "Address";
-    public static final String ATTR_DATA_ADDRESS_ID = "AddressId";
+    public static final String ATTR_DATA_CREATION_TX = "BlockchainTxId";
+    public static final String ATTR_DATA_MULTISIG_ID = "MultisigId";
     public static final String ATTR_DATA_TEAMMATE_ID = "TeammateId";
     public static final String ATTR_DATA_STATUS = "Status";
     public static final String ATTR_DATA_DATE_CREATED = "DateCreated";
     public static final String ATTR_DATA_KEY_ORDER = "KeyOrder";
-    public static final String ATTR_DATA_BTC_AMOUNT = "AmountBTC";
+    public static final String ATTR_DATA_CRYPTO_AMOUNT = "AmountCrypto";
     public static final String ATTR_DATA_CLAIM_ID = "ClaimId";
     public static final String ATTR_DATA_ONE_CLAIM_ID = "OneClaimId";
     public static final String ATTR_DATA_CLAIM_COUNT = "ClaimCount";
@@ -234,7 +238,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_KNOWN_SINCE = "KnownSince";
     public static final String ATTR_DATA_IS_DEFAULT = "IsDefault";
     public static final String ATTR_DATA_PAY_TOS = "PayTos";
-    public static final String ATTR_DATA_BTC_ADDRESSES = "BTCAddresses";
+    public static final String ATTR_DATA_MULTISIGS = "Multisigs";
     public static final String ATTR_DATA_COSIGNERS = "Cosigners";
     public static final String ATTR_DATA_WITHDRAW_REQ_ID = "WithdrawReqId";
     public static final String ATTR_DATA_TXS = "Txs";
@@ -251,6 +255,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RESOLUTION_TIME = "ResolutionTime";
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";
     public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
+    public static final String ATTR_DATA_BLOCKCHAIN_TX_ID = "BlockchainTxId";
+    public static final String ATTR_DATA_CRYPTO_CONTRACT = "CryptoContracts";
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";
     public static final String ATTR_DATA_VOTERS = "Voters";
     public static final String ATTR_DATA_ME = "Me";

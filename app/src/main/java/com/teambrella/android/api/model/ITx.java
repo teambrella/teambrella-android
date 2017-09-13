@@ -6,7 +6,7 @@ public interface ITx {
 
     long getTeammateId();
 
-    float getBTCAmount();
+    float getCryptoAmount();
 
     long getClaimId();
 

@@ -11,5 +11,5 @@ public interface ITxOutput {
 
     String getPayToId();
 
-    float getBTCAmount();
+    float getCryptoAmount();
 }

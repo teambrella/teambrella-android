@@ -1,9 +1,9 @@
 package com.teambrella.android.api.model;
 
 /**
- * BTC Address
+ * Multisig (with mutibple co-signers) Address
  */
-public interface IBTCAddress {
+public interface IMultisig {
 
     int USER_ADDRESS_STATUS_PREVIOUS = 0;
     int USER_ADDRESS_STATUS_CURRENT = 1;
@@ -13,6 +13,8 @@ public interface IBTCAddress {
     int USER_ADDRESS_STATUS_SERVER_PREVIOUS = 10;
     int USER_ADDRESS_STATUS_SERVER_CURRENT = 11;
     int USER_ADDRESS_STATUS_SERVER_NEXT = 12;
+
+    int getId();
 
     String getAddress();
 

@@ -15,12 +15,12 @@ public class JsonCosigner extends JsonWrapper implements ICosigner {
 
     @Override
     public long getTeammateId() {
-        return getLong(TeambrellaModel.ATTR_DATA_TEAM_ID, -1);
+        return getLong(TeambrellaModel.ATTR_DATA_TEAMMATE_ID, -1);
     }
 
     @Override
-    public String getAddressId() {
-        return getString(TeambrellaModel.ATTR_DATA_TEAMMATE_ID);
+    public long getMultisigId() {
+        return getLong(TeambrellaModel.ATTR_DATA_MULTISIG_ID, -1);
     }
 
     @Override

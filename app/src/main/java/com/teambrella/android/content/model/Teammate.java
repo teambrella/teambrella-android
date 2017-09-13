@@ -31,7 +31,11 @@ public class Teammate {
     @SerializedName(TeambrellaModel.ATTR_DATA_PUBLIC_KEY)
     public String publicKey;
 
-    public List<BTCAddress> addresses;
+    @Column(TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS)
+    @SerializedName(TeambrellaModel.ATTR_DATA_PUBLIC_KEY_ADDRESS)
+    public String publicKeyAddress;
+
+    public List<Multisig> multisigs;
 
 
     @Column(TeambrellaRepository.Team.PAY_TO_ADDRESS_OK_AGE)
@@ -50,10 +54,10 @@ public class Teammate {
     public int getAutoApprovalCosignGoodAddress;
 
 
-    public BTCAddress getCurrentAddress() {
-        if (this.addresses != null) {
-            for (BTCAddress address : this.addresses) {
-                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_CURRENT) {
+    public Multisig getCurrentAddress() {
+        if (this.multisigs != null) {
+            for (Multisig address : this.multisigs) {
+                if (address.status == TeambrellaModel.USER_MULTISIG_STATUS_CURRENT) {
                     return address;
                 }
             }
@@ -61,10 +65,10 @@ public class Teammate {
         return null;
     }
 
-    public BTCAddress getNextAddress() {
-        if (this.addresses != null) {
-            for (BTCAddress address : this.addresses) {
-                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_NEXT) {
+    public Multisig getNextAddress() {
+        if (this.multisigs != null) {
+            for (Multisig address : this.multisigs) {
+                if (address.status == TeambrellaModel.USER_MULTISIG_STATUS_NEXT) {
                     return address;
                 }
             }
@@ -73,10 +77,10 @@ public class Teammate {
     }
 
 
-    public BTCAddress getPreviousAddress() {
-        if (this.addresses != null) {
-            for (BTCAddress address : this.addresses) {
-                if (address.status == TeambrellaModel.USER_ADDRESS_STATUS_PREVIOUS) {
+    public Multisig getPreviousAddress() {
+        if (this.multisigs != null) {
+            for (Multisig address : this.multisigs) {
+                if (address.status == TeambrellaModel.USER_MULTISIG_STATUS_PREVIOUS) {
                     return address;
                 }
             }

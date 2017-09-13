@@ -9,7 +9,7 @@ public interface ITxInput {
 
     String getTxId();
 
-    float getBTCAmount();
+    float getCryptoAmount();
 
     String getPreviousTxId();
 
