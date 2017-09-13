@@ -38,8 +38,8 @@ android {
         applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 36
-        versionName "0.0.1.36"
+        versionCode 43
+        versionName "0.0.1.43"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -49,12 +49,14 @@ android {
         buildConfigField "String", "MASTER_USER_PRIVATE_KEY", "\"" + keyProperties.getProperty("MasterUserPrivateKey") + "\""
         buildConfigField "String", "EUGENE_PRIVATE_KEY", "\"" + keyProperties.getProperty("EugenePrivateKey") + "\""
         buildConfigField "String", "STASIA_PRIVATE_KEY", "\"" + keyProperties.getProperty("StasiaPrivateKey") + "\""
+        buildConfigField "String", "VLAD_PRIVATE_KEY", "\"" + keyProperties.getProperty("VladPrivateKey") + "\""
 
         buildConfigField "String", "DENIS_FACEEBOOK_ID", "\"" + keyProperties.getProperty("DenisFacebookId") + "\""
         buildConfigField "String", "KATE_FACEEBOOK_ID", "\"" + keyProperties.getProperty("KateFacebookId") + "\""
         buildConfigField "String", "THORAX_FACEEBOOK_ID", "\"" + keyProperties.getProperty("ThoraxFacebookId") + "\""
         buildConfigField "String", "EUGENE_FACEEBOOK_ID", "\"" + keyProperties.getProperty("EugeneFacebookId") + "\""
         buildConfigField "String", "STASIA_FACEBOOK_ID", "\"" + keyProperties.getProperty("StasiaFacebookId") + "\""
+        buildConfigField "String", "VLAD_FACEBOOK_ID", "\"" + keyProperties.getProperty("VladFacebookId") + "\""
     }
 
     signingConfigs {

@@ -156,5 +156,29 @@
     <string name="bike_insurance">Bike Coverage</string>
     <string name="something_went_wrong_error">Oops! Something went wrong.</string>
     <string name="no_internet_connection">No Internet Connection.</string>
-
+    <string name="chat_not_voted_yet">Not voted yet</string>
+    <string name="claim_chat_vote">Voted:%d%%</string>
+    <string name="application_chat_vote">Voted:%.2f</string>
+    <string name="slogan">Not insurance. A lot better.</string>
+    <string name="fund_wallet">Fund the wallet to increase</string>
+    <string name="coverage_explanation_title">How it works</string>
+    <string name="coverage_explanation_description">Use the slider to understand how expenses impact your maximum reimbursement.</string>
+    <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
+    <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
+    <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
+    <string name="notification_claim_header">New claim in %1$s</string>
+    <string name="notification_claim_text">%1$s for %2$s</string>
+    <string name="notification_messages_since">%d new messages</string>
+    <string name="notification_funded_header">You wallet is funded</string>
+    <string name="inbox">Inbox</string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
+    <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>
+    <string name="private_conversation">Private Conversation</string>
+    <string name="ends_in">Ends %s</string>
+    <string name="ended_ago">Ended %s</string>
+    <string name="declined">Declined</string>
+    <string name="all_votes">All Votes</string>
+    <string name="weight_format_string"><![CDATA[Weight <b>%.1f</b>]]></string>
+    <string name="votes">Votes</string>
+    <string name="private_message_notification_title">%s (new message)</string>
 </resources>

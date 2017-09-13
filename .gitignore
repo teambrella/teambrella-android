@@ -1,10 +1,12 @@
-.idea/
 .gradle/
+.idea/
 app/build/
 !app/build.gradle
-*.iml
-local.properties
 build/
 !build.gradle
-gradle.properties
+local.properties
+teambrella.keystore
+*.iml
+keys.properties
 keystore.properties
+gradle.properties
