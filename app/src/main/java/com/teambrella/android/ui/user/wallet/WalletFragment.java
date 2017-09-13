@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -30,6 +31,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private TextView mCurrencyView;
     private TextView mReservedValueView;
     private TextView mAvailableValueView;
+    private ImageView mQRCodeView;
 
 
     @Override
@@ -40,6 +42,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mCurrencyView = view.findViewById(R.id.currency);
         mReservedValueView = view.findViewById(R.id.reserved_value);
         mAvailableValueView = view.findViewById(R.id.available_value);
+        mQRCodeView = view.findViewById(R.id.qr_code);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -74,6 +77,8 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(cryptoBalance * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
+            
+            //mQRCodeView.setImageBitmap(QRCodeUtils.createBitmap("qdsdasdasd"));
 
         } else {
 
