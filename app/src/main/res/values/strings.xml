@@ -194,4 +194,5 @@
     <string name="copy_address">Copy Address</string>
     <string name="ethereum_address">Ethereum Address</string>
     <string name="qr_code">QR-Code</string>
+    <string name="cosigners">Co-signers</string>
 </resources>

@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -115,7 +116,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/block_first"
+            android:background="@drawable/block_last"
             android:orientation="vertical">
 
 
@@ -202,6 +203,57 @@
 
 
         </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/actionlist_top" />
+
+        <LinearLayout
+            android:id="@+id/cosigners"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/selectable_item_background"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/cosigners"
+                android:textColor="@color/charcoalGrey"
+                android:textSize="15sp" />
+
+            <com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
+                android:id="@+id/cosigners_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:avatar_background_color="@color/dark"
+                app:avatar_border_color="@android:color/white"
+                app:avatar_border_width="1dp"
+                app:avatar_count="3"
+                app:avatar_shift="10dp"
+                app:avatar_size="32dp" />
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/cosigners_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:textColor="@color/blueGrey"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/actionlist_bottom" />
 
     </LinearLayout>
 
