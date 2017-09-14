@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/Teambrella.ListItem">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -25,14 +26,15 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/clock"
-        android:ellipsize="end" />
+        android:ellipsize="end"
+        tools:text="in 7 fucking days" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/icon"
-        android:layout_toStartOf="@id/net"
+        android:layout_toStartOf="@id/ends_in"
         android:gravity="center_vertical|start"
         android:orientation="vertical"
         android:paddingEnd="16dp"
@@ -41,7 +43,9 @@
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/teammate"
             style="@style/Teambrella.TextAppearence.ListItem.Title"
-            android:gravity="start|center_vertical" />
+            android:gravity="start|center_vertical"
+            android:lineSpacingExtra="2dp"
+            tools:text=";asldsa';dlsa;'dlas;'dlas;'dlasd;';as'dl;a'a';sdla';sdlas';dlas;'dlsa;'dlasd;'asld;'sadla';sdlas;'da';sdlas;'dlas'd;lasd';sald;'sadlsa;'dlas;'" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/object"
