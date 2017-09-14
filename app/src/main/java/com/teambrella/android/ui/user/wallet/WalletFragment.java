@@ -13,6 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.QRCodeUtils;
@@ -40,6 +41,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private TextView mUninterruptedCoverageCryptoValue;
     private TextView mMaxCoverageCurrencyValue;
     private TextView mUninterruptedCoverageCurrencyValue;
+    private TextView mFundValletButton;
 
 
     @Override
@@ -55,6 +57,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
         mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
         mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
+        mFundValletButton = view.findViewById(R.id.fund_wallet);
 
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -109,6 +112,9 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
             mUninterruptedCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
+
+            mFundValletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)));
+
 
         } else {
 

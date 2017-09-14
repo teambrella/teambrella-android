@@ -73,6 +73,9 @@
         <activity
             android:name=".ui.votes.AllVotesActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.QRCodeActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"
