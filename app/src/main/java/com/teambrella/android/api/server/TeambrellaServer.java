@@ -317,7 +317,8 @@ public class TeambrellaServer {
                 return mAPI.getUpdates(requestBody);
             case TeambrellaUris.ME_REGISTER_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KEY_FACEBOOK_TOKEN);
-                return mAPI.registerKey(facebookToken);
+                String sigOfPublicKeyHash = uri.getQueryParameter(TeambrellaUris.KEY_SIG_OF_PUBLIC_KEY_HASH);
+                return mAPI.registerKey(facebookToken, sigOfPublicKeyHash);
             case TeambrellaUris.CLAIMS_LIST:
                 return mAPI.getClaimsList(requestBody);
             case TeambrellaUris.CLAIMS_ONE:

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -19,6 +20,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.blockchain.EtherAccount;
 
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
@@ -110,38 +112,19 @@ public class WelcomeActivity extends AppCompatActivity {
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                String userId = loginResult.getAccessToken().getUserId();
-                String privateKey = null;
-                switch (userId) {
-                    case BuildConfig.DENIS_FACEEBOOK_ID:
-                        privateKey = BuildConfig.DENIS_PRIVATE_KEY;
-                        break;
-                    case BuildConfig.KATE_FACEEBOOK_ID:
-                        privateKey = BuildConfig.KATE_PRIVATE_KEY;
-                        break;
-                    case BuildConfig.THORAX_FACEEBOOK_ID:
-                        privateKey = BuildConfig.THORAX_PRIVATE_KEY;
-                        break;
-                    case BuildConfig.EUGENE_FACEEBOOK_ID:
-                        privateKey = BuildConfig.EUGENE_PRIVATE_KEY;
-                        break;
-                    case BuildConfig.STASIA_FACEBOOK_ID:
-                        privateKey = BuildConfig.STASIA_PRIVATE_KEY;
-                        break;
-                    case BuildConfig.VLAD_FACEBOOK_ID:
-                        privateKey = BuildConfig.VLAD_PRIVATE_KEY;
-                        break;
-                    default:
-                        Toast.makeText(WelcomeActivity.this, "Unknown user", Toast.LENGTH_LONG).show();
-                        break;
-                }
-
-
+                AccessToken token = loginResult.getAccessToken();
+                String userId = token.getUserId();
+                TeambrellaUser u = TeambrellaUser.get(WelcomeActivity.this);
+                String privateKey = u.getPrivateKey();
                 if (privateKey != null) {
-                    TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
                     getTeams(privateKey);
+                }else{
+                    privateKey = new Wallet(MainNetParams.get())
+                            .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
+                    u.setPrivateKey(privateKey);
                 }
 
+                registerUser(token.getToken());
                 LoginManager.getInstance().logOut();
             }
 
@@ -164,16 +147,17 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void registerUser(String token) {
-        String key = new Wallet(MainNetParams.get())
-                .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
-        new TeambrellaServer(this, key).requestObservable(TeambrellaUris.getRegisterUri(token), null)
+        String key = TeambrellaUser.get(this).getPrivateKey();
+        String publicKeySignature = EtherAccount.getPublicKeySignature(key, getApplicationContext());
+
+        new TeambrellaServer(this, key).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(jsonObject -> Log.e("TEST", key)
                         , throwable -> Log.e("TEST", throwable.toString()));
         Log.e("TEST", key);
     }
-
+    
 
     private void onTryDemo(View v) {
         TeambrellaUser.get(this).setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);
