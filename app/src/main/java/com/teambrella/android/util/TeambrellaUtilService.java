@@ -43,9 +43,12 @@ import org.ethereum.geth.Account;
 import org.ethereum.geth.Accounts;
 import org.ethereum.geth.BigInt;
 import org.ethereum.geth.Geth;
+import org.ethereum.geth.Hash;
 import org.ethereum.geth.KeyStore;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,7 +89,46 @@ public class TeambrellaUtilService extends GcmTaskService {
 //    public TeambrellaUtilService() {
 //        super("Util Service");
 //    }
+////!!!
+    public String ethSign(String msg)
+    {
+        try{
+            String privateKey = TeambrellaUser.get(this).getPrivateKey();
 
+            if (privateKey != null) {
+
+                mServer = new TeambrellaServer(this, privateKey);
+                mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
+            } else {
+                //throw new RuntimeException("Missing private key");
+            }
+            mServer = new TeambrellaServer(this, privateKey);
+            mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
+            mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
+
+            String privKey = "L4TzGwABRFtqGBtrbKxK1ZHEByi3GczUhztEx9dtPvXkuAzGKGdo";
+            KeyStore ks = getEthKeyStore();
+            Account acc = getEthAccount(ks);
+
+            Log.e(LOG_TAG, "=============================");
+            Log.e(LOG_TAG, "address: " + acc.getAddress().getHex());
+
+            byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
+            String hash = Geth.newHashFromBytes(bytes).getHex();
+            Log.e(LOG_TAG, "hash: " + hash);
+
+            bytes = Geth.newHashFromBytes(bytes).getBytes();
+            byte[] sig = ks.signHash(acc.getAddress(), bytes);
+            Log.e(LOG_TAG, "sig: " + toHexString(sig));
+
+            return "0x" + toHexString(sig);
+
+        }catch (Exception e){
+            Log.e(LOG_TAG, e.getMessage(), e);
+        }
+
+        return null;
+    }
 
     @Override
     public void onCreate() {
