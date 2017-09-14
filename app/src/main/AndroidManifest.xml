@@ -76,6 +76,9 @@
         <activity
             android:name=".ui.QRCodeActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CosignersActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"

@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.user.wallet;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,9 +13,12 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.ui.CosignersActivity;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.QRCodeUtils;
 
@@ -41,7 +45,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private TextView mUninterruptedCoverageCryptoValue;
     private TextView mMaxCoverageCurrencyValue;
     private TextView mUninterruptedCoverageCurrencyValue;
-    private TextView mFundValletButton;
+    private TextView mFundWalletButton;
+    private View mCosignersView;
+    private TeambrellaAvatarsWidgets mCosignersAvatar;
+    private TextView mCosignersCountView;
 
 
     @Override
@@ -57,7 +64,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
         mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
         mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
-        mFundValletButton = view.findViewById(R.id.fund_wallet);
+        mFundWalletButton = view.findViewById(R.id.fund_wallet);
+        mCosignersView = view.findViewById(R.id.cosigners);
+        mCosignersAvatar = view.findViewById(R.id.cosigners_avatar);
+        mCosignersCountView = view.findViewById(R.id.cosigners_count);
 
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -66,6 +76,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
@@ -113,8 +124,19 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
-            mFundValletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)));
+            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)));
 
+            Observable.just(data).flatMap(jsonWrapper -> Observable.fromIterable(jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS)))
+                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+                    .toList()
+                    .subscribe((uris) -> {
+                        mCosignersAvatar.setAvatars(uris);
+                        mCosignersCountView.setText(Integer.toString(uris.size()));
+                    }, e -> {
+                    });
+
+            mCosignersView.setOnClickListener(view -> CosignersActivity.start(getContext(), data.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS).toString()
+                    , mDataHost.getTeamId()));
 
         } else {
 
