@@ -43,7 +43,6 @@ import org.ethereum.geth.Account;
 import org.ethereum.geth.Accounts;
 import org.ethereum.geth.BigInt;
 import org.ethereum.geth.Geth;
-import org.ethereum.geth.Hash;
 import org.ethereum.geth.KeyStore;
 
 import java.math.BigDecimal;
