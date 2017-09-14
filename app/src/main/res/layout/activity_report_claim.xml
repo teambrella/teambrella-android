@@ -48,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
-            android:text="Unknown location"
             android:textAllCaps="true"
             android:textColor="@color/blueGrey"
             android:textSize="10sp"

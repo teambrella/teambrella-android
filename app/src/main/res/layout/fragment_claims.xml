@@ -63,7 +63,6 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:includeFontPadding="false"
-                    android:text="Unknown Location"
                     android:textColor="@color/blueGrey"
                     android:textSize="12sp"
                     app:layout_constraintLeft_toRightOf="@id/object_icon"
@@ -72,13 +71,13 @@
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/submit_claim"
                     style="@style/Teambrella.TextAppearence.SectionButton"
-                    android:background="@drawable/header_button"
-                    android:textColor="@android:color/white"
                     android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:background="@drawable/header_button"
                     android:text="@string/report_claim"
+                    android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="@+id/object_icon"
                     app:layout_constraintLeft_toRightOf="@id/object_icon"
                     app:layout_constraintRight_toRightOf="parent" />
