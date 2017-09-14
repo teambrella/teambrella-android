@@ -44,6 +44,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private ImageView mProxyAvatar;
     private TeambrellaAvatarsWidgets mAvatarWidgets;
     private View mRestVoteButton;
+    private View mAllVotesView;
 
 
     private String mCurrency;
@@ -64,6 +65,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mAvatarWidgets = view.findViewById(R.id.team_avatars);
         mWhen = view.findViewById(R.id.when);
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
+        mAllVotesView = view.findViewById(R.id.all_votes);
+        
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
 

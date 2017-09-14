@@ -16,6 +16,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.widget.VoterBar;
 
@@ -49,6 +50,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private ImageView mProxyAvatar;
     private TeambrellaAvatarsWidgets mAvatarWidgets;
     private float mAVGRisk;
+    private View mAllVotesView;
 
     private int mCount;
 
@@ -75,6 +77,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mProxyName = view.findViewById(R.id.proxy_name);
         mProxyAvatar = view.findViewById(R.id.proxy_avatar);
         mAvatarWidgets = view.findViewById(R.id.team_avatars);
+        mAllVotesView = view.findViewById(R.id.all_votes);
         mVoterBar.setVoterBarListener(this);
 
 
@@ -181,6 +184,9 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                             .into(mNewTeammateIcon);
                 }
+
+
+                mAllVotesView.setOnClickListener(view -> AllVotesActivity.startTeammateAllVotes(getContext(), mDataHost.getTeamId(), mDataHost.getTeammateId()));
             }
         } catch (Exception e) {
 

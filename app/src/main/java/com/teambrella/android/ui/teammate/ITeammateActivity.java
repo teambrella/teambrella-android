@@ -18,4 +18,8 @@ public interface ITeammateActivity extends IDataHost {
     String getCurrency();
 
     void showSnackBar(@StringRes int text);
+
+    int getTeamId();
+
+    int getTeammateId();
 }

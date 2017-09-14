@@ -135,7 +135,7 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.votes, menu);
+        //getMenuInflater().inflate(R.menu.votes, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -202,6 +202,17 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     @Override
     public String getCurrency() {
         return mCurrency;
+    }
+
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
+    }
+
+    @Override
+    public int getTeammateId() {
+        return mTeammateId;
     }
 
     @Override

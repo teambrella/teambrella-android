@@ -292,6 +292,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     }
 
     @Override
+    public int getTeammateId() {
+        return mTeam.getInt(TeambrellaModel.ATTR_DATA_MY_TEAMMATE_ID);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (mDisposable != null && !mDisposable.isDisposed()) {
