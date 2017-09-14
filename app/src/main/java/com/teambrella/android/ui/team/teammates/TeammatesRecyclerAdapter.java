@@ -178,7 +178,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         @Override
         void onBind(JsonWrapper item) {
             super.onBind(item);
-            mEndsIn.setText(TeambrellaDateUtils.getRelativeTime(item.getInt(TeambrellaModel.ATTR_DATA_VOTING_ENDS_IN)));
+            mEndsIn.setText(TeambrellaDateUtils.getRelativeTimeLocalized(itemView.getContext(), item.getInt(TeambrellaModel.ATTR_DATA_VOTING_ENDS_IN)));
         }
     }
 }

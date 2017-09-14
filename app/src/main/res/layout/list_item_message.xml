@@ -36,6 +36,7 @@
             android:paddingRight="8dp"
             android:paddingTop="4dp"
             android:textColor="@color/darkSkyBlue"
+            android:textSize="12sp"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/vote"
