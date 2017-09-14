@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 
@@ -26,7 +27,7 @@ public class TeambrellaImageLoader {
 
 
     private TeambrellaImageLoader(Context context, TeambrellaServer server) {
-        mPicasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(server.getHttpClient(context))).loggingEnabled(true)
+        mPicasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(server.getHttpClient(context))).loggingEnabled(BuildConfig.DEBUG)
                 .listener((picasso, uri, exception) -> {
                 }).build();
     }

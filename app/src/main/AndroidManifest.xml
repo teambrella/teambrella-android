@@ -10,7 +10,7 @@
     <application
         android:name=".ui.TeambrellaApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_teambrella_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -72,6 +72,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.votes.AllVotesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.QRCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CosignersActivity"
             android:screenOrientation="portrait" />
 
         <provider

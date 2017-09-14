@@ -7,6 +7,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.team.claims.TeamClaimsFragment;
 import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
+import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 /**
  * Team fragment
@@ -54,11 +57,11 @@ public class TeamFragment extends AMainLandingFragment {
             public CharSequence getPageTitle(int position) {
                 switch (position) {
                     case 0:
-                        return getString(R.string.team_feed);
+                        return getTitle(getString(R.string.team_feed));
                     case 1:
-                        return getString(R.string.team_members);
+                        return getTitle(getString(R.string.team_members));
                     case 2:
-                        return getString(R.string.team_claims);
+                        return getTitle(getString(R.string.team_claims));
                     default:
                         throw new RuntimeException();
                 }
@@ -90,6 +93,14 @@ public class TeamFragment extends AMainLandingFragment {
                 setTypeface((ViewGroup) view, typeface);
             }
         }
+    }
+
+    private CharSequence getTitle(String title) {
+        SpannableString s = new SpannableString(title);
+        s.setSpan(new AkkuratBoldTypefaceSpan(getContext()), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return s;
     }
 
 }

@@ -169,6 +169,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
                         View view = getView();
                         if (view != null) {
                             view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
+                            view.findViewById(R.id.object_info_container).setBackgroundResource(R.drawable.block);
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();

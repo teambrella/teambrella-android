@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class AmountCurrencyUtil {
 
-    private static final String DEFAULT_TEXT = "1A";
+    private static final String DEFAULT_TEXT = "123456789";
     private static final float DEFAULT_PROPORTION = 0.5f;
 
     private static final String USD = "USD";
@@ -44,6 +44,21 @@ public class AmountCurrencyUtil {
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         text.setSpan(new CurrencyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
+    }
+
+
+    public static void setCryptoAmount(TextView textView, float amount) {
+        final Context context = textView.getContext();
+        int stringId = amount > 1 ? R.string.ethereum : R.string.milli_ethereum;
+        String cryptoCurrency = context.getString(stringId);
+        switch (stringId) {
+            case R.string.ethereum:
+                setAmount(textView, amount, cryptoCurrency);
+                break;
+            case R.string.milli_ethereum:
+                setAmount(textView, Math.round(amount * 1000), cryptoCurrency);
+                break;
+        }
     }
 
     public static String getCurrencySign(String currency) {

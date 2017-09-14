@@ -15,11 +15,11 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.util.AmountCurrencyUtil;
-
-import java.util.Random;
 
 import io.reactivex.Notification;
 
@@ -46,6 +46,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mPossibleExpenses = view.findViewById(R.id.possible_expenses_value);
         mTeamPay = view.findViewById(R.id.team_pay_value);
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
+        mDataHost.load(mTags[0]);
         return view;
     }
 
@@ -53,20 +54,29 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            AmountCurrencyUtil.setAmount(mMaxExpenses, 1200, mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mPossibleExpenses, 600, mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mTeamPay, 200, mDataHost.getCurrency());
 
-            final int coverage = new Random().nextInt(101);
-            String coverageString = Integer.toString(coverage);
-            SpannableString coveragePercent = new SpannableString(coverage + "%");
+            JsonWrapper data = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper coveragePart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_COVERAGE);
+
+            float coverage = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE);
+            float limit = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT);
+            AmountCurrencyUtil.setAmount(mMaxExpenses, Math.round(limit), mDataHost.getCurrency());
+            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit), mDataHost.getCurrency());
+            AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), mDataHost.getCurrency());
+
+            String coverageString = Integer.toString(Math.round(coverage * 100));
+            SpannableString coveragePercent = new SpannableString(coverageString + "%");
             coveragePercent.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.darkSkyBlue)), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             coveragePercent.setSpan(new RelativeSizeSpan(0.2f), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mCoverageView.setText(coveragePercent);
 
-            if (coverage > 97) {
+
+            mCoverageSlider.setProgress(Math.round(limit));
+            mCoverageSlider.setMax(Math.round(limit));
+
+            if (coverage > 0.97f) {
                 mCoverageIcon.setImageResource(R.drawable.cover_sunny);
-            } else if (coverage > 90) {
+            } else if (coverage > 0.90f) {
                 mCoverageIcon.setImageResource(R.drawable.cover_lightrain);
             } else {
                 mCoverageIcon.setImageResource(R.drawable.cover_rain);
@@ -75,7 +85,8 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             mCoverageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
+                    AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(i), mDataHost.getCurrency());
+                    AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * i), mDataHost.getCurrency());
                 }
 
                 @Override

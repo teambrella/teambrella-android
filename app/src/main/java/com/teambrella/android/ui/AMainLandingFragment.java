@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -40,25 +41,31 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                 .into(teamLogo);
 
-        teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
+
+        if (BuildConfig.DEBUG) {
+            teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
+        }
 
 
         mTitle = view.findViewById(R.id.title);
         mUnreadCount = view.findViewById(R.id.unread_count);
 
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        toolbar.getMenu().add(0, R.id.exit, 0, "Exit");
         //toolbar.setOverflowIcon(getContext().getResources().getDrawable(R.drawable.ic_more_vert));
-        toolbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.exit:
-                    TeambrellaUser.get(getContext()).setPrivateKey(null);
-                    getActivity().finish();
-                    startActivity(new Intent(getContext(), WelcomeActivity.class));
-            }
-            return true;
-        });
+
+        if (BuildConfig.DEBUG) {
+            Toolbar toolbar = view.findViewById(R.id.toolbar);
+            toolbar.getMenu().add(0, R.id.exit, 0, "Exit");
+            toolbar.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.exit:
+                        TeambrellaUser.get(getContext()).setPrivateKey(null);
+                        getActivity().finish();
+                        startActivity(new Intent(getContext(), WelcomeActivity.class));
+                }
+                return true;
+            });
+        }
 
 
         view.findViewById(R.id.inbox).setOnClickListener(v -> startActivity(new Intent(getContext(), InboxActivity.class)));

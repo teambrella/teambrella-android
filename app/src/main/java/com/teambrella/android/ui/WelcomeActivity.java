@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -52,7 +51,13 @@ public class WelcomeActivity extends AppCompatActivity {
         TeambrellaUser user = TeambrellaUser.get(this);
         setContentView(R.layout.acivity_welcome);
         findViewById(R.id.facebook_login).setOnClickListener(this::onFacebookLogin);
-        findViewById(R.id.try_demo).setOnClickListener(this::onTryDemo);
+        View tryDemoView = findViewById(R.id.try_demo);
+        if (BuildConfig.DEBUG) {
+            tryDemoView.setOnClickListener(this::onTryDemo);
+        } else {
+            tryDemoView.setVisibility(View.INVISIBLE);
+            tryDemoView.setEnabled(false);
+        }
         if (user.getPrivateKey() != null) {
             getTeams(user.getPrivateKey());
         }
@@ -153,9 +158,10 @@ public class WelcomeActivity extends AppCompatActivity {
         new TeambrellaServer(this, key).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(jsonObject -> Log.e("TEST", key)
-                        , throwable -> Log.e("TEST", throwable.toString()));
-        Log.e("TEST", key);
+                .subscribe(jsonObject -> {
+                        }
+                        , throwable -> {
+                        });
     }
     
 
