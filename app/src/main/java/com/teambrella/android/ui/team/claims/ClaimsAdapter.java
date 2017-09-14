@@ -104,7 +104,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                         viewType = VIEW_TYPE_VOTED;
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
-                        if (position == 0 || getItemViewType(position - 1) != VIEW_TYPE_VOTING) {
+                        if (position == 0 || getItemViewType(mSubmitClaim ? position : position - 1) != VIEW_TYPE_VOTING) {
                             viewType = VIEW_TYPE_IN_PAYMENT_HEADER;
                         } else {
                             viewType = VIEW_TYPE_IN_PAYMENT_HEADER_TOP;
@@ -114,7 +114,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                         viewType = VIEW_TYPE_IN_PAYMENT;
                         break;
                     case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
-                        if (position == 0 || getItemViewType(position - 1) != VIEW_TYPE_VOTING) {
+                        if (position == 0 || getItemViewType(mSubmitClaim ? position : position - 1) != VIEW_TYPE_VOTING) {
                             viewType = VIEW_TYPE_PROCESSED_HEADER;
                         } else {
                             viewType = VIEW_TYPE_PROCESSED_HEADER_TOP;

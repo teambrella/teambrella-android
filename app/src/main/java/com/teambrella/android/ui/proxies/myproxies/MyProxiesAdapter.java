@@ -2,7 +2,6 @@ package com.teambrella.android.ui.proxies.myproxies;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,10 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
     private final int mTeamId;
-    private final String mCurrency;
 
     MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
-        mCurrency = currency;
     }
 
     @Override
@@ -86,7 +83,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
             super.onBind(item);
             mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION);
-            mLocation.setText(TextUtils.isEmpty(location) ? "Unknown location" : location);
+            mLocation.setText(location);
 
             mDecision.setProgress(Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_DECISION_FREQUENCY) * 100));
             mDiscussion.setProgress(Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_DISCUSSION_FREQUENCY) * 100));
