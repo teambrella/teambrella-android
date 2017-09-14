@@ -199,7 +199,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/discussion"
-            android:background="@drawable/section_background"
+            android:background="@drawable/block_first"
             android:visibility="gone" />
 
 

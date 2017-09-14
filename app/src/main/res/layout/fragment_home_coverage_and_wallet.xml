@@ -162,6 +162,7 @@
                 android:text="@string/wallet" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/wallet_amount"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
                 android:layout_below="@id/wallet_header"
                 android:layout_toEndOf="@id/wallet_icon"
