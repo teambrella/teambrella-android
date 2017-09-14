@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -35,9 +37,12 @@ import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
+import com.teambrella.android.util.TeambrellaUtilService;
 
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
+import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 
 
 /**
@@ -51,6 +56,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private static final String TEAM_EXTRA = "team_extra";
 
 
+    public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
     public static final String HOME_DATA_TAG = "home_data";
@@ -115,6 +121,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             finish();
             startActivity(new Intent(this, WelcomeActivity.class));
         }
+
+        scheduleWalletSync();
     }
 
 
@@ -402,6 +410,20 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         if (fragmentManager.findFragmentByTag(TEAM_CHOOSER_FRAGMENT_TAG) == null) {
             new TeamSelectionFragment().show(fragmentManager, TEAM_CHOOSER_FRAGMENT_TAG);
         }
+    }
+
+
+    private void scheduleWalletSync(){
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(SYNC_WALLET_TASK_TAG)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setPersisted(true)
+                .setPeriod(30*60)       // 30 minutes period
+                .setFlex(5*60)          // +/- 5 minutes
+                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(this).schedule(task);
     }
 
 

@@ -47,8 +47,6 @@ import org.ethereum.geth.Hash;
 import org.ethereum.geth.KeyStore;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,70 +84,33 @@ public class TeambrellaUtilService extends GcmTaskService {
     private ECKey mKey;
 
 
-//    public TeambrellaUtilService() {
-//        super("Util Service");
-//    }
-////!!!
-    public String ethSign(String msg)
-    {
-        try{
-            String privateKey = TeambrellaUser.get(this).getPrivateKey();
-
-            if (privateKey != null) {
-
-                mServer = new TeambrellaServer(this, privateKey);
-                mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-            } else {
-                //throw new RuntimeException("Missing private key");
-            }
-            mServer = new TeambrellaServer(this, privateKey);
-            mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
-            mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
-
-            String privKey = "L4TzGwABRFtqGBtrbKxK1ZHEByi3GczUhztEx9dtPvXkuAzGKGdo";
-            KeyStore ks = getEthKeyStore();
-            Account acc = getEthAccount(ks);
-
-            Log.e(LOG_TAG, "=============================");
-            Log.e(LOG_TAG, "address: " + acc.getAddress().getHex());
-
-            byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
-            String hash = Geth.newHashFromBytes(bytes).getHex();
-            Log.e(LOG_TAG, "hash: " + hash);
-
-            bytes = Geth.newHashFromBytes(bytes).getBytes();
-            byte[] sig = ks.signHash(acc.getAddress(), bytes);
-            Log.e(LOG_TAG, "sig: " + toHexString(sig));
-
-            return "0x" + toHexString(sig);
-
-        }catch (Exception e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-        }
-
-        return null;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        String privateKey = TeambrellaUser.get(this).getPrivateKey();
 
-        if (privateKey != null) {
-
-            mServer = new TeambrellaServer(this, privateKey);
-            mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-        } else {
-            //throw new RuntimeException("Missing private key");
-        }
-        mServer = new TeambrellaServer(this, privateKey);
-        mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
-        mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
+        tryInit();
     }
+
+    private boolean tryInit(){
+        if (mKey != null) return true;
+
+        String privateKey = TeambrellaUser.get(this).getPrivateKey();
+        if (privateKey != null){
+            mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
+            mServer = new TeambrellaServer(this, privateKey);
+            mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
+            mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
+            return true;
+        }
+        else{
+            Log.w(LOG_TAG, "No crypto key has been generated for this user yet. Skipping the sync task till her Facebook login.");
+            return false;
+        }
+    }
+
 
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        //onHandleIntent(intent);
         return super.onStartCommand(intent, i, i1);
     }
 
@@ -173,7 +134,9 @@ public class TeambrellaUtilService extends GcmTaskService {
     @Override
     public int onRunTask(TaskParams taskParams) {
         try {
-            sync();
+            if (tryInit()){
+                sync();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -510,14 +473,18 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private void sync() throws RemoteException, OperationApplicationException, TeambrellaException {
         Log.v(LOG_TAG, "start syncing...");
-        do {
+
+        boolean hasNews = true;
+        for (int attempt = 0; attempt < 3 && hasNews; attempt++){
             createWallets(3_000_000);
             verifyIfWalletIsCreated(3_000_000);
             autoApproveTxs();
             cosignApprovedTransactions();
             masterSign();
             publishApprovedAndCosignedTxs();
-        } while (update());
+
+            hasNews = update();
+        }
     }
 
     private KeyStore getEthKeyStore() throws RemoteException {
