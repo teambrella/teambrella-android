@@ -66,7 +66,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mWhen = view.findViewById(R.id.when);
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mAllVotesView = view.findViewById(R.id.all_votes);
-        
+
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
 

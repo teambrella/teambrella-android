@@ -58,7 +58,9 @@ public class WelcomeActivity extends AppCompatActivity {
             tryDemoView.setVisibility(View.INVISIBLE);
             tryDemoView.setEnabled(false);
         }
+
         if (user.getPrivateKey() != null) {
+            findViewById(R.id.facebook_login).setVisibility(View.GONE);
             getTeams(user.getPrivateKey());
         }
     }
@@ -118,18 +120,9 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken token = loginResult.getAccessToken();
-                String userId = token.getUserId();
-                TeambrellaUser u = TeambrellaUser.get(WelcomeActivity.this);
-                String privateKey = u.getPrivateKey();
-                if (privateKey != null) {
-                    getTeams(privateKey);
-                }else{
-                    privateKey = new Wallet(MainNetParams.get())
-                            .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
-                    u.setPrivateKey(privateKey);
-                }
-
-                registerUser(token.getToken());
+                String privateKey = new Wallet(MainNetParams.get())
+                        .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
+                registerUser(token.getToken(), privateKey);
                 LoginManager.getInstance().logOut();
             }
 
@@ -151,19 +144,20 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
 
-    private void registerUser(String token) {
-        String key = TeambrellaUser.get(this).getPrivateKey();
-        String publicKeySignature = EtherAccount.getPublicKeySignature(key, getApplicationContext());
+    private void registerUser(String token, final String privateKey) {
+        String publicKeySignature = EtherAccount.getPublicKeySignature(privateKey, getApplicationContext());
 
-        new TeambrellaServer(this, key).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
+        new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(jsonObject -> {
+                            TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
+                            getTeams(privateKey);
                         }
                         , throwable -> {
                         });
     }
-    
+
 
     private void onTryDemo(View v) {
         TeambrellaUser.get(this).setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);

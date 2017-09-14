@@ -43,11 +43,9 @@ import org.ethereum.geth.Account;
 import org.ethereum.geth.Accounts;
 import org.ethereum.geth.BigInt;
 import org.ethereum.geth.Geth;
-import org.ethereum.geth.Hash;
 import org.ethereum.geth.KeyStore;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,13 +84,12 @@ public class TeambrellaUtilService extends GcmTaskService {
     private ECKey mKey;
 
 
-//    public TeambrellaUtilService() {
+    //    public TeambrellaUtilService() {
 //        super("Util Service");
 //    }
 ////!!!
-    public String ethSign(String msg)
-    {
-        try{
+    public String ethSign(String msg) {
+        try {
             String privateKey = TeambrellaUser.get(this).getPrivateKey();
 
             if (privateKey != null) {
@@ -123,7 +120,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
             return "0x" + toHexString(sig);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage(), e);
         }
 
@@ -142,7 +139,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         } else {
             //throw new RuntimeException("Missing private key");
         }
-        mServer = new TeambrellaServer(this, privateKey);
         mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
         mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
     }
