@@ -195,4 +195,5 @@
     <string name="object_cat">Gato</string>
     <string name="object_bike">Bicicleta</string>
     <string name="object_pet">Mascota</string>
+    <string name="team_avg">EQUIPO: \n PROMEDIO</string>
 </resources>
