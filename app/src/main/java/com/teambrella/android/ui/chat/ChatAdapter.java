@@ -161,12 +161,14 @@ class ChatAdapter extends ChatDataPagerAdapter {
         TextView mMessage;
         TextView mTeammateName;
         TextView mVote;
+        View mHeader;
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
             mMessage = itemView.findViewById(R.id.message);
             mTeammateName = itemView.findViewById(R.id.teammate_name);
             mVote = itemView.findViewById(R.id.vote);
+            mHeader = itemView.findViewById(R.id.header);
         }
 
         @Override
@@ -206,6 +208,9 @@ class ChatAdapter extends ChatDataPagerAdapter {
                     mVote.setVisibility(View.INVISIBLE);
                     if (mUserPicture != null) {
                         mUserPicture.setVisibility(View.GONE);
+                    }
+                    if (mHeader != null) {
+                        mHeader.setVisibility(View.GONE);
                     }
                     break;
             }

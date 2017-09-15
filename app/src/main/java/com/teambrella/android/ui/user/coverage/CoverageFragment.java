@@ -66,7 +66,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             float coverage = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE);
             float limit = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT);
             AmountCurrencyUtil.setAmount(mMaxExpenses, Math.round(limit), mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit), mDataHost.getCurrency());
+            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit * 0.7f), mDataHost.getCurrency());
             AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), mDataHost.getCurrency());
 
             String coverageString = Integer.toString(Math.round(coverage * 100));
