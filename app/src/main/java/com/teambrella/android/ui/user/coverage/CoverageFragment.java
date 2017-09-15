@@ -48,6 +48,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mPossibleExpenses = view.findViewById(R.id.possible_expenses_value);
         mTeamPay = view.findViewById(R.id.team_pay_value);
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
+        mFundButton = view.findViewById(R.id.fund_wallet);
         mDataHost.load(mTags[0]);
         return view;
     }
@@ -116,6 +117,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 AmountCurrencyUtil.setAmount(mMaxExpenses, 0, mDataHost.getCurrency());
                 AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, mDataHost.getCurrency());
                 AmountCurrencyUtil.setAmount(mTeamPay, 0, mDataHost.getCurrency());
+                mFundButton.setEnabled(false);
             }
         }
     }
