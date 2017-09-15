@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -273,6 +274,14 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
                     }
+
+
+                    findViewById(R.id.send_image).setVisibility(View.GONE);
+
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
+                    params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
+                    mMessageView.setLayoutParams(params);
+
                     break;
             }
         }
@@ -519,7 +528,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case SHOW_CLAIM_CHAT_ACTION:
                 case SHOW_FEED_CHAT_ACTION:
                 case SHOW_TEAMMATE_CHAT_ACTION:
-                    if (topicId.equals(mTopicId)) {
+                    if (topicId.equals(mTopicId) && userId == null || !userId.equals(TeambrellaUser.get(ChatActivity.this).getUserId())) {
                         getPager(DATA_FRAGMENT_TAG).loadNext(true);
                         return true;
                     }

@@ -39,7 +39,7 @@ public class UserFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return ADataProgressFragment.getInstance(MainActivity.USER_DATA, TeammateFragment.class);
+                        return ADataProgressFragment.getInstance(new String[]{MainActivity.USER_DATA, MainActivity.VOTE_DATA}, TeammateFragment.class);
                     case 1:
                         return ADataFragment.getInstance(MainActivity.WALLET_DATA, CoverageFragment.class);
                     case 2:

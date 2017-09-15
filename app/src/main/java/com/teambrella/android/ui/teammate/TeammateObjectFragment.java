@@ -40,6 +40,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
     private TextView mRisk;
     private TextView mSeeClaims;
     private TextView mCoverageType;
+    private TextView mObjectTitle;
 
     private int mTeammateId;
     private int mTeamId;
@@ -68,6 +69,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
         mRisk = view.findViewById(R.id.risk);
         mSeeClaims = view.findViewById(R.id.see_claims);
         mCoverageType = view.findViewById(R.id.coverage_type);
+        mObjectTitle = view.findViewById(R.id.object_title);
         return view;
     }
 
@@ -90,10 +92,16 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             Observable<JsonWrapper> objectObservable =
                     dataObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
 
-
             dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
                     .doOnNext(jsonWrapper -> mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))))
                     .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency))
+                    .doOnNext(jsonWrapper -> {
+                        if (mDataHost.getTeamId() == 2021) {
+                            mObjectTitle.setText(R.string.object_cat);
+                        } else {
+                            mObjectTitle.setText(TeambrellaModel.getObjectType(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)));
+                        }
+                    })
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
 
@@ -122,7 +130,6 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
                         .into(mObjectPicture);
                 mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)));
             }
-
 
             basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mNet, Math.round(basic.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT)), mCurrency))
                     .doOnNext(basic -> mRisk.setText(getString(R.string.risk_format_string, basic.getFloat(TeambrellaModel.ATTR_DATA_RISK) + 0.05f)))

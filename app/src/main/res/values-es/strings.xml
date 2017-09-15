@@ -35,7 +35,7 @@
     <string name="limit">Límite</string>
     <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
-    <string name="see_claims_format_string">Ver los Reclamaciones (%d)</string>
+    <string name="see_claims_format_string">Ver las Reclamaciones (%d)</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
 
@@ -192,4 +192,7 @@
     <string name="cosigners">Co-firmantes</string>
     <string name="now">Ahora</string>
     <string name="unable_to_connect_try_later">Oops, no se puede conectar con Teambrella. Inténtalo más tarde.</string>
+    <string name="object_cat">Gato</string>
+    <string name="object_bike">Bicicleta</string>
+    <string name="object_pet">Mascota</string>
 </resources>

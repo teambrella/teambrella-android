@@ -113,6 +113,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void onFacebookLogin(View v) {
+        findViewById(R.id.facebook_login).setVisibility(View.GONE);
+        findViewById(R.id.try_demo).setVisibility(View.GONE);
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -143,8 +145,9 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void registerUser(String token, final String privateKey) {
+        findViewById(R.id.facebook_login).setVisibility(View.GONE);
+        findViewById(R.id.try_demo).setVisibility(View.GONE);
         String publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
-
         new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
