@@ -125,7 +125,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
                     mVoteView.setText(itemView.getContext().getString(R.string.risk_vote_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_VOTE) + 0.05));
                     break;
             }
-            mWeightView.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_WEIGHT)));
+            mWeightView.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_WEIGHT_COMBINED)));
         }
     }
 

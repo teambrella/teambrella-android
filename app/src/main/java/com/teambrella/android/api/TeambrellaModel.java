@@ -197,6 +197,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_BIG_PHOTOS = "BigPhotos";
     public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
+    public static final String ATTR_DATA_WEIGHT_COMBINED = "WeightCombined";
     public static final String ATTR_DATA_WEIGHT = "Weight";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
