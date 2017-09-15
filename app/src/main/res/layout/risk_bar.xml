@@ -7,11 +7,26 @@
     android:paddingEnd="1dp"
     android:paddingStart="1dp">
 
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:background="@drawable/voter_box_background" />
+        android:background="@drawable/voter_box_background">
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/average_risk_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/team_avg"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="10sp" />
+
+
+    </RelativeLayout>
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView

@@ -201,4 +201,6 @@
     <string name="object_cat">Cat</string>
     <string name="object_bike">Bike</string>
     <string name="object_pet">Pet</string>
+    <string name="team_avg">Team \n AVG</string>
+
 </resources>

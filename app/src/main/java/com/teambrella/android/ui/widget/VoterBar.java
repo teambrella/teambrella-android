@@ -52,6 +52,7 @@ public class VoterBar extends HorizontalScrollView {
     private float mInitialVote;
     private boolean mIsFromUser;
     private boolean mIsTouched;
+    private double mAverage;
 
     public VoterBar(Context context) {
         super(context);
@@ -85,10 +86,11 @@ public class VoterBar extends HorizontalScrollView {
     }
 
 
-    public void init(VoterBox[] data, float initialVote) {
+    public void init(VoterBox[] data, float initialVote, double average) {
 
         mData = data;
         mInitialVote = initialVote;
+        mAverage = average;
         if (getMeasuredWidth() == 0 || getMeasuredHeight() == 0) {
             return;
         }
@@ -116,6 +118,7 @@ public class VoterBar extends HorizontalScrollView {
                 View view = inflater.inflate(R.layout.risk_bar, mContainer, false);
                 ((TextView) view.findViewById(R.id.risk)).setText(String.format(Locale.US, "%.2f", box.value));
                 int childWidth = (int) ((box.right - box.left) * votingWidth);
+                view.findViewById(R.id.average_risk_label).setVisibility(mAverage >= box.left && mAverage <= box.right ? VISIBLE : GONE);
                 mContainer.addView(view, new ViewGroup.LayoutParams(childWidth, ViewGroup.LayoutParams.MATCH_PARENT));
             }
 
@@ -135,7 +138,7 @@ public class VoterBar extends HorizontalScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        post(() -> init(mData, mInitialVote));
+        post(() -> init(mData, mInitialVote, mAverage));
     }
 
 

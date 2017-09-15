@@ -120,9 +120,8 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                         int count = range.getInt(TeambrellaModel.ATTR_DATA_COUNT);
                         boxes[i] = new VoterBar.VoterBox(riskFloatProgress(left), riskFloatProgress(right), value, count);
                     }
-
-                    mVoterBar.init(boxes, (float) riskFloatProgress(voting != null ? voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) : -1));
                     mAVGRisk = riskScale.getFloat(TeambrellaModel.ATTR_DATA_AVG_RISK);
+                    mVoterBar.init(boxes, (float) riskFloatProgress(voting != null ? voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) : -1), riskFloatProgress(mAVGRisk));
                 }
 
                 if (voting != null && mCount == 0 && !mVoterBar.isUserActive()) {
