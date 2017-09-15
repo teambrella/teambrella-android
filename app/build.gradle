@@ -38,8 +38,8 @@ android {
         applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 46
-        versionName "0.0.1.46"
+        versionCode 47
+        versionName "0.0.1.47"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
