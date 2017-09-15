@@ -25,14 +25,38 @@ public class EtherAccount {
     private ECKey mKey;
     private Context mContext;
 
-    public static String getPublicKeySignature(String privateKey, Context context){
+    public static String toDepositAddress(String privateKey, Context context) throws CryptoException{
+        return new EtherAccount(privateKey, context).getDepositAddress();
+    }
+
+    public static String toPublicKeySignature(String privateKey, Context context){
         return new EtherAccount(privateKey, context).getPublicKeySignature();
     }
+
 
     public EtherAccount(String privateKey, Context context){
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, privateKey);
         mKey = dpk.getKey();
         mContext = context;
+    }
+
+    public EtherAccount(ECKey key, Context context){
+        mKey = key;
+        mContext = context;
+    }
+
+
+    public String getDepositAddress() throws CryptoException {
+        try{
+            KeyStore ks = getEthKeyStore();
+            Account acc = getEthAccount(ks);
+
+            return acc.getAddress().getHex();
+
+        }catch (RemoteException ex){
+            Log.e(LOG_TAG, ex.getMessage(), ex);
+            throw new CryptoException(ex.getMessage(), ex);
+        }
     }
 
     public String getPublicKeySignature(){

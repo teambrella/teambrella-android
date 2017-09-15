@@ -145,7 +145,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void registerUser(String token, final String privateKey) {
-        String publicKeySignature = EtherAccount.getPublicKeySignature(privateKey, getApplicationContext());
+        String publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
 
         new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
