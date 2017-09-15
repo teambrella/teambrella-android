@@ -208,7 +208,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     if (mTeambrellaSocketClient == null) {
                         URI uri = URI.create(new Uri.Builder()
                                 .scheme("wss")
-                                .authority("surilla.com")
+                                .authority(TeambrellaServer.AUTHORITY)
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
                         mTeambrellaSocketClient = new TeambrellaServer(this, TeambrellaUser.get(this).getPrivateKey())
