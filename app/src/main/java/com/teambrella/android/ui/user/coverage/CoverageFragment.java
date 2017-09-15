@@ -18,6 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.util.AmountCurrencyUtil;
 
@@ -34,6 +35,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
     private TextView mPossibleExpenses;
     private TextView mTeamPay;
     private SeekBar mCoverageSlider;
+    private View mFundButton;
     private boolean mIsShown;
 
     @Nullable
@@ -100,7 +102,21 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 }
             });
 
+            String fundAddress = data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS);
+            if (fundAddress != null) {
+                mFundButton.setEnabled(true);
+                mFundButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
+            } else {
+                mFundButton.setEnabled(false);
+            }
+
             mIsShown = true;
+        } else {
+            if (!mIsShown) {
+                AmountCurrencyUtil.setAmount(mMaxExpenses, 0, mDataHost.getCurrency());
+                AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, mDataHost.getCurrency());
+                AmountCurrencyUtil.setAmount(mTeamPay, 0, mDataHost.getCurrency());
+            }
         }
     }
 }

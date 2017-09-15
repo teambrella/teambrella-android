@@ -105,11 +105,21 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , Math.round(cryptoBalance * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
 
-            Observable.just(data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)).map(QRCodeUtils::createBitmap)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mQRCodeView::setImageBitmap, throwable -> {
-                    });
+            String fundAddress = data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS);
+
+            if (fundAddress != null) {
+                Observable.just(data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)).map(QRCodeUtils::createBitmap)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(mQRCodeView::setImageBitmap, throwable -> {
+                        });
+                mFundWalletButton.setEnabled(true);
+                mQRCodeView.setVisibility(View.VISIBLE);
+            } else {
+                mFundWalletButton.setEnabled(false);
+                mQRCodeView.setVisibility(View.INVISIBLE);
+            }
+
 
             float forMaxCoverage = Math.abs(data.getFloat(TeambrellaModel.ATTR_DATA_NEED_CRYPTO));
             AmountCurrencyUtil.setCryptoAmount(mMaxCoverageCryptoValue, forMaxCoverage);

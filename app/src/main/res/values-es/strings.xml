@@ -35,6 +35,7 @@
     <string name="limit">Límite</string>
     <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
+    <string name="see_claims_format_string">See Claims (%d)</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
 
@@ -65,14 +66,14 @@
     <string name="your_vote">Tu Voto</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
 
-    <string name="vote_avg_difference_bigger_format_string">"PROMEDIO\n+%d%%"</string>
-    <string name="vote_avg_difference_smaller_format_string">"PROMEDIO\n%d%%"</string>
-    <string name="vote_avg_difference_same">"PROMEDIO\n0%%"</string>
+    <string name="vote_avg_difference_bigger_format_string">"MEDIA\n+%d%%"</string>
+    <string name="vote_avg_difference_smaller_format_string">"MEDIA\n%d%%"</string>
+    <string name="vote_avg_difference_same">"MEDIA\n0%%"</string>
     <string name="reset_vote">Reiniciar Votación</string>
     <string name="no_teammate_vote_value">. . .</string>
 
     <string name="wallet">Monedero</string>
-    <string name="submit_another_claim">Enviar Nueva Reclamación</string>
+    <string name="submit_another_claim">Enviar Reclamación</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
     <string name="your_claim">Tu Reclamación</string>
@@ -156,11 +157,39 @@
     <string name="application_chat_vote">Votado:%.2f</string>
     <string name="slogan">No es un seguro. Es mucho mejor.</string>
 
-    <!-- -->
-    <string name="fund_wallet_to_inc">Fund the wallet to increase</string>
+    <!-- New -->
+    <string name="fund_wallet_to_inc">Financie tu monedero para aumentar</string>
     <string name="notification_claim_header">Nueva reclamación en %1$s</string>
     <string name="notification_claim_text">%1$s para %2$s</string>
     <string name="notification_messages_since">%d nuevos mensajes</string>
     <string name="notification_funded_header">Tu monedero está financiado</string>
-
+    <string name="coverage_explanation_title">Cómo funciona</string>
+    <string name="coverage_explanation_description">Utilice el control deslizante para ver cómo los gastos afectan su reembolso máximo.</string>
+    <string name="coverage_explanation_max_expenses_covered">Cantidad máxima de los gastos cubiertos</string>
+    <string name="coverage_explanation_possible_expenses">Si tus gastos son</string>
+    <string name="coverage_explanation_team_would_pay">El equipo te pagaría hasta</string>
+    <string name="inbox">Mensajes privados</string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<b>Todavía no tienes los Proxies.</b><br><br>Por favor, considera a alguien en quien confías para nombrar a tu primero Proxy.]]></string>
+    <string name="proxies_for_empty_prompt"><![CDATA[<b>No estas Proxy de cualquier compañero del equipo.</b><br><br>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.]]></string>
+    <string name="private_conversation">Mensaje privado</string>
+    <string name="ends_in">Termina%s</string>
+    <string name="ended_ago">Termino %s</string>
+    <string name="declined">Rechazado</string>
+    <string name="all_votes">Todos los Votos</string>
+    <string name="weight_format_string"><![CDATA[Peso <b>%.1f</b>]]></string>
+    <string name="votes">Votos</string>
+    <string name="private_message_notification_title">%s (nuevo mensaje)</string>
+    <string name="withdraw">Retirar</string>
+    <string name="reserved">Reservado</string>
+    <string name="available">Disponible</string>
+    <string name="fund_wallet">Financiar monedero</string>
+    <string name="for_max_coverage">Para cobertura máxima(100%)</string>
+    <string name="for_uninterrupted_coverage">Para cobertura ininterrumpida</string>
+    <string name="recommending_funding">Financiamiento Recomendado </string>
+    <string name="copy_address">Copiar direción </string>
+    <string name="ethereum_address">Dirección de Ethereum</string>
+    <string name="qr_code">QR-Code</string>
+    <string name="cosigners">Co-firmantes</string>
+    <string name="now">Ahora</string>
+    s
 </resources>
