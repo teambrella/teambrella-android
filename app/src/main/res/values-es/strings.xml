@@ -68,7 +68,7 @@
 
     <string name="vote_avg_difference_bigger_format_string">"MEDIA\n+%d%%"</string>
     <string name="vote_avg_difference_smaller_format_string">"MEDIA\n%d%%"</string>
-    <string name="vote_avg_difference_same">"MEDIA\n0%%"</string>
+    <string name="vote_avg_difference_same">"MEDIA\n0%"</string>
     <string name="reset_vote">Reiniciar Votación</string>
     <string name="no_teammate_vote_value">. . .</string>
 
