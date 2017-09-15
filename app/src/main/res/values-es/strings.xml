@@ -35,7 +35,7 @@
     <string name="limit">Límite</string>
     <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
-    <string name="see_claims_format_string">See Claims (%d)</string>
+    <string name="see_claims_format_string">Ver los Reclamaciones (%d)</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
 
