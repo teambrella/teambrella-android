@@ -191,5 +191,5 @@
     <string name="qr_code">QR-Code</string>
     <string name="cosigners">Co-firmantes</string>
     <string name="now">Ahora</string>
-    s
+    <string name="unable_to_connect_try_later">Oops, no se puede conectar con Teambrella. Inténtalo más tarde.</string>
 </resources>

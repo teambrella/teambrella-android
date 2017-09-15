@@ -116,7 +116,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
 
     private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDateFormat mDateFormat = new SimpleDateFormat("hh:mm d LLLL", Locale.ENGLISH);
+        private SimpleDateFormat mDateFormat = new SimpleDateFormat("HH:mm d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
         Picasso picasso;

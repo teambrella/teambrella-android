@@ -3,9 +3,9 @@ package com.teambrella.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -106,9 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             finish();
                         }
                         , e -> {
-                            Toast.makeText(this, "Something Went Wrong ", Toast.LENGTH_SHORT).show();
-                            findViewById(R.id.facebook_login).setVisibility(View.VISIBLE);
-                            findViewById(R.id.try_demo).setVisibility(View.VISIBLE);
+                            tryAgainLater();
                         }
                 );
     }
@@ -133,7 +131,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(WelcomeActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+                tryAgainLater();
             }
         });
 
@@ -154,8 +152,20 @@ public class WelcomeActivity extends AppCompatActivity {
                             TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
                             getTeams(privateKey);
                         }
-                        , throwable -> {
-                        });
+                        , throwable -> tryAgainLater());
+    }
+
+
+    private void tryAgainLater() {
+        Snackbar.make(findViewById(R.id.facebook_login), R.string.unable_to_connect_try_later, Snackbar.LENGTH_LONG)
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        finish();
+                    }
+                })
+                .show();
     }
 
 
