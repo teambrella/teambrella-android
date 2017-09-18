@@ -105,10 +105,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , Math.round(cryptoBalance * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
 
-            String fundAddress = data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS);
+            String fundAddress = mDataHost.getFundAddress();
 
             if (fundAddress != null) {
-                Observable.just(data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)).map(QRCodeUtils::createBitmap)
+                Observable.just(fundAddress).map(QRCodeUtils::createBitmap)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(mQRCodeView::setImageBitmap, throwable -> {
@@ -134,7 +134,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
-            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS)));
+            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), mDataHost.getFundAddress()));
 
             Observable.just(data).flatMap(jsonWrapper -> Observable.fromIterable(jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS)))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())

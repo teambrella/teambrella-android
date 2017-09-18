@@ -22,6 +22,8 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.blockchain.CryptoException;
+import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -85,6 +87,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
     private MainNotificationClient mClient;
+    private EtherAccount mEtherAccount;
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -102,6 +105,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
                         , JsonObject.class)) : null;
+
+        mEtherAccount = new EtherAccount(TeambrellaUser.get(this).getPrivateKey(), this);
 
         super.onCreate(savedInstanceState);
 
@@ -425,6 +430,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+
+    @Override
+    public String getFundAddress() {
+        try {
+            return mEtherAccount.getDepositAddress();
+        } catch (CryptoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private void scheduleWalletSync() {
         PeriodicTask task = new PeriodicTask.Builder()

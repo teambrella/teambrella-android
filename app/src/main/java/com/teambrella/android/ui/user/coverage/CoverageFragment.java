@@ -105,7 +105,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 }
             });
 
-            String fundAddress = data.getString(TeambrellaModel.ATTR_DATA_FUND_ADDRESS);
+            String fundAddress = mDataHost.getFundAddress();
             if (fundAddress != null) {
                 mFundButton.setEnabled(true);
                 mFundButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
