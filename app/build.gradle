@@ -38,8 +38,8 @@ android {
         applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 49
-        versionName "0.1.0.49"
+        versionCode 50
+        versionName "0.1.0.50"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -82,16 +82,18 @@ android {
             dimension "default"
             buildConfigField "String", "AUTHORITY", "\"surilla.com\""
             buildConfigField "String", "BASE_URL", "\"https://surilla.com\""
-            buildConfigField "String", "FACEBOOK_APP_ID", "\"416598765047865\""
-
-
+            sourceSets {
+                main.res.srcDirs = ['src/main/res', 'src/surilla/res']
+            }
         }
 
         Teambrella {
             dimension "default"
             buildConfigField "String", "AUTHORITY", "\"teambrella.com\""
             buildConfigField "String", "BASE_URL", "\"https://teambrella.com\""
-            buildConfigField "String", "FACEBOOK_APP_ID", "\"1826256607597448\""
+            sourceSets {
+                main.res.srcDirs = ['src/main/res', 'src/teambrella/res']
+            }
         }
     }
 

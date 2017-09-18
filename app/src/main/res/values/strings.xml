@@ -5,7 +5,6 @@
     <string name="unknown_value">…</string>
     <string name="object_format_string" translatable="false">%1$s, %2$s</string>
     <string name="locale">en</string>
-    <string name="app_name">Teambrella</string>
 
     <!-- Bottom navigation bar -->
     <string name="bottom_navigation_home">Home</string>
