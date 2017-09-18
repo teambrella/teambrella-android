@@ -60,15 +60,15 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         if (user.getPrivateKey() != null) {
-            findViewById(R.id.facebook_login).setVisibility(View.GONE);
+            findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
             getTeams(user.getPrivateKey());
         }
     }
 
 
     private void getTeams(String privateKey) {
-        findViewById(R.id.facebook_login).setVisibility(View.GONE);
-        findViewById(R.id.try_demo).setVisibility(View.GONE);
+        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
+        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
         TeambrellaUser user = TeambrellaUser.get(this);
         final int selectedTeam = TeambrellaUser.get(this).getTeamId();
         mTeamsDisposal = new TeambrellaServer(WelcomeActivity.this, privateKey)
@@ -113,8 +113,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void onFacebookLogin(View v) {
-        findViewById(R.id.facebook_login).setVisibility(View.GONE);
-        findViewById(R.id.try_demo).setVisibility(View.GONE);
+        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
+        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -128,7 +128,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-
+                findViewById(R.id.facebook_login).setVisibility(View.VISIBLE);
+                if (BuildConfig.DEBUG) {
+                    findViewById(R.id.try_demo).setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
