@@ -49,7 +49,7 @@
 
     <string name="claim_title_format_string">Reclamación %d</string>
     <string name="claim_details">Detalles de Reclamación</string>
-    <string name="claim_amount">Cantidad Reclamada</string>
+    <string name="claim_amount">Reclamado</string>
     <string name="voting">Votación</string>
     <string name="voting_risk">Votación: Riesgo</string>
     <string name="estimated_expenses">Gastos Estimados</string>
@@ -195,4 +195,5 @@
     <string name="object_bike">Bicicleta</string>
     <string name="object_pet">Mascota</string>
     <string name="team_avg">EQUIPO: \n PROMEDIO</string>
+    <string name="no_coverage_for_the_date">Has tenido 0% cobertura en el día del incidente</string>
 </resources>

@@ -200,5 +200,6 @@
     <string name="object_bike">Bike</string>
     <string name="object_pet">Pet</string>
     <string name="team_avg">Team \n AVG</string>
+    <string name="no_coverage_for_the_date">You had 0% coverage on the date of the incident</string>
 
 </resources>
