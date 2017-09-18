@@ -46,7 +46,7 @@ public class TeambrellaUris {
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
-    public static final String KEY_SIG_OF_PUBLIC_KEY_HASH = "sigOfPublicKeyHash";
+    public static final String KEY_SIG_OF_PUBLIC_KEY = "sigOfPublicKey";
     public static final String KEY_OFFSET = "Offset";
     public static final String KEY_LIMIT = "Limit";
     public static final String KEY_TEAM_ID = "TeamId";
@@ -342,12 +342,12 @@ public class TeambrellaUris {
     }
 
 
-    public static Uri getRegisterUri(String facebookToken, String sigOfPublicKeyHash) {
+    public static Uri getRegisterUri(String facebookToken, String sigOfPublicKey) {
         return new Uri.Builder().authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_ME)
                 .appendEncodedPath(SEGMENT_REGISTER)
                 .appendQueryParameter(KEY_FACEBOOK_TOKEN, facebookToken)
-                .appendQueryParameter(KEY_SIG_OF_PUBLIC_KEY_HASH, sigOfPublicKeyHash)
+                .appendQueryParameter(KEY_SIG_OF_PUBLIC_KEY, sigOfPublicKey)
                 .build();
     }
 
