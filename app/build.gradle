@@ -82,6 +82,7 @@ android {
             dimension "default"
             buildConfigField "String", "AUTHORITY", "\"surilla.com\""
             buildConfigField "String", "BASE_URL", "\"https://surilla.com\""
+            buildConfigField "boolean", "isTestNet", "true"
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/surilla/res']
             }
@@ -91,6 +92,7 @@ android {
             dimension "default"
             buildConfigField "String", "AUTHORITY", "\"teambrella.com\""
             buildConfigField "String", "BASE_URL", "\"https://teambrella.com\""
+            buildConfigField "boolean", "isTestNet", "false"
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/teambrella/res']
             }

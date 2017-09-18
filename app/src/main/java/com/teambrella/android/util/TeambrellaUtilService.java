@@ -16,6 +16,7 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -333,7 +334,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private boolean verifyIfWalletIsCreated(long gasLimit) throws RemoteException, OperationApplicationException {
 
-        EtherNode blockchain = new EtherNode(true);
+        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         String myPublicKey = mKey.getPublicKeyAsHex();
@@ -527,7 +528,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private org.ethereum.geth.Transaction createNewWalletTx(long nonce, long gasLimit, long teamId, String[] addresses) throws RemoteException {
         String data = createNewWalletData(teamId, addresses);
-        long gasPrice = 50_000_000_000L;  // 0.5 Gwei (1 Gwei = 10^9 wei)
+        long gasPrice = BuildConfig.isTestNet ? 50_000_000_000L : 500_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
@@ -609,7 +610,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private long getNonce(String addressHex) {
-        EtherNode blockchain = new EtherNode(true);
+        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
         return blockchain.checkNonce(addressHex);
     }
 
@@ -619,7 +620,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
             String hex = "0x" + toHexString(rlp);
 
-            EtherNode blockchain = new EtherNode(true);
+            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
             return blockchain.pushTx(hex);
 
         } catch (Exception e) {
