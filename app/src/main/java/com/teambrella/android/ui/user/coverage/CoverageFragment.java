@@ -50,8 +50,8 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
         mFundButton = view.findViewById(R.id.fund_wallet);
         mDataHost.load(mTags[0]);
-        mCoverageSlider.setProgress(70);
         mCoverageSlider.setMax(100);
+        mCoverageSlider.setProgress(70);
         return view;
     }
 
@@ -76,8 +76,8 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             mCoverageView.setText(coveragePercent);
 
 
-            mCoverageSlider.setProgress(Math.round(limit * 0.7f));
             mCoverageSlider.setMax(Math.round(limit));
+            mCoverageSlider.setProgress(Math.round(limit * 0.7f));
 
             if (coverage > 0.97f) {
                 mCoverageIcon.setImageResource(R.drawable.cover_sunny);
