@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -143,9 +144,9 @@ public class TeambrellaContentProviderClient {
             cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS, teammate.publicKeyAddress);
             return ContentProviderOperation.newInsert(TeambrellaRepository.Teammate.CONTENT_URI).withValues(cv).build();
         }else{
-            if (existingTeammate.publicKey != null && teammate.publicKey != existingTeammate.publicKey ||
-                teammate.facebookName != existingTeammate.facebookName ||
-                teammate.teamId != existingTeammate.teamId){
+            if (existingTeammate.publicKey != null && !Objects.equals(teammate.publicKey, existingTeammate.publicKey) ||
+                existingTeammate.publicKeyAddress != null && !Objects.equals(teammate.publicKeyAddress, existingTeammate.publicKeyAddress) ||
+                existingTeammate.facebookName != null && !Objects.equals(teammate.facebookName, existingTeammate.facebookName)){
                 return null; // we don't allow to change basic info
             }
 
