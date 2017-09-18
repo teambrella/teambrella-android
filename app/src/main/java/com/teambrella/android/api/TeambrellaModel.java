@@ -184,7 +184,7 @@ public class TeambrellaModel {
 
 
     /*Data*/
-    public static final String ATTR_DATA_MY_TEAMMATE_ID = "MyTeammateID";
+    public static final String ATTR_DATA_MY_TEAMMATE_ID = "MyTeammateId";
     public static final String ATTR_DATA_TEAM_ID = "TeamId";
     public static final String ATTR_DATA_TEAMMATES = "Teammates";
     public static final String ATTR_DATA_ID = "Id";
@@ -197,6 +197,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_BIG_PHOTOS = "BigPhotos";
     public static final String ATTR_DATA_SMALL_PHOTO = "SmallPhoto";
     public static final String ATTR_DATA_NAME = "Name";
+    public static final String ATTR_DATA_WEIGHT_COMBINED = "WeightCombined";
     public static final String ATTR_DATA_WEIGHT = "Weight";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_MODEL = "Model";
@@ -393,6 +394,19 @@ public class TeambrellaModel {
                 return R.string.bike_insurance;
             default:
                 return R.string.other_insurance;
+        }
+    }
+
+
+    @StringRes
+    public static int getObjectType(int type) {
+        switch (type) {
+            case InsuranceType.PET:
+                return R.string.object_pet;
+            case InsuranceType.BICYCLE:
+                return R.string.object_bike;
+            default:
+                return R.string.object;
         }
     }
 

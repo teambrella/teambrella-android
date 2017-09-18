@@ -22,6 +22,8 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.blockchain.CryptoException;
+import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -68,6 +70,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     public static final String TEAMS_DATA = "teams_data";
     public static final String USER_DATA = "user_data";
     public static final String WALLET_DATA = "wallet_data";
+    public static final String VOTE_DATA = "vote_data";
 
 
     private static final String HOME_TAG = "home";
@@ -84,6 +87,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
     private MainNotificationClient mClient;
+    private EtherAccount mEtherAccount;
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -101,6 +105,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
                         , JsonObject.class)) : null;
+
+        mEtherAccount = new EtherAccount(TeambrellaUser.get(this).getPrivateKey(), this);
 
         super.onCreate(savedInstanceState);
 
@@ -204,7 +210,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     protected String[] getDataTags() {
-        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA} : new String[]{};
+        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA, VOTE_DATA} : new String[]{};
     }
 
     @Override
@@ -224,6 +230,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId));
             case WALLET_DATA:
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
+            case VOTE_DATA:
+                return TeambrellaDataFragment.getInstance(null);
+
         }
         return null;
     }
@@ -270,7 +279,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void postVote(double vote) {
-        // nothing to do
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
+        }
     }
 
     @Override
@@ -418,14 +431,24 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     }
 
 
-    private void scheduleWalletSync(){
+    @Override
+    public String getFundAddress() {
+        try {
+            return mEtherAccount.getDepositAddress();
+        } catch (CryptoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void scheduleWalletSync() {
         PeriodicTask task = new PeriodicTask.Builder()
                 .setService(TeambrellaUtilService.class)
                 .setTag(SYNC_WALLET_TASK_TAG)
                 .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setPersisted(true)
-                .setPeriod(30*60)       // 30 minutes period
-                .setFlex(5*60)          // +/- 5 minutes
+                .setPeriod(30 * 60)       // 30 minutes period
+                .setFlex(5 * 60)          // +/- 5 minutes
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
                 .build();
         GcmNetworkManager.getInstance(this).schedule(task);
@@ -446,7 +469,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
         @Override
         public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
-            getPager(FEED_DATA_TAG).reload();
+            //getPager(FEED_DATA_TAG).reload();
             return false;
         }
     }

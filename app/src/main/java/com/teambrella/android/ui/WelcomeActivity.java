@@ -3,9 +3,9 @@ package com.teambrella.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -60,15 +60,15 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         if (user.getPrivateKey() != null) {
-            findViewById(R.id.facebook_login).setVisibility(View.GONE);
+            findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
             getTeams(user.getPrivateKey());
         }
     }
 
 
     private void getTeams(String privateKey) {
-        findViewById(R.id.facebook_login).setVisibility(View.GONE);
-        findViewById(R.id.try_demo).setVisibility(View.GONE);
+        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
+        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
         TeambrellaUser user = TeambrellaUser.get(this);
         final int selectedTeam = TeambrellaUser.get(this).getTeamId();
         mTeamsDisposal = new TeambrellaServer(WelcomeActivity.this, privateKey)
@@ -106,15 +106,15 @@ public class WelcomeActivity extends AppCompatActivity {
                             finish();
                         }
                         , e -> {
-                            Toast.makeText(this, "Something Went Wrong ", Toast.LENGTH_SHORT).show();
-                            findViewById(R.id.facebook_login).setVisibility(View.VISIBLE);
-                            findViewById(R.id.try_demo).setVisibility(View.VISIBLE);
+                            tryAgainLater();
                         }
                 );
     }
 
 
     private void onFacebookLogin(View v) {
+        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
+        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -128,12 +128,15 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-
+                findViewById(R.id.facebook_login).setVisibility(View.VISIBLE);
+                if (BuildConfig.DEBUG) {
+                    findViewById(R.id.try_demo).setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(WelcomeActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+                tryAgainLater();
             }
         });
 
@@ -145,8 +148,9 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void registerUser(String token, final String privateKey) {
+        findViewById(R.id.facebook_login).setVisibility(View.GONE);
+        findViewById(R.id.try_demo).setVisibility(View.GONE);
         String publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
-
         new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -154,8 +158,20 @@ public class WelcomeActivity extends AppCompatActivity {
                             TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
                             getTeams(privateKey);
                         }
-                        , throwable -> {
-                        });
+                        , throwable -> tryAgainLater());
+    }
+
+
+    private void tryAgainLater() {
+        Snackbar.make(findViewById(R.id.facebook_login), R.string.unable_to_connect_try_later, Snackbar.LENGTH_LONG)
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        finish();
+                    }
+                })
+                .show();
     }
 
 

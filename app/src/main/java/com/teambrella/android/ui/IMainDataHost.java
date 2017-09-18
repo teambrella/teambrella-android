@@ -35,4 +35,6 @@ public interface IMainDataHost extends IDataHost {
 
     void showSnackBar(@StringRes int text);
 
+    String getFundAddress();
+
 }

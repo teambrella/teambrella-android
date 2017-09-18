@@ -18,6 +18,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.IMainDataHost;
+import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.util.AmountCurrencyUtil;
 
@@ -34,6 +35,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
     private TextView mPossibleExpenses;
     private TextView mTeamPay;
     private SeekBar mCoverageSlider;
+    private View mFundButton;
     private boolean mIsShown;
 
     @Nullable
@@ -46,7 +48,10 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mPossibleExpenses = view.findViewById(R.id.possible_expenses_value);
         mTeamPay = view.findViewById(R.id.team_pay_value);
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
+        mFundButton = view.findViewById(R.id.fund_wallet);
         mDataHost.load(mTags[0]);
+        mCoverageSlider.setProgress(70);
+        mCoverageSlider.setMax(100);
         return view;
     }
 
@@ -61,7 +66,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             float coverage = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE);
             float limit = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT);
             AmountCurrencyUtil.setAmount(mMaxExpenses, Math.round(limit), mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit), mDataHost.getCurrency());
+            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit * 0.7f), mDataHost.getCurrency());
             AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), mDataHost.getCurrency());
 
             String coverageString = Integer.toString(Math.round(coverage * 100));
@@ -71,7 +76,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             mCoverageView.setText(coveragePercent);
 
 
-            mCoverageSlider.setProgress(Math.round(limit));
+            mCoverageSlider.setProgress(Math.round(limit * 0.7f));
             mCoverageSlider.setMax(Math.round(limit));
 
             if (coverage > 0.97f) {
@@ -100,7 +105,22 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 }
             });
 
+            String fundAddress = mDataHost.getFundAddress();
+            if (fundAddress != null) {
+                mFundButton.setEnabled(true);
+                mFundButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
+            } else {
+                mFundButton.setEnabled(false);
+            }
+
             mIsShown = true;
+        } else {
+            if (!mIsShown) {
+                AmountCurrencyUtil.setAmount(mMaxExpenses, 0, mDataHost.getCurrency());
+                AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, mDataHost.getCurrency());
+                AmountCurrencyUtil.setAmount(mTeamPay, 0, mDataHost.getCurrency());
+                mFundButton.setEnabled(false);
+            }
         }
     }
 }

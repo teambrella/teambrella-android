@@ -176,6 +176,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             }
         });
 
+        AmountCurrencyUtil.setAmount(findViewById(R.id.deductible), 0f, mCurrency);
+
         mDescriptionView = findViewById(R.id.description);
         mAddressView = findViewById(R.id.address);
     }
@@ -343,6 +345,13 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
     private void submitClaim() {
 
+
+        if (mCoverageValue <= 0) {
+            mCoverageView.requestFocus();
+            mCoverageView.setError(getString(R.string.no_coverage_for_the_date));
+            return;
+        }
+
         if (TextUtils.isEmpty(mIncidentDateView.getText())) {
             mIncidentDateView.setFocusable(true);
             mIncidentDateView.setFocusableInTouchMode(true);
@@ -369,7 +378,6 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             mAddressView.setError(getString(R.string.no_address_provided));
             return;
         }
-
 
         request(TeambrellaUris.getNewClaimUri(mTeamId, mCalendar.getTime(),
                 mExpensesValue, mDescriptionView.getText().toString(),

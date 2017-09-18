@@ -51,8 +51,8 @@ public class TeambrellaServer {
 
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
-    public static final String AUTHORITY = "surilla.com";
-    public static final String BASE_URL = "https://surilla.com";
+    public static final String AUTHORITY = BuildConfig.AUTHORITY;
+    public static final String BASE_URL = BuildConfig.BASE_URL;
     public static final String SCHEME = "https";
 
 
