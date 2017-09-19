@@ -5,51 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-
-    <compatible-screens>
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="small" />
-
-        <screen
-            android:screenDensity="xxhdpi"
-            android:screenSize="small" />
-
-        <screen
-            android:screenDensity="xxxhdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="xxhdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="xxxhdpi"
-            android:screenSize="normal" />
-    </compatible-screens>
-
+    
     <application
-        android:name=".ui.TeambrellaApplication"
+        android:name=".TeambrellaApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -123,38 +81,12 @@
             android:syncable="true" />
 
         <service
-            android:name=".content.sync.TeambrellaSyncService"
-            android:exported="true"
-            android:process=":sync">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter" />
-        </service>
-
-
-        <service
             android:name=".util.TeambrellaUtilService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
-        </service>
-
-
-        <service
-            android:name=".account.TeambrellaAuthenticationService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
         </service>
 
         <service
