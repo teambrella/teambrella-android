@@ -86,9 +86,33 @@ public class EtherNode {
                     return Long.parseLong(hex, 16);
                 }
             } catch (IOException | InterruptedException e) {
-                Log.e(LOG_TAG, "Failed to check Nonce.", e);
+                Log.e(LOG_TAG, "Failed to check Nonce:" + e.getMessage(), e);
             }
         }
+
+        return 0;
+    }
+
+    public long checkBalance(String addressHex) {
+        Scan<Long> responceBody = null;
+        for (EtherAPI api : mEtherAPIs) {
+            try {
+                Response<Scan<Long>> response = api.checkBalance(addressHex).execute();
+                Thread.currentThread().sleep(1000);
+                if (response.isSuccessful()) {
+                    responceBody = response.body();
+
+                    Long balance = responceBody.result;
+                    if (null == balance)
+                        return -1;
+
+                    return balance.longValue();
+                }
+            } catch (IOException | InterruptedException e) {
+                Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+            }
+        }
+
         return 0;
     }
 

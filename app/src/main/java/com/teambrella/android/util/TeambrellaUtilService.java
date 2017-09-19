@@ -1,6 +1,5 @@
 package com.teambrella.android.util;
 
-import android.annotation.SuppressLint;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Intent;
@@ -22,6 +21,8 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.BlockchainNode;
+import com.teambrella.android.blockchain.CryptoException;
+import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.blockchain.EtherNode;
 import com.teambrella.android.blockchain.Scan;
 import com.teambrella.android.blockchain.TxReceiptResult;
@@ -50,8 +51,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 
 /**
@@ -115,31 +114,24 @@ public class TeambrellaUtilService extends GcmTaskService {
         Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
-//            onHandleIntent(intent);
+//            new AsyncTask<Void, Void, Void>() {
+//                @Override
+//                protected Void doInBackground(Void... voids) {
+//                    try {
+//                        processIntent(intent);
+//                    } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
+//                        Log.e(LOG_TAG, e.toString());
+//                    }
+//                    return null;
+//                }
+//            }.execute();
+//
+//            Log.e(LOG_TAG, "INTENT STARTED" + intent.toString());
 //            return START_NOT_STICKY;
-//        }
-//                else
+//        }else
 
         return super.onStartCommand(intent, i, i1);
     }
-
-//    @SuppressLint("StaticFieldLeak")
-//    protected void onHandleIntent(@Nullable Intent intent) {
-//        new AsyncTask<Void, Void, Void>() {
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                try {
-//                    processIntent(intent);
-//                } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
-//                    Log.e(LOG_TAG, e.toString());
-//                }
-//                return null;
-//            }
-//        }.execute();
-//
-//        Log.e(LOG_TAG, "INTENT STARTED" + intent.toString());
-//    }
 
 
     @Override
@@ -150,12 +142,14 @@ public class TeambrellaUtilService extends GcmTaskService {
                 sync();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "sync attempt failed:");
+            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+            Log.e(LOG_TAG, "sync error call stack was: ", e);
         }
         return GcmNetworkManager.RESULT_SUCCESS;
     }
 
-    private void processIntent(Intent intent) throws RemoteException, OperationApplicationException, TeambrellaException {
+    private void processIntent(Intent intent) throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
         String action = intent != null ? intent.getAction() : null;
         if (action != null) {
             switch (action) {
@@ -313,18 +307,19 @@ public class TeambrellaUtilService extends GcmTaskService {
         KeyStore ks = getEthKeyStore();
         Account myAccount = getEthAccount(ks);
         cryptoTx = createNewWalletTx(myNonce, gasLimit, m.teamId, cosignerAddresses);
-        cryptoTx = sign(cryptoTx, ks, myAccount, 3);
+        cryptoTx = sign(cryptoTx, ks, myAccount, BuildConfig.isTestNet);
         Log.v(LOG_TAG, toCreationInfoString(m) + " signed.");
 
         String txHex = publishCryptoTx(cryptoTx);
         return txHex;
     }
 
-    private org.ethereum.geth.Transaction sign(org.ethereum.geth.Transaction cryptoTx, KeyStore ks, Account ethAcc, long chainId) throws RemoteException {
+    private org.ethereum.geth.Transaction sign(org.ethereum.geth.Transaction cryptoTx, KeyStore ks, Account ethAcc, boolean isTestnet) throws RemoteException {
 
         try {
+            BigInt chainId = new BigInt(isTestnet ? 3 : 1);                 // 3 is for Ropsten TestNet; 1 is for MainNet
             String secret = mKey.getPrivateKeyAsWiF(new MainNetParams());
-            return ks.signTxPassphrase(ethAcc, secret, cryptoTx, new BigInt(chainId));
+            return ks.signTxPassphrase(ethAcc, secret, cryptoTx, chainId);
         } catch (Exception e) {
             Log.e(LOG_TAG, "", e);
             throw new RemoteException(e.getMessage());
@@ -375,10 +370,26 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
-    private boolean depositWallet() throws TeambrellaException {
-        boolean result = false;
+    private boolean depositWallet() throws CryptoException, RemoteException {
+            String myPublicKey = mKey.getPublicKeyAsHex();
+            List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
+            if (myCurrentMultisigs.size() == 1){
+                EtherAccount myAcc = new EtherAccount(mKey, getApplicationContext());
 
-        return result;
+                EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+                long gasWalletAmount = blockchain.checkBalance(myAcc.getDepositAddress());
+
+                if (gasWalletAmount > 20_000_000_000_000_000L) {
+                    long minRestForGas = 10_000_000_000_000_000L;
+                    long myNonce = getMyNonce();
+                    org.ethereum.geth.Transaction depositTx;
+                    depositTx = myAcc.newDepositTx(myNonce, 50_000L, myCurrentMultisigs.get(0).address, BuildConfig.isTestNet, gasWalletAmount - minRestForGas);
+                    depositTx = myAcc.signTx(depositTx, BuildConfig.isTestNet);
+                    publishCryptoTx(depositTx);
+                }
+            }
+
+            return true;
     }
 
     private boolean autoApproveTxs() throws RemoteException, OperationApplicationException {
@@ -483,13 +494,14 @@ public class TeambrellaUtilService extends GcmTaskService {
         return !operations.isEmpty();
     }
 
-    private void sync() throws RemoteException, OperationApplicationException, TeambrellaException {
+    private void sync() throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
         Log.v(LOG_TAG, "start syncing...");
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++){
             createWallets(3_000_000);
             verifyIfWalletIsCreated(3_000_000);
+            depositWallet();
             autoApproveTxs();
             cosignApprovedTransactions();
             masterSign();

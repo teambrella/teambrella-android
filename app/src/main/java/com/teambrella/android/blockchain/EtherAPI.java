@@ -15,10 +15,13 @@ public interface EtherAPI {
     @POST("api?module=proxy&action=eth_sendRawTransaction")
     Call<JsonObject> pushTx(@Field("hex") String hex);
 
-    @GET("https://ropsten.etherscan.io/api?module=proxy&action=eth_getTransactionCount")
+    @GET("api?module=proxy&action=eth_getTransactionCount")
     Call<Scan<String>> checkNonce(@Query("address") String address);
 
-    @GET("https://ropsten.etherscan.io/api?module=proxy&action=eth_getTransactionReceipt")
+    @GET("api?module=proxy&action=eth_getTransactionReceipt")
     Call<Scan<TxReceiptResult>> checkTx(@Query("txhash") String txHash);
 
+
+    @GET("api?module=account&action=balance")
+    Call<Scan<Long>> checkBalance(@Query("address") String address);
 }
