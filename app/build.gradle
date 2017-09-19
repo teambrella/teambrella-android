@@ -20,7 +20,7 @@ repositories {
     maven { url "https://maven.google.com" }
 }
 
-apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android'
 
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -38,8 +38,8 @@ android {
         applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 54
-        versionName "0.1.0.54"
+        versionCode 55
+        versionName "0.1.0.55"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -113,10 +113,10 @@ dependencies {
 
     /* Support */
     compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
+    compile 'com.android.support:recyclerview-v7:26.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:multidex:1.0.2'
-    compile 'com.android.support:design:26.0.1'
+    compile 'com.android.support:design:26.0.2'
 
     /* Server communication */
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
@@ -144,9 +144,9 @@ dependencies {
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
     /* *Facebook SDK*/
-    compile 'com.facebook.android:facebook-android-sdk:4.22.1'
+    compile 'com.facebook.android:facebook-android-sdk:4.26.0'
 
-    compile 'com.google.android.gms:play-services-gcm:11.0.4'
+    compile 'com.google.android.gms:play-services-gcm:11.2.2'
 
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
