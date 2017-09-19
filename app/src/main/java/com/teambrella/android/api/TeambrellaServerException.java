@@ -32,7 +32,7 @@ public class TeambrellaServerException extends TeambrellaException {
      * @param errorMessage server error message
      */
     public TeambrellaServerException(Uri uri, int errorCode, String errorMessage, long timestamp) {
-        super(uri);
+        super(uri, errorMessage, null);
         this.mErrorCode = errorCode;
         this.mErrorMessage = errorMessage;
         this.mTimestamp = timestamp;

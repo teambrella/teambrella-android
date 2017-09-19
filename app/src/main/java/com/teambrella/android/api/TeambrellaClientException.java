@@ -9,4 +9,9 @@ public class TeambrellaClientException extends TeambrellaException {
     public TeambrellaClientException(Uri uri, String message, Throwable cause) {
         super(uri, message, cause);
     }
+
+    @Override
+    public String toString() {
+        return "[" + getUri() + "] " + super.toString();
+    }
 }

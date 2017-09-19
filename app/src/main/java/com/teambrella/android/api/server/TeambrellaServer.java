@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Pair;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -119,7 +120,9 @@ public class TeambrellaServer {
                                     .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
                         }
                     }
-                    return Observable.error(new TeambrellaClientException(uri, throwable.getMessage(), throwable));
+                    Exception exception = new TeambrellaClientException(uri, throwable.getMessage(), throwable);
+                    Crashlytics.logException(exception);
+                    return Observable.error(exception);
                 });
     }
 

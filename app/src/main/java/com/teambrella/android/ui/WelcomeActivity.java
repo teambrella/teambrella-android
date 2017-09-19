@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -105,9 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             user.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
                             finish();
                         }
-                        , e -> {
-                            tryAgainLater();
-                        }
+                        , this::tryAgainLater
                 );
     }
 
@@ -136,7 +135,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-                tryAgainLater();
+                tryAgainLater(error);
             }
         });
 
@@ -158,11 +157,11 @@ public class WelcomeActivity extends AppCompatActivity {
                             TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
                             getTeams(privateKey);
                         }
-                        , throwable -> tryAgainLater());
+                        , this::tryAgainLater);
     }
 
 
-    private void tryAgainLater() {
+    private void tryAgainLater(Throwable throwable) {
         Snackbar.make(findViewById(R.id.facebook_login), R.string.unable_to_connect_try_later, Snackbar.LENGTH_LONG)
                 .addCallback(new Snackbar.Callback() {
                     @Override
@@ -172,6 +171,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+
+        Crashlytics.logException(throwable);
     }
 
 

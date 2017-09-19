@@ -205,7 +205,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         if (action != null) {
             switch (action) {
                 case CONNECT_ACTION:
-                    if (mTeambrellaSocketClient == null) {
+                    if (mTeambrellaSocketClient == null && TeambrellaUser.get(this).getPrivateKey() != null) {
                         URI uri = URI.create(new Uri.Builder()
                                 .scheme("wss")
                                 .authority(TeambrellaServer.AUTHORITY)
