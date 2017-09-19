@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -135,6 +137,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
+                Answers.getInstance().logLogin(new LoginEvent().putSuccess(false));
                 tryAgainLater(error);
             }
         });
@@ -155,6 +158,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(jsonObject -> {
                             TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
+                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
                             getTeams(privateKey);
                         }
                         , this::tryAgainLater);
