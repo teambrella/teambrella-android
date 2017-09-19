@@ -1,5 +1,6 @@
 package com.teambrella.android.ui;
 
+import android.accounts.Account;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -52,6 +54,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
  */
 public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
 
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int NEW_DISCUSSION_REQUEST_CODE = 102;
 
     private static final String USER_ID_EXTRA = "user_id_extra";
@@ -105,8 +108,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
                         , JsonObject.class)) : null;
-
-        mEtherAccount = new EtherAccount(TeambrellaUser.get(this).getPrivateKey(), this);
 
         super.onCreate(savedInstanceState);
 
@@ -433,13 +434,27 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public String getFundAddress() {
-        try {
-            return mEtherAccount.getDepositAddress();
-        } catch (CryptoException e) {
-            e.printStackTrace();
+
+        EtherAccount eth = getEtherAccountOrNull();
+        if (eth != null){
+            return eth.getDepositAddress();
+        }else {
+            Log.w(LOG_TAG, "Was unnable to get direct eth address. See errors logged before this.");
+            return null;
         }
-        return null;
     }
+
+    private EtherAccount getEtherAccountOrNull(){
+        if (mEtherAccount != null) return mEtherAccount;
+
+        try {
+            return mEtherAccount = new EtherAccount(TeambrellaUser.get(this).getPrivateKey(), this);
+        } catch (CryptoException e) {
+            Log.e(LOG_TAG, "Cannot get initialize local ethereum account: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
 
     private void scheduleWalletSync() {
         PeriodicTask task = new PeriodicTask.Builder()
@@ -447,8 +462,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                 .setTag(SYNC_WALLET_TASK_TAG)
                 .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setPersisted(true)
-                .setPeriod(30 * 60)       // 30 minutes period
-                .setFlex(5 * 60)          // +/- 5 minutes
+                .setPeriod(30 * 60)     // 30 minutes period
+                .setFlex(10 * 60)       // +/- 10 minutes
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
                 .build();
         GcmNetworkManager.getInstance(this).schedule(task);

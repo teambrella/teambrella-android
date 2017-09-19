@@ -9,8 +9,10 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
 import org.ethereum.geth.Account;
 import org.ethereum.geth.Accounts;
+import org.ethereum.geth.BigInt;
 import org.ethereum.geth.Geth;
 import org.ethereum.geth.KeyStore;
+import org.ethereum.geth.Transaction;
 
 import java.util.Arrays;
 
@@ -23,46 +25,80 @@ public class EtherAccount {
     private static final String LOG_TAG = EtherAccount.class.getSimpleName();
 
     private ECKey mKey;
+    private KeyStore mKeyStore;
+    private Account mAccount;
     private Context mContext;
 
     public static String toDepositAddress(String privateKey, Context context) throws CryptoException{
         return new EtherAccount(privateKey, context).getDepositAddress();
     }
 
-    public static String toPublicKeySignature(String privateKey, Context context){
+    public static String toPublicKeySignature(String privateKey, Context context) throws CryptoException{
         return new EtherAccount(privateKey, context).getPublicKeySignature();
     }
 
-
-    public EtherAccount(String privateKey, Context context){
+    public EtherAccount(String privateKey, Context context) throws CryptoException{
+        mContext = context;
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, privateKey);
         mKey = dpk.getKey();
-        mContext = context;
+        mKeyStore = getEthKeyStore();
+        mAccount = getEthAccount(mKeyStore);
     }
 
-    public EtherAccount(ECKey key, Context context){
+    public EtherAccount(ECKey key, Context context) throws CryptoException{
+        mContext = context;
         mKey = key;
-        mContext = context;
+        mKeyStore = getEthKeyStore();
+        mAccount = getEthAccount(mKeyStore);
     }
 
 
-    public String getDepositAddress() throws CryptoException {
-        try{
-            KeyStore ks = getEthKeyStore();
-            Account acc = getEthAccount(ks);
-
-            return acc.getAddress().getHex();
-
-        }catch (RemoteException ex){
-            Log.e(LOG_TAG, ex.getMessage(), ex);
-            throw new CryptoException(ex.getMessage(), ex);
-        }
+    public String getDepositAddress() {
+        return mAccount.getAddress().getHex();
     }
 
     public String getPublicKeySignature(){
         byte[] signature = sign(mKey.getPublicKeyAsHex());
         reverseAndCalculateV(signature);
         return "0x" + toHexString(signature);
+    }
+
+    public Transaction newDepositTx(long nonce, long gasLimit, String toAddress, boolean isTestNet, long value) throws CryptoException {
+        long gasPrice = isTestNet ? 50_000_000_000L : 500_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
+
+        String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"to\":\"%s\",\"value\":\"0x%x\",\"input\":\"0x\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
+                nonce,
+                gasPrice,
+                gasLimit,
+                toAddress,
+                value
+        );
+
+        Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+
+        try {
+            Transaction tx = Geth.newTransactionFromJSON(json);
+            Log.v(LOG_TAG, "deposit tx constructed.");
+            return tx;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "", e);
+            throw new CryptoException(e.getMessage(), e);
+        }
+    }
+
+    public Transaction signTx(Transaction unsignedTx, boolean isTestnet) throws CryptoException{
+
+            String secret = mKey.getPrivateKeyAsWiF(new MainNetParams());
+            try {
+                return mKeyStore.signTxPassphrase(mAccount, secret, unsignedTx, getChainId(isTestnet));
+            }catch (Exception e){
+                Log.e(LOG_TAG, "Could not sign tx; isTestnet:" + isTestnet + ". " + e.getMessage(), e);
+                throw new CryptoException(e.getMessage(), e);
+            }
+    }
+
+    private BigInt getChainId(boolean isTestNet){
+        return new BigInt(isTestNet ? 3 : 1);   // 3 is for Ropsten TestNet; 1 is for MainNet
     }
 
     private byte[] sign(String target)
@@ -88,7 +124,7 @@ public class EtherAccount {
         return null;
     }
 
-    private KeyStore getEthKeyStore() throws RemoteException {
+    private KeyStore getEthKeyStore() {
         String myPublicKey = mKey.getPublicKeyAsHex();
         String documentsPath = mContext.getFilesDir().getPath();
         KeyStore ks = new KeyStore(documentsPath + "/keystore/" + myPublicKey, Geth.LightScryptN, Geth.LightScryptP);
@@ -96,7 +132,7 @@ public class EtherAccount {
         return ks;
     }
 
-    private Account getEthAccount(KeyStore ks) throws RemoteException {
+    private Account getEthAccount(KeyStore ks) throws CryptoException {
         try {
             String secret = mKey.getPrivateKeyAsWiF(new MainNetParams());
 
@@ -111,7 +147,7 @@ public class EtherAccount {
             return acc;
         } catch (Exception e){
             Log.e("Test", "Was unnable to read account.", e);
-            throw new RemoteException(e.getMessage());
+            throw new CryptoException(e.getMessage(), e);
         }
     }
 

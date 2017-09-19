@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
@@ -22,6 +23,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 
 import org.bitcoinj.params.MainNetParams;
@@ -39,6 +41,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class WelcomeActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
 
     private Disposable mTeamsDisposal;
@@ -152,7 +155,12 @@ public class WelcomeActivity extends AppCompatActivity {
     private void registerUser(String token, final String privateKey) {
         findViewById(R.id.facebook_login).setVisibility(View.GONE);
         findViewById(R.id.try_demo).setVisibility(View.GONE);
-        String publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
+        String publicKeySignature = null;
+        try{
+            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
+        }catch (CryptoException e){
+            Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be regestered on the server. The error was: " + e.getMessage(), e);
+        }
         new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
