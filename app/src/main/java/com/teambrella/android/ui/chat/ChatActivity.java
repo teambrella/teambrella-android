@@ -302,6 +302,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
         mClient = new ChatNotificationClient(this);
         mClient.connect();
+
+        setResult(RESULT_OK);
     }
 
     @Override

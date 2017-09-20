@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.chat.inbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,9 @@ public class InboxActivity extends ADataHostActivity {
 
     public static final String INBOX_DATA_TAG = "inbox_data_tag";
     public static final String INBOX_UI_TAG = "inbox_ui_tag";
+
+
+    public static final int CONVERSATION_REQUEST_CODE = 111;
 
 
     private InboxNotificationClient mNotificationClient;
@@ -50,6 +54,12 @@ public class InboxActivity extends ADataHostActivity {
         mNotificationClient.connect();
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        getPager(INBOX_DATA_TAG).reload();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

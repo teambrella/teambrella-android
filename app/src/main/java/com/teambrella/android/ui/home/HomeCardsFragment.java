@@ -239,6 +239,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             view.setOnClickListener(v -> {
                 Context context = getContext();
+                IMainDataHost dataHost = (IMainDataHost) getContext();
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
                         ChatActivity.startClaimChat(context

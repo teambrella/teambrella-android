@@ -45,6 +45,10 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         super(pager);
     }
 
+    public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager, OnStartActivityListener listener) {
+        super(pager, listener);
+    }
+
     @Override
     public int getItemViewType(int position) {
         int count = mPager.getLoadedData().size();

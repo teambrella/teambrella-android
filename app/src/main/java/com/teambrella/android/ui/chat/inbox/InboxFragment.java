@@ -20,7 +20,8 @@ public class InboxFragment extends ADataPagerProgressFragment<IDataHost> {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new InboxAdapter(mDataHost.getPager(InboxActivity.INBOX_DATA_TAG));
+        return new InboxAdapter(mDataHost.getPager(InboxActivity.INBOX_DATA_TAG),
+                intent -> getActivity().startActivityForResult(intent, InboxActivity.CONVERSATION_REQUEST_CODE));
     }
 
     @Override
