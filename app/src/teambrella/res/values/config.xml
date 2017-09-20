@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name" translatable="false">Teambrella</string>
     <string name="facebook_app_id" translatable="false">1826256607597448</string>
+    <string name="content_provider_authority" translatable="false">com.teambrella.android.provider</string>
 </resources>

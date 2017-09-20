@@ -3,13 +3,16 @@ package com.teambrella.android.content;
 import android.content.UriMatcher;
 import android.net.Uri;
 
+import com.teambrella.android.BuildConfig;
+
 /**
  * Teambrella Content
  */
 public class TeambrellaRepository {
 
 
-    public static String AUTHORITY = "com.teambrella.android.provider";
+    public static String AUTHORITY = BuildConfig.FLAVOR.equals("teambrella") ? "com.teambrella.android.provider"
+            : "com.surilla.android.provider";
 
     public static final String MULTISIG_TABLE = "Multisig";
     static final String CONNECTION_TABLE = "Connection";

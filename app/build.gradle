@@ -35,7 +35,6 @@ android {
     compileSdkVersion 26
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.teambrella.android"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 56
@@ -86,6 +85,7 @@ android {
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/surilla/res']
             }
+            applicationId "com.surilla.android"
         }
 
         Teambrella {
@@ -96,6 +96,7 @@ android {
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/teambrella/res']
             }
+            applicationId "com.teambrella.android"
         }
     }
 
