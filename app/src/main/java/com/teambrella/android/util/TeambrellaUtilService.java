@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -91,18 +90,17 @@ public class TeambrellaUtilService extends GcmTaskService {
         tryInit();
     }
 
-    private boolean tryInit(){
+    private boolean tryInit() {
         if (mKey != null) return true;
 
         String privateKey = TeambrellaUser.get(this).getPrivateKey();
-        if (privateKey != null){
+        if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
             mServer = new TeambrellaServer(this, privateKey);
             mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
             return true;
-        }
-        else{
+        } else {
             Log.w(LOG_TAG, "No crypto key has been generated for this user yet. Skipping the sync task till her Facebook login.");
             return false;
         }
@@ -136,9 +134,9 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onRunTask(TaskParams taskParams) {
-        Log.v(LOG_TAG, "Periodic task ran" );
+        Log.v(LOG_TAG, "Periodic task ran");
         try {
-            if (tryInit()){
+            if (tryInit()) {
                 sync();
             }
         } catch (Exception e) {
@@ -371,25 +369,25 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private boolean depositWallet() throws CryptoException, RemoteException {
-            String myPublicKey = mKey.getPublicKeyAsHex();
-            List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
-            if (myCurrentMultisigs.size() == 1){
-                EtherAccount myAcc = new EtherAccount(mKey, getApplicationContext());
+        String myPublicKey = mKey.getPublicKeyAsHex();
+        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
+        if (myCurrentMultisigs.size() == 1) {
+            EtherAccount myAcc = new EtherAccount(mKey, getApplicationContext());
 
-                EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
-                long gasWalletAmount = blockchain.checkBalance(myAcc.getDepositAddress());
+            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+            long gasWalletAmount = blockchain.checkBalance(myAcc.getDepositAddress());
 
-                if (gasWalletAmount > 20_000_000_000_000_000L) {
-                    long minRestForGas = 10_000_000_000_000_000L;
-                    long myNonce = getMyNonce();
-                    org.ethereum.geth.Transaction depositTx;
-                    depositTx = myAcc.newDepositTx(myNonce, 50_000L, myCurrentMultisigs.get(0).address, BuildConfig.isTestNet, gasWalletAmount - minRestForGas);
-                    depositTx = myAcc.signTx(depositTx, BuildConfig.isTestNet);
-                    publishCryptoTx(depositTx);
-                }
+            if (gasWalletAmount > 20_000_000_000_000_000L) {
+                long minRestForGas = 10_000_000_000_000_000L;
+                long myNonce = getMyNonce();
+                org.ethereum.geth.Transaction depositTx;
+                depositTx = myAcc.newDepositTx(myNonce, 50_000L, myCurrentMultisigs.get(0).address, BuildConfig.isTestNet, gasWalletAmount - minRestForGas);
+                depositTx = myAcc.signTx(depositTx, BuildConfig.isTestNet);
+                publishCryptoTx(depositTx);
             }
+        }
 
-            return true;
+        return true;
     }
 
     private boolean autoApproveTxs() throws RemoteException, OperationApplicationException {
@@ -498,7 +496,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         Log.v(LOG_TAG, "start syncing...");
 
         boolean hasNews = true;
-        for (int attempt = 0; attempt < 3 && hasNews; attempt++){
+        for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
             createWallets(3_000_000);
             verifyIfWalletIsCreated(3_000_000);
             depositWallet();
@@ -540,7 +538,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private org.ethereum.geth.Transaction createNewWalletTx(long nonce, long gasLimit, long teamId, String[] addresses) throws RemoteException {
         String data = createNewWalletData(teamId, addresses);
-        long gasPrice = BuildConfig.isTestNet ? 50_000_000_000L : 500_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
+        long gasPrice = BuildConfig.isTestNet ? 50_000_000_000L : 1_000_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
