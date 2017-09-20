@@ -2,7 +2,7 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="com.teambrella.android.teammate"
     android:allowParallelSyncs="false"
-    android:contentAuthority="com.teambrella.android.provider"
+    android:contentAuthority="@string/content_provider_authority"
     android:isAlwaysSyncable="true"
     android:supportsUploading="true"
     android:userVisible="true" />
