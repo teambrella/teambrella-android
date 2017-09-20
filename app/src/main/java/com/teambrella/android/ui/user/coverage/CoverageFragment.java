@@ -69,23 +69,13 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit * 0.7f), mDataHost.getCurrency());
             AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), mDataHost.getCurrency());
 
-            String coverageString = Integer.toString(Math.round(coverage * 100));
-            SpannableString coveragePercent = new SpannableString(coverageString + "%");
-            coveragePercent.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.darkSkyBlue)), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            coveragePercent.setSpan(new RelativeSizeSpan(0.2f), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mCoverageView.setText(coveragePercent);
+
+            updateCoverageView(coverage);
 
 
             mCoverageSlider.setMax(Math.round(limit));
             mCoverageSlider.setProgress(Math.round(limit * 0.7f));
 
-            if (coverage > 0.97f) {
-                mCoverageIcon.setImageResource(R.drawable.cover_sunny);
-            } else if (coverage > 0.90f) {
-                mCoverageIcon.setImageResource(R.drawable.cover_lightrain);
-            } else {
-                mCoverageIcon.setImageResource(R.drawable.cover_rain);
-            }
 
             mCoverageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -120,7 +110,23 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, mDataHost.getCurrency());
                 AmountCurrencyUtil.setAmount(mTeamPay, 0, mDataHost.getCurrency());
                 mFundButton.setEnabled(false);
+                updateCoverageView(0);
             }
+        }
+    }
+
+    private void updateCoverageView(float coverage) {
+        String coverageString = Integer.toString(Math.round(coverage * 100));
+        SpannableString coveragePercent = new SpannableString(coverageString + "%");
+        coveragePercent.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.darkSkyBlue)), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        coveragePercent.setSpan(new RelativeSizeSpan(0.2f), coverageString.length(), coverageString.length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mCoverageView.setText(coveragePercent);
+        if (coverage > 0.97f) {
+            mCoverageIcon.setImageResource(R.drawable.cover_sunny);
+        } else if (coverage > 0.90f) {
+            mCoverageIcon.setImageResource(R.drawable.cover_lightrain);
+        } else {
+            mCoverageIcon.setImageResource(R.drawable.cover_rain);
         }
     }
 }

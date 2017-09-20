@@ -73,6 +73,47 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
             mDataHost.load(mTags[0]);
             setContentShown(false);
         }
+
+        mCurrencyView.setText(getString(R.string.milli_ethereum));
+        AmountCurrencyUtil.setCryptoAmount(mReservedValueView, 0);
+        AmountCurrencyUtil.setCryptoAmount(mAvailableValueView, 0);
+
+        mBalanceView.setText(getContext().getString(R.string.amount_format_string
+                , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
+                , 0));
+
+
+        String fundAddress = mDataHost.getFundAddress();
+
+        if (fundAddress != null) {
+            Observable.just(fundAddress).map(QRCodeUtils::createBitmap)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mQRCodeView::setImageBitmap, throwable -> {
+                    });
+            mFundWalletButton.setEnabled(true);
+            mQRCodeView.setVisibility(View.VISIBLE);
+        } else {
+            mFundWalletButton.setEnabled(false);
+            mQRCodeView.setVisibility(View.INVISIBLE);
+        }
+
+        mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), mDataHost.getFundAddress()));
+
+
+        AmountCurrencyUtil.setCryptoAmount(mMaxCoverageCryptoValue, 0);
+        mMaxCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
+                , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
+                , 0));
+
+
+        AmountCurrencyUtil.setCryptoAmount(mUninterruptedCoverageCryptoValue, 0);
+        mUninterruptedCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
+                , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
+                , 0));
+
+        mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
+
         return view;
     }
 
@@ -104,23 +145,6 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(cryptoBalance * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
-
-            String fundAddress = mDataHost.getFundAddress();
-
-            if (fundAddress != null) {
-                Observable.just(fundAddress).map(QRCodeUtils::createBitmap)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(mQRCodeView::setImageBitmap, throwable -> {
-                        });
-                mFundWalletButton.setEnabled(true);
-                mQRCodeView.setVisibility(View.VISIBLE);
-            } else {
-                mFundWalletButton.setEnabled(false);
-                mQRCodeView.setVisibility(View.INVISIBLE);
-            }
-
-
             float forMaxCoverage = Math.abs(data.getFloat(TeambrellaModel.ATTR_DATA_NEED_CRYPTO));
             AmountCurrencyUtil.setCryptoAmount(mMaxCoverageCryptoValue, forMaxCoverage);
             mMaxCoverageCurrencyValue.setText(getContext().getString(R.string.amount_format_string
@@ -134,8 +158,6 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     , AmountCurrencyUtil.getCurrencySign(mDataHost.getCurrency())
                     , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
-            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), mDataHost.getFundAddress()));
-
             Observable.just(data).flatMap(jsonWrapper -> Observable.fromIterable(jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS)))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                     .toList()
@@ -147,8 +169,6 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
 
             mCosignersView.setOnClickListener(view -> CosignersActivity.start(getContext(), data.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS).toString()
                     , mDataHost.getTeamId()));
-
-        } else {
 
         }
         setContentShown(true);

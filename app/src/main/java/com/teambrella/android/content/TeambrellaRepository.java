@@ -11,7 +11,7 @@ import com.teambrella.android.BuildConfig;
 public class TeambrellaRepository {
 
 
-    public static String AUTHORITY = BuildConfig.FLAVOR.equals("teambrella") ? "com.teambrella.android.provider"
+    public static String AUTHORITY = BuildConfig.FLAVOR.equals("Teambrella") ? "com.teambrella.android.provider"
             : "com.surilla.android.provider";
 
     public static final String MULTISIG_TABLE = "Multisig";
