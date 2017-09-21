@@ -14,7 +14,7 @@ public class MyProxiesFragment extends AMainDataPagerProgressFragment {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
+        return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost::launchActivity);
     }
 
     @Override

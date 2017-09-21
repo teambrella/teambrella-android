@@ -345,6 +345,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         load(HOME_DATA_TAG);
         getPager(CLAIMS_DATA_TAG).reload();
         load(USER_DATA);
+        getPager(MY_PROXIES_DATA).reload();
         super.onActivityResult(requestCode, resultCode, data);
     }
 

@@ -23,8 +23,8 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
     private final int mTeamId;
 
-    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
-        super(pager);
+    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, OnStartActivityListener listener) {
+        super(pager, listener);
         mTeamId = teamId;
     }
 

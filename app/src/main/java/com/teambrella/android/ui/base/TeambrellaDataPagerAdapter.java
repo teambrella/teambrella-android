@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
@@ -170,7 +171,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     }
 
 
-    protected static abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
+    protected abstract class AMemberViewHolder extends RecyclerView.ViewHolder {
 
         private final int mTeamId;
         private final ImageView mIcon;
@@ -192,9 +193,13 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .blockingFirst().getValue();
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
-
+            itemView.setOnClickListener(v -> {
+                Intent intent = TeammateActivity.getIntent(itemView.getContext(), mTeamId,
+                        item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri);
+                if (!startActivity(intent)) {
+                    itemView.getContext().startActivity(intent);
+                }
+            });
         }
     }
 
