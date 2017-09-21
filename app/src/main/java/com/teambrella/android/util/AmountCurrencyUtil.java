@@ -18,7 +18,6 @@ import java.util.Locale;
  */
 public class AmountCurrencyUtil {
 
-    private static final String DEFAULT_TEXT = "123456789";
     private static final float DEFAULT_PROPORTION = 0.5f;
 
     private static final String USD = "USD";
@@ -31,7 +30,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrencyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan(Integer.toString(amount).substring(start - 1)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -42,7 +41,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrencyRelativeSizeSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan(String.format(Locale.US, "%.2f", amount).substring(start - 1)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -74,6 +73,13 @@ public class AmountCurrencyUtil {
 
     private static class CurrencyRelativeSizeSpan extends MetricAffectingSpan {
 
+
+        private final String mText;
+
+        CurrencyRelativeSizeSpan(String text) {
+            mText = text;
+        }
+
         @Override
         public void updateDrawState(TextPaint ds) {
             updateAnyState(ds);
@@ -86,10 +92,10 @@ public class AmountCurrencyUtil {
 
         private void updateAnyState(TextPaint ds) {
             Rect bounds = new Rect();
-            ds.getTextBounds(DEFAULT_TEXT, 0, DEFAULT_TEXT.length(), bounds);
+            ds.getTextBounds(mText, 0, mText.length(), bounds);
             int shift = bounds.top - bounds.bottom;
             ds.setTextSize(ds.getTextSize() * DEFAULT_PROPORTION);
-            ds.getTextBounds(DEFAULT_TEXT, 0, DEFAULT_TEXT.length(), bounds);
+            ds.getTextBounds(mText, 0, mText.length(), bounds);
             shift += bounds.bottom - bounds.top;
             ds.baselineShift += shift;
         }

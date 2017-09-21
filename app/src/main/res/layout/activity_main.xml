@@ -98,6 +98,7 @@
             <ImageView
                 android:id="@+id/avatar"
                 style="@style/Teambrella.BottomBarIcon"
+
                 tools:ignore="ContentDescription" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
