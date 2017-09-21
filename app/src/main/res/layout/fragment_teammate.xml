@@ -217,6 +217,12 @@
             android:layout_below="@id/object_info_container"
             android:background="@drawable/block_last" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/voting_statistics_container"
+            android:background="@drawable/actionlist_top" />
+
 
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
