@@ -123,6 +123,7 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency(), mDataHost.isFullTeamAccess());
+        return new ClaimsAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency(), mDataHost.isFullTeamAccess(),
+                mDataHost::launchActivity);
     }
 }

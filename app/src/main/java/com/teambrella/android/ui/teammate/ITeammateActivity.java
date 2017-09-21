@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
+import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.teambrella.android.data.base.IDataHost;
@@ -22,4 +23,6 @@ public interface ITeammateActivity extends IDataHost {
     int getTeamId();
 
     int getTeammateId();
+
+    void launchActivity(Intent intent);
 }

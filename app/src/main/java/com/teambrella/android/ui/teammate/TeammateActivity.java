@@ -51,6 +51,9 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private static final String UI_FRAGMENT = "ui";
 
 
+    private static final int DEFAULT_REQUEST_CODE = 3;
+
+
     private Disposable mDisposal;
     private int mTeammateId = -1;
     private String mUserId = null;
@@ -252,6 +255,12 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        load(DATA_FRAGMENT);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             Observable.fromArray(notification.getValue())
@@ -268,4 +277,8 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     }
 
 
+    @Override
+    public void launchActivity(Intent intent) {
+        startActivityForResult(intent, DEFAULT_REQUEST_CODE);
+    }
 }

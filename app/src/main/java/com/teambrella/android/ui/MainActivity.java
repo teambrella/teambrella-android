@@ -54,7 +54,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final int NEW_DISCUSSION_REQUEST_CODE = 102;
+    private static final int DEFAULT_REQUEST_CODE = 102;
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
@@ -336,22 +336,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void startNewDiscussion() {
-        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), NEW_DISCUSSION_REQUEST_CODE);
+        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), DEFAULT_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        //if (requestCode == NEW_DISCUSSION_REQUEST_CODE
-        //        && resultCode == RESULT_OK) {
         getPager(FEED_DATA_TAG).reload();
         load(HOME_DATA_TAG);
         getPager(CLAIMS_DATA_TAG).reload();
         load(USER_DATA);
-        //}
-
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     @Override
@@ -461,7 +455,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void launchActivity(Intent intent) {
-        startActivityForResult(intent, 111);
+        startActivityForResult(intent, DEFAULT_REQUEST_CODE);
     }
 
     private void scheduleWalletSync() {

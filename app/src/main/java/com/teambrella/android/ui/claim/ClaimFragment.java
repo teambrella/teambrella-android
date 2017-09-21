@@ -162,13 +162,13 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 mTeamAccessLevel = team != null ? team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, mTeamAccessLevel) : mTeamAccessLevel;
 
                 if (uri != null) {
-                    mDiscussion.setOnClickListener(v -> ChatActivity.startClaimChat(getContext()
-                            , 0
+                    mDiscussion.setOnClickListener(v -> mDataHost.launchActivity(ChatActivity.getClaimChat(getContext()
+                            , mDataHost.getTeamId()
                             , claimId
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null
                             , smallPhoto != null ? Uri.parse(smallPhoto) : null
                             , topicId
-                            , mTeamAccessLevel));
+                            , mTeamAccessLevel)));
                 }
             }
 

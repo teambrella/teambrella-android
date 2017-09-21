@@ -94,48 +94,21 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private ChatNotificationClient mClient;
 
     public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
-        context.startActivity(new Intent(context, ChatActivity.class)
-                .putExtra(EXTRA_TEAM_ID, teamId)
-                .putExtra(EXTRA_USER_ID, userId)
-                .putExtra(EXTRA_USER_NAME, userName)
-                .putExtra(EXTRA_IMAGE_URI, imageUri)
-                .putExtra(EXTRA_TOPIC_ID, topicId)
-                .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
-                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
-                .setAction(SHOW_TEAMMATE_CHAT_ACTION));
+        context.startActivity(getTeammateChat(context, teamId, userId, userName, imageUri, topicId, accessLevel));
     }
 
 
     public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
-        context.startActivity(new Intent(context, ChatActivity.class)
-                .putExtra(EXTRA_TEAM_ID, teamId)
-                .putExtra(EXTRA_CLAIM_ID, claimId)
-                .putExtra(EXTRA_OBJECT_NAME, objectName)
-                .putExtra(EXTRA_IMAGE_URI, imageUri)
-                .putExtra(EXTRA_TOPIC_ID, topicId)
-                .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
-                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
-                .setAction(SHOW_CLAIM_CHAT_ACTION));
+        context.startActivity(getClaimChat(context, teamId, claimId, objectName, imageUri, topicId, accessLevel));
     }
 
-
     public static void startFeedChat(Context context, String title, String topicId, int accessLevel) {
-        context.startActivity(new Intent(context, ChatActivity.class)
-                .putExtra(EXTRA_TOPIC_ID, topicId)
-                .putExtra(EXTRA_TITLE, title)
-                .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
-                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
-                .setAction(SHOW_FEED_CHAT_ACTION));
+        context.startActivity(getFeedChat(context, title, topicId, accessLevel));
     }
 
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
-        context.startActivity(new Intent(context, ChatActivity.class)
-                .putExtra(EXTRA_USER_ID, userId)
-                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
-                .putExtra(EXTRA_USER_NAME, userName)
-                .putExtra(EXTRA_IMAGE_URI, imageUri)
-                .setAction(SHOW_CONVERSATION_CHAT));
+        context.startActivity(getConversationChat(context, userId, userName, imageUri));
     }
 
     public static Intent getConversationChat(Context context, String userId, String userName, Uri imageUri) {
@@ -145,6 +118,40 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 .putExtra(EXTRA_USER_NAME, userName)
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .setAction(SHOW_CONVERSATION_CHAT);
+    }
+
+    public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_CLAIM_ID, claimId)
+                .putExtra(EXTRA_OBJECT_NAME, objectName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .putExtra(EXTRA_TOPIC_ID, topicId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
+                .setAction(SHOW_CLAIM_CHAT_ACTION);
+    }
+
+    public static Intent getTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_USER_ID, userId)
+                .putExtra(EXTRA_USER_NAME, userName)
+                .putExtra(EXTRA_IMAGE_URI, imageUri)
+                .putExtra(EXTRA_TOPIC_ID, topicId)
+                .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
+                .setAction(SHOW_TEAMMATE_CHAT_ACTION);
+    }
+
+
+    public static Intent getFeedChat(Context context, String title, String topicId, int accessLevel) {
+        return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_TOPIC_ID, topicId)
+                .putExtra(EXTRA_TITLE, title)
+                .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
+                .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
+                .setAction(SHOW_FEED_CHAT_ACTION);
     }
 
 

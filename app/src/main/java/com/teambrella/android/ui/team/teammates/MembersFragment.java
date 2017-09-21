@@ -85,6 +85,7 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new TeammatesRecyclerAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency());
+        return new TeammatesRecyclerAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency()
+                , mDataHost::launchActivity);
     }
 }

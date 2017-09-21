@@ -59,8 +59,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
      *
      * @param pager pager
      */
-    ClaimsAdapter(IDataPager<JsonArray> pager, int teamId, String currency, boolean submitClaim) {
-        super(pager);
+    ClaimsAdapter(IDataPager<JsonArray> pager, int teamId, String currency, boolean submitClaim, OnStartActivityListener listener) {
+        super(pager, listener);
         mTeamId = teamId;
         mSubmitClaim = submitClaim;
         mCurrency = currency;
@@ -269,11 +269,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
 
             if (mViewToVote != null) {
-                mViewToVote.setOnClickListener(v -> context.startActivity(
+                mViewToVote.setOnClickListener(v -> startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                                 item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             } else {
-                itemView.setOnClickListener(v -> context.startActivity(
+                itemView.setOnClickListener(v -> startActivity(
                         ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                                 item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             }
@@ -329,8 +329,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             mLocationView.setText(mLocation);
 
-            mSubmitClaimView.setOnClickListener(v -> ReportClaimActivity.
-                    start(context, mObjectImageUri, mObjectName, mTeamId, mCurrency));
+            mSubmitClaimView.setOnClickListener(v -> startActivity(ReportClaimActivity.
+                    getLaunchIntent(context, mObjectImageUri, mObjectName, mTeamId, mCurrency)));
         }
     }
 }

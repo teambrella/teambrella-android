@@ -87,8 +87,12 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
 
     public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
-        context.startActivity(new Intent(context, ReportClaimActivity.class).putExtra(EXTRA_IMAGE_URI, objectImageUri)
-                .putExtra(EXTRA_NAME, objectName).putExtra(EXTRA_TEAM_ID, teamId).putExtra(EXTRA_CURRENCY, currency));
+        context.startActivity(getLaunchIntent(context, objectImageUri, objectName, teamId, currency));
+    }
+
+    public static Intent getLaunchIntent(Context context, String objectImageUri, String objectName, int teamId, String currency) {
+        return new Intent(context, ReportClaimActivity.class).putExtra(EXTRA_IMAGE_URI, objectImageUri)
+                .putExtra(EXTRA_NAME, objectName).putExtra(EXTRA_TEAM_ID, teamId).putExtra(EXTRA_CURRENCY, currency);
     }
 
 
