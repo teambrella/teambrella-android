@@ -26,10 +26,9 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 class InboxAdapter extends TeambrellaDataPagerAdapter {
 
-    InboxAdapter(IDataPager<JsonArray> pager) {
-        super(pager);
+    InboxAdapter(IDataPager<JsonArray> pager, OnStartActivityListener listener) {
+        super(pager, listener);
     }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -80,9 +79,9 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
             mUnreadCount.setVisibility(item.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE);
             mWhen.setText(TeambrellaDateUtils.getRelativeTime(-item.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES, 0)));
 
-            itemView.setOnClickListener(v -> ChatActivity.startConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
+            itemView.setOnClickListener(v -> startActivity(ChatActivity.getConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                     , item.getString(TeambrellaModel.ATTR_DATA_NAME)
-                    , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR))));
+                    , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))));
         }
     }
 }

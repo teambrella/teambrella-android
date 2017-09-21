@@ -68,7 +68,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
         }
 
 
-        view.findViewById(R.id.inbox).setOnClickListener(v -> startActivity(new Intent(getContext(), InboxActivity.class)));
+        view.findViewById(R.id.inbox).setOnClickListener(v -> mDataHost.launchActivity(new Intent(getContext(), InboxActivity.class)));
     }
 
     @SuppressLint("SetTextI18n")

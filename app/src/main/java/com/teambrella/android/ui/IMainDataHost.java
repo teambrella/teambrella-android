@@ -1,5 +1,6 @@
 package com.teambrella.android.ui;
 
+import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.teambrella.android.data.base.IDataHost;
@@ -37,4 +38,5 @@ public interface IMainDataHost extends IDataHost {
 
     String getFundAddress();
 
+    void launchActivity(Intent intent);
 }
