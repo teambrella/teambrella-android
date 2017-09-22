@@ -176,14 +176,12 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
             Observable<JsonWrapper> discussionsObservable = dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION));
 
-
             discussionsObservable.doOnNext(discussion -> mUnread.setText(discussion.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT)))
                     .doOnNext(discussion -> mUnread.setVisibility(discussion.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE))
-                    .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT))))
+                    .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT, "")
+                            .replaceAll("<p>", "").replaceAll("</p>", ""))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
-                    .doOnNext(discussion -> {
-                        mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0)));
-                    })
+                    .doOnNext(discussion -> mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0))))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
 
