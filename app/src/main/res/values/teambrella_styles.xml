@@ -214,6 +214,7 @@
     <style name="Teambrella.TextAppearence.MessageTitle">
         <item name="android:textColor">@color/dark</item>
         <item name="android:textSize">15sp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
 
     <style name="Teambrella.TextAppearence.MessageText">
