@@ -47,6 +47,8 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String EXTRA_CURRENCY = "currency";
     private static final String EXTRA_CLAIM_ID = "claimId";
 
+    private static final int DEFAULT_REQUEST_CODE = 4;
+
 
     private Disposable mDisposal;
 
@@ -223,6 +225,18 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     @Override
     public int getTeamId() {
         return mTeamId;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        load(CLAIM_DATA_TAG);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void launchActivity(Intent intent) {
+        startActivityForResult(intent, DEFAULT_REQUEST_CODE);
     }
 
     protected void onDataUpdated(Notification<JsonObject> notification) {

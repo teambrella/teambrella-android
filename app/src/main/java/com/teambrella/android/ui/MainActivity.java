@@ -1,6 +1,5 @@
 package com.teambrella.android.ui;
 
-import android.accounts.Account;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,7 +54,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final int NEW_DISCUSSION_REQUEST_CODE = 102;
+    private static final int DEFAULT_REQUEST_CODE = 102;
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
@@ -337,19 +336,17 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void startNewDiscussion() {
-        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), NEW_DISCUSSION_REQUEST_CODE);
+        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), DEFAULT_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == NEW_DISCUSSION_REQUEST_CODE
-                && resultCode == RESULT_OK) {
-            getPager(FEED_DATA_TAG).reload();
-        }
-
+        getPager(FEED_DATA_TAG).reload();
+        load(HOME_DATA_TAG);
+        getPager(CLAIMS_DATA_TAG).reload();
+        load(USER_DATA);
+        getPager(MY_PROXIES_DATA).reload();
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     @Override
@@ -436,15 +433,16 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     public String getFundAddress() {
 
         EtherAccount eth = getEtherAccountOrNull();
-        if (eth != null){
+        if (eth != null) {
             return eth.getDepositAddress();
-        }else {
+        } else {
             Log.w(LOG_TAG, "Was unnable to get direct eth address. See errors logged before this.");
             return null;
         }
     }
 
-    private EtherAccount getEtherAccountOrNull(){
+
+    private EtherAccount getEtherAccountOrNull() {
         if (mEtherAccount != null) return mEtherAccount;
 
         try {
@@ -455,6 +453,11 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+
+    @Override
+    public void launchActivity(Intent intent) {
+        startActivityForResult(intent, DEFAULT_REQUEST_CODE);
+    }
 
     private void scheduleWalletSync() {
         PeriodicTask task = new PeriodicTask.Builder()

@@ -41,8 +41,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
     /**
      * Constructor.
      */
-    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager, int teamId, String currency) {
-        super(pager);
+    TeammatesRecyclerAdapter(IDataPager<JsonArray> pager, int teamId, String currency, OnStartActivityListener listener) {
+        super(pager, listener);
         mTeamId = teamId;
         mCurrency = currency;
 
@@ -132,8 +132,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
                     , item.getString(TeambrellaModel.ATTR_DATA_MODEL)
                     , item.getString(TeambrellaModel.ATTR_DATA_YEAR)));
 
-            itemView.setOnClickListener(v -> TeammateActivity.start(itemView.getContext(), mTeamId,
-                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri));
+            itemView.setOnClickListener(v -> startActivity(TeammateActivity.getIntent(itemView.getContext(), mTeamId,
+                    item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri)));
         }
     }
 

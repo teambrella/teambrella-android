@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.claim;
 
+import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.teambrella.android.data.base.IDataHost;
@@ -20,5 +21,7 @@ public interface IClaimActivity extends IDataHost {
     int getClaimId();
 
     int getTeamId();
+
+    void launchActivity(Intent intent);
 
 }

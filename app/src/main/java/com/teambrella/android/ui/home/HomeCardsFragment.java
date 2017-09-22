@@ -239,29 +239,30 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             view.setOnClickListener(v -> {
                 Context context = getContext();
+                IMainDataHost dataHost = (IMainDataHost) getContext();
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
-                        ChatActivity.startClaimChat(context
+                        dataHost.launchActivity(ChatActivity.getClaimChat(context
                                 , mTeamId
                                 , mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mTeamAccessLevel);
+                                , mTeamAccessLevel));
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
-                        ChatActivity.startFeedChat(context
+                        dataHost.launchActivity(ChatActivity.getFeedChat(context
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mTeamAccessLevel);
+                                , mTeamAccessLevel));
                         break;
                     default:
-                        ChatActivity.startTeammateChat(context, mTeamId
+                        dataHost.launchActivity(ChatActivity.getTeammateChat(context, mTeamId
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
                                 , null
                                 , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mTeamAccessLevel);
+                                , mTeamAccessLevel));
                         break;
                 }
             });

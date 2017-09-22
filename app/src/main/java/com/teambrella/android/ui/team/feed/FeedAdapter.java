@@ -51,8 +51,8 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
     private final int mTeamId;
     private final IMainDataHost mDataHost;
 
-    FeedAdapter(IMainDataHost dataHost, IDataPager<JsonArray> pager, int teamId) {
-        super(pager);
+    FeedAdapter(IMainDataHost dataHost, IDataPager<JsonArray> pager, int teamId, OnStartActivityListener listener) {
+        super(pager, listener);
         mTeamId = teamId;
         mDataHost = dataHost;
     }
@@ -202,27 +202,27 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             itemView.setOnClickListener(v -> {
                 switch (itemType) {
                     case TeambrellaModel.FEED_ITEM_CLAIM:
-                        ChatActivity.startClaimChat(context
+                        startActivity(ChatActivity.getClaimChat(context
                                 , mTeamId
                                 , item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
                                 , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getTeamAccessLevel());
+                                , mDataHost.getTeamAccessLevel()));
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
-                        ChatActivity.startFeedChat(context
+                        startActivity(ChatActivity.getFeedChat(context
                                 , item.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getTeamAccessLevel());
+                                , mDataHost.getTeamAccessLevel()));
                         break;
                     default:
-                        ChatActivity.startTeammateChat(context, mTeamId
+                        startActivity(ChatActivity.getTeammateChat(context, mTeamId
                                 , item.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
                                 , null
                                 , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getTeamAccessLevel());
+                                , mDataHost.getTeamAccessLevel()));
                         break;
 
                 }
