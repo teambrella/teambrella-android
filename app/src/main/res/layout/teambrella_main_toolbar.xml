@@ -54,7 +54,7 @@
                 android:lines="1"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
         </FrameLayout>
 
