@@ -36,6 +36,7 @@
                 android:id="@+id/inbox"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
+                android:paddingRight="4dp"
                 android:scaleType="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -47,12 +48,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|top"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/toolbar_unread_count_background"
                 android:gravity="center"
                 android:lines="1"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
         </FrameLayout>
 
