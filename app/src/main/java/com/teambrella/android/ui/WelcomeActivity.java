@@ -78,6 +78,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
+        findViewById(R.id.try_demo_invite).setOnClickListener(this::onTryDemo);
 
         setState(State.INIT);
 

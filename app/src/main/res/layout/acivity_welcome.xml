@@ -80,8 +80,12 @@
             android:textSize="14sp" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/try_demo_invite"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
+            android:background="@drawable/selectable_item_background"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"

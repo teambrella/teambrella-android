@@ -120,6 +120,12 @@ public class TeamSelectionFragment extends DialogFragment {
                 ((TeamViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
             }
         }
+
+        @Override
+        protected RecyclerView.ViewHolder createBottomViewHolder(ViewGroup parent) {
+            return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+            };
+        }
     }
 
 
