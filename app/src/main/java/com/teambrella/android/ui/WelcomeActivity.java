@@ -41,14 +41,29 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class WelcomeActivity extends AppCompatActivity {
 
+    private enum State {
+        INIT,
+        LOADING,
+        INVITE_ONLY
+    }
+
+
     private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
 
     private Disposable mTeamsDisposal;
+    private View mInvitationOnlyView;
+    private View mFacebookLoginButton;
+    private View mTryDemoButton;
+    private TeambrellaUser mUser;
+    private State mState;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mUser = TeambrellaUser.get(this);
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -56,25 +71,47 @@ public class WelcomeActivity extends AppCompatActivity {
 
         TeambrellaUser user = TeambrellaUser.get(this);
         setContentView(R.layout.acivity_welcome);
-        findViewById(R.id.facebook_login).setOnClickListener(this::onFacebookLogin);
-        View tryDemoView = findViewById(R.id.try_demo);
-        if (BuildConfig.DEBUG) {
-            tryDemoView.setOnClickListener(this::onTryDemo);
-        } else {
-            tryDemoView.setVisibility(View.INVISIBLE);
-            tryDemoView.setEnabled(false);
-        }
 
-        if (user.getPrivateKey() != null) {
+        mInvitationOnlyView = findViewById(R.id.invitation_only);
+        mTryDemoButton = findViewById(R.id.try_demo);
+        mFacebookLoginButton = findViewById(R.id.facebook_login);
+
+        mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
+        mTryDemoButton.setOnClickListener(this::onTryDemo);
+
+        setState(State.INIT);
+
+        if (user.getPrivateKey() != null && !user.isDemoUser()) {
             findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
             getTeams(user.getPrivateKey());
         }
     }
 
 
+    private void setState(State state) {
+        switch (state) {
+            case INIT:
+                mFacebookLoginButton.setVisibility(View.VISIBLE);
+                mTryDemoButton.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.GONE);
+                break;
+            case LOADING:
+                mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.GONE);
+                break;
+            case INVITE_ONLY:
+                mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.VISIBLE);
+                break;
+        }
+
+        mState = state;
+    }
+
     private void getTeams(String privateKey) {
-        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
-        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
+        setState(State.LOADING);
         TeambrellaUser user = TeambrellaUser.get(this);
         final int selectedTeam = TeambrellaUser.get(this).getTeamId();
         mTeamsDisposal = new TeambrellaServer(WelcomeActivity.this, privateKey)
@@ -117,8 +154,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void onFacebookLogin(View v) {
-        findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
-        findViewById(R.id.try_demo).setVisibility(View.INVISIBLE);
+        setState(State.LOADING);
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -132,10 +168,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                findViewById(R.id.facebook_login).setVisibility(View.VISIBLE);
-                if (BuildConfig.DEBUG) {
-                    findViewById(R.id.try_demo).setVisibility(View.VISIBLE);
-                }
+                setState(State.INVITE_ONLY);
             }
 
             @Override
@@ -151,14 +184,25 @@ public class WelcomeActivity extends AppCompatActivity {
         loginManager.logInWithReadPermissions(this, permissions);
     }
 
+    @Override
+    public void onBackPressed() {
+        switch (mState) {
+            case INVITE_ONLY:
+                setState(State.INIT);
+                break;
+            default:
+                super.onBackPressed();
+                break;
+        }
+    }
 
     private void registerUser(String token, final String privateKey) {
         findViewById(R.id.facebook_login).setVisibility(View.GONE);
         findViewById(R.id.try_demo).setVisibility(View.GONE);
         String publicKeySignature = null;
-        try{
+        try {
             publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
-        }catch (CryptoException e){
+        } catch (CryptoException e) {
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be regestered on the server. The error was: " + e.getMessage(), e);
         }
         new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
@@ -179,18 +223,16 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
                         super.onDismissed(transientBottomBar, event);
-                        finish();
+                        setState(State.INIT);
                     }
                 })
                 .show();
-
         Crashlytics.logException(throwable);
     }
 
 
     private void onTryDemo(View v) {
-        TeambrellaUser.get(this).setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);
-        getTeams(BuildConfig.MASTER_USER_PRIVATE_KEY);
+        getTeams(mUser.getPrivateKey());
     }
 
     @Override

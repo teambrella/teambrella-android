@@ -201,5 +201,7 @@
     <string name="object_pet">Pet</string>
     <string name="team_avg">Team \n AVG</string>
     <string name="no_coverage_for_the_date">You had 0% coverage on the date of the incident</string>
+    <string name="we_are_invite_only_title">"We're invite only!"</string>
+    <string name="we_are_invite_only_description">"Hey there, for now we’re invite only.\n Please open an invite URL before you can continue, or try the demo."</string>
 
 </resources>

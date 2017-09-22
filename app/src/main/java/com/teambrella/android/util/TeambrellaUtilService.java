@@ -93,7 +93,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean tryInit() {
         if (mKey != null) return true;
 
-        String privateKey = TeambrellaUser.get(this).getPrivateKey();
+        TeambrellaUser user = TeambrellaUser.get(this);
+        String privateKey = !user.isDemoUser() ? TeambrellaUser.get(this).getPrivateKey() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
             mServer = new TeambrellaServer(this, privateKey);

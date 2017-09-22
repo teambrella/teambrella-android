@@ -2,6 +2,9 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import com.teambrella.android.BuildConfig;
 
 /**
  * Teambrella User
@@ -13,6 +16,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_PRIVATE_KEY = "private_key";
     private static final String PREFERENCE_USER_ID = "user_id_key";
     private static final String PREFERENCE_TEAM_ID = "team_id_key";
+    private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
 
 
     private static TeambrellaUser sUser;
@@ -34,7 +38,12 @@ public class TeambrellaUser {
     }
 
     public String getPrivateKey() {
-        return mPreferences.getString(PREFERENCE_PRIVATE_KEY, null);
+        return mPreferences.getString(PREFERENCE_PRIVATE_KEY, BuildConfig.MASTER_USER_PRIVATE_KEY);
+    }
+
+
+    public boolean isDemoUser() {
+        return TextUtils.isEmpty(mPreferences.getString(PREFERENCE_PRIVATE_KEY, null));
     }
 
 
