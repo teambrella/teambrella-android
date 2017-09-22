@@ -90,7 +90,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             case VIEW_TYPE_ERROR:
                 return new ErrorViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
             case VIEW_TYPE_BOTTOM:
-                return new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
+                return createBottomViewHolder(parent);
             case VIEW_TYPE_EMPTY:
                 return createEmptyViewHolder(parent);
         }
@@ -130,6 +130,10 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
         return new DefaultEmptyViewHolder(parent.getContext(), parent, -1);
+    }
+
+    protected RecyclerView.ViewHolder createBottomViewHolder(ViewGroup parent) {
+        return new Header(parent, -1, -1, R.drawable.list_item_header_background_bottom);
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
