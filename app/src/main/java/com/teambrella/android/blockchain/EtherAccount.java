@@ -64,7 +64,7 @@ public class EtherAccount {
     }
 
     public Transaction newDepositTx(long nonce, long gasLimit, String toAddress, boolean isTestNet, long value) throws CryptoException {
-        long gasPrice = isTestNet ? 50_000_000_000L : 500_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
+        long gasPrice = isTestNet ? 50_000_000_000L : 1_000_000_000L;  // 50 Gwei for TestNet and 1 Gwei for MainNet (1 Gwei = 10^9 wei)
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"to\":\"%s\",\"value\":\"0x%x\",\"input\":\"0x\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
