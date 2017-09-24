@@ -82,7 +82,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         setState(State.INIT);
 
-        if (user.getPrivateKey() != null && !user.isDemoUser()) {
+        if (user.getPrivateKey() != null) {
             findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
             getTeams(user.getPrivateKey());
         }
@@ -233,6 +233,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     private void onTryDemo(View v) {
+        mUser.setDemoUser();
         getTeams(mUser.getPrivateKey());
     }
 

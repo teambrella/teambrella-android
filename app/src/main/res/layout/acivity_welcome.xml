@@ -64,6 +64,7 @@
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingBottom="8dp"
             android:paddingTop="4dp"
             android:text="@string/we_are_invite_only_title"
