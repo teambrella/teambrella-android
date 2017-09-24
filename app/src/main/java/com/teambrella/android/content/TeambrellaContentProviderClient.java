@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.model.Cosigner;
-import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.PayTo;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.TXSignature;
@@ -770,11 +769,11 @@ public class TeambrellaContentProviderClient {
     }
 
 
-    public void updateConnectionTime(long time) throws RemoteException {
+    public void updateConnectionTime(Date time) throws RemoteException {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, time);
+            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, mSDF.format(time));
             if (cursor.moveToFirst()) {
                 mClient.update(TeambrellaRepository.Connection.CONTENT_URI, cv, TeambrellaRepository.Connection.ID + "=?",
                         new String[]{cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.ID))});
@@ -785,11 +784,11 @@ public class TeambrellaContentProviderClient {
         }
     }
 
-    public void setLastUpdatedTime(long time) throws RemoteException {
+    public void setLastUpdatedTimestamp(long timestamp) throws RemoteException {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Connection.LAST_UPDATED, Long.toString(time));
+            cv.put(TeambrellaRepository.Connection.LAST_UPDATED, timestamp);
             if (cursor.moveToFirst()) {
                 mClient.update(TeambrellaRepository.Connection.CONTENT_URI, cv, TeambrellaRepository.Connection.ID + "=?",
                         new String[]{cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.ID))});
@@ -815,12 +814,8 @@ public class TeambrellaContentProviderClient {
         JsonObject body = new JsonObject();
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            String value = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
-            long lastUpdated = 0;
-            if (value != null) {
-                lastUpdated = Long.parseLong(value);
-            }
-            body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
+            long since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
+            body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
         }
         if (cursor != null) {
             cursor.close();

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -117,7 +118,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 //                protected Void doInBackground(Void... voids) {
 //                    try {
 //                        processIntent(intent);
-//                    } catch (RemoteException | OperationApplicationException | TeambrellaException e) {
+//                    } catch (RemoteException | OperationApplicationException | TeambrellaException | CryptoException e) {
 //                        Log.e(LOG_TAG, e.toString());
 //                    }
 //                    return null;
@@ -193,7 +194,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         boolean result = false;
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        mTeambrellaClient.updateConnectionTime(new Date().getTime());
+        mTeambrellaClient.updateConnectionTime(new Date());
 
         JsonObject response = mServer.requestObservable(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates())
                 .blockingFirst();
@@ -223,7 +224,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 mClient.applyBatch(operations);
             }
 
-            mTeambrellaClient.setLastUpdatedTime(timestamp);
+            mTeambrellaClient.setLastUpdatedTimestamp(timestamp);
 
         }
         return result;
