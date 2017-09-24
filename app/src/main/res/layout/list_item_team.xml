@@ -1,23 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:background="@drawable/selectable_item_background"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:background="@drawable/selectable_item_background">
 
 
     <ImageView
         android:id="@+id/team_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="24dp" />
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/current_team_mark"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="24dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/checkmark_team"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/team_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp" />
+        android:layout_marginStart="24dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@id/current_team_mark"
+        app:layout_constraintStart_toEndOf="@id/team_icon"
+        app:layout_constraintTop_toTopOf="@id/team_icon" />
 
-</LinearLayout>
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/object"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAllCaps="true"
+        android:textColor="@color/bluishGrey"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/team_title"
+        app:layout_constraintTop_toBottomOf="@id/team_title" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/coverage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:drawablePadding="4dp"
+        android:drawableStart="@drawable/ic_coverage_small"
+        android:textAllCaps="true"
+        android:textColor="@color/bluishGrey"
+        android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/object"
+        app:layout_constraintStart_toEndOf="@id/object"
+        app:layout_constraintTop_toBottomOf="@id/team_title" />
+
+
+</android.support.constraint.ConstraintLayout>
