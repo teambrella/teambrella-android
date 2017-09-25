@@ -29,6 +29,7 @@ import com.teambrella.android.ui.base.AppCompatRequestActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import io.reactivex.Notification;
 
@@ -78,7 +79,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (mUser.getPrivateKey() != null) {
-            getTeams(mUser.getPrivateKey());
+            if (mUser.isDemoUser()) {
+                getDemoTeams(mUser.getPrivateKey());
+            } else {
+                getTeams(mUser.getPrivateKey());
+            }
         }
     }
 
@@ -107,6 +112,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private void getTeams(String privateKey) {
         setState(State.LOADING);
         request(TeambrellaUris.getMyTeams(), privateKey);
+    }
+
+    private void getDemoTeams(String privateKey) {
+        setState(State.LOADING);
+        request(TeambrellaUris.getDemoTeams(Locale.getDefault().getLanguage()), privateKey);
     }
 
 
@@ -160,7 +170,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         } catch (CryptoException e) {
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
         }
-        request(TeambrellaUris.getRegisterUri(token, publicKeySignature));
+        request(TeambrellaUris.getRegisterUri(token, publicKeySignature), privateKey);
     }
 
 
@@ -180,7 +190,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void onTryDemo(View v) {
         mUser.setDemoUser();
-        getTeams(mUser.getPrivateKey());
+        getDemoTeams(mUser.getPrivateKey());
     }
 
     @Override
@@ -200,7 +210,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             Uri uri = uriString != null ? Uri.parse(uriString) : null;
             if (uri != null) {
                 switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
-                    case TeambrellaUris.MY_TEAMS: {
+                    case TeambrellaUris.MY_TEAMS:
+                    case TeambrellaUris.DEMO_TEAMS: {
                         final int selectedTeam = TeambrellaUser.get(this).getTeamId();
                         JsonWrapper data = result.getObject(TeambrellaModel.ATTR_DATA);
                         String userId = data != null ? data.getString(TeambrellaModel.ATTR_DATA_USER_ID) : null;
