@@ -2,12 +2,16 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
-import com.teambrella.android.BuildConfig;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.KeyChain;
+import org.bitcoinj.wallet.Wallet;
 
 /**
  * Teambrella User
  */
+@SuppressWarnings("WeakerAccess")
 public class TeambrellaUser {
 
 
@@ -16,6 +20,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_USER_ID = "user_id_key";
     private static final String PREFERENCE_TEAM_ID = "team_id_key";
     private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
+    private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
 
 
     private static TeambrellaUser sUser;
@@ -26,6 +31,13 @@ public class TeambrellaUser {
 
     private TeambrellaUser(Context context) {
         mPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+
+        if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_PENDING_KEY, null))) {
+            mPreferences.edit().putString(PREFERENCE_PENDING_KEY, generatePrivateKey()).apply();
+        }
+        if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_DEMO_KEY, null))) {
+            mPreferences.edit().putString(PREFERENCE_DEMO_KEY, generatePrivateKey()).apply();
+        }
     }
 
 
@@ -42,7 +54,7 @@ public class TeambrellaUser {
 
 
     public void setDemoUser() {
-        setPrivateKey(BuildConfig.MASTER_USER_PRIVATE_KEY);
+        setPrivateKey(mPreferences.getString(PREFERENCE_DEMO_KEY, null));
     }
 
     public void resetDemoUser() {
@@ -50,7 +62,12 @@ public class TeambrellaUser {
     }
 
     public boolean isDemoUser() {
-        return BuildConfig.MASTER_USER_PRIVATE_KEY.equals(mPreferences.getString(PREFERENCE_PRIVATE_KEY, null));
+        return mPreferences.getString(PREFERENCE_DEMO_KEY, "")
+                .equals(mPreferences.getString(PREFERENCE_PRIVATE_KEY, null));
+    }
+
+    public String getPendingPrivateKey() {
+        return mPreferences.getString(PREFERENCE_PENDING_KEY, null);
     }
 
 
@@ -72,6 +89,12 @@ public class TeambrellaUser {
 
     public int getTeamId() {
         return mPreferences.getInt(PREFERENCE_TEAM_ID, -1);
+    }
+
+
+    private String generatePrivateKey() {
+        return new Wallet(MainNetParams.get())
+                .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
     }
 
 }

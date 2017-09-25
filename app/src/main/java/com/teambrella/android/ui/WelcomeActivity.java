@@ -1,10 +1,10 @@
 package com.teambrella.android.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -17,29 +17,25 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.ui.base.AppCompatRequestActivity;
 
-import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.wallet.KeyChain;
-import org.bitcoinj.wallet.Wallet;
-
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.Notification;
 
 /**
  * Wellcome activity
  */
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatRequestActivity {
 
     private enum State {
         INIT,
@@ -50,8 +46,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
-
-    private Disposable mTeamsDisposal;
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
     private View mTryDemoButton;
@@ -68,8 +62,6 @@ public class WelcomeActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
-        TeambrellaUser user = TeambrellaUser.get(this);
         setContentView(R.layout.acivity_welcome);
 
         mInvitationOnlyView = findViewById(R.id.invitation_only);
@@ -79,15 +71,16 @@ public class WelcomeActivity extends AppCompatActivity {
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         findViewById(R.id.try_demo_invite).setOnClickListener(this::onTryDemo);
-
         setState(State.INIT);
-
-        if (user.getPrivateKey() != null) {
-            findViewById(R.id.facebook_login).setVisibility(View.INVISIBLE);
-            getTeams(user.getPrivateKey());
-        }
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mUser.getPrivateKey() != null) {
+            getTeams(mUser.getPrivateKey());
+        }
+    }
 
     private void setState(State state) {
         switch (state) {
@@ -113,44 +106,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void getTeams(String privateKey) {
         setState(State.LOADING);
-        TeambrellaUser user = TeambrellaUser.get(this);
-        final int selectedTeam = TeambrellaUser.get(this).getTeamId();
-        mTeamsDisposal = new TeambrellaServer(WelcomeActivity.this, privateKey)
-                .requestObservable(TeambrellaUris.getMyTeams(), null)
-                .map(JsonWrapper::new)
-                .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(jsonWrapper -> user.setUserId(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_USER_ID)))
-                .map(jsonWrapper -> jsonWrapper.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS))
-                .subscribe(teams -> {
-
-                            JsonWrapper team = null;
-                            for (JsonWrapper aTeam : teams) {
-                                if (aTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) == selectedTeam) {
-                                    team = aTeam;
-                                    break;
-                                }
-                            }
-
-                            if (team == null && teams.size() > 0) {
-                                team = teams.get(0);
-                            }
-
-                            if (team == null) {
-                                finish();
-                                return;
-                            }
-
-                            startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
-                                    , user.getUserId()
-                                    , team.getObject().toString()));
-
-                            user.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
-                            finish();
-                        }
-                        , this::tryAgainLater
-                );
+        request(TeambrellaUris.getMyTeams(), privateKey);
     }
 
 
@@ -161,9 +117,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken token = loginResult.getAccessToken();
-                String privateKey = new Wallet(MainNetParams.get())
-                        .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
-                registerUser(token.getToken(), privateKey);
+                registerUser(token.getToken(), mUser.getPendingPrivateKey());
                 LoginManager.getInstance().logOut();
             }
 
@@ -204,17 +158,9 @@ public class WelcomeActivity extends AppCompatActivity {
         try {
             publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
         } catch (CryptoException e) {
-            Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be regestered on the server. The error was: " + e.getMessage(), e);
+            Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
         }
-        new TeambrellaServer(this, privateKey).requestObservable(TeambrellaUris.getRegisterUri(token, publicKeySignature), null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(jsonObject -> {
-                            TeambrellaUser.get(WelcomeActivity.this).setPrivateKey(privateKey);
-                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
-                            getTeams(privateKey);
-                        }
-                        , this::tryAgainLater);
+        request(TeambrellaUris.getRegisterUri(token, publicKeySignature));
     }
 
 
@@ -243,11 +189,59 @@ public class WelcomeActivity extends AppCompatActivity {
         mCallBackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mTeamsDisposal != null && !mTeamsDisposal.isDisposed()) {
-            mTeamsDisposal.dispose();
+    protected void onRequestResult(Notification<JsonObject> response) {
+        super.onRequestResult(response);
+        if (response.isOnNext()) {
+            JsonWrapper result = new JsonWrapper(response.getValue());
+            JsonWrapper status = result.getObject(TeambrellaModel.ATTR_STATUS);
+            String uriString = status != null ? status.getString(TeambrellaModel.ATTR_STATUS_URI) : null;
+            Uri uri = uriString != null ? Uri.parse(uriString) : null;
+            if (uri != null) {
+                switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
+                    case TeambrellaUris.MY_TEAMS: {
+                        final int selectedTeam = TeambrellaUser.get(this).getTeamId();
+                        JsonWrapper data = result.getObject(TeambrellaModel.ATTR_DATA);
+                        String userId = data != null ? data.getString(TeambrellaModel.ATTR_DATA_USER_ID) : null;
+                        if (userId != null) {
+                            mUser.setUserId(userId);
+                        }
+
+                        ArrayList<JsonWrapper> teams = data != null ? data.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS) : new ArrayList<>();
+                        JsonWrapper team = null;
+                        for (JsonWrapper aTeam : teams) {
+                            if (aTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) == selectedTeam) {
+                                team = aTeam;
+                                break;
+                            }
+                        }
+                        if (team == null && teams.size() > 0) {
+                            team = teams.get(0);
+                        }
+
+                        if (team == null) {
+                            finish();
+                            return;
+                        }
+
+                        startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
+                                , mUser.getUserId()
+                                , team.getObject().toString()));
+
+                        mUser.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
+                        finish();
+                    }
+                    break;
+                    case TeambrellaUris.ME_REGISTER_KEY:
+                        mUser.setPrivateKey(mUser.getPendingPrivateKey());
+                        Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        getTeams(mUser.getPrivateKey());
+                        break;
+                }
+            }
+        } else {
+            tryAgainLater(response.getError());
         }
     }
 }
