@@ -118,6 +118,9 @@ public class TeambrellaServer {
                             return getObservableObject(uri, getRequestBody(uri, requestData))
                                     .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
                                     .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
+                        } else {
+                            Crashlytics.logException(throwable);
+                            return Observable.error(throwable);
                         }
                     }
                     Exception exception = new TeambrellaClientException(uri, throwable.getMessage(), throwable);

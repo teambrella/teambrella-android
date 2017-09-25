@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
@@ -232,7 +233,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         }
 
                         if (team == null) {
-                            finish();
+                            setState(State.INVITE_ONLY);
                             return;
                         }
 
@@ -252,7 +253,21 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 }
             }
         } else {
-            tryAgainLater(response.getError());
+            @SuppressWarnings("ThrowableNotThrown")
+            Throwable error = response.getError();
+            if (error instanceof TeambrellaServerException) {
+                TeambrellaServerException exception = (TeambrellaServerException) error;
+                switch (exception.getErrorCode()) {
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM:
+                        setState(State.INVITE_ONLY);
+                        break;
+                    default:
+                        tryAgainLater(error);
+                        break;
+                }
+            } else {
+                tryAgainLater(error);
+            }
         }
     }
 }
