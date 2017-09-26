@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.teammate;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -216,13 +218,33 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     public void onVoteChanged(float vote, boolean fromUser) {
         Rect scrollBounds = new Rect();
         mScrollView.getHitRect(scrollBounds);
-        if (!mUserPicture.getLocalVisibleRect(scrollBounds)) {
-            ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300).start();
+        if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.GONE) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mWouldCoverPanel.setVisibility(View.VISIBLE);
+                }
+            });
+            animator.start();
         }
     }
 
     @Override
     public void onVoterBarReleased(float vote, boolean fromUser) {
-        ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", 0f, -(float) mWouldCoverPanel.getHeight()).setDuration(300).start();
+        if (mWouldCoverPanel.getVisibility() == View.VISIBLE) {
+
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", 0f, -(float) mWouldCoverPanel.getHeight()).setDuration(300);
+
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mWouldCoverPanel.setVisibility(View.GONE);
+                }
+            });
+
+            animator.start();
+        }
     }
 }
