@@ -47,7 +47,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private enum State {
         INIT,
         LOADING,
-        INVITE_ONLY
+        INVITE_ONLY,
+        ALMOST_READY
     }
 
 
@@ -77,6 +78,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mTryDemoButton = findViewById(R.id.try_demo);
         mFacebookLoginButton = findViewById(R.id.facebook_login);
         mInvitationDescription = findViewById(R.id.invitation_description);
+        mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         findViewById(R.id.try_demo_invite).setOnClickListener(this::onTryDemo);
@@ -111,7 +113,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
+                mInvitationTitle.setText(R.string.we_are_invite_only_title);
                 setInvitationDescription(R.string.we_are_invite_only_description);
+                break;
+            case ALMOST_READY:
+                mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.VISIBLE);
+                mInvitationTitle.setText(R.string.almost_ready_title);
+                mInvitationDescription.setText(R.string.almost_ready_description);
                 break;
         }
 
@@ -162,6 +172,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     public void onBackPressed() {
         switch (mState) {
             case INVITE_ONLY:
+            case ALMOST_READY:
                 setState(State.INIT);
                 break;
             default:
@@ -268,6 +279,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 switch (exception.getErrorCode()) {
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM:
                         setState(State.INVITE_ONLY);
+                        break;
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION:
+                        setState(State.ALMOST_READY);
                         break;
                     default:
                         tryAgainLater(error);
