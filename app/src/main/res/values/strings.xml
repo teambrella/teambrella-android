@@ -204,6 +204,8 @@
     <string name="no_coverage_for_the_date">You had 0% coverage on the date of the incident</string>
     <string name="we_are_invite_only_title">"We're invite only!"</string>
     <string name="we_are_invite_only_description"><![CDATA[Hey there, for now we’re invite only.<br> Want to join? <br><a href="http://teambrella.com/join/team">Ask us for invitation!</a>]]></string>
+    <string name="almost_ready_title">Hiya!</string>
+    <string name="almost_ready_description">We are working round the clock to set up your team. It will be ready soon!</string>
     <string name="choose_your_team">Choose your team</string>
     <string name="exit_demo">Exit Demo</string>
 
