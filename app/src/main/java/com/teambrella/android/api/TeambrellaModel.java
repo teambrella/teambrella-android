@@ -348,6 +348,12 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_OBJECT_COVERAGE = "ObjectCoverage";
 
 
+    public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";
+    public static final String ATTR_DATA_HE_COVERS_ME_IF1 = "HeCoversMeIf1";
+    public static final String ATTR_DATA_HE_COVERS_ME_IF499 = "HeCoversMeIf499";
+    public static final String ATTR_DATA_MY_RISK = "MyRisk";
+
+
     public static final int FEED_ITEM_TEAMMATE = 0;
     public static final int FEED_ITEM_CLAIM = 1;
     public static final int FEED_ITEM_RULE = 2;

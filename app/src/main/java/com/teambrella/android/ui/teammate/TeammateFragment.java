@@ -66,6 +66,10 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private TextView mCoverMe;
 
     private TextView mCoverThem;
+    private TextView mWouldCoverMe;
+    private TextView mWouldCoverThem;
+    private TextView mCoversMeTitle;
+    private TextView mCoversThemTitle;
 
 
     private String mUserId;
@@ -74,9 +78,16 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private String mCurrency;
     private int mTeamAccessLevel;
 
+    private float mHeCoversMeIf02;
+    private float mHeCoversMeIf1;
+    private float mHeCoversMeIf499;
+    private float mMyRisk;
+
 
     private boolean mIsShown;
 
+
+    //"HeCoversMeIf02":10.104229912048861,"HeCoversMeIf1":45.50422458110436,"HeCoversMeIf499":46.31511561896891,"MyRisk":0.9
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,6 +106,10 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         mWhen = view.findViewById(R.id.when);
         mWouldCoverPanel = view.findViewById(R.id.would_cover_panel);
         mScrollView = view.findViewById(R.id.scroll_view);
+        mWouldCoverMe = view.findViewById(R.id.would_cover_me);
+        mWouldCoverThem = view.findViewById(R.id.would_cover_them);
+        mCoversMeTitle = view.findViewById(R.id.covers_me_title);
+        mCoversThemTitle = view.findViewById(R.id.covers_them_title);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -160,6 +175,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
 
             basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
                     .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
                     .doOnNext(basic -> mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
@@ -182,6 +199,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                         if (view != null) {
                             view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
                             view.findViewById(R.id.object_info_container).setBackgroundResource(R.drawable.block);
+                            mCoversMeTitle.setText(R.string.would_cover_me);
+                            mCoversThemTitle.setText(R.string.would_cover_them);
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
@@ -204,6 +223,16 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
             mCoverMeSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);
+
+            dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE))
+                    .doOnNext(riskScale -> {
+                        mHeCoversMeIf1 = riskScale.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME_IF1, mHeCoversMeIf1);
+                        mHeCoversMeIf02 = riskScale.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME02, mHeCoversMeIf02);
+                        mHeCoversMeIf499 = riskScale.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME_IF499, mHeCoversMeIf499);
+                        mMyRisk = riskScale.getFloat(TeambrellaModel.ATTR_DATA_MY_RISK, mMyRisk);
+                    }).onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+
+
             setContentShown(true);
             mIsShown = true;
         } else {
@@ -218,7 +247,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     public void onVoteChanged(float vote, boolean fromUser) {
         Rect scrollBounds = new Rect();
         mScrollView.getHitRect(scrollBounds);
-        if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.GONE) {
+        if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.GONE
+                && fromUser) {
             ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -228,23 +258,51 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             });
             animator.start();
         }
+
+        float value = (float) Math.pow(25, vote) / 5;
+
+        if (value >= 0.2f && value <= 1f) {
+            float wouldCoverMe = getLinearPoint(value, 0.2f, mHeCoversMeIf02, 1f, mHeCoversMeIf1);
+            float wouldCoverThem = wouldCoverMe * mMyRisk / value;
+            AmountCurrencyUtil.setAmount(mWouldCoverMe, wouldCoverMe, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverMe, wouldCoverMe, mCurrency);
+            AmountCurrencyUtil.setAmount(mWouldCoverThem, wouldCoverThem, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverThem, wouldCoverThem, mCurrency);
+        } else {
+            float wouldCoverMe = getLinearPoint(value, 1f, mHeCoversMeIf1, 4.99f, mHeCoversMeIf499);
+            float wouldCoverThem = wouldCoverMe * mMyRisk / value;
+            AmountCurrencyUtil.setAmount(mWouldCoverMe, wouldCoverMe, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverMe, wouldCoverMe, mCurrency);
+            AmountCurrencyUtil.setAmount(mWouldCoverThem, wouldCoverThem, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverThem, wouldCoverThem, mCurrency);
+        }
+
+        mWouldCoverPanel.removeCallbacks(mHideWouldCoverPanelRunnable);
     }
 
     @Override
     public void onVoterBarReleased(float vote, boolean fromUser) {
         if (mWouldCoverPanel.getVisibility() == View.VISIBLE) {
-
-            ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", 0f, -(float) mWouldCoverPanel.getHeight()).setDuration(300);
-
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    mWouldCoverPanel.setVisibility(View.GONE);
-                }
-            });
-
-            animator.start();
+            mWouldCoverPanel.postDelayed(mHideWouldCoverPanelRunnable, 1000);
         }
     }
+
+
+    private static float getLinearPoint(float x, float x1, float y1, float x2, float y2) {
+        return ((x - x1) * (y2 - y1)) / (x2 - x1) + y1;
+    }
+
+    private Runnable mHideWouldCoverPanelRunnable = () -> {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", 0f, -(float) mWouldCoverPanel.getHeight()).setDuration(300);
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mWouldCoverPanel.setVisibility(View.GONE);
+            }
+        });
+
+        animator.start();
+    };
 }
