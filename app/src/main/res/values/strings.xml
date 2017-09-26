@@ -208,5 +208,7 @@
     <string name="almost_ready_description">We are working round the clock to set up your team. It will be ready soon!</string>
     <string name="choose_your_team">Choose your team</string>
     <string name="exit_demo">Exit Demo</string>
+    <string name="would_cover_me">Would cover me</string>
+    <string name="would_cover_them">Would cover them</string>
 
 </resources>
