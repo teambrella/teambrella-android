@@ -32,6 +32,7 @@ import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
 
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -56,6 +57,9 @@ import java.util.List;
  * Teambrella util service
  */
 public class TeambrellaUtilService extends GcmTaskService {
+
+    public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
+    public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
@@ -93,7 +97,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean tryInit() {
         if (mKey != null) return true;
 
-        String privateKey = TeambrellaUser.get(this).getPrivateKey();
+        TeambrellaUser user = TeambrellaUser.get(this);
+        String privateKey = !user.isDemoUser() ? TeambrellaUser.get(this).getPrivateKey() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
             mServer = new TeambrellaServer(this, privateKey);
@@ -106,10 +111,9 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
 //            new AsyncTask<Void, Void, Void>() {
@@ -134,15 +138,26 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onRunTask(TaskParams taskParams) {
-        Log.v(LOG_TAG, "Periodic task ran");
-        try {
-            if (tryInit()) {
-                sync();
+        String tag = taskParams.getTag();
+        if (tag != null) {
+            switch (tag) {
+                case SYNC_WALLET_TASK_TAG:
+                    Log.v(LOG_TAG, "Sync wallet task ran");
+                    try {
+                        if (tryInit()) {
+                            sync();
+                        }
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "sync attempt failed:");
+                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+                        Log.e(LOG_TAG, "sync error call stack was: ", e);
+                    }
+                    break;
+                case CHECK_SOCKET:
+                    startService(new Intent(this, TeambrellaNotificationService.class)
+                            .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+                    break;
             }
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "sync attempt failed:");
-            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-            Log.e(LOG_TAG, "sync error call stack was: ", e);
         }
         return GcmNetworkManager.RESULT_SUCCESS;
     }

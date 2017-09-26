@@ -59,8 +59,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
 
-
-    public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
     public static final String HOME_DATA_TAG = "home_data";
@@ -129,6 +127,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
 
         scheduleWalletSync();
+        scheduleCheckingSocket();
     }
 
 
@@ -462,11 +461,24 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private void scheduleWalletSync() {
         PeriodicTask task = new PeriodicTask.Builder()
                 .setService(TeambrellaUtilService.class)
-                .setTag(SYNC_WALLET_TASK_TAG)
+                .setTag(TeambrellaUtilService.SYNC_WALLET_TASK_TAG)
                 .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setPersisted(true)
                 .setPeriod(30 * 60)     // 30 minutes period
                 .setFlex(10 * 60)       // +/- 10 minutes
+                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(this).schedule(task);
+    }
+
+    private void scheduleCheckingSocket() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(TeambrellaUtilService.CHECK_SOCKET)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setPersisted(true)
+                .setPeriod(60)     // 30 minutes period
+                .setFlex(30)       // +/- 10 minutes
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
                 .build();
         GcmNetworkManager.getInstance(this).schedule(task);

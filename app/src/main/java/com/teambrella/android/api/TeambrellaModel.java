@@ -181,6 +181,8 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
     public static final int VALUE_STATUS_RESULT_CODE_FATAL = 1;
     public static final int VALUE_STATUS_RESULT_CODE_AUTH = 2;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM = 6;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION = 8;
 
 
     /*Data*/
@@ -343,6 +345,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_REMAINED_MINUTES = "RemainedMinutes";
     public static final String ATTR_DATA_TEAM_ACCESS_LEVEL = "TeamAccessLevel";
     public static final String ATTR_DATA_VOTING_ENDS_IN = "VotingEndsIn";
+    public static final String ATTR_DATA_OBJECT_COVERAGE = "ObjectCoverage";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

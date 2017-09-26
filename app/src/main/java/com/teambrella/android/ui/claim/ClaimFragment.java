@@ -133,7 +133,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 String text = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT);
 
                 if (text != null) {
-                    mMessageText.setText(text);
+                    mMessageText.setText(text.replaceAll("<p>", "").replaceAll("</p>", ""));
                 }
 
 
