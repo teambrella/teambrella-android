@@ -2,6 +2,7 @@ package com.teambrella.android.ui.teammate;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -280,6 +281,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 break;
             }
         }
+
+        Fragment fragment = getParentFragment();
+
+        if (fragment instanceof VoterBar.VoterBarListener) {
+            ((VoterBar.VoterBarListener) fragment).onVoteChanged(vote, fromUser);
+        }
     }
 
     @Override
@@ -287,6 +294,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         if (fromUser) {
             mDataHost.postVote(Math.pow(25, vote) / 5);
             mCount++;
+        }
+
+        Fragment fragment = getParentFragment();
+
+        if (fragment instanceof VoterBar.VoterBarListener) {
+            ((VoterBar.VoterBarListener) fragment).onVoterBarReleased(vote, fromUser);
         }
     }
 }

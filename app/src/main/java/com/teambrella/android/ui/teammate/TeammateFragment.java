@@ -1,10 +1,13 @@
 package com.teambrella.android.ui.teammate;
 
+import android.animation.ObjectAnimator;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.ui.widget.VoterBar;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -35,7 +39,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Teammate fragment.
  */
-public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
+public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> implements VoterBar.VoterBarListener {
 
     private static final String OBJECT_FRAGMENT_TAG = "object_tag";
     private static final String VOTING_TAG = "voting_tag";
@@ -43,8 +47,10 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
 
     private ImageView mUserPicture;
+    private ImageView mSmallImagePicture;
     private ImageView mTeammateIcon;
     private TeambrellaAvatarsWidgets mAvatars;
+    private NestedScrollView mScrollView;
 
     private TextView mUserName;
     private TextView mMessage;
@@ -54,6 +60,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
 
     private View mCoverMeSection;
     private View mCoverThemSection;
+    private View mWouldCoverPanel;
     private TextView mCoverMe;
 
     private TextView mCoverThem;
@@ -65,6 +72,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     private String mCurrency;
     private int mTeamAccessLevel;
 
+
     private boolean mIsShown;
 
 
@@ -72,6 +80,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_teammate, container, false);
         mUserPicture = view.findViewById(R.id.user_picture);
+        mSmallImagePicture = view.findViewById(R.id.small_teammate_icon);
         mUserName = view.findViewById(R.id.user_name);
         mCoverMe = view.findViewById(R.id.cover_me);
         mCoverThem = view.findViewById(R.id.cover_them);
@@ -82,6 +91,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
         mCoverMeSection = view.findViewById(R.id.cover_me_section);
         mCoverThemSection = view.findViewById(R.id.cover_them_section);
         mWhen = view.findViewById(R.id.when);
+        mWouldCoverPanel = view.findViewById(R.id.would_cover_panel);
+        mScrollView = view.findViewById(R.id.scroll_view);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -110,11 +121,9 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             transaction.add(R.id.voting_container, ADataFragment.getInstance(mTags, TeammateVotingFragment.class), VOTING_TAG);
         }
 
-
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
-
         mIsShown = false;
     }
 
@@ -161,6 +170,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
             basicObservable.map(basic -> TeambrellaServer.BASE_URL + basic.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .doOnNext(uri -> picasso.load(uri).into(mUserPicture))
                     .doOnNext(uri -> picasso.load(uri).transform(new CropCircleTransformation()).into(mTeammateIcon))
+                    .doOnNext(uri -> picasso.load(uri).into(mSmallImagePicture))
                     .onErrorReturnItem("").blockingFirst();
 
 
@@ -205,4 +215,17 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> {
     }
 
 
+    @Override
+    public void onVoteChanged(float vote, boolean fromUser) {
+        Rect scrollBounds = new Rect();
+        mScrollView.getHitRect(scrollBounds);
+        if (!mUserPicture.getLocalVisibleRect(scrollBounds)) {
+            ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300).start();
+        }
+    }
+
+    @Override
+    public void onVoterBarReleased(float vote, boolean fromUser) {
+        ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", 0f, -(float) mWouldCoverPanel.getHeight()).setDuration(300).start();
+    }
 }
