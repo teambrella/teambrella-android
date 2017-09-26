@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -40,11 +39,8 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                 .into(teamLogo);
 
+        teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
 
-        if (BuildConfig.DEBUG) {
-            teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
-        }
-        
         mTitle = view.findViewById(R.id.title);
         mUnreadCount = view.findViewById(R.id.unread_count);
         view.findViewById(R.id.inbox).setOnClickListener(v -> mDataHost.launchActivity(new Intent(getContext(), InboxActivity.class)));

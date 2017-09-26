@@ -23,7 +23,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.JsonObject;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
@@ -101,7 +100,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         switch (state) {
             case INIT:
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
-                mTryDemoButton.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 break;
             case LOADING:
