@@ -4,9 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -51,6 +56,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
     private View mTryDemoButton;
+    private TextView mInvitationTitle;
+    private TextView mInvitationDescription;
     private TeambrellaUser mUser;
     private State mState;
 
@@ -69,7 +76,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationOnlyView = findViewById(R.id.invitation_only);
         mTryDemoButton = findViewById(R.id.try_demo);
         mFacebookLoginButton = findViewById(R.id.facebook_login);
-
+        mInvitationDescription = findViewById(R.id.invitation_description);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         findViewById(R.id.try_demo_invite).setOnClickListener(this::onTryDemo);
@@ -104,6 +111,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
+                setInvitationDescription(R.string.we_are_invite_only_description);
                 break;
         }
 
@@ -269,5 +277,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 tryAgainLater(error);
             }
         }
+    }
+
+
+    private void setInvitationDescription(@StringRes int textId) {
+        Spannable text = (Spannable) Html.fromHtml(getString(textId));
+        mInvitationDescription.setMovementMethod(LinkMovementMethod.getInstance());
+        mInvitationDescription.setText(text);
     }
 }
