@@ -110,10 +110,10 @@ public class TeambrellaUtilService extends GcmTaskService {
             return false;
         }
     }
-    
+
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
 //            new AsyncTask<Void, Void, Void>() {
@@ -154,7 +154,6 @@ public class TeambrellaUtilService extends GcmTaskService {
                     }
                     break;
                 case CHECK_SOCKET:
-                    Log.v(LOG_TAG, "Checking socket task ran");
                     startService(new Intent(this, TeambrellaNotificationService.class)
                             .setAction(TeambrellaNotificationService.CONNECT_ACTION));
                     break;
