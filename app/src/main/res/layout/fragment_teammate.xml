@@ -236,7 +236,7 @@
         android:id="@+id/would_cover_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@drawable/member___collapsed_bg"
         android:elevation="2dp"
         android:padding="16dp"
         android:visibility="gone">
