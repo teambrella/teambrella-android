@@ -102,6 +102,16 @@
                     android:layout_marginTop="14sp"
                     android:gravity="center" />
 
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/blueGrey"
+                    android:textSize="12sp" />
+
+
             </LinearLayout>
 
             <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
