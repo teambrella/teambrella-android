@@ -218,4 +218,9 @@
     <string name="my_pet">Mi Mascota</string>
     <string name="my_bike">Mi Bicicleta</string>
     <string name="object_dog">Perro</string>
+
+    <string name="cover_him">Le cubro</string>
+    <string name="cover_her">Le cubro</string>
+    <string name="would_cover_him">Le cubriría</string>
+    <string name="would_cover_her">Le cubriría</string>
 </resources>

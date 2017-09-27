@@ -48,6 +48,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
     private int mClaimCount;
     private String mModel;
     private String mCurrency;
+    private int mGender;
 
 
     public static TeammateObjectFragment getInstance(String dataTag) {
@@ -83,11 +84,13 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
 
             Observable<JsonWrapper> dataObservable =
                     responseObservable.map(response -> response.getObject(TeambrellaModel.ATTR_DATA))
-                            .doOnNext(data -> mTeammateId = data.getInt(TeambrellaModel.ATTR_DATA_ID, mTeamId));
+                            .doOnNext(data -> mTeammateId = data.getInt(TeambrellaModel.ATTR_DATA_ID, mTeammateId));
 
             Observable<JsonWrapper> basicObservable =
                     dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC));
 
+            basicObservable.doOnNext(jsonWrapper -> mGender = jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_GENDER, mGender))
+                    .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
             Observable<JsonWrapper> objectObservable =
                     dataObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT));
@@ -98,13 +101,13 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
                     .doOnNext(jsonWrapper -> {
                         if (mDataHost.getTeamId() == 2021) {
                             mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.CAT)
-                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.CAT, TeambrellaModel.Gender.FEMALE));
+                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.CAT, mGender));
                         } else if (mDataHost.getTeamId() == 2020) {
                             mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.DOG)
-                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.DOG, TeambrellaModel.Gender.FEMALE));
+                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.DOG, mGender));
                         } else {
                             mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))
-                                    : TeambrellaModel.getObjectNameWithOwner(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE), TeambrellaModel.Gender.FEMALE));
+                                    : TeambrellaModel.getObjectNameWithOwner(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE), mGender));
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null))

@@ -279,6 +279,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_FUND_ADDRESS = "FundAddress";
     public static final String ATTR_DATA_NEED_CRYPTO = "NeedCrypto";
     public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
+    public static final String ATTR_DATA_GENDER = "Gender";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -362,6 +363,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_HE_COVERS_ME_IF1 = "HeCoversMeIf1";
     public static final String ATTR_DATA_HE_COVERS_ME_IF499 = "HeCoversMeIf499";
     public static final String ATTR_DATA_MY_RISK = "MyRisk";
+    public static final String ATTR_DATA_CITY = "City";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

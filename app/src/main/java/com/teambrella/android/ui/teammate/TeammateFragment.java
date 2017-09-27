@@ -70,6 +70,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private TextView mWouldCoverThem;
     private TextView mCoversMeTitle;
     private TextView mCoversThemTitle;
+    private TextView mCityView;
 
 
     private String mUserId;
@@ -82,6 +83,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private float mHeCoversMeIf1;
     private float mHeCoversMeIf499;
     private float mMyRisk;
+    private int mGender;
 
 
     private boolean mIsShown;
@@ -111,6 +113,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         mWouldCoverThem = view.findViewById(R.id.would_cover_them);
         mCoversMeTitle = view.findViewById(R.id.covers_me_title);
         mCoversThemTitle = view.findViewById(R.id.covers_them_title);
+        mCityView = view.findViewById(R.id.city);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
             setContentShown(false);
@@ -174,13 +177,15 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     .onErrorReturnItem(new JsonWrapper(new JsonObject())).blockingFirst();
 
 
-            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
-                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
-                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverMe, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
-                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverThem, basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
+            basicObservable.doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverMe, mWouldCoverMeValue > 0 ? mWouldCoverMeValue : basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mCoverThem, mWouldCoverThemValue > 0 ? mWouldCoverThemValue : basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverMe, mWouldCoverMeValue > 0 ? mWouldCoverMeValue : basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME), mCurrency))
+                    .doOnNext(basic -> AmountCurrencyUtil.setAmount(mWouldCoverThem, mWouldCoverThemValue > 0 ? mWouldCoverThemValue : basic.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM), mCurrency))
                     .doOnNext(basic -> mUserName.setText(basic.getString(TeambrellaModel.ATTR_DATA_NAME)))
                     .doOnNext(basic -> mTeamId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID))
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
+                    .doOnNext(basic -> mCityView.setText(basic.getString(TeambrellaModel.ATTR_DATA_CITY)))
+                    .doOnNext(basic -> mGender = basic.getInt(TeambrellaModel.ATTR_DATA_GENDER, mGender))
                     .subscribe(jsonWrapper -> {
                     }, throwable -> {
                     }, () -> {
@@ -201,7 +206,28 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                             view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
                             view.findViewById(R.id.object_info_container).setBackgroundResource(R.drawable.block);
                             mCoversMeTitle.setText(R.string.would_cover_me);
-                            mCoversThemTitle.setText(R.string.would_cover_them);
+                            switch (mGender) {
+                                case TeambrellaModel.Gender.MALE:
+                                    mCoversThemTitle.setText(R.string.would_cover_him);
+                                    break;
+                                case TeambrellaModel.Gender.FEMALE:
+                                    mCoversThemTitle.setText(R.string.would_cover_her);
+                                    break;
+                                default:
+                                    mCoversThemTitle.setText(R.string.would_cover_them);
+                            }
+                        }
+                    })
+                    .doOnError(throwable -> {
+                        switch (mGender) {
+                            case TeambrellaModel.Gender.MALE:
+                                mCoversThemTitle.setText(R.string.cover_him);
+                                break;
+                            case TeambrellaModel.Gender.FEMALE:
+                                mCoversThemTitle.setText(R.string.cover_her);
+                                break;
+                            default:
+                                mCoversThemTitle.setText(R.string.cover_them);
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
