@@ -52,6 +52,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private TeambrellaAvatarsWidgets mAvatarWidgets;
     private float mAVGRisk;
     private View mAllVotesView;
+    private TextView mOthers;
 
     private int mCount;
 
@@ -79,6 +80,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mProxyAvatar = view.findViewById(R.id.proxy_avatar);
         mAvatarWidgets = view.findViewById(R.id.team_avatars);
         mAllVotesView = view.findViewById(R.id.all_votes);
+        mOthers = view.findViewById(R.id.others);
         mVoterBar.setVoterBarListener(this);
 
 
@@ -278,6 +280,9 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     mRightTeammateIcon.setVisibility(View.INVISIBLE);
                     mRightTeammateRisk.setVisibility(View.INVISIBLE);
                 }
+
+                mOthers.setVisibility(teammates.size() > 0 ? View.VISIBLE : View.GONE);
+
                 break;
             }
         }

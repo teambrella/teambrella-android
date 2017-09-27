@@ -18,10 +18,20 @@
             android:layout_height="wrap_content"
             android:text="@string/voting_risk" />
 
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/when"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="ends in 5 days"
+            android:textAllCaps="true"
+            android:textColor="@color/blueGrey"
+            android:textSize="12sp" />
+
         <com.teambrella.android.ui.widget.CountDownClock
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginStart="12dp" />
 
 
     </LinearLayout>
@@ -278,6 +288,20 @@
                 android:visibility="invisible" />
 
         </LinearLayout>
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/others"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="Others"
+            android:textColor="@color/blueWithAHintOfPurple"
+            android:textSize="15sp"
+            app:layout_constraintBaseline_toBaselineOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </android.support.constraint.ConstraintLayout>
