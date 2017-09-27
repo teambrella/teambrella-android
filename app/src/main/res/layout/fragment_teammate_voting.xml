@@ -289,18 +289,18 @@
         </LinearLayout>
 
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/others"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="Others"
-            android:textColor="@color/blueWithAHintOfPurple"
-            android:textSize="15sp"
-            app:layout_constraintBaseline_toBaselineOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"
-            app:layout_constraintEnd_toEndOf="parent" />
+        <!--<com.teambrella.android.ui.widget.AkkuratBoldTextView-->
+        <!--android:id="@+id/others"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingEnd="16dp"-->
+        <!--android:paddingStart="16dp"-->
+        <!--android:text="Others"-->
+        <!--android:textColor="@color/blueWithAHintOfPurple"-->
+        <!--android:textSize="15sp"-->
+        <!--app:layout_constraintBaseline_toBaselineOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="@id/new_teammate_info"-->
+        <!--app:layout_constraintEnd_toEndOf="parent" />-->
 
 
     </android.support.constraint.ConstraintLayout>

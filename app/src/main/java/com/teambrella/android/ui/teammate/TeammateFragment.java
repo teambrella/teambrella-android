@@ -86,8 +86,9 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
 
     private boolean mIsShown;
 
-
-    //"HeCoversMeIf02":10.104229912048861,"HeCoversMeIf1":45.50422458110436,"HeCoversMeIf499":46.31511561896891,"MyRisk":0.9
+    private float mWouldCoverMeValue;
+    private float mWouldCoverThemValue;
+    private boolean mCoverageUpdateStarted;
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -262,19 +263,16 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         float value = (float) Math.pow(25, vote) / 5;
 
         if (value >= 0.2f && value <= 1f) {
-            float wouldCoverMe = getLinearPoint(value, 0.2f, mHeCoversMeIf02, 1f, mHeCoversMeIf1);
-            float wouldCoverThem = wouldCoverMe * mMyRisk / value;
-            AmountCurrencyUtil.setAmount(mWouldCoverMe, wouldCoverMe, mCurrency);
-            AmountCurrencyUtil.setAmount(mCoverMe, wouldCoverMe, mCurrency);
-            AmountCurrencyUtil.setAmount(mWouldCoverThem, wouldCoverThem, mCurrency);
-            AmountCurrencyUtil.setAmount(mCoverThem, wouldCoverThem, mCurrency);
+            mWouldCoverMeValue = getLinearPoint(value, 0.2f, mHeCoversMeIf02, 1f, mHeCoversMeIf1);
+            mWouldCoverThemValue = mWouldCoverMeValue * mMyRisk / value;
         } else {
-            float wouldCoverMe = getLinearPoint(value, 1f, mHeCoversMeIf1, 4.99f, mHeCoversMeIf499);
-            float wouldCoverThem = wouldCoverMe * mMyRisk / value;
-            AmountCurrencyUtil.setAmount(mWouldCoverMe, wouldCoverMe, mCurrency);
-            AmountCurrencyUtil.setAmount(mCoverMe, wouldCoverMe, mCurrency);
-            AmountCurrencyUtil.setAmount(mWouldCoverThem, wouldCoverThem, mCurrency);
-            AmountCurrencyUtil.setAmount(mCoverThem, wouldCoverThem, mCurrency);
+            mWouldCoverMeValue = getLinearPoint(value, 1f, mHeCoversMeIf1, 4.99f, mHeCoversMeIf499);
+            mWouldCoverThemValue = mWouldCoverMeValue * mMyRisk / value;
+        }
+
+        if (!mCoverageUpdateStarted) {
+            mWouldCoverPanel.post(mCoverageUpdate);
+            mCoverageUpdateStarted = true;
         }
 
         mWouldCoverPanel.removeCallbacks(mHideWouldCoverPanelRunnable);
@@ -285,6 +283,8 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         if (mWouldCoverPanel.getVisibility() == View.VISIBLE) {
             mWouldCoverPanel.postDelayed(mHideWouldCoverPanelRunnable, 1000);
         }
+        mWouldCoverPanel.removeCallbacks(mCoverageUpdate);
+        mCoverageUpdateStarted = false;
     }
 
 
@@ -304,5 +304,16 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         });
 
         animator.start();
+    };
+
+    private Runnable mCoverageUpdate = new Runnable() {
+        @Override
+        public void run() {
+            AmountCurrencyUtil.setAmount(mWouldCoverMe, mWouldCoverMeValue, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverMe, mWouldCoverMeValue, mCurrency);
+            AmountCurrencyUtil.setAmount(mWouldCoverThem, mWouldCoverThemValue, mCurrency);
+            AmountCurrencyUtil.setAmount(mCoverThem, mWouldCoverThemValue, mCurrency);
+            mWouldCoverPanel.postDelayed(this, 100);
+        }
     };
 }
