@@ -202,4 +202,6 @@
     <string name="almost_ready_description">Estamos trabajando como burros para iniciar tu equipo. Muy pronto estará lista para funcionar.</string>
     <string name="choose_your_team">Elegir tu equipo</string>
     <string name="exit_demo">Salir de Demo</string>
+    <string name="would_cover_me">Me cubriría</string>
+    <string name="would_cover_them">Los cubriría</string>
 </resources>
