@@ -32,6 +32,8 @@ public class TeambrellaModel {
         public static final int BUSINESS_BEES = 400;
         public static final int BUSINESS_CRIME = 440;
         public static final int BUSINESS_LIABILITY = 460;
+        public static final int CAT = 1001;
+        public static final int DOG = 1002;
     }
 
 
@@ -63,6 +65,14 @@ public class TeambrellaModel {
         public static final int READ_ONLY = 2;
         public static final int READ_ALL_AND_EDIT_MINE = 3;
         public static final int FULL_ACCESS = 4;
+    }
+
+
+    public static final class Gender {
+        public static final int UNKNOWN = 0;
+        public static final int MALE = 1;
+        public static final int FEMALE = 2;
+        public static final int OTHER = 100;
     }
 
 
@@ -418,5 +428,69 @@ public class TeambrellaModel {
                 return R.string.object;
         }
     }
+
+
+    @StringRes
+    public static int getObjectNameWithOwner(int type, int gender) {
+        switch (type) {
+            case InsuranceType.PET:
+                switch (gender) {
+                    case Gender.MALE:
+                        return R.string.his_pet;
+                    case Gender.FEMALE:
+                        return R.string.her_pet;
+                    default:
+                        return R.string.object_pet;
+                }
+            case InsuranceType.BICYCLE:
+                switch (gender) {
+                    case Gender.MALE:
+                        return R.string.his_bike;
+                    case Gender.FEMALE:
+                        return R.string.her_bike;
+                    default:
+                        return R.string.object_bike;
+                }
+            case InsuranceType.CAT:
+                switch (gender) {
+                    case Gender.MALE:
+                        return R.string.his_cat;
+                    case Gender.FEMALE:
+                        return R.string.her_cat;
+                    default:
+                        return R.string.object_cat;
+                }
+
+            case InsuranceType.DOG:
+                switch (gender) {
+                    case Gender.MALE:
+                        return R.string.his_dog;
+                    case Gender.FEMALE:
+                        return R.string.her_dog;
+                    default:
+                        return R.string.object_dog;
+                }
+            default:
+                return R.string.object;
+        }
+    }
+
+
+    @StringRes
+    public static int getMyObjectNamer(int type) {
+        switch (type) {
+            case InsuranceType.PET:
+                return R.string.my_pet;
+            case InsuranceType.BICYCLE:
+                return R.string.my_bike;
+            case InsuranceType.CAT:
+                return R.string.my_cat;
+            case InsuranceType.DOG:
+                return R.string.my_dog;
+            default:
+                return R.string.object;
+        }
+    }
+
 
 }

@@ -97,9 +97,14 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
                     .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency))
                     .doOnNext(jsonWrapper -> {
                         if (mDataHost.getTeamId() == 2021) {
-                            mObjectTitle.setText(R.string.object_cat);
+                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.CAT)
+                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.CAT, TeambrellaModel.Gender.FEMALE));
+                        } else if (mDataHost.getTeamId() == 2020) {
+                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.DOG)
+                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.DOG, TeambrellaModel.Gender.FEMALE));
                         } else {
-                            mObjectTitle.setText(TeambrellaModel.getObjectType(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)));
+                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))
+                                    : TeambrellaModel.getObjectNameWithOwner(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE), TeambrellaModel.Gender.FEMALE));
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null))

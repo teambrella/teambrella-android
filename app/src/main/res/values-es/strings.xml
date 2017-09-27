@@ -24,7 +24,7 @@
     <string name="new_teammates">Nuevos compañeros</string>
     <string name="net">Net</string>
     <string name="cover_me">Me cubre</string>
-    <string name="cover_them">Los cubro</string>
+    <string name="cover_them">Le cubro</string>
     <string name="voting_ends_title">Votación termina en</string>
 
     <string name="object">Objeto</string>
@@ -203,5 +203,19 @@
     <string name="choose_your_team">Elegir tu equipo</string>
     <string name="exit_demo">Salir de Demo</string>
     <string name="would_cover_me">Me cubriría</string>
-    <string name="would_cover_them">Los cubriría</string>
+    <string name="would_cover_them">Le cubriría</string>
+
+    <string name="his_dog">Su Perro</string>
+    <string name="her_dog">Su Perro</string>
+    <string name="his_pet">Su Mascota</string>
+    <string name="her_pet">Su Mascota</string>
+    <string name="his_cat">Su Gato</string>
+    <string name="her_cat">Su Gato</string>
+    <string name="his_bike">Su Bicicleta</string>
+    <string name="her_bike">Su bicicleta</string>
+    <string name="my_cat">Mi Gato</string>
+    <string name="my_dog">Mi Perro</string>
+    <string name="my_pet">Mi Mascota</string>
+    <string name="my_bike">Mi Bicicleta</string>
+    <string name="object_dog">Perro</string>
 </resources>
