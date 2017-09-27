@@ -77,6 +77,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             mYourVoteCurrency.setAlpha(0.3f);
             mRestVoteButton.setAlpha(0.3f);
         });
+
         return view;
     }
 
@@ -132,7 +133,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mYourVoteCurrency.setAlpha(1f);
                 mRestVoteButton.setAlpha(1f);
 
-                mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTime(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
+                mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(getContext(), voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
 
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
@@ -155,6 +156,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
 
                 mAvatarWidgets.setOnClickListener(view -> AllVotesActivity.startClaimAllVotes(view.getContext(), mDataHost.getTeamId(), mDataHost.getClaimId()));
+                mAllVotesView.setOnClickListener(v -> AllVotesActivity.startClaimAllVotes(getContext(), mDataHost.getTeamId(), data.getInt(TeambrellaModel.ATTR_DATA_ID)));
             }
 
         }
