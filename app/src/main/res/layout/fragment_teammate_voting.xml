@@ -18,10 +18,19 @@
             android:layout_height="wrap_content"
             android:text="@string/voting_risk" />
 
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/when"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textAllCaps="true"
+            android:textColor="@color/blueGrey"
+            android:textSize="12sp" />
+
         <com.teambrella.android.ui.widget.CountDownClock
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginStart="12dp" />
 
 
     </LinearLayout>

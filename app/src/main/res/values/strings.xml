@@ -57,7 +57,7 @@
     <string name="claim_details">Claim Details</string>
     <string name="claim_amount">Claim Amount</string>
     <string name="voting">Voting</string>
-    <string name="voting_risk">Voting:Risk</string>
+    <string name="voting_risk">Voting: Risk</string>
     <string name="estimated_expenses">Estimated expenses</string>
     <string name="deductible">Deductible</string>
     <string name="coverage">Coverage</string>
@@ -177,7 +177,7 @@
     <string name="my_proxies_empty_prompt"><![CDATA[<b>You don’t have Proxy Voters yet.</b><br><br>Please consider someone you trust to be your first Proxy Voter.]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>
     <string name="private_conversation">Private Conversation</string>
-    <string name="ends_in">Ends %s</string>
+    <string name="ends_in">Ends in %s</string>
     <string name="ended_ago">Ended %s</string>
     <string name="declined">Declined</string>
     <string name="all_votes">All Votes</string>
