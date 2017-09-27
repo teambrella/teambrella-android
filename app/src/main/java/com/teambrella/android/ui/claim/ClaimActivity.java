@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +26,6 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
-import com.teambrella.android.ui.votes.AllVotesActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -44,7 +42,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_MODEL = "model";
     private static final String EXTRA_TEAM_ID = "team_id";
-    private static final String EXTRA_CURRENCY = "currency";
     private static final String EXTRA_CLAIM_ID = "claimId";
 
     private static final int DEFAULT_REQUEST_CODE = 4;
@@ -54,7 +51,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
 
     private int mClaimId;
-    private String mCurrency;
     private int mTeamId;
     private TextView mTitle;
     private TextView mSubtitle;
@@ -79,7 +75,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         final Intent intent = getIntent();
-        mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, -1);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         super.onCreate(savedInstanceState);
@@ -124,13 +119,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.votes, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
     protected String[] getDataTags() {
         return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
     }
@@ -152,9 +140,6 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                break;
-            case R.id.votes:
-                AllVotesActivity.startClaimAllVotes(this, mTeamId, mClaimId);
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -19,6 +19,7 @@ import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.widget.VoterBar;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private TeambrellaAvatarsWidgets mAvatarWidgets;
     private float mAVGRisk;
     private View mAllVotesView;
+    private TextView mWhen;
 
     private int mCount;
 
@@ -78,6 +80,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mProxyAvatar = view.findViewById(R.id.proxy_avatar);
         mAvatarWidgets = view.findViewById(R.id.team_avatars);
         mAllVotesView = view.findViewById(R.id.all_votes);
+        mWhen = view.findViewById(R.id.when);
         mVoterBar.setVoterBarListener(this);
 
 
@@ -165,6 +168,10 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                         mProxyAvatar.setVisibility(View.INVISIBLE);
                         mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
                     }
+
+
+                    mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(getContext()
+                            , voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
 
 
                     Observable.

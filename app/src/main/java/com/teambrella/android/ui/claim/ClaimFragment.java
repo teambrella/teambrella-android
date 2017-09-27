@@ -177,6 +177,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 View view = getView();
                 if (view != null) {
                     view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.details_container).setBackgroundResource(R.drawable.block_last);
                 }
             }
             setContentShown(true);
