@@ -211,4 +211,19 @@
     <string name="would_cover_me">Would cover me</string>
     <string name="would_cover_them">Would cover them</string>
 
+    <string name="his_dog">His Dog</string>
+    <string name="her_dog">Her Dog</string>
+    <string name="his_pet">His Pet</string>
+    <string name="her_pet">Her Pet</string>
+    <string name="his_cat">His Cat</string>
+    <string name="her_cat">Her Cat</string>
+    <string name="his_bike">His Bike</string>
+    <string name="her_bike">Her Bike</string>
+    <string name="my_cat">My Cat</string>
+    <string name="my_dog">My Dog</string>
+    <string name="my_pet">My Pet</string>
+    <string name="my_bike">My Bike</string>
+    <string name="object_dog">Dog</string>
+
+
 </resources>
