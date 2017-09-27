@@ -90,6 +90,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
         private TextView mRating;
         private TextView mPosition;
         private TextView mOptToRating;
+        private TextView mSubtitle;
 
 
         UserViewHolder(View itemView) {
@@ -97,6 +98,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
             mRating = itemView.findViewById(R.id.rating);
             mPosition = itemView.findViewById(R.id.position);
             mOptToRating = itemView.findViewById(R.id.opt_to_rating);
+            mSubtitle = itemView.findViewById(R.id.subtitle);
         }
 
         @SuppressLint("SetTextI18n")
@@ -105,6 +107,7 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
             int ratingPosition = item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1);
             mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             mPosition.setText(Integer.toString(ratingPosition));
+            mSubtitle.setText(item.getString(TeambrellaModel.ATTR_DATA_LOCATION, ""));
             if (mOptToRating != null) {
                 mOptToRating.setText(ratingPosition > 0 ? R.string.opt_out_of_rating : R.string.opt_into_rating);
                 mOptToRating.setOnClickListener(v -> mDataHost.optInToRating(ratingPosition < 0));

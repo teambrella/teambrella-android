@@ -70,6 +70,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private TextView mWouldCoverThem;
     private TextView mCoversMeTitle;
     private TextView mCoversThemTitle;
+    private TextView mWouldCoverThemTitle;
     private TextView mCityView;
 
 
@@ -113,6 +114,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         mWouldCoverThem = view.findViewById(R.id.would_cover_them);
         mCoversMeTitle = view.findViewById(R.id.covers_me_title);
         mCoversThemTitle = view.findViewById(R.id.covers_them_title);
+        mWouldCoverThemTitle = view.findViewById(R.id.would_cover_them_title);
         mCityView = view.findViewById(R.id.city);
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -209,12 +211,15 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                             switch (mGender) {
                                 case TeambrellaModel.Gender.MALE:
                                     mCoversThemTitle.setText(R.string.would_cover_him);
+                                    mWouldCoverThemTitle.setText(R.string.would_cover_him);
                                     break;
                                 case TeambrellaModel.Gender.FEMALE:
                                     mCoversThemTitle.setText(R.string.would_cover_her);
+                                    mWouldCoverThemTitle.setText(R.string.would_cover_her);
                                     break;
                                 default:
                                     mCoversThemTitle.setText(R.string.would_cover_them);
+                                    mWouldCoverThemTitle.setText(R.string.would_cover_them);
                             }
                         }
                     })

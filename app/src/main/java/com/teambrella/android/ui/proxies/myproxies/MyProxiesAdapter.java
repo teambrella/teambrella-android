@@ -88,7 +88,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         public void onBind(JsonWrapper item) {
             super.onBind(item);
             mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
-            String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION);
+            String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION, "");
             mLocation.setText(location);
 
             mDecision.setProgress(Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_DECISION_FREQUENCY) * 100));
