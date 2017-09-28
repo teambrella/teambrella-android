@@ -113,11 +113,12 @@ dependencies {
     })
 
     /* Support */
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.2'
+    //noinspection GradleCompatible
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:multidex:1.0.2'
-    compile 'com.android.support:design:26.0.2'
+    compile 'com.android.support:design:26.1.0'
 
     /* Server communication */
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
@@ -147,7 +148,7 @@ dependencies {
     /* *Facebook SDK*/
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
 
-    compile 'com.google.android.gms:play-services-gcm:11.2.2'
+    compile 'com.google.android.gms:play-services-gcm:11.4.0'
 
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
