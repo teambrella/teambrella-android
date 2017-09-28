@@ -12,7 +12,7 @@
     <dimen name="home_coverage_and_wallet_height">48dp</dimen>
     <dimen name="home_default_vertical_margin">8dp</dimen>
     <dimen name="home_and_coverage_max_height">250dp</dimen>
-    <dimen name="home_submit_claim_margin_bottom">32dp</dimen>
+    <dimen name="home_submit_claim_margin_bottom">24dp</dimen>
     <dimen name="chat_image_width">220dp</dimen>
     <dimen name="team_logo_size">42dp</dimen>
     <dimen name="image_size_40">40dp</dimen>
