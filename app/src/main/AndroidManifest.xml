@@ -75,6 +75,10 @@
             android:name=".ui.CosignersActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.teammates.TeammatesByRiskActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"
