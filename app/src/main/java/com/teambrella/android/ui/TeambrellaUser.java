@@ -59,6 +59,8 @@ public class TeambrellaUser {
 
     public void resetDemoUser() {
         mPreferences.edit().remove(PREFERENCE_PRIVATE_KEY).apply();
+        mPreferences.edit().putString(PREFERENCE_DEMO_KEY, generatePrivateKey()).apply();
+        setUserId(null);
     }
 
     public boolean isDemoUser() {
