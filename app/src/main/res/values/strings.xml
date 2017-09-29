@@ -229,5 +229,7 @@
     <string name="would_cover_him">Would Cover Him</string>
     <string name="would_cover_her">Would Cover Her</string>
 
+    <string name="no_claims"><![CDATA[<b>No claims in your team so far.</b>]]></string>
+    <string name="no_messages"><![CDATA[<b>No Messages.</b>]]></string>
 
 </resources>
