@@ -46,6 +46,12 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+
+    @Override
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_messages);
+    }
+
     private class ConversationViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mUserPicture;
