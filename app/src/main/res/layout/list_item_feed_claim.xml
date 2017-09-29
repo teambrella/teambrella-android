@@ -14,65 +14,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/header"
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/title"
+        style="@style/Teambrella.TextAppearence.MessageTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toStartOf="@+id/when"
         app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintTop_toTopOf="@id/icon">
+        app:layout_constraintTop_toTopOf="@id/icon" />
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/title"
-            style="@style/Teambrella.TextAppearence.MessageTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/when"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/title" />
 
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/when"
-            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/message_layout"
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/message"
+        style="@style/Teambrella.TextAppearence.MessageText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:layout_marginEnd="40sp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/header"
-        app:layout_constraintTop_toBottomOf="@id/header">
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/message"
-            style="@style/Teambrella.TextAppearence.MessageText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="2" />
+        app:layout_constraintStart_toStartOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/unread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/unread_message_count_background"
-            android:gravity="center"
-            android:lines="1"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
-
-    </LinearLayout>
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/unread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/unread_message_count_background"
+        android:gravity="center"
+        android:lines="1"
+        android:textColor="@android:color/white"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
@@ -88,8 +77,8 @@
         app:avatar_shift="5dp"
         app:avatar_size="20dp"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@id/message_layout"
-        app:layout_constraintTop_toBottomOf="@id/message_layout" />
+        app:layout_constraintStart_toStartOf="@id/message"
+        app:layout_constraintTop_toBottomOf="@id/message" />
 
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -103,7 +92,7 @@
         android:includeFontPadding="false"
         app:layout_constraintBottom_toBottomOf="@id/avatars"
         app:layout_constraintStart_toEndOf="@id/avatars"
-        app:layout_constraintTop_toBottomOf="@id/message_layout"
+        app:layout_constraintTop_toBottomOf="@id/message"
         app:layout_constraintTop_toTopOf="@id/avatars" />
 
 </android.support.constraint.ConstraintLayout>

@@ -58,7 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:divider="@color/paleGrey"
+        android:divider="@drawable/vertical_divider"
         android:orientation="horizontal"
         android:showDividers="middle"
         app:layout_constraintRight_toRightOf="parent"
