@@ -102,8 +102,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         context.startActivity(getClaimChat(context, teamId, claimId, objectName, imageUri, topicId, accessLevel));
     }
 
-    public static void startFeedChat(Context context, String title, String topicId, int accessLevel) {
-        context.startActivity(getFeedChat(context, title, topicId, accessLevel));
+    public static void startFeedChat(Context context, String title, String topicId, int teamId, int accessLevel) {
+        context.startActivity(getFeedChat(context, title, topicId, teamId, accessLevel));
     }
 
 
@@ -145,8 +145,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
-    public static Intent getFeedChat(Context context, String title, String topicId, int accessLevel) {
+    public static Intent getFeedChat(Context context, String title, String topicId, int teamId, int accessLevel) {
         return new Intent(context, ChatActivity.class)
+                .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))

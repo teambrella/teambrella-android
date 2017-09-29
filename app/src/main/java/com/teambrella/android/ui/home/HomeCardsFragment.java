@@ -254,6 +254,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                         dataHost.launchActivity(ChatActivity.getFeedChat(context
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , dataHost.getTeamId()
                                 , mTeamAccessLevel));
                         break;
                     default:
