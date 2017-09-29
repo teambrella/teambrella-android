@@ -31,6 +31,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -210,6 +211,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private void onTryDemo(View v) {
         mUser.setDemoUser();
         getDemoTeams(mUser.getPrivateKey());
+        StatisticHelper.onTryDemo();
     }
 
     @Override
@@ -265,6 +267,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     break;
                     case TeambrellaUris.ME_REGISTER_KEY:
                         mUser.setPrivateKey(mUser.getPendingPrivateKey());
+                        StatisticHelper.onUserRegistered();
                         Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
                         getTeams(mUser.getPrivateKey());
                         break;

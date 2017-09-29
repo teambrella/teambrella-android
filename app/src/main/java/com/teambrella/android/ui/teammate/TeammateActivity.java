@@ -28,6 +28,7 @@ import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.votes.AllVotesActivity;
+import com.teambrella.android.util.StatisticHelper;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -169,6 +170,8 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getTeammateVoteUri(mTeammateId, vote));
         }
+
+        StatisticHelper.onApplicationVote(getTeamId(), vote);
     }
 
     @Override
