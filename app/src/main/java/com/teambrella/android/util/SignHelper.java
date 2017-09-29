@@ -140,7 +140,7 @@ class SignHelper {
             return null;
         }
 
-        Script script = getRedeemScript(tx.getFromAddress(), tx.cosigners);
+        Script script = getRedeemScript(tx.getFromMultisig(), tx.cosigners);
         ScriptBuilder[] ops = new ScriptBuilder[tx.txInputs.size()];
 
         for (Cosigner cosigner : tx.cosigners) {

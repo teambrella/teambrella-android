@@ -26,10 +26,12 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 
+import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.Wallet;
 
+import java.security.interfaces.ECKey;
 import java.util.LinkedList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -59,6 +61,9 @@ public class WelcomeActivity extends AppCompatActivity {
         findViewById(R.id.facebook_login).setOnClickListener(this::onFacebookLogin);
         View tryDemoView = findViewById(R.id.try_demo);
         if (BuildConfig.DEBUG) {
+            ////XXX remove!!!
+            user.setPrivateKey(null);
+
             tryDemoView.setOnClickListener(this::onTryDemo);
         } else {
             tryDemoView.setVisibility(View.INVISIBLE);
@@ -124,9 +129,14 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken token = loginResult.getAccessToken();
-                String privateKey = new Wallet(MainNetParams.get())
-                        .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
-                registerUser(token.getToken(), privateKey);
+                //////XXX !!! uncommment!
+//                DeterministicKey key = new Wallet(MainNetParams.get())
+//                        .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION);
+                org.bitcoinj.core.DumpedPrivateKey dpk = org.bitcoinj.core.DumpedPrivateKey.fromBase58(null, "L4TzGwABRFtqGBtrbKxK1ZHEByi3GczUhztEx9dtPvXkuAzGKGdo"); //eugene
+                org.bitcoinj.core.ECKey key = dpk.getKey();
+
+                String privateKey = key.getPrivateKeyAsWiF(MainNetParams.get());
+                registerUser(token.getToken(), privateKey, key.getPublicKeyAsHex());
                 LoginManager.getInstance().logOut();
             }
 
@@ -152,12 +162,12 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
 
-    private void registerUser(String token, final String privateKey) {
+    private void registerUser(String token, final String privateKey, String publicKeyHex){
         findViewById(R.id.facebook_login).setVisibility(View.GONE);
         findViewById(R.id.try_demo).setVisibility(View.GONE);
         String publicKeySignature = null;
         try{
-            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
+            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext(), publicKeyHex);
         }catch (CryptoException e){
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be regestered on the server. The error was: " + e.getMessage(), e);
         }

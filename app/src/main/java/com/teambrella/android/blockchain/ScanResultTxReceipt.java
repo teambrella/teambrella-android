@@ -2,7 +2,7 @@ package com.teambrella.android.blockchain;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TxReceiptResult {
+public class ScanResultTxReceipt {
     @SerializedName("blockNumber")
     public String blockNumber;
 

@@ -256,6 +256,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RESOLUTION_TIME = "ResolutionTime";
     public static final String ATTR_DATA_TX_INFOS = "TxInfos";
     public static final String ATTR_DATA_TX_INPUT_ID = "TxInputId";
+    public static final String ATTR_DATA_TX_Hash = "TxHash";
     public static final String ATTR_DATA_BLOCKCHAIN_TX_ID = "BlockchainTxId";
     public static final String ATTR_DATA_CRYPTO_CONTRACT = "CryptoContracts";
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";

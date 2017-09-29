@@ -53,6 +53,9 @@ public class Tx {
     @Column(TeambrellaRepository.Tx.RECEIVED_TIME)
     public String receivedTime;
 
+    @Column(TeambrellaRepository.Tx.CRYPTO_TX)
+    public String cryptoTx;
+
     @Column(TeambrellaRepository.Tx.RESOLUTION)
     public int resolution;
 
@@ -67,7 +70,7 @@ public class Tx {
     public List<Cosigner> cosigners;
 
 
-    public Multisig getFromAddress() {
+    public Multisig getFromMultisig() {
         return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getPreviousAddress() :
                 this.teammate.getCurrentAddress();
     }

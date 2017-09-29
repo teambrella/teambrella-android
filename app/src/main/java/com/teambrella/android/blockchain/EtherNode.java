@@ -51,11 +51,11 @@ public class EtherNode {
     }
 
 
-    public Scan<TxReceiptResult> checkTx(String creationTx) {
-        Scan<TxReceiptResult> receipt = null;
+    public Scan<ScanResultTxReceipt> checkTx(String creationTx) {
+        Scan<ScanResultTxReceipt> receipt = null;
         for (EtherAPI api : mEtherAPIs) {
             try {
-                    Response<Scan<TxReceiptResult>> response = api.checkTx(creationTx).execute();
+                    Response<Scan<ScanResultTxReceipt>> response = api.checkTx(creationTx).execute();
                     Thread.currentThread().sleep(1000);
                     if (response.isSuccessful()) {
                         receipt = response.body();

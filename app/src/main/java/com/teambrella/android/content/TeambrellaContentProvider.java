@@ -171,7 +171,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private static class TeambrellaSQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final int VERSION = 202;
+        private static final int VERSION = 203;
         private static final String NAME = "teambrella";
 
 
@@ -253,6 +253,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "[ResolutionTime] datetime, " +
                     "[ProcessedTime] datetime, " +
                     "[NeedUpdateServer] boolean NOT NULL, " +
+                    "[CryptoTx] TEXT, " +
                     "[Resolution] integer NOT NULL, " +
                     "[ClientResolutionTime] datetime, " +
                     "CONSTRAINT [FK_Tx_0_0] FOREIGN KEY ([TeammateId]) REFERENCES [Teammate] ([Id]) MATCH NONE ON UPDATE NO ACTION ON DELETE NO ACTION, " +
@@ -295,7 +296,7 @@ public class TeambrellaContentProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            if (oldVersion < 202
+            if (oldVersion < 203
                     ){
                 db.execSQL("DROP TABLE IF EXISTS Multisig");
                 db.execSQL("DROP TABLE IF EXISTS Connection");
