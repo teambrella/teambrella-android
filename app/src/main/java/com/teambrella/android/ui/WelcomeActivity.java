@@ -32,6 +32,9 @@ import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 
+import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.ECKey;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -145,7 +148,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken token = loginResult.getAccessToken();
-                registerUser(token.getToken(), mUser.getPendingPrivateKey());
+                ECKey key = DumpedPrivateKey.fromBase58(null, mUser.getPendingPrivateKey()).getKey();
+                registerUser(token.getToken(), mUser.getPendingPrivateKey(), key.getPublicKeyAsHex());
                 LoginManager.getInstance().logOut();
             }
 
@@ -180,12 +184,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         }
     }
 
-    private void registerUser(String token, final String privateKey) {
+    private void registerUser(String token, final String privateKey, String publicKeyHex) {
         findViewById(R.id.facebook_login).setVisibility(View.GONE);
         findViewById(R.id.try_demo).setVisibility(View.GONE);
         String publicKeySignature = null;
         try {
-            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext());
+            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext(), publicKeyHex);
         } catch (CryptoException e) {
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
         }

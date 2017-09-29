@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -108,7 +109,7 @@ public class EtherNode {
 
                     return balance.longValue();
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | JsonSyntaxException e) {
                 Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
             }
         }
