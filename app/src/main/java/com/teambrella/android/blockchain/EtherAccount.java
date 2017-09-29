@@ -151,46 +151,6 @@ public class EtherAccount {
         return sig;
     }
 
-//    private String getSecret(){
-//        return mKey.getPrivateKeyAsWiF(new MainNetParams());
-//    }
-
-    private BigInt getChainId(boolean isTestNet){
-        return new BigInt(isTestNet ? 3 : 1);   // 3 is for Ropsten TestNet; 1 is for MainNet
-    }
-
-    private byte[] sign(String target) {
-
-        try{
-            Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
-//xxx:            KeyStore ks = getEthKeyStore();
-//            Account acc = getEthAccount(ks);
-
-            byte[] targetAsBytes = Hex.toBytes(target);
-            int len = targetAsBytes.length;
-            if (len < 32) throw new UnsupportedOperationException("Can only sign message of 32+ bytes");
-            byte[] last32Bytes = Arrays.copyOfRange(targetAsBytes, len -32, len);
-
-            byte[] sig = mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, last32Bytes);
-            return sig;
-
-        }catch (Exception e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-        }
-
-        return null;
-    }
-
-    ////TODO: xxx: remove:
-//    private KeyStore getEthKeyStore() {
-//        String myPublicKey = mKey.getPublicKeyAsHex();
-//        String documentsPath = mContext.getFilesDir().getPath();
-//        KeyStore ks = new KeyStore(documentsPath + "/keystore/" + myPublicKey, Geth.LightScryptN, Geth.LightScryptP);
-//
-//        return ks;
-//    }
-
-    ////TODO: xxxx: move up before private methods.
     private static Account initEthAccount(byte[] privateKey, KeyStore ks, String ksSecret) throws CryptoException {
         try {
             Accounts aaa = ks.getAccounts();
@@ -206,6 +166,30 @@ public class EtherAccount {
             Log.e("Test", "Was unnable to read account.", e);
             throw new CryptoException(e.getMessage(), e);
         }
+    }
+
+    private BigInt getChainId(boolean isTestNet){
+        return new BigInt(isTestNet ? 3 : 1);   // 3 is for Ropsten TestNet; 1 is for MainNet
+    }
+
+    private byte[] sign(String target) {
+
+        try{
+            Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
+
+            byte[] targetAsBytes = Hex.toBytes(target);
+            int len = targetAsBytes.length;
+            if (len < 32) throw new UnsupportedOperationException("Can only sign message of 32+ bytes");
+            byte[] last32Bytes = Arrays.copyOfRange(targetAsBytes, len -32, len);
+
+            byte[] sig = mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, last32Bytes);
+            return sig;
+
+        }catch (Exception e){
+            Log.e(LOG_TAG, e.getMessage(), e);
+        }
+
+        return null;
     }
 
     private void reverseAndCalculateV(byte[] array){
