@@ -45,7 +45,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
 
     public void setMyVote(JsonWrapper vote) {
         mMyVote = vote;
-        notifyItemChanged(0);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
                     holder = new MyVoteViewHolder(inflater.inflate(R.layout.list_item_vote, parent, false));
                     break;
                 case VIEW_TYPE_HEADER:
-                    holder = new Header(parent, R.string.all_votes, R.string.votes, R.drawable.list_item_header_background_middle);
+                    holder = new Header(parent, R.string.all_votes, R.string.votes, getHeadersCount() == 2 ? R.drawable.list_item_header_background_middle : R.drawable.list_item_header_background_top);
                     break;
                 default:
                     holder = new VoteViewHolder(inflater.inflate(R.layout.list_item_vote, parent, false));
@@ -76,7 +76,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
                 ((MyVoteViewHolder) holder).onBind(mMyVote);
             }
         } else if (holder instanceof VoteViewHolder) {
-            ((VoteViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - 2).getAsJsonObject()));
+            ((VoteViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - getHeadersCount()).getAsJsonObject()));
         }
     }
 
@@ -86,9 +86,11 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
         if (viewType == VIEW_TYPE_REGULAR) {
             switch (position) {
                 case 0:
-                    return VIEW_TYPE_ME;
+                    return getHeadersCount() == 2 ? VIEW_TYPE_ME :
+                            VIEW_TYPE_HEADER;
                 case 1:
-                    return VIEW_TYPE_HEADER;
+                    return getHeadersCount() == 2 ? VIEW_TYPE_HEADER :
+                            VIEW_TYPE_TEAMMATE;
                 default:
                     return VIEW_TYPE_TEAMMATE;
             }
@@ -98,7 +100,8 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected int getHeadersCount() {
-        return 2;
+        return mMyVote == null || mMyVote.getString(TeambrellaModel.ATTR_DATA_VOTED_BY_PROXY_USER_ID) != null
+                || mMyVote.getFloat(TeambrellaModel.ATTR_DATA_VOTE, 0f) <= 0 ? 1 : 2;
     }
 
     class VoteViewHolder extends AMemberViewHolder {
@@ -122,7 +125,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
                     mVoteView.setText(Html.fromHtml("" + (int) (item.getFloat(TeambrellaModel.ATTR_DATA_VOTE) * 100)) + "%");
                     break;
                 case MODE_APPLICATION:
-                    mVoteView.setText(itemView.getContext().getString(R.string.risk_vote_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_VOTE) + 0.005));
+                    mVoteView.setText(itemView.getContext().getString(R.string.risk_vote_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_VOTE)));
                     break;
             }
             mWeightView.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_WEIGHT_COMBINED)));

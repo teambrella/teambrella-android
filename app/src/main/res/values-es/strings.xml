@@ -223,4 +223,8 @@
     <string name="cover_her">Le cubro</string>
     <string name="would_cover_him">Le cubriría</string>
     <string name="would_cover_her">Le cubriría</string>
+
+    <string name="no_claims"><![CDATA[<b>Hasta el momento no hay reclamaciones en tu equipo.</b>]]></string>
+    <string name="no_messages"><![CDATA[<b>No hay mensajes privados.</b>]]></string>
+
 </resources>
