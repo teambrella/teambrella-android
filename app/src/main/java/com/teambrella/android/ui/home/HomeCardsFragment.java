@@ -206,7 +206,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             requestCreator.into(icon);
 
-            message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT)));
+            message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
 
             int unreadCount = mCard.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
 
