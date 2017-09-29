@@ -63,6 +63,13 @@ public abstract class AppCompatRequestActivity extends AppCompatActivity {
         }
     }
 
+    protected void request(Uri uri, String privateKey) {
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.request(this, privateKey, uri);
+        }
+    }
+
     protected void onRequestResult(Notification<JsonObject> response) {
 
     }

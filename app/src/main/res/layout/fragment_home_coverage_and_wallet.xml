@@ -132,6 +132,7 @@
                 android:id="@+id/coverage"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
                 android:layout_below="@id/coverage_header"
+                android:layout_marginTop="6dp"
                 android:layout_toEndOf="@id/coverage_icon"
                 android:includeFontPadding="false"
                 android:text="@string/unknown_value" />
@@ -165,6 +166,7 @@
                 android:id="@+id/wallet_amount"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
                 android:layout_below="@id/wallet_header"
+                android:layout_marginTop="6dp"
                 android:layout_toEndOf="@id/wallet_icon"
                 android:includeFontPadding="false"
                 android:text="@string/unknown_value" />

@@ -1,5 +1,6 @@
 package com.teambrella.android.data.base;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,7 +47,10 @@ public class TeambrellaRequestFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mServer = new TeambrellaServer(getContext(), TeambrellaUser.get(getContext()).getPrivateKey());
+        TeambrellaUser user = TeambrellaUser.get(getContext());
+        if (user.getPrivateKey() != null) {
+            mServer = new TeambrellaServer(getContext(), user.getPrivateKey());
+        }
         mConnectable.connect();
         Log.e(LOG_TAG, "On create");
     }
@@ -63,7 +67,19 @@ public class TeambrellaRequestFragment extends Fragment {
     }
 
     public void request(Uri uri) {
-        mServer.requestObservable(uri, null)
+        if (mServer != null) {
+            request(mServer, uri);
+        }
+    }
+
+
+    public void request(Context context, String privateKey, Uri uri) {
+        request(new TeambrellaServer(context, privateKey), uri);
+    }
+
+
+    private void request(TeambrellaServer server, Uri uri) {
+        server.requestObservable(uri, null)
                 .map(jsonObject -> {
                     if (jsonObject != null) {
                         jsonObject.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject().addProperty(TeambrellaModel.ATTR_STATUS_URI, uri.toString());

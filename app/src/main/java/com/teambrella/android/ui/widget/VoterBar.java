@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -201,6 +202,12 @@ public class VoterBar extends HorizontalScrollView {
         for (int i = 0; i < mContainer.getChildCount(); i++) {
             View child = mContainer.getChildAt(i);
             child.setSelected(child.getLeft() - shift < l && child.getRight() - shift > l);
+            View riskView = child.findViewById(R.id.risk);
+            View avgView = child.findViewById(R.id.average_risk_label);
+            if (riskView != null && avgView != null) {
+                riskView.setVisibility(child.isSelected()
+                        || avgView.getVisibility() == VISIBLE ? VISIBLE : INVISIBLE);
+            }
         }
         removeCallbacks(mIdleChecker);
         postDelayed(mIdleChecker, 200);
@@ -212,6 +219,7 @@ public class VoterBar extends HorizontalScrollView {
     }
 
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         Path clipPath = new Path();

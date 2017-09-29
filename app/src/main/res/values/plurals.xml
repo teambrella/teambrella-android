@@ -15,6 +15,6 @@
     <plurals name="days">
         <item quantity="zero">now</item>
         <item quantity="one">1 day</item>
-        <item quantity="other">%d days.</item>
+        <item quantity="other">%d days</item>
     </plurals>
 </resources>

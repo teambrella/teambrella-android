@@ -151,7 +151,10 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             }
 
             requestCreator.into(mIcon);
-            mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
+            String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
+            text = text.replaceAll("<p>", "");
+            text = text.replaceAll("</p>", "");
+            mMessage.setText(Html.fromHtml(text));
 
 
             switch (itemType) {

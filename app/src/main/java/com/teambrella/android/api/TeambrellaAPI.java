@@ -9,6 +9,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -161,4 +162,11 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("wallet/getOne")
     Observable<Response<JsonObject>> getWallet(@Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("demo/getPetTeams/{language}")
+    Observable<Response<JsonObject>> getDemoTeams(@Path("language") String language);
+
+
 }

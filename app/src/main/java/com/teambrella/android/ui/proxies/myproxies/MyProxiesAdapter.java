@@ -51,6 +51,12 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.my_proxies_empty_prompt);
     }
 
+    @Override
+    protected RecyclerView.ViewHolder createBottomViewHolder(ViewGroup parent) {
+        return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+        };
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -82,7 +88,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         public void onBind(JsonWrapper item) {
             super.onBind(item);
             mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
-            String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION);
+            String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION, "");
             mLocation.setText(location);
 
             mDecision.setProgress(Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_DECISION_FREQUENCY) * 100));

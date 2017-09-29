@@ -22,6 +22,7 @@ public class AmountCurrencyUtil {
 
     private static final String USD = "USD";
     private static final String PEN = "PEN";
+    private static final String ARS = "ARS";
 
 
     public static void setAmount(TextView textView, int amount, String currency) {
@@ -30,7 +31,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrencyRelativeSizeSpan(Integer.toString(amount).substring(start - 1)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan("1234567890"/*Integer.toString(amount).substring(start - 1)*/), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -41,7 +42,7 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrencyRelativeSizeSpan(String.format(Locale.US, "%.2f", amount).substring(start - 1)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan("1234567890"/*String.format(Locale.US, "%.2f", amount).substring(start - 1)*/), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(text);
     }
 
@@ -65,6 +66,8 @@ public class AmountCurrencyUtil {
             return "$";
         } else if (PEN.equalsIgnoreCase(currency)) {
             return "S/. ";
+        } else if (ARS.equalsIgnoreCase(currency)) {
+            return "$";
         } else {
             return currency;
         }

@@ -133,7 +133,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 String text = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT);
 
                 if (text != null) {
-                    mMessageText.setText(text);
+                    mMessageText.setText(text.replaceAll("<p>", "").replaceAll("</p>", ""));
                 }
 
 
@@ -177,6 +177,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 View view = getView();
                 if (view != null) {
                     view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.details_container).setBackgroundResource(R.drawable.block_last);
                 }
             }
             setContentShown(true);

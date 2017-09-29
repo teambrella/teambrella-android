@@ -118,6 +118,9 @@ public class TeambrellaServer {
                             return getObservableObject(uri, getRequestBody(uri, requestData))
                                     .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
                                     .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
+                        } else {
+                            Crashlytics.logException(throwable);
+                            return Observable.error(throwable);
                         }
                     }
                     Exception exception = new TeambrellaClientException(uri, throwable.getMessage(), throwable);
@@ -309,6 +312,7 @@ public class TeambrellaServer {
             case TeambrellaUris.MY_TEAMS:
             case TeambrellaUris.NEW_FILE:
             case TeambrellaUris.INBOX:
+            case TeambrellaUris.DEMO_TEAMS:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -380,6 +384,8 @@ public class TeambrellaServer {
                 return mAPI.getClaimVotes(requestBody);
             case TeambrellaUris.WALLET:
                 return mAPI.getWallet(requestBody);
+            case TeambrellaUris.DEMO_TEAMS:
+                return mAPI.getDemoTeams(uri.getQueryParameter(TeambrellaUris.KEY_LANGUAGE));
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

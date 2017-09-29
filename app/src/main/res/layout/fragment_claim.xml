@@ -77,7 +77,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/blueGrey"
                         android:textSize="10sp"
-                        app:layout_constraintBottom_toBottomOf="@id/message_title"
+                        app:layout_constraintBaseline_toBaselineOf="@id/message_title"
                         app:layout_constraintRight_toRightOf="parent" />
 
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -125,7 +125,7 @@
                     android:id="@+id/details_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/block_last" />
+                    android:background="@drawable/block_first" />
 
                 <View
                     android:layout_width="match_parent"

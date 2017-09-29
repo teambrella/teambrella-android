@@ -24,7 +24,7 @@
     <string name="new_teammates">Nuevos compañeros</string>
     <string name="net">Net</string>
     <string name="cover_me">Me cubre</string>
-    <string name="cover_them">Los cubro</string>
+    <string name="cover_them">Le cubro</string>
     <string name="voting_ends_title">Votación termina en</string>
 
     <string name="object">Objeto</string>
@@ -171,7 +171,7 @@
     <string name="my_proxies_empty_prompt"><![CDATA[<b>Todavía no tienes los Proxies.</b><br><br>Por favor, considera a alguien en quien confías para nombrar a tu primero Proxy.]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<b>No estas Proxy de cualquier compañero del equipo.</b><br><br>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.]]></string>
     <string name="private_conversation">Mensaje privado</string>
-    <string name="ends_in">Termina%s</string>
+    <string name="ends_in">Termina en %s</string>
     <string name="ended_ago">Termino %s</string>
     <string name="declined">Rechazado</string>
     <string name="all_votes">Todos los Votos</string>
@@ -196,4 +196,31 @@
     <string name="object_pet">Mascota</string>
     <string name="team_avg">EQUIPO: \n PROMEDIO</string>
     <string name="no_coverage_for_the_date">Has tenido 0% cobertura en el día del incidente</string>
+    <string name="we_are_invite_only_title">"Funcionamos solo con invitación"</string>
+    <string name="we_are_invite_only_description"><![CDATA[Hola, actualmente Teambrella funciona sólo con invitación. Quieres formar parte? <br><a href="http://teambrella.com/join/team">Solicitar una Invitación</a>]]></string>
+    <string name="almost_ready_title">Hola de nuevo!</string>
+    <string name="almost_ready_description">Estamos trabajando como burros para iniciar tu equipo. Muy pronto estará lista para funcionar.</string>
+    <string name="choose_your_team">Elegir tu equipo</string>
+    <string name="exit_demo">Salir de Demo</string>
+    <string name="would_cover_me">Me cubriría</string>
+    <string name="would_cover_them">Le cubriría</string>
+
+    <string name="his_dog">Su Perro</string>
+    <string name="her_dog">Su Perro</string>
+    <string name="his_pet">Su Mascota</string>
+    <string name="her_pet">Su Mascota</string>
+    <string name="his_cat">Su Gato</string>
+    <string name="her_cat">Su Gato</string>
+    <string name="his_bike">Su Bicicleta</string>
+    <string name="her_bike">Su bicicleta</string>
+    <string name="my_cat">Mi Gato</string>
+    <string name="my_dog">Mi Perro</string>
+    <string name="my_pet">Mi Mascota</string>
+    <string name="my_bike">Mi Bicicleta</string>
+    <string name="object_dog">Perro</string>
+
+    <string name="cover_him">Le cubro</string>
+    <string name="cover_her">Le cubro</string>
+    <string name="would_cover_him">Le cubriría</string>
+    <string name="would_cover_her">Le cubriría</string>
 </resources>
