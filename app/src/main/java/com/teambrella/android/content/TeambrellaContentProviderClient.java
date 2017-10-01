@@ -843,14 +843,17 @@ public class TeambrellaContentProviderClient {
         }
 
         cursor = mClient.query(TeambrellaRepository.Tx.CONTENT_URI, new String[]{TeambrellaRepository.Tx.ID, TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME,
-                TeambrellaRepository.Tx.RESOLUTION}, TeambrellaRepository.Tx.NEED_UPDATE_SERVER, null, null);
+                TeambrellaRepository.Tx.RESOLUTION, TeambrellaRepository.Tx.CRYPTO_TX}, TeambrellaRepository.Tx.NEED_UPDATE_SERVER, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             JsonArray txArray = new JsonArray();
             do {
                 JsonObject info = new JsonObject();
                 info.add(TeambrellaModel.ATTR_DATA_ID, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.ID))));
-                info.add(TeambrellaModel.ATTR_DATA_TX_Hash, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CRYPTO_TX))));
+                String cryptoTx = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CRYPTO_TX));
+                if (cryptoTx != null){
+                    info.add(TeambrellaModel.ATTR_DATA_TX_Hash, new JsonPrimitive(cryptoTx));
+                }
                 info.add(TeambrellaModel.ATTR_DATA_RESOLUTION, new JsonPrimitive(cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.Tx.RESOLUTION))));
                 info.add(TeambrellaModel.ATTR_DATA_RESOLUTION_TIME, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME))));
                 txArray.add(info);
