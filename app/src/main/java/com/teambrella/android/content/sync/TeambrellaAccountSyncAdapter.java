@@ -126,7 +126,7 @@ class TeambrellaAccountSyncAdapter {
 //                    provider.applyBatch(operations);
 //                }
 //
-//                setLastUpdatedTime(provider, timestamp);
+//                setLastUpdatedTimestamp(provider, timestamp);
 //
 //                checkAddresses(client, serverUpdates.multisigs);
 //

@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ public class EtherNode {
     private final List<EtherAPI> mEtherAPIs = new LinkedList<>();
     private final boolean mIsTestNet;
     private static final String[] TEST_AUTHORITIES = new String[]{"https://ropsten.etherscan.io"};
-    private static final String[] MAIN_AUTHORITIES = new String[]{"https://etherscan.io"};
+    private static final String[] MAIN_AUTHORITIES = new String[]{"http://api.etherscan.io"};
 
     public EtherNode(boolean testNet) {
         this.mIsTestNet = testNet;
@@ -51,11 +52,11 @@ public class EtherNode {
     }
 
 
-    public Scan<TxReceiptResult> checkTx(String creationTx) {
-        Scan<TxReceiptResult> receipt = null;
+    public Scan<ScanResultTxReceipt> checkTx(String creationTx) {
+        Scan<ScanResultTxReceipt> receipt = null;
         for (EtherAPI api : mEtherAPIs) {
             try {
-                    Response<Scan<TxReceiptResult>> response = api.checkTx(creationTx).execute();
+                    Response<Scan<ScanResultTxReceipt>> response = api.checkTx(creationTx).execute();
                     Thread.currentThread().sleep(1000);
                     if (response.isSuccessful()) {
                         receipt = response.body();
@@ -108,7 +109,7 @@ public class EtherNode {
 
                     return balance.longValue();
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | JsonSyntaxException e) {
                 Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
             }
         }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -20,14 +19,12 @@ import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.blockchain.AbiArguments;
+import com.teambrella.android.blockchain.BlockchainNode;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.blockchain.EtherNode;
-import com.teambrella.android.blockchain.Hex;
 import com.teambrella.android.blockchain.Scan;
 import com.teambrella.android.blockchain.ScanResultTxReceipt;
-import com.teambrella.android.blockchain.Sha3;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.Cosigner;
@@ -35,7 +32,6 @@ import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
-import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
 
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -59,12 +55,9 @@ import java.util.List;
 /**
  * Teambrella util service
  */
-public class TeambrellaUtilService extends GcmTaskService {
+public class BtcService extends GcmTaskService {
 
-    public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
-    public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
-
-    private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
+    private static final String LOG_TAG = BtcService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
 
 
@@ -100,8 +93,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean tryInit() {
         if (mKey != null) return true;
 
-        TeambrellaUser user = TeambrellaUser.get(this);
-        String privateKey = !user.isDemoUser() ? TeambrellaUser.get(this).getPrivateKey() : null;
+        String privateKey = TeambrellaUser.get(this).getPrivateKey();
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
             mServer = new TeambrellaServer(this, privateKey);
@@ -114,18 +106,20 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
 //            new AsyncTask<Void, Void, Void>() {
 //                @Override
 //                protected Void doInBackground(Void... voids) {
 //                    try {
-//                          processIntent(intent);
-//                    } catch (Exception e) {
-//                        Log.e(LOG_TAG, "" + e.getMessage(), e);
+//                        processIntent(intent);
+//
+//                    } catch (RemoteException | OperationApplicationException | TeambrellaException | CryptoException e) {
+//                        Log.e(LOG_TAG, e.toString());
 //                    }
 //                    return null;
 //                }
@@ -137,49 +131,18 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         return super.onStartCommand(intent, i, i1);
     }
-    private static final String METHOD_ID_TRANSFER = "91f34dbd";
-    private static final String TX_PREFIX = "5452";
-    private static final String NS_PREFIX = "4E53";
-    private byte[] getTransferDataHash(int teamId, int opNum, String[] addresses, long[] values){
 
-        String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
-        String a1 = String.format("%064x", teamId);
-        String a2 = String.format("%064x", opNum);
-        int n = addresses.length;
-        String[] a3 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a3[i] = addresses[i].startsWith("0x") ? addresses[i].substring(2) : addresses[i];
-        }
-        String[] a4 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a4[i] = String.format("%064x", values[i]);
-        }
-
-        byte[] data = Hex.toBytes(a0, a1, a2, a3, a4);
-        return Sha3.getKeccak256Hash(data);
-    }
     @Override
     public int onRunTask(TaskParams taskParams) {
-        String tag = taskParams.getTag();
-        if (tag != null) {
-            switch (tag) {
-                case SYNC_WALLET_TASK_TAG:
-                    Log.v(LOG_TAG, "Sync wallet task ran");
-                    try {
-                        if (tryInit()) {
-                            sync();
-                        }
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "sync attempt failed:");
-                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-                        Log.e(LOG_TAG, "sync error call stack was: ", e);
-                    }
-                    break;
-                case CHECK_SOCKET:
-                    startService(new Intent(this, TeambrellaNotificationService.class)
-                            .setAction(TeambrellaNotificationService.CONNECT_ACTION));
-                    break;
+        Log.v(LOG_TAG, "Periodic task ran");
+        try {
+            if (tryInit()) {
+                sync();
             }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "sync attempt failed:");
+            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+            Log.e(LOG_TAG, "sync error call stack was: ", e);
         }
         return GcmNetworkManager.RESULT_SUCCESS;
     }
@@ -437,51 +400,51 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
+// TODO: move to btc:
+//    /**
+//     * Cosign transaction
+//     *
+//     * @param tx transaction
+//     * @return list of operations to apply
+//     */
+//    private List<ContentProviderOperation> cosignTransaction(Tx tx, long userId) {
+//        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+//        Transaction transaction = SignHelper.getTransaction(tx);
+//        if (transaction != null) {
+//            Multisig address = tx.getFromMultisig();
+//            if (address != null) {
+//                Script redeemScript = SignHelper.getRedeemScript(address, tx.cosigners);
+//                for (int i = 0; i < tx.txInputs.size(); i++) {
+//                    byte[] signature = cosign(redeemScript, transaction, i);
+//                    operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), userId, signature));
+//                }
+//            }
+//        }
+//        return operations;
+//    }
     /**
      * Cosign transaction
      *
      * @param tx transaction
      * @return list of operations to apply
      */
-    private List<ContentProviderOperation> cosignTransaction(Tx tx, long userId) throws CryptoException {
-
+    private List<ContentProviderOperation> cosignTransaction(Tx tx, long userId) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        ////btc:Transaction transaction = SignHelper.getTransaction(tx);
-        ////if (transaction != null) {
-        switch (tx.kind){
-            case TeambrellaModel.TX_KIND_PAYOUT:
-            case TeambrellaModel.TX_KIND_WITHDRAW:
-                Multisig multisig = tx.getFromMultisig();
-                if (multisig != null) {
-                    ////btc: Script redeemScript = SignHelper.getRedeemScript(address, tx.cosigners);
-                    EthWallet wallet = getWallet();
-
-                    String from = multisig.address;
-                    for (int i = 0; i < tx.txInputs.size(); i++) {
-                        ////btc:byte[] signature = cosign(redeemScript, transaction, i);
-                        byte[] signature = wallet.cosign(tx, tx.txInputs.get(i));
-                        operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), userId, signature));
-                    }
+        Transaction transaction = SignHelper.getTransaction(tx);
+        if (transaction != null) {
+            Multisig address = tx.getFromMultisig();
+            if (address != null) {
+                Script redeemScript = SignHelper.getRedeemScript(address, tx.cosigners);
+                for (int i = 0; i < tx.txInputs.size(); i++) {
+                    byte[] signature = cosign(redeemScript, transaction, i);
+                    operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), userId, signature));
                 }
-                break;
-            default:
-                // TODO: support move & incoming TXs
-                break;
+            }
         }
-        ////}
         return operations;
     }
 
-    private EthWallet getWallet() throws CryptoException{
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        String keyStorePath = getApplicationContext().getFilesDir().getPath() + "/keystore/" + myPublicKey;
-        String keyStoreSecret = mKey.getPrivateKeyAsWiF(new MainNetParams());
-        byte[] privateKey = mKey.getPrivKeyBytes();
-
-        return new EthWallet(privateKey, keyStorePath, keyStoreSecret, BuildConfig.isTestNet);
-    }
-
-    private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException, CryptoException {
+    private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException {
         List<Tx> list = mTeambrellaClient.getCosinableTx();
         Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -496,33 +459,26 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
-    private boolean masterSign() throws RemoteException, OperationApplicationException, CryptoException {
-////btc:
-//        List<Tx> list = mTeambrellaClient.getApprovedAndCosignedTxs();
-//        Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
-//        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-//        if (list != null) {
-//            for (Tx tx : list) {
-//                operations.addAll(cosignTransaction(tx, user.id));
-//                operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
-//            }
-//        }
-//        mClient.applyBatch(operations);
-//        return !operations.isEmpty();
-        return false;
+    private boolean masterSign() throws RemoteException, OperationApplicationException {
+        List<Tx> list = mTeambrellaClient.getApprovedAndCosignedTxs();
+        Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        if (list != null) {
+            for (Tx tx : list) {
+                operations.addAll(cosignTransaction(tx, user.id));
+                operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
+            }
+        }
+        mClient.applyBatch(operations);
+        return !operations.isEmpty();
     }
 
-
-    //// btc:
-//    private byte[] cosign(Script redeemScript, Transaction transaction, int inputNum) {
-//        Sha256Hash hash = transaction.hashForSignature(inputNum, redeemScript, Transaction.SigHash.ALL, false);
-//        return mKey.sign(hash).encodeToDER();
-//    }
 
     private byte[] cosign(Script redeemScript, Transaction transaction, int inputNum) {
         Sha256Hash hash = transaction.hashForSignature(inputNum, redeemScript, Transaction.SigHash.ALL, false);
         return mKey.sign(hash).encodeToDER();
     }
+
 
     private void show(Uri uri) throws RemoteException {
         Cursor cursor = mClient.query(uri, null, null, null, null);
@@ -543,38 +499,16 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
-    private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException, CryptoException {
-        ////btc:
-//        BlockchainNode blockchain = new BlockchainNode(true);
-//        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-//        List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
-//        for (Tx tx : txs) {
-//            Transaction transaction = SignHelper.getTransactionToPublish(tx);
-//            if (transaction != null && blockchain.checkTransaction(transaction.getHashAsString()) || blockchain.pushTransaction(org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()))) {
-//                operations.add(TeambrellaContentProviderClient.setTxPublished(tx));
-//                mClient.applyBatch(operations);
-//            }
-//        }
-//
-//        return !operations.isEmpty();
+    private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException {
+        BlockchainNode blockchain = new BlockchainNode(true);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
         for (Tx tx : txs) {
-
-            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
-            EthWallet wallet = getWallet();
-            switch (tx.kind){
-                case TeambrellaModel.TX_KIND_PAYOUT:
-                case TeambrellaModel.TX_KIND_WITHDRAW:
-                    String cryptoTxHash = wallet.publish(tx);
-                    if (cryptoTxHash != null){
-                        operations.add(TeambrellaContentProviderClient.setTxPublished(tx, cryptoTxHash));
-                        mClient.applyBatch(operations);
-                    }
-                    break;
-                default:
-                    // TODO: support move & incoming TXs
-                    break;
+            Transaction transaction = SignHelper.getTransactionToPublish(tx);
+            String txHash = org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize());
+            if (transaction != null && blockchain.checkTransaction(transaction.getHashAsString()) || blockchain.pushTransaction(txHash)) {
+                operations.add(TeambrellaContentProviderClient.setTxPublished(tx, txHash));
+                mClient.applyBatch(operations);
             }
         }
 
@@ -627,7 +561,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private org.ethereum.geth.Transaction createNewWalletTx(long nonce, long gasLimit, long teamId, String[] addresses) throws RemoteException {
         String data = createNewWalletData(teamId, addresses);
-        long gasPrice = BuildConfig.isTestNet ? 150_000_000_000L : 1_000_000_000L;  // 150 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
+        long gasPrice = BuildConfig.isTestNet ? 50_000_000_000L : 1_000_000_000L;  // 50 Gwei for TestNet and 0.5 Gwei for MainNet (1 Gwei = 10^9 wei)
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
@@ -661,12 +595,12 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private String createNewWalletData(long teamId, String[] addresses) {
         int n = addresses.length;
-        String contractV002 = "6060604052604051610ecd380380610ecd8339810160405280805182019190602001805191506003905082805161003a929160200190610064565b50600190815560028054600160a060020a03191633600160a060020a0316179055600055506100f2565b8280548282559060005260206000209081019282156100bb579160200282015b828111156100bb5782518254600160a060020a031916600160a060020a039190911617825560209290920191600190910190610084565b506100c79291506100cb565b5090565b6100ef91905b808211156100c7578054600160a060020a03191681556001016100d1565b90565b610dcc806101016000396000f300606060405236156100965763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630b7b3eb7811461009857806322c5ec0f146100ca5780633bf2b4cd146100e05780638d475461146100f357806391f34dbd14610118578063a0175b961461016e578063d41097e3146101b7578063deff41c1146101d6578063df98ba00146101e9575b005b34156100a357600080fd5b6100ae6004356101fc565b604051600160a060020a03909116815260200160405180910390f35b34156100d557600080fd5b6100ae600435610224565b34156100eb57600080fd5b610096610232565b34156100fe57600080fd5b610106610312565b60405190815260200160405180910390f35b341561012357600080fd5b61009660048035906024803580820192908101359160443580820192908101359160649160c43580830192908201359160e43580830192908201359161010435918201910135610318565b341561017957600080fd5b61009660048035906024803580820192908101359160449160a43580830192908201359160c43580830192908201359160e435918201910135610628565b34156101c257600080fd5b610096600160a060020a036004351661081d565b34156101e157600080fd5b6100ae6108c0565b34156101f457600080fd5b6101066108cf565b600480548290811061020a57fe5b600091825260209091200154600160a060020a0316905081565b600380548290811061020a57fe5b60005b6004548110156102805733600160a060020a031660048281548110151561025857fe5b600091825260209091200154600160a060020a031614156102785761030f565b600101610235565b5060005b60035481101561030f5733600160a060020a03166003828154811015156102a757fe5b600091825260209091200154600160a060020a031614156103075760048054600181016102d48382610cac565b506000918252602090912001805473ffffffffffffffffffffffffffffffffffffffff191633600160a060020a03161790555b600101610284565b50565b60015481565b60025460009033600160a060020a0390811691161461033657600080fd5b6000548d9081101561034757600080fd5b30600160a060020a0316316103888c8c80806020026020016040519081016040528093929190818152602001838360200280828437506108d5945050505050565b111561039357600080fd5b6001548e6103cd8f8f808060200260200160405190810160405280939291908181526020018383602002808284375061090a945050505050565b6104038e8e8080602002602001604051908101604052809392919081815260200183836020028082843750610a05945050505050565b60405180807f545200000000000000000000000000000000000000000000000000000000000081525060020185815260200184815260200183805190602001908083835b602083106104665780518252601f199092019160209182019101610447565b6001836020036101000a038019825116818451161790925250505091909101905082805190602001908083835b602083106104b25780518252601f199092019160209182019101610493565b6001836020036101000a038019825116818451161790925250505091909101955060409450505050505190819003902091506105a1828a600360606040519081016040529190828260608082843782019150505050508a8a8080601f016020809104026020016040519081016040528181529291906020840183838082843782019150505050505089898080601f016020809104026020016040519081016040528181529291906020840183838082843782019150505050505088888080601f016020809104026020016040519081016040528181529291906020840183838082843750610af0945050505050565b15156105ac57600080fd5b60018e016000556106188d8d8060208082020160405190810160405280939291908181526020018383602002808284378201915050505050508c8c8080602002602001604051908101604052809392919081815260200183836020028082843750610b80945050505050565b5050505050505050505050505050565b60025460009033600160a060020a0390811691161461064657600080fd5b6000548b9081101561065757600080fd5b6001548c6106918d8d808060200260200160405190810160405280939291908181526020018383602002808284375061090a945050505050565b60405180807f4e5300000000000000000000000000000000000000000000000000000000000081525060020184815260200183815260200182805190602001908083835b602083106106f45780518252601f1990920191602091820191016106d5565b6001836020036101000a0380198251168184511617909252505050919091019450604093505050505190819003902091506107e2828a600360606040519081016040529190828260608082843782019150505050508a8a8080601f016020809104026020016040519081016040528181529291906020840183838082843782019150505050505089898080601f016020809104026020016040519081016040528181529291906020840183838082843782019150505050505088888080601f016020809104026020016040519081016040528181529291906020840183838082843750610af0945050505050565b15156107ed57600080fd5b60018c016000908155610801600482610cac565b5061080e60038c8c610cd0565b50505050505050505050505050565b600254600090819033600160a060020a0390811691161461083d57600080fd5b5050600354600454600682111561085b576002811161085b57600080fd5b6003821115610871576001811161087157600080fd5b6000811161087e57600080fd5b82600160a060020a03166108fc30600160a060020a0316319081150290604051600060405180830381858888f1935050505015156108bb57600080fd5b505050565b600254600160a060020a031681565b60005481565b6000805b8251811015610904578281815181106108ee57fe5b90602001906020020151909101906001016108d9565b50919050565b610912610d40565b60008083516014026040518059106109275750595b90808252806020026020018201604052509250600091505b83518210156109fe575060005b60148110156109f3578060130360080260020a84838151811061096b57fe5b90602001906020020151600160a060020a031681151561098757fe5b047f01000000000000000000000000000000000000000000000000000000000000000283828460140201815181106109bb57fe5b9060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a90535060010161094c565b60019091019061093f565b5050919050565b610a0d610d40565b6000808351602002604051805910610a225750595b90808252806020026020018201604052509250600091505b83518210156109fe575060005b6020811015610ae55780601f0360080260020a848381518110610a6657fe5b90602001906020020151811515610a7957fe5b047f0100000000000000000000000000000000000000000000000000000000000000028382846020020181518110610aad57fe5b9060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a905350600101610a47565b600190910190610a3a565b600380546000918290610b2d90899088908a855b602002015181548110610b1357fe5b600091825260209091200154600160a060020a0316610bf1565b90506003821115610b5257808015610b4f5750610b4f888660038a6001610b04565b90505b6006821115610b7557808015610b725750610b72888560038a6002610b04565b90505b979650505050505050565b60005b81518110156108bb57828181518110610b9857fe5b90602001906020020151600160a060020a03166108fc838381518110610bba57fe5b906020019060200201519081150290604051600060405180830381858888f193505050501515610be957600080fd5b600101610b83565b6000806000610c008686610c32565b90925090506001821515148015610c28575083600160a060020a031681600160a060020a0316145b9695505050505050565b60008060008060006020860151925060408601519150606086015160001a9050610c5e87828585610c6c565b945094505050509250929050565b60008060008060405188815287602082015286604082015285606082015260208160808360006001610bb8f1925080519299929850919650505050505050565b8154818355818115116108bb576000838152602090206108bb918101908301610d52565b828054828255906000526020600020908101928215610d30579160200282015b82811115610d3057815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03843516178255602090920191600190910190610cf0565b50610d3c929150610d6f565b5090565b60206040519081016040526000815290565b610d6c91905b80821115610d3c5760008155600101610d58565b90565b610d6c91905b80821115610d3c57805473ffffffffffffffffffffffffffffffffffffffff19168155600101610d755600a165627a7a7230582022e6d8a992945b19566381b295f214afecfe2a94d99a7c72506490dba86306200029";
+        String contractV001 = "60606040526040516114cc3803806114cc833981016040528080518201919060200180519060200190919050505b816003908051906020019061004392919061009c565b508060018190555033600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060016000819055505b5050610169565b828054828255906000526020600020908101928215610115579160200282015b828111156101145782518260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550916020019190600101906100bc565b5b5090506101229190610126565b5090565b61016691905b8082111561016257600081816101000a81549073ffffffffffffffffffffffffffffffffffffffff02191690555060010161012c565b5090565b90565b611354806101786000396000f30060606040523615610097576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630b7b3eb71461009b57806322c5ec0f146100fe5780633bf2b4cd146101615780638d4754611461017657806391f34dbd1461019f578063a0175b961461022d578063d41097e3146102a7578063deff41c1146102e0578063df98ba0014610335575b5b5b005b34156100a657600080fd5b6100bc600480803590602001909190505061035e565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561010957600080fd5b61011f600480803590602001909190505061039e565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561016c57600080fd5b6101746103de565b005b341561018157600080fd5b61018961056b565b6040518082815260200191505060405180910390f35b34156101aa57600080fd5b61022b60048080359060200190919080359060200190820180359060200191909192908035906020019082018035906020019190919290806060019091908035906020019082018035906020019190919290803590602001908201803590602001919091929080359060200190820180359060200191909192905050610571565b005b341561023857600080fd5b6102a560048080359060200190919080359060200190820180359060200191909192908060600190919080359060200190820180359060200191909192908035906020019082018035906020019190919290803590602001908201803590602001919091929050506108fa565b005b34156102b257600080fd5b6102de600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610b51565b005b34156102eb57600080fd5b6102f3610c5f565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561034057600080fd5b610348610c85565b6040518082815260200191505060405180910390f35b60048181548110151561036d57fe5b906000526020600020900160005b915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6003818154811015156103ad57fe5b906000526020600020900160005b915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008090505b600480549050811015610473573373ffffffffffffffffffffffffffffffffffffffff1660048281548110151561041757fe5b906000526020600020900160005b9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16141561046557610568565b5b80806001019150506103e4565b600090505b600380549050811015610567573373ffffffffffffffffffffffffffffffffffffffff166003828154811015156104ab57fe5b906000526020600020900160005b9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415610559576004805480600101828161050891906111b4565b916000526020600020900160005b33909190916101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505b5b8080600101915050610478565b5b50565b60015481565b6000600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156105cf57600080fd5b8c60005481101515156105e157600080fd5b3073ffffffffffffffffffffffffffffffffffffffff16316106318c8c80806020026020016040519081016040528093929190818152602001838360200280828437820191505050505050610c8b565b1115151561063e57600080fd5b6001548e61067a8f8f80806020026020016040519081016040528093929190818152602001838360200280828437820191505050505050610cd4565b6106b28e8e80806020026020016040519081016040528093929190818152602001838360200280828437820191505050505050610dec565b60405180807f545200000000000000000000000000000000000000000000000000000000000081525060020185815260200184815260200183805190602001908083835b60208310151561071c57805182525b6020820191506020810190506020830392506106f6565b6001836020036101000a03801982511681845116808217855250505050505090500182805190602001908083835b60208310151561077057805182525b60208201915060208101905060208303925061074a565b6001836020036101000a0380198251168184511680821785525050505050509050019450505050506040518091039020915061086a828a600380602002604051908101604052809291908260036020028082843782019150505050508a8a8080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505089898080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505088888080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050610eee565b151561087557600080fd5b60018e016000819055506108e78d8d808060200260200160405190810160405280939291908181526020018383602002808284378201915050505050508c8c80806020026020016040519081016040528093929190818152602001838360200280828437820191505050505050611041565b5b5b505b50505050505050505050505050565b6000600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561095857600080fd5b8a600054811015151561096a57600080fd5b6001548c6109a68d8d80806020026020016040519081016040528093929190818152602001838360200280828437820191505050505050610cd4565b60405180807f4e5300000000000000000000000000000000000000000000000000000000000081525060020184815260200183815260200182805190602001908083835b602083101515610a1057805182525b6020820191506020810190506020830392506109ea565b6001836020036101000a038019825116818451168082178552505050505050905001935050505060405180910390209150610b09828a600380602002604051908101604052809291908260036020028082843782019150505050508a8a8080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505089898080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505088888080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050610eee565b1515610b1457600080fd5b60018c016000819055506000600481610b2d91906111e0565b508a8a60039190610b3f92919061120c565b505b5b505b5050505050505050505050565b600080600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610bb057600080fd5b600380549050915060048054905090506006821115610bd957600281111515610bd857600080fd5b5b6003821115610bf257600181111515610bf157600080fd5b5b600081111515610c0157600080fd5b8273ffffffffffffffffffffffffffffffffffffffff166108fc3073ffffffffffffffffffffffffffffffffffffffff16319081150290604051600060405180830381858888f193505050501515610c5857600080fd5b5b5b505050565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60005481565b60008060009150600090505b8251811015610cca578281815181101515610cae57fe5b90602001906020020151820191505b8080600101915050610c97565b8191505b50919050565b610cdc6112ac565b6000808351601402604051805910610cf15750595b908082528060200260200182016040525b509250600091505b8351821015610de457600090505b6014811015610dd6578060130360080260020a8483815181101515610d3957fe5b9060200190602002015173ffffffffffffffffffffffffffffffffffffffff16811515610d6257fe5b047f01000000000000000000000000000000000000000000000000000000000000000283826014850201815181101515610d9857fe5b9060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053505b8080600101915050610d18565b5b8180600101925050610d0a565b5b5050919050565b610df46112ac565b6000808351602002604051805910610e095750595b908082528060200260200182016040525b509250600091505b8351821015610ee657600090505b6020811015610ed85780601f0360080260020a8483815181101515610e5157fe5b90602001906020020151811515610e6457fe5b047f01000000000000000000000000000000000000000000000000000000000000000283826020850201815181101515610e9a57fe5b9060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053505b8080600101915050610e30565b5b8180600101925050610e22565b5b5050919050565b60008060006003805490509150610f54888760038a6000600381101515610f1157fe5b6020020151815481101515610f2257fe5b906000526020600020900160005b9054906101000a900473ffffffffffffffffffffffffffffffffffffffff166110d2565b90506003821115610fc457808015610fc15750610fc0888660038a6001600381101515610f7d57fe5b6020020151815481101515610f8e57fe5b906000526020600020900160005b9054906101000a900473ffffffffffffffffffffffffffffffffffffffff166110d2565b5b90505b60068211156110325780801561102f575061102e888560038a6002600381101515610feb57fe5b6020020151815481101515610ffc57fe5b906000526020600020900160005b9054906101000a900473ffffffffffffffffffffffffffffffffffffffff166110d2565b5b90505b8092505b505095945050505050565b60008090505b81518110156110cc57828181518110151561105e57fe5b9060200190602002015173ffffffffffffffffffffffffffffffffffffffff166108fc838381518110151561108f57fe5b906020019060200201519081150290604051600060405180830381858888f1935050505015156110be57600080fd5b5b8080600101915050611047565b5b505050565b60008060006110e18686611134565b80925081935050506001151582151514801561112857508373ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16145b92505b50509392505050565b60008060008060006020860151925060408601519150606086015160001a90506111608782858561116f565b945094505b5050509250929050565b60008060008060405188815287602082015286604082015285606082015260208160808360006001610bb8f1925080519150508181935093505b505094509492505050565b8154818355818115116111db578183600052602060002091820191016111da91906112c0565b5b505050565b8154818355818115116112075781836000526020600020918201910161120691906112c0565b5b505050565b82805482825590600052602060002090810192821561129b579160200282015b8281111561129a57823573ffffffffffffffffffffffffffffffffffffffff168260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055509160200191906001019061122c565b5b5090506112a891906112e5565b5090565b602060405190810160405280600081525090565b6112e291905b808211156112de5760008160009055506001016112c6565b5090565b90565b61132591905b8082111561132157600081816101000a81549073ffffffffffffffffffffffffffffffffffffffff0219169055506001016112eb565b5090565b905600a165627a7a7230582013ea6a742eda913e7d9d417017fa9957501fd861a196e9d2f2e0bb4a51ec34b10029";
         String a0 = "0000000000000000000000000000000000000000000000000000000000000040"; // Arraay (offset where the array data starts.
         String a1 = String.format("%064x", teamId);
         String a2 = String.format("%064x", n);
 
-        StringBuilder hexString = new StringBuilder("0x").append(contractV002).append(a0).append(a1).append(a2);
+        StringBuilder hexString = new StringBuilder("0x").append(contractV001).append(a0).append(a1).append(a2);
         for (int i = 0; i < n; i++) {
             hexString.append("000000000000000000000000").append(addresses[i].substring(2)); // "0xABC..." to "000000000000000000000000000ABC..."
         }
