@@ -19,7 +19,7 @@ public interface EtherAPI {
     Call<Scan<String>> checkNonce(@Query("address") String address);
 
     @GET("api?module=proxy&action=eth_getTransactionReceipt")
-    Call<Scan<TxReceiptResult>> checkTx(@Query("txhash") String txHash);
+    Call<Scan<ScanResultTxReceipt>> checkTx(@Query("txhash") String txHash);
 
 
     @GET("api?module=account&action=balance")

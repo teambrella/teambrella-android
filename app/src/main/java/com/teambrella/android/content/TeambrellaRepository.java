@@ -128,6 +128,7 @@ public class TeambrellaRepository {
         public static final String RESOLUTION_TIME = "ResolutionTime";
         public static final String PROCESSED_TIME = "ProcessedTime";
         public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
+        public static final String CRYPTO_TX = "CryptoTx";
         public static final String RESOLUTION = "Resolution";
         public static final String CLIENT_RESOLUTION_TIME = "ClientResolutionTime";
     }

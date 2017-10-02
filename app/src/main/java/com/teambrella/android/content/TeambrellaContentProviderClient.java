@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.model.Cosigner;
-import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.PayTo;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.TXSignature;
@@ -341,7 +340,7 @@ public class TeambrellaContentProviderClient {
 //            if (!isWalletMove && outputs.isEmpty()) {
 //                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
 //                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
-//                        .build());
+//                        .encodeToHexString());
 //                continue;
 //            }
 ////
@@ -354,7 +353,7 @@ public class TeambrellaContentProviderClient {
 //            if (!isWalletMove && Math.abs(totalAmount - tx.cryptoAmount) > 0.000001f) {
 //                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
 //                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
-//                        .build());
+//                        .encodeToHexString());
 //                continue;
 //            }
 
@@ -496,7 +495,7 @@ public class TeambrellaContentProviderClient {
                     }
 
 
-                    tx.cosigners = getCosigners(tx.getFromAddress());
+                    tx.cosigners = getCosigners(tx.getFromMultisig());
 
                     Collections.sort(tx.cosigners);
 
@@ -547,9 +546,10 @@ public class TeambrellaContentProviderClient {
                 .build();
     }
 
-    public static ContentProviderOperation setTxPublished(Tx tx) {
+    public static ContentProviderOperation setTxPublished(Tx tx, String txHash) {
         return ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
                 .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_PUBLISHED)
+                .withValue(TeambrellaRepository.Tx.CRYPTO_TX, txHash)
                 .withValue(TeambrellaRepository.Tx.NEED_UPDATE_SERVER, true)
                 .withValue(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME, mSDF.format(new Date()))
                 .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
@@ -658,7 +658,7 @@ public class TeambrellaContentProviderClient {
                                 , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
                     }
 
-                    tx.cosigners = getCosigners(tx.getFromAddress());
+                    tx.cosigners = getCosigners(tx.getFromMultisig());
                     for (TxInput txInput : tx.txInputs) {
                         List<TXSignature> signatures = queryList(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=?",
                                 new String[]{txInput.id.toString()}, TXSignature.class);
@@ -770,11 +770,11 @@ public class TeambrellaContentProviderClient {
     }
 
 
-    public void updateConnectionTime(long time) throws RemoteException {
+    public void updateConnectionTime(Date time) throws RemoteException {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, time);
+            cv.put(TeambrellaRepository.Connection.LAST_CONNECTED, mSDF.format(time));
             if (cursor.moveToFirst()) {
                 mClient.update(TeambrellaRepository.Connection.CONTENT_URI, cv, TeambrellaRepository.Connection.ID + "=?",
                         new String[]{cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.ID))});
@@ -785,11 +785,11 @@ public class TeambrellaContentProviderClient {
         }
     }
 
-    public void setLastUpdatedTime(long time) throws RemoteException {
+    public void setLastUpdatedTimestamp(long timestamp) throws RemoteException {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, null, null, null, null);
         if (cursor != null) {
             ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Connection.LAST_UPDATED, Long.toString(time));
+            cv.put(TeambrellaRepository.Connection.LAST_UPDATED, timestamp);
             if (cursor.moveToFirst()) {
                 mClient.update(TeambrellaRepository.Connection.CONTENT_URI, cv, TeambrellaRepository.Connection.ID + "=?",
                         new String[]{cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.ID))});
@@ -815,12 +815,8 @@ public class TeambrellaContentProviderClient {
         JsonObject body = new JsonObject();
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            String value = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
-            long lastUpdated = 0;
-            if (value != null) {
-                lastUpdated = Long.parseLong(value);
-            }
-            body.add(TeambrellaModel.ATTR_DATA_LAST_UPDATED, new JsonPrimitive(lastUpdated));
+            long since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
+            body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
         }
         if (cursor != null) {
             cursor.close();
@@ -847,13 +843,17 @@ public class TeambrellaContentProviderClient {
         }
 
         cursor = mClient.query(TeambrellaRepository.Tx.CONTENT_URI, new String[]{TeambrellaRepository.Tx.ID, TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME,
-                TeambrellaRepository.Tx.RESOLUTION}, TeambrellaRepository.Tx.NEED_UPDATE_SERVER, null, null);
+                TeambrellaRepository.Tx.RESOLUTION, TeambrellaRepository.Tx.CRYPTO_TX}, TeambrellaRepository.Tx.NEED_UPDATE_SERVER, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             JsonArray txArray = new JsonArray();
             do {
                 JsonObject info = new JsonObject();
                 info.add(TeambrellaModel.ATTR_DATA_ID, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.ID))));
+                String cryptoTx = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CRYPTO_TX));
+                if (cryptoTx != null){
+                    info.add(TeambrellaModel.ATTR_DATA_TX_Hash, new JsonPrimitive(cryptoTx));
+                }
                 info.add(TeambrellaModel.ATTR_DATA_RESOLUTION, new JsonPrimitive(cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.Tx.RESOLUTION))));
                 info.add(TeambrellaModel.ATTR_DATA_RESOLUTION_TIME, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CLIENT_RESOLUTION_TIME))));
                 txArray.add(info);
