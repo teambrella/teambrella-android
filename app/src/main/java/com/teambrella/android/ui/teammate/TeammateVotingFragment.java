@@ -17,6 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.teammates.TeammatesByRiskActivity;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.widget.VoterBar;
@@ -286,9 +287,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
                 mOthersView.setVisibility(teammates.size() > 0 ? View.VISIBLE : View.GONE);
-                mOthersView.setOnClickListener(v -> {
-                    
-                });
+                mOthersView.setOnClickListener(v -> TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId()));
 
                 break;
             }
