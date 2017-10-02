@@ -204,7 +204,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
                         super.onDismissed(transientBottomBar, event);
-                        setState(State.INIT);
+                        if (mUser.getPrivateKey() != null
+                                && !mUser.isDemoUser()) {
+                            finish();
+                        } else {
+                            setState(State.INIT);
+                        }
                     }
                 })
                 .show();
