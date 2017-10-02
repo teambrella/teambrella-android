@@ -175,7 +175,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        if (mSubmitClaim && position == 0) {
+        if (holder instanceof SubmitClaimViewHolder) {
             ((SubmitClaimViewHolder) holder).onBind();
         } else if (holder instanceof ClaimViewHolder) {
             position -= getHeadersCount();
@@ -296,6 +296,12 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             }
 
         }
+    }
+
+
+    @Override
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_claims);
     }
 
     private class SubmitClaimViewHolder extends RecyclerView.ViewHolder {

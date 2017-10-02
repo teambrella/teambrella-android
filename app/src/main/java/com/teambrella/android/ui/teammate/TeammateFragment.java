@@ -280,7 +280,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         Rect scrollBounds = new Rect();
         mScrollView.getHitRect(scrollBounds);
         if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.GONE
-                && fromUser) {
+                && fromUser && !mDataHost.isItMe()) {
             ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override

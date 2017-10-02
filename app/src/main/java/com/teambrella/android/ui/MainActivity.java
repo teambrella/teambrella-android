@@ -40,6 +40,7 @@ import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
+import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 
 import io.reactivex.disposables.Disposable;
@@ -283,6 +284,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
         }
+
+        StatisticHelper.onApplicationVote(getTeamId(), vote);
     }
 
     @Override

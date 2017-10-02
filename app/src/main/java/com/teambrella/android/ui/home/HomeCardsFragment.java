@@ -206,7 +206,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             requestCreator.into(icon);
 
-            message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT)));
+            message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
 
             int unreadCount = mCard.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
 
@@ -254,6 +254,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                         dataHost.launchActivity(ChatActivity.getFeedChat(context
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
                                 , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                , dataHost.getTeamId()
                                 , mTeamAccessLevel));
                         break;
                     default:

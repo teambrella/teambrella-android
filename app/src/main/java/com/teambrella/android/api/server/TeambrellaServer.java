@@ -436,6 +436,7 @@ public class TeambrellaServer {
                     .addHeader("t", Long.toString(timestamp))
                     .addHeader("key", publicKey)
                     .addHeader("sig", signature)
+                    .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                     .build();
             return chain.proceed(newRequest);
         }

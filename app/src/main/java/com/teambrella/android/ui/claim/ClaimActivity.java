@@ -26,6 +26,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.util.StatisticHelper;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -177,6 +178,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
         }
+        StatisticHelper.onClaimVote(getTeamId(), vote);
     }
 
 
