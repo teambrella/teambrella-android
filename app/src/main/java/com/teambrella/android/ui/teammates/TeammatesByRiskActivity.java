@@ -1,5 +1,10 @@
 package com.teambrella.android.ui.teammates;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
@@ -10,6 +15,11 @@ import com.teambrella.android.ui.base.ADataHostActivity;
 public class TeammatesByRiskActivity extends ADataHostActivity {
 
     private static final String TEAMMATES_DATA_TAG = "teammate_data_tag";
+    private static final String TEAMMATES_UI_TAG = "teammates_ui_tag";
+
+    public static void start(Context context) {
+        context.startActivity(new Intent(context, TeammatesByRiskActivity.class));
+    }
 
     @Override
     protected String[] getDataTags() {
@@ -29,5 +39,11 @@ public class TeammatesByRiskActivity extends ADataHostActivity {
     @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         return null;
+    }
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 }
