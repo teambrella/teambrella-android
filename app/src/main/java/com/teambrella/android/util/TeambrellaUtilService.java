@@ -2,16 +2,17 @@ package com.teambrella.android.util;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,7 +21,6 @@ import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.blockchain.AbiArguments;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.blockchain.EtherNode;
@@ -54,6 +54,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 
 
 /**
@@ -89,6 +91,33 @@ public class TeambrellaUtilService extends GcmTaskService {
     private ECKey mKey;
 
 
+    public static void scheduleWalletSync(Context context) {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(TeambrellaUtilService.SYNC_WALLET_TASK_TAG)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setPersisted(true)
+                .setPeriod(30 * 60)     // 30 minutes period
+                .setFlex(10 * 60)       // +/- 10 minutes
+                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void scheduleCheckingSocket(Context context) {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(TeambrellaUtilService.CHECK_SOCKET)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setPersisted(true)
+                .setPeriod(60)     // 30 minutes period
+                .setFlex(30)       // +/- 10 minutes
+                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+
     @Override
     public void onCreate() {
         Log.v(LOG_TAG, "Periodic task created");
@@ -114,6 +143,14 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
+
+    @Override
+    public void onInitializeTasks() {
+        super.onInitializeTasks();
+        scheduleWalletSync(this);
+        scheduleCheckingSocket(this);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
         //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
@@ -137,10 +174,12 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         return super.onStartCommand(intent, i, i1);
     }
+
     private static final String METHOD_ID_TRANSFER = "91f34dbd";
     private static final String TX_PREFIX = "5452";
     private static final String NS_PREFIX = "4E53";
-    private byte[] getTransferDataHash(int teamId, int opNum, String[] addresses, long[] values){
+
+    private byte[] getTransferDataHash(int teamId, int opNum, String[] addresses, long[] values) {
 
         String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
         String a1 = String.format("%064x", teamId);
@@ -158,6 +197,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         byte[] data = Hex.toBytes(a0, a1, a2, a3, a4);
         return Sha3.getKeccak256Hash(data);
     }
+
     @Override
     public int onRunTask(TaskParams taskParams) {
         String tag = taskParams.getTag();
@@ -448,7 +488,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         ////btc:Transaction transaction = SignHelper.getTransaction(tx);
         ////if (transaction != null) {
-        switch (tx.kind){
+        switch (tx.kind) {
             case TeambrellaModel.TX_KIND_PAYOUT:
             case TeambrellaModel.TX_KIND_WITHDRAW:
                 Multisig multisig = tx.getFromMultisig();
@@ -472,7 +512,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return operations;
     }
 
-    private EthWallet getWallet() throws CryptoException{
+    private EthWallet getWallet() throws CryptoException {
         String myPublicKey = mKey.getPublicKeyAsHex();
         String keyStorePath = getApplicationContext().getFilesDir().getPath() + "/keystore/" + myPublicKey;
         String keyStoreSecret = mKey.getPrivateKeyAsWiF(new MainNetParams());
@@ -563,11 +603,11 @@ public class TeambrellaUtilService extends GcmTaskService {
 
             EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
             EthWallet wallet = getWallet();
-            switch (tx.kind){
+            switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
                 case TeambrellaModel.TX_KIND_WITHDRAW:
                     String cryptoTxHash = wallet.publish(tx);
-                    if (cryptoTxHash != null){
+                    if (cryptoTxHash != null) {
                         operations.add(TeambrellaContentProviderClient.setTxPublished(tx, cryptoTxHash));
                         mClient.applyBatch(operations);
                     }
