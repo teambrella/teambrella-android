@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
@@ -52,7 +51,6 @@ public class TeambrellaRequestFragment extends Fragment {
             mServer = new TeambrellaServer(getContext(), user.getPrivateKey());
         }
         mConnectable.connect();
-        Log.e(LOG_TAG, "On create");
     }
 
 

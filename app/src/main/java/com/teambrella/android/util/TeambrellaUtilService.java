@@ -113,7 +113,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public void onCreate() {
-        Log.v(LOG_TAG, "Periodic task created");
+        //Log.v(LOG_TAG, "Periodic task created");
         super.onCreate();
 
         tryInit();
