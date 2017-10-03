@@ -83,7 +83,7 @@ class EthWallet {
         sig[0] = sig[1] = sig[2] = new byte[0];
         Map<Long,TXSignature> txSignatures = payFrom.signatures;
         int index = 0, j = 0;
-        for (Cosigner cos : myMultisig.cosigners){
+        for (Cosigner cos : tx.cosigners){
             if (txSignatures.containsKey(cos.teammateId)){
                 TXSignature s = txSignatures.get(cos.teammateId);
                 pos[j] = index;

@@ -14,8 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -45,8 +43,6 @@ import com.teambrella.android.util.TeambrellaUtilService;
 
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-
-import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 
 
 /**
@@ -127,8 +123,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             startActivity(new Intent(this, WelcomeActivity.class));
         }
 
-        scheduleWalletSync();
-        scheduleCheckingSocket();
+        TeambrellaUtilService.scheduleWalletSync(this);
+        TeambrellaUtilService.scheduleCheckingSocket(this);
+
     }
 
 
@@ -460,33 +457,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     public void launchActivity(Intent intent) {
         startActivityForResult(intent, DEFAULT_REQUEST_CODE);
     }
-
-    private void scheduleWalletSync() {
-        PeriodicTask task = new PeriodicTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(TeambrellaUtilService.SYNC_WALLET_TASK_TAG)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setPersisted(true)
-                .setPeriod(30 * 60)     // 30 minutes period
-                .setFlex(10 * 60)       // +/- 10 minutes
-                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
-                .build();
-        GcmNetworkManager.getInstance(this).schedule(task);
-    }
-
-    private void scheduleCheckingSocket() {
-        PeriodicTask task = new PeriodicTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(TeambrellaUtilService.CHECK_SOCKET)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setPersisted(true)
-                .setPeriod(60)     // 30 minutes period
-                .setFlex(30)       // +/- 10 minutes
-                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
-                .build();
-        GcmNetworkManager.getInstance(this).schedule(task);
-    }
-
 
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
 
