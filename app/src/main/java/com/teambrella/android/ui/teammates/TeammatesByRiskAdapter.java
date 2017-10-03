@@ -1,25 +1,93 @@
 package com.teambrella.android.ui.teammates;
 
+import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.gson.JsonArray;
+import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.teammate.TeammateActivity;
+
+import io.reactivex.Notification;
+import io.reactivex.Observable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teammates Adapter.
  */
-public class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
+class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
+
+    private final int mTeamId;
 
     /**
      * Constructor
      *
      * @param pager pager
      */
-    public TeammatesByRiskAdapter(IDataPager<JsonArray> pager) {
+    TeammatesByRiskAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
+        mTeamId = teamId;
     }
 
 
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+        if (viewHolder == null) {
+            viewHolder = new TeammateViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_teammate_risk, parent, false));
+        }
+        return viewHolder;
+    }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+        if (holder instanceof TeammateViewHolder) {
+            ((TeammateViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+        }
+    }
 
+    class TeammateViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView mIconView;
+        TextView mTitleView;
+        TextView mRiskView;
+
+        TeammateViewHolder(View itemView) {
+            super(itemView);
+            mIconView = itemView.findViewById(R.id.icon);
+            mTitleView = itemView.findViewById(R.id.title);
+            mRiskView = itemView.findViewById(R.id.risk);
+        }
+
+        void onBind(JsonWrapper item) {
+            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
+                    .subscribe(requestCreator -> requestCreator.resize(200, 0).transform(new CropCircleTransformation()).into(mIconView), throwable -> {
+                        // 8)
+                    });
+            String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .blockingFirst().getValue();
+            mTitleView.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
+            itemView.setOnClickListener(v -> {
+                Intent intent = TeammateActivity.getIntent(itemView.getContext(), mTeamId,
+                        item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri);
+                if (!startActivity(intent)) {
+                    itemView.getContext().startActivity(intent);
+                }
+            });
+
+            mRiskView.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
+        }
+    }
 
 }

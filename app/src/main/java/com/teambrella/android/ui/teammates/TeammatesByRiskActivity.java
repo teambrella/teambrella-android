@@ -9,17 +9,17 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 
 /**
  * All Teammates sorted by Risk
  */
-public class TeammatesByRiskActivity extends ADataHostActivity {
+public class TeammatesByRiskActivity extends ADataHostActivity implements ITeammateByRiskActivity {
 
     private static final String EXTRA_TEAM_ID = "teamId";
     public static final String TEAMMATES_DATA_TAG = "teammate_data_tag";
@@ -55,8 +55,8 @@ public class TeammatesByRiskActivity extends ADataHostActivity {
             case TEAMMATES_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(
                         TeambrellaUris.getTeamUri(mTeamId),
-                        null
-                        , TeammatesDataPagerFragment.class);
+                        TeambrellaModel.ATTR_DATA_TEAMMATES
+                        , TeambrellaDataPagerFragment.class);
         }
         return null;
     }
@@ -90,5 +90,11 @@ public class TeammatesByRiskActivity extends ADataHostActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    @Override
+    public int getTeamId() {
+        return mTeamId;
     }
 }
