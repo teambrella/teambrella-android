@@ -2,6 +2,8 @@ package com.teambrella.android.blockchain;
 
 import com.google.gson.JsonObject;
 
+import java.math.BigInteger;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -23,5 +25,5 @@ public interface EtherAPI {
 
 
     @GET("api?module=account&action=balance")
-    Call<Scan<Long>> checkBalance(@Query("address") String address);
+    Call<Scan<BigInteger>> checkBalance(@Query("address") String address);
 }

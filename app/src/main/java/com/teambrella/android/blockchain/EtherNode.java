@@ -10,6 +10,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,27 +97,27 @@ public class EtherNode {
         return 0;
     }
 
-    public long checkBalance(String addressHex) {
-        Scan<Long> responceBody = null;
+    public BigDecimal checkBalance(String addressHex) {
+        Scan<BigInteger> responceBody = null;
         for (EtherAPI api : mEtherAPIs) {
             try {
-                Response<Scan<Long>> response = api.checkBalance(addressHex).execute();
+                Response<Scan<BigInteger>> response = api.checkBalance(addressHex).execute();
                 Thread.currentThread().sleep(1000);
                 if (response.isSuccessful()) {
                     responceBody = response.body();
 
-                    Long balance = responceBody.result;
+                    BigInteger balance = responceBody.result;
                     if (null == balance)
-                        return -1;
+                        return new BigDecimal(-1);
 
-                    return balance.longValue();
+                    return new BigDecimal(balance, MathContext.UNLIMITED).divide(AbiArguments.WEIS_IN_ETH);
                 }
             } catch (IOException | InterruptedException | JsonSyntaxException e) {
                 Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
             }
         }
 
-        return 0;
+        return new BigDecimal(-1, MathContext.UNLIMITED);
     }
 
     public String pushTx(String hex) {

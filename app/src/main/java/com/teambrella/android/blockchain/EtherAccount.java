@@ -13,6 +13,8 @@ import org.ethereum.geth.Geth;
 import org.ethereum.geth.KeyStore;
 import org.ethereum.geth.Transaction;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 
@@ -77,15 +79,37 @@ public class EtherAccount {
         return "0x" + Hex.fromBytes(signature);
     }
 
-    public Transaction newDepositTx(long nonce, long gasLimit, String toAddress, boolean isTestNet, long value) throws CryptoException {
-        long gasPrice = isTestNet ? 150_000_000_000L : 1_000_000_000L;  // 50 Gwei for TestNet and 1 Gwei for MainNet (1 Gwei = 10^9 wei)
+    public Transaction newContractTx(long nonce, long gasLimit, long gasPrice, String bytecode, Object... methodArgs) throws CryptoException {
+
+        // TODO: xxx: use newMessageTx with
+
+        String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
+                nonce,
+                gasPrice,
+                gasLimit,
+                "0x" + bytecode + AbiArguments.encodeToHexString(methodArgs)
+        );
+
+        try {
+            Log.v(LOG_TAG, "Constructing tx: " + json);
+            Transaction tx = Geth.newTransactionFromJSON(json);
+            Log.v(LOG_TAG, "Tx constructed.");
+            return tx;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "" + e.getMessage(), e);
+            throw new CryptoException("" + e.getMessage(), e);
+        }
+    }
+
+    public Transaction newDepositTx(long nonce, long gasLimit, String toAddress, long gasPrice, BigDecimal value) throws CryptoException {
+        BigInteger weis = value.multiply(AbiArguments.WEIS_IN_ETH).toBigInteger();
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"to\":\"%s\",\"value\":\"0x%x\",\"input\":\"0x\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
                 gasPrice,
                 gasLimit,
                 toAddress,
-                value
+                weis
         );
 
         Log.v(LOG_TAG, "Constructing deposit tx:" + json);
@@ -100,8 +124,7 @@ public class EtherAccount {
         }
     }
 
-    public Transaction newMessageTx(long nonce, long gasLimit, String contractAddress, boolean isTestNet, String methodId, Object... methodArgs) throws CryptoException {
-        long gasPrice = isTestNet ? 150_000_000_000L : 1_000_000_000L;  // 50 Gwei for TestNet and 1 Gwei for MainNet (1 Gwei = 10^9 wei)
+    public Transaction newMessageTx(long nonce, long gasLimit, String contractAddress, long gasPrice, String methodId, Object... methodArgs) throws CryptoException {
 
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"to\":\"%s\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
