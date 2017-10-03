@@ -84,6 +84,24 @@ public class TeambrellaNotificationManager {
         mNotificationManager.notify(19, notification);
     }
 
+    public void showNewTeammates(String name, int othersCount, String teamName) {
+        Notification notification = getBuilder()
+                .setContentTitle(getTitle(teamName))
+                .setContentText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                        : mContext.getString(R.string.new_teammate_notification_description, name)))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                                : mContext.getString(R.string.new_teammate_notification_description, name))))
+                .setContentIntent(PendingIntent.getActivity(mContext
+                        , 1
+                        , new Intent(mContext, MainActivity.class)
+                        , PendingIntent.FLAG_UPDATE_CURRENT))
+                .build();
+
+        mNotificationManager.notify(23, notification);
+
+    }
+
 
     private NotificationCompat.Builder getBuilder() {
         return new NotificationCompat.Builder(mContext, null)
