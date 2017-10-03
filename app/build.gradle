@@ -37,8 +37,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 66
-        versionName "and-0.1.3.66"
+        versionCode 69
+        versionName "and-0.1.3.69"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
