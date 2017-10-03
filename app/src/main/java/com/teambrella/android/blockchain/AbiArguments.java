@@ -11,7 +11,7 @@ public class AbiArguments {
 
     private static final String LOG_TAG = AbiArguments.class.getSimpleName();
     private static final int BYTES_IN_WORD = 32;
-    private static final BigDecimal WEIS_IN_ETH = new BigDecimal(1_000_000_000_000_000_000L);
+    public static final BigDecimal WEIS_IN_ETH = new BigDecimal(1_000_000_000_000_000_000L, MathContext.UNLIMITED);
 
     private final List<Object> mArgs = new ArrayList<>(7);
 
