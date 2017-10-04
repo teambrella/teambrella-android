@@ -17,6 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.teammates.RiskRange;
 import com.teambrella.android.ui.teammates.TeammatesByRiskActivity;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
@@ -287,7 +288,17 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
                 mOthersView.setVisibility(teammates.size() > 0 ? View.VISIBLE : View.GONE);
-                mOthersView.setOnClickListener(v -> TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId()));
+
+                mOthersView.setOnClickListener(v -> {
+                    ArrayList<RiskRange> list = new ArrayList<>();
+                    for (JsonWrapper range : mRanges) {
+                        if (range.getInt(TeambrellaModel.ATTR_DATA_COUNT, 0) > 0) {
+                            list.add(new RiskRange(range.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE),
+                                    range.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE)));
+                        }
+                    }
+                    TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId(), list);
+                });
 
                 break;
             }

@@ -9,12 +9,13 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
-import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+
+import java.util.ArrayList;
 
 /**
  * All Teammates sorted by Risk
@@ -22,16 +23,19 @@ import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 public class TeammatesByRiskActivity extends ADataHostActivity implements ITeammateByRiskActivity {
 
     private static final String EXTRA_TEAM_ID = "teamId";
+    private static final String EXTRA_RISK_RANGES = "risk_ranges";
     public static final String TEAMMATES_DATA_TAG = "teammate_data_tag";
     private static final String TEAMMATES_UI_TAG = "teammates_ui_tag";
 
 
     private int mTeamId;
+    private ArrayList<RiskRange> mRanges;
 
 
-    public static void start(Context context, int teamId) {
+    public static void start(Context context, int teamId, ArrayList<RiskRange> ranges) {
         context.startActivity(new Intent(context, TeammatesByRiskActivity.class)
-                .putExtra(EXTRA_TEAM_ID, teamId));
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_RISK_RANGES, ranges));
     }
 
     @Override
@@ -53,10 +57,7 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(
-                        TeambrellaUris.getTeammatesUri(mTeamId, true),
-                        TeambrellaModel.ATTR_DATA_TEAMMATES
-                        , TeambrellaDataPagerFragment.class);
+                return TeammatesByRiskDataPagerFragment.getInstance(TeambrellaUris.getTeammatesUri(mTeamId, true), mRanges);
         }
         return null;
     }
@@ -65,6 +66,7 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mTeamId = getIntent().getIntExtra(EXTRA_TEAM_ID, -1);
+        mRanges = getIntent().getParcelableArrayListExtra(EXTRA_RISK_RANGES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_fragment);
         ActionBar actionBar = getSupportActionBar();

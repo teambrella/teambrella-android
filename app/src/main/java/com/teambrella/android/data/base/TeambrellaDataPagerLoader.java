@@ -36,6 +36,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     private boolean mIsLoading = false;
     private boolean mHasNext = true;
     private int mNextIndex = 0;
+    private int mLimit = LIMIT;
 
 
     public TeambrellaDataPagerLoader(Context context, Uri uri, String property) {
@@ -46,10 +47,19 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
         mProperty = property;
     }
 
+    public TeambrellaDataPagerLoader(Context context, Uri uri, String property, int limit) {
+        mConnectableObservable = mPublisher.publish();
+        mConnectableObservable.connect();
+        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+        mUri = uri;
+        mProperty = property;
+        mLimit = limit;
+    }
+
     @Override
     public void loadNext(boolean force) {
         if (!mIsLoading && (mHasNext || force)) {
-            mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mNextIndex, LIMIT), null)
+            mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mNextIndex, mLimit), null)
                     .subscribeOn(Schedulers.io())
                     .map(jsonObject -> {
                         JsonObject metadata = new JsonObject();
@@ -122,7 +132,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     @Override
     public void reload(Uri uri) {
-        mServer.requestObservable(TeambrellaUris.appendPagination(uri, 0, LIMIT), null)
+        mServer.requestObservable(TeambrellaUris.appendPagination(uri, 0, mLimit), null)
                 .subscribeOn(Schedulers.io())
                 .map(jsonObject -> {
                     JsonObject metadata = new JsonObject();
@@ -147,7 +157,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     private void onNext(JsonObject data) {
         JsonArray newData = getPageableData(data);
         onAddNewData(newData);
-        mHasNext = newData.size() == LIMIT;
+        mHasNext = newData.size() == mLimit;
         mNextIndex += newData.size();
         mIsLoading = false;
         mPublisher.onNext(Notification.createOnNext(data));

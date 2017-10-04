@@ -379,6 +379,7 @@ public class TeambrellaModel {
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES = 20;
     public static final int ATTR_DATA_ITEM_TYPE_TEAMMATE = 30;
+    public static final int ATTR_DATA_ITEM_TYPE_SECTION_RISK = 40;
 
 
     /**
