@@ -297,7 +297,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                                     range.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE)));
                         }
                     }
-                    TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId(), list);
+                    TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId(), list, (float) value);
                 });
 
                 break;

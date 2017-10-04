@@ -7,4 +7,6 @@ import com.teambrella.android.data.base.IDataHost;
  */
 public interface ITeammateByRiskActivity extends IDataHost {
     int getTeamId();
+
+    float getSelectedValue();
 }

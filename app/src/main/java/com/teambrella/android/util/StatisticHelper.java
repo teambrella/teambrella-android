@@ -42,7 +42,7 @@ public class StatisticHelper {
     }
 
     public static void onUserRegistered() {
-        if (BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(USER_REGISTERED));
         }
     }

@@ -24,18 +24,21 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
 
     private static final String EXTRA_TEAM_ID = "teamId";
     private static final String EXTRA_RISK_RANGES = "risk_ranges";
+    private static final String EXTRA_SELECTED = "selected";
     public static final String TEAMMATES_DATA_TAG = "teammate_data_tag";
     private static final String TEAMMATES_UI_TAG = "teammates_ui_tag";
 
 
     private int mTeamId;
     private ArrayList<RiskRange> mRanges;
+    private float mSelectedValue;
 
 
-    public static void start(Context context, int teamId, ArrayList<RiskRange> ranges) {
+    public static void start(Context context, int teamId, ArrayList<RiskRange> ranges, float selectedValue) {
         context.startActivity(new Intent(context, TeammatesByRiskActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
-                .putExtra(EXTRA_RISK_RANGES, ranges));
+                .putExtra(EXTRA_RISK_RANGES, ranges)
+                .putExtra(EXTRA_SELECTED, selectedValue));
     }
 
     @Override
@@ -67,6 +70,7 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mTeamId = getIntent().getIntExtra(EXTRA_TEAM_ID, -1);
         mRanges = getIntent().getParcelableArrayListExtra(EXTRA_RISK_RANGES);
+        mSelectedValue = getIntent().getFloatExtra(EXTRA_SELECTED, 1f);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_fragment);
         ActionBar actionBar = getSupportActionBar();
@@ -98,5 +102,11 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
     @Override
     public int getTeamId() {
         return mTeamId;
+    }
+
+
+    @Override
+    public float getSelectedValue() {
+        return mSelectedValue;
     }
 }
