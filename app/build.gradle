@@ -33,7 +33,7 @@ android {
     keyProperties.load(new FileInputStream(file(project.property("KeyProperties"))))
 
     compileSdkVersion 26
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
