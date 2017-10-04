@@ -227,5 +227,7 @@
     <string name="others">Otros</string>
     <string name="no_claims"><![CDATA[<b>Hasta el momento no hay reclamaciones en tu equipo.</b>]]></string>
     <string name="no_messages"><![CDATA[<b>No hay mensajes privados.</b>]]></string>
-    
+    <string name="new_teammate_notification_description">%s quiere unirse a tu equipo. Dile hola!</string>
+    <string name="new_discussion_notification_description">"%1$s inició una nueva discusión \"%2$s\""</string>
+
 </resources>
