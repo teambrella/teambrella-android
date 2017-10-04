@@ -26,6 +26,9 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
 
+    public static final int VIEW_TYPE_HEADER = VIEW_TYPE_REGULAR + 1;
+    public static final int VIEW_TYPE_TEAMMATE = VIEW_TYPE_REGULAR + 2;
+
     private final int mTeamId;
 
     /**
@@ -40,10 +43,33 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
 
 
     @Override
+    public int getItemViewType(int position) {
+        int viewType = super.getItemViewType(position);
+
+        if (viewType == VIEW_TYPE_REGULAR) {
+            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
+            switch (item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE)) {
+                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_RISK:
+                    return VIEW_TYPE_HEADER;
+                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE:
+                    return VIEW_TYPE_TEAMMATE;
+            }
+        }
+
+        return viewType;
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
         if (viewHolder == null) {
-            viewHolder = new TeammateViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_teammate_risk, parent, false));
+            switch (viewType) {
+                case VIEW_TYPE_HEADER:
+                    viewHolder = new Header(parent, R.string.teammates, -1, R.drawable.list_item_header_background_middle);
+                    break;
+                default:
+                    viewHolder = new TeammateViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_teammate_risk, parent, false));
+            }
         }
         return viewHolder;
     }

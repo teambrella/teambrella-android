@@ -27,7 +27,6 @@ public class TeammatesByRiskDataPagerFragment extends TeambrellaDataPagerFragmen
         return fragment;
     }
 
-
     @Override
     protected IDataPager<JsonArray> createLoader(Bundle args) {
         final Uri uri = args != null ? args.getParcelable(EXTRA_URI) : null;
