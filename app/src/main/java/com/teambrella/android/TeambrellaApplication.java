@@ -14,6 +14,8 @@ public class TeambrellaApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics(), new Answers());
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics(), new Answers());
+        }
     }
 }

@@ -23,6 +23,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
@@ -161,7 +162,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
             @Override
             public void onError(FacebookException error) {
-                Answers.getInstance().logLogin(new LoginEvent().putSuccess(false));
+                if (!BuildConfig.DEBUG) {
+                    Answers.getInstance().logLogin(new LoginEvent().putSuccess(false));
+                }
                 tryAgainLater(error);
             }
         });
@@ -277,7 +280,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     case TeambrellaUris.ME_REGISTER_KEY:
                         mUser.setPrivateKey(mUser.getPendingPrivateKey());
                         StatisticHelper.onUserRegistered();
-                        Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        if (!BuildConfig.DEBUG) {
+                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        }
                         getTeams(mUser.getPrivateKey());
                         break;
                 }
