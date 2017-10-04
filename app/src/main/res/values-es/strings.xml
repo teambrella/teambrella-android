@@ -229,5 +229,8 @@
     <string name="no_messages"><![CDATA[<b>No hay mensajes privados.</b>]]></string>
     <string name="new_teammate_notification_description">%s quiere unirse a tu equipo. Dile hola!</string>
     <string name="new_discussion_notification_description">"%1$s inició una nueva discusión \"%2$s\""</string>
+    <string name="risk">Riesgo</string>
+    <string name="compare_team_risk">Comparar Reisgo Del Equipo</string>
+    <string name="risk_from_to_format_string">"Reisgo:%1$.2f a %2$.2f"</string>
 
 </resources>
