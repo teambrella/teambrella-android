@@ -73,7 +73,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         NEW_CLAIM(4),
         PRIVATE_MSG(5),
         WALLET_FUNDED(6),
-        POSTS_SINCE_INTERACTED(7);
+        POSTS_SINCE_INTERACTED(7),
+        NEW_TEAMMATE(8),
+        NEW_DISCUSSION(9);
 
         private final int id;
 
@@ -242,7 +244,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
     private void processMessage(String message) {
-        Log.d(LOG_TAG, message);
+        //Log.d(LOG_TAG, message);
         String messageParts[] = message.split(";");
         NotificationTypes type = NotificationTypes.valueOf(Integer.parseInt(messageParts[0]));
         switch (type) {
@@ -321,13 +323,52 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     mTeambrellaNotificationManager.showNewMessagesSinceLastVisit(count);
                 }
                 break;
+
+            case NEW_TEAMMATE: {
+                //noinspection unused
+                int teamId = Integer.parseInt(messageParts[1]);
+                //noinspection unused
+                String userId = messageParts[2];
+                //noinspection unused
+                int teammateId = Integer.parseInt(messageParts[3]);
+                String name = messageParts[4];
+                //noinspection unused
+                String avatar = messageParts[5];
+                int totalCount = Integer.parseInt(messageParts[6]);
+                //noinspection unused
+                String teamUrl = messageParts[7];
+                //noinspection unused
+                String teamName = messageParts[8];
+                mTeambrellaNotificationManager.showNewTeammates(name, totalCount, teamName);
+            }
+            break;
+            case NEW_DISCUSSION: {
+                //noinspection unused
+                int teamId = Integer.parseInt(messageParts[1]);
+                String userId = messageParts[2];
+                String topicId = messageParts[3];
+                String topicName = messageParts[4];
+                //noinspection unused
+                String postId = messageParts[5];
+                String userName = messageParts[6];
+                //noinspection unused
+                String avatar = messageParts[7];
+                //noinspection unused
+                String teamUrl = messageParts[8];
+                String teamName = messageParts[9];
+                if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
+                    mTeambrellaNotificationManager.showNewDiscussion(teamName, userName, teamId, topicName, topicId);
+                }
+
+            }
+            break;
         }
     }
 
 
     @Override
     public void onOpen() {
-        Log.e(LOG_TAG, "on Open");
+        //Log.e(LOG_TAG, "on Open");
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.BlockchainNode;
 import com.teambrella.android.blockchain.CryptoException;
-import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.blockchain.EtherNode;
 import com.teambrella.android.blockchain.Scan;
 import com.teambrella.android.blockchain.ScanResultTxReceipt;
@@ -369,23 +368,23 @@ public class BtcService extends GcmTaskService {
     }
 
     private boolean depositWallet() throws CryptoException, RemoteException {
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
-        if (myCurrentMultisigs.size() == 1) {
-            EtherAccount myAcc = new EtherAccount(mKey, getApplicationContext());
-
-            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
-            long gasWalletAmount = blockchain.checkBalance(myAcc.getDepositAddress());
-
-            if (gasWalletAmount > 20_000_000_000_000_000L) {
-                long minRestForGas = 10_000_000_000_000_000L;
-                long myNonce = getMyNonce();
-                org.ethereum.geth.Transaction depositTx;
-                depositTx = myAcc.newDepositTx(myNonce, 50_000L, myCurrentMultisigs.get(0).address, BuildConfig.isTestNet, gasWalletAmount - minRestForGas);
-                depositTx = myAcc.signTx(depositTx, BuildConfig.isTestNet);
-                publishCryptoTx(depositTx);
-            }
-        }
+//        String myPublicKey = mKey.getPublicKeyAsHex();
+//        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
+//        if (myCurrentMultisigs.size() == 1) {
+//            EtherAccount myAcc = new EtherAccount(mKey, getApplicationContext());
+//
+//            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+//            long gasWalletAmount = 0//blockchain.checkBalance(myAcc.getDepositAddress());
+//
+//            if (gasWalletAmount > 20_000_000_000_000_000L) {
+//                long minRestForGas = 10_000_000_000_000_000L;
+//                long myNonce = getMyNonce();
+//                org.ethereum.geth.Transaction depositTx;
+//                ..depositTx = myAcc.newDepositTx(myNonce, 50_000L, myCurrentMultisigs.get(0).address, BuildConfig.isTestNet, gasWalletAmount - minRestForGas);
+//                depositTx = myAcc.signTx(depositTx, BuildConfig.isTestNet);
+//                publishCryptoTx(depositTx);
+//            }
+//        }
 
         return true;
     }

@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -82,6 +83,40 @@ public class TeambrellaNotificationManager {
                         , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         mNotificationManager.notify(19, notification);
+    }
+
+    public void showNewTeammates(String name, int othersCount, String teamName) {
+        Notification notification = getBuilder()
+                .setContentTitle(getTitle(teamName))
+                .setContentText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                        : mContext.getString(R.string.new_teammate_notification_description, name)))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                                : mContext.getString(R.string.new_teammate_notification_description, name))))
+                .setContentIntent(PendingIntent.getActivity(mContext
+                        , 1
+                        , new Intent(mContext, MainActivity.class)
+                        , PendingIntent.FLAG_UPDATE_CURRENT))
+                .build();
+
+        mNotificationManager.notify(23, notification);
+
+    }
+
+    public void showNewDiscussion(String teamName, String userName, int teamId, String topicName, String topicId) {
+        Notification notification = getBuilder()
+                .setContentTitle(getTitle(teamName))
+                .setContentText(getTitle(mContext.getString(R.string.new_discussion_notification_description, userName, topicName)))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(getTitle(mContext.getString(R.string.new_discussion_notification_description, userName, topicName))))
+                .setContentIntent(PendingIntent.getActivities(mContext
+                        , 1
+                        , new Intent[]{new Intent(mContext, MainActivity.class), ChatActivity.getFeedChat(mContext, topicName,
+                                topicId, teamId, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)}
+                        , PendingIntent.FLAG_UPDATE_CURRENT))
+                .build();
+
+        mNotificationManager.notify(29, notification);
     }
 
 
