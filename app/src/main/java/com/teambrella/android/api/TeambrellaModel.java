@@ -154,6 +154,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_MESSAGE = "Message";
     public static final String ATTR_REQUEST_IMAGES = "Images";
     public static final String ATTR_REQUEST_ADDRESS = "Address";
+    public static final String ATTR_REQUEST_SORTED_BY_RISK = "OrderByRisk";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";

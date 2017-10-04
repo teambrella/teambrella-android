@@ -67,6 +67,7 @@ public class TeambrellaUris {
     public static final String KEY_IMAGES = "images";
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_LANGUAGE = "language";
+    public static final String KEY_SORTED_BY_RISK = "sortedByRisk";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -150,6 +151,23 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_TEAM)
                 .appendEncodedPath(Integer.toString(teamId))
                 .appendEncodedPath(SEGMENT_LIST)
+                .build();
+    }
+
+
+    /**
+     * Get team Uri
+     *
+     * @param teamId team ID
+     * @return uri
+     */
+    public static Uri getTeammatesUri(int teamId, boolean sortedByRisk) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_TEAM)
+                .appendEncodedPath(Integer.toString(teamId))
+                .appendEncodedPath(SEGMENT_LIST)
+                .appendQueryParameter(KEY_SORTED_BY_RISK, Boolean.toString(sortedByRisk))
                 .build();
     }
 

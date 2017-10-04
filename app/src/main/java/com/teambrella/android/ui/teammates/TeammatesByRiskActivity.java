@@ -54,7 +54,7 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
         switch (tag) {
             case TEAMMATES_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(
-                        TeambrellaUris.getTeamUri(mTeamId),
+                        TeambrellaUris.getTeammatesUri(mTeamId, true),
                         TeambrellaModel.ATTR_DATA_TEAMMATES
                         , TeambrellaDataPagerFragment.class);
         }

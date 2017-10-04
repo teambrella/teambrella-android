@@ -160,6 +160,9 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, teamId);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                String sortedByRiskValue = uri.getQueryParameter(TeambrellaUris.KEY_SORTED_BY_RISK);
+                boolean sortedByRisk = sortedByRiskValue != null && Boolean.parseBoolean(sortedByRiskValue);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_SORTED_BY_RISK, sortedByRisk);
                 break;
             case TeambrellaUris.USER_RATING:
                 String optIn = uri.getQueryParameter(TeambrellaUris.KEY_OPT_IN);
