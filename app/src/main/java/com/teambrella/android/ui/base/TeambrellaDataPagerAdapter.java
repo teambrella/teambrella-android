@@ -172,6 +172,23 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                 itemView.setBackgroundResource(backgroundResId);
             }
         }
+
+        public Header(ViewGroup parent, String title, String subtitle, @DrawableRes int backgroundResId) {
+            super(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_header, parent, false));
+            TextView titleView = itemView.findViewById(R.id.status_title);
+            TextView subtitleView = itemView.findViewById(R.id.status_subtitle);
+            titleView.setText(title);
+            subtitleView.setText(subtitle);
+
+
+            if (backgroundResId > 0) {
+                itemView.setBackgroundResource(backgroundResId);
+            }
+        }
+
+        public void setTitle(String title) {
+            ((TextView) itemView.findViewById(R.id.status_title)).setText(title);
+        }
     }
 
 

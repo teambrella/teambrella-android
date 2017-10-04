@@ -65,7 +65,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
         if (viewHolder == null) {
             switch (viewType) {
                 case VIEW_TYPE_HEADER:
-                    viewHolder = new Header(parent, R.string.teammates, -1, R.drawable.list_item_header_background_middle);
+                    viewHolder = new Header(parent, -1, R.string.risk, R.drawable.list_item_header_background_middle);
                     break;
                 default:
                     viewHolder = new TeammateViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_teammate_risk, parent, false));
@@ -79,6 +79,10 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
         super.onBindViewHolder(holder, position);
         if (holder instanceof TeammateViewHolder) {
             ((TeammateViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
+        } else if (holder instanceof Header && getItemViewType(position) == VIEW_TYPE_HEADER) {
+            JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject());
+            ((Header) holder).setTitle(holder.itemView.getContext().getString(R.string.risk_from_to_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE),
+                    item.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE)));
         }
     }
 

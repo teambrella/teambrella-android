@@ -76,7 +76,7 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.others);
+            actionBar.setTitle(R.string.compare_team_risk);
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
