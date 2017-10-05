@@ -232,5 +232,7 @@
     <string name="risk">Riesgo</string>
     <string name="compare_team_risk">Comparar Reisgo Del Equipo</string>
     <string name="risk_from_to_format_string">"Reisgo:%1$.2f a %2$.2f"</string>
+    <string name="access_denied_title">Lo sentimos</string>
+    <string name="access_denied_description"><![CDATA[De momento no puedes connectar con Teambrella. Por favor, contacta con nuestro soporte <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
 
 </resources>

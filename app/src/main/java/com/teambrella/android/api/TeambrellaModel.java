@@ -194,6 +194,7 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_CODE_AUTH = 2;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM = 6;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION = 8;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_ANOTHER_KEY = 5;
 
 
     /*Data*/

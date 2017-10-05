@@ -52,7 +52,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         INIT,
         LOADING,
         INVITE_ONLY,
-        ALMOST_READY
+        ALMOST_READY,
+        ACCESS_DENIED
     }
 
 
@@ -61,6 +62,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
     private View mTryDemoButton;
+    private View mTryDemoInvite;
+    private View mMarginView;
     private TextView mInvitationTitle;
     private TextView mInvitationDescription;
     private TeambrellaUser mUser;
@@ -85,7 +88,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
-        findViewById(R.id.try_demo_invite).setOnClickListener(this::onTryDemo);
+        mTryDemoInvite = findViewById(R.id.try_demo_invite);
+        mMarginView = findViewById(R.id.margin);
+        mTryDemoInvite.setOnClickListener(this::onTryDemo);
         setState(State.INIT);
     }
 
@@ -107,11 +112,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
                 mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
+                mTryDemoInvite.setVisibility(View.VISIBLE);
+                mMarginView.setVisibility(View.GONE);
                 break;
             case LOADING:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
+                mMarginView.setVisibility(View.GONE);
                 break;
             case INVITE_ONLY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
@@ -119,6 +127,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.we_are_invite_only_title);
                 setInvitationDescription(R.string.we_are_invite_only_description);
+                mMarginView.setVisibility(View.GONE);
                 break;
             case ALMOST_READY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
@@ -126,6 +135,16 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.almost_ready_title);
                 mInvitationDescription.setText(R.string.almost_ready_description);
+                mMarginView.setVisibility(View.GONE);
+                break;
+            case ACCESS_DENIED:
+                mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.VISIBLE);
+                mInvitationTitle.setText(R.string.access_denied_title);
+                setInvitationDescription(R.string.access_denied_description);
+                mTryDemoInvite.setVisibility(View.GONE);
+                mMarginView.setVisibility(View.VISIBLE);
                 break;
         }
 
@@ -180,6 +199,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         switch (mState) {
             case INVITE_ONLY:
             case ALMOST_READY:
+            case ACCESS_DENIED:
                 setState(State.INIT);
                 break;
             default:
@@ -299,6 +319,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION:
                         setState(State.ALMOST_READY);
+                        break;
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_ANOTHER_KEY:
+                        setState(State.ACCESS_DENIED);
                         break;
                     default:
                         tryAgainLater(error);
