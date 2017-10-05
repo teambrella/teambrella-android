@@ -91,12 +91,14 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
         ImageView mIconView;
         TextView mTitleView;
         TextView mRiskView;
+        TextView mObjectView;
 
         TeammateViewHolder(View itemView) {
             super(itemView);
             mIconView = itemView.findViewById(R.id.icon);
             mTitleView = itemView.findViewById(R.id.title);
             mRiskView = itemView.findViewById(R.id.risk);
+            mObjectView = itemView.findViewById(R.id.object);
         }
 
         void onBind(JsonWrapper item) {
@@ -116,7 +118,10 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
                 }
             });
 
-            mRiskView.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
+            mRiskView.setText(itemView.getContext().getString(R.string.risk_vote_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
+            mObjectView.setText(itemView.getContext().getString(R.string.object_format_string
+                    , item.getString(TeambrellaModel.ATTR_DATA_MODEL)
+                    , item.getString(TeambrellaModel.ATTR_DATA_YEAR)));
         }
     }
 

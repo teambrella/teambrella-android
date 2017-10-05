@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
@@ -14,6 +16,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 import java.util.ArrayList;
 
@@ -75,8 +78,12 @@ public class TeammatesByRiskActivity extends ADataHostActivity implements ITeamm
         setContentView(R.layout.activity_one_fragment);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            SpannableString s = new SpannableString(getString(R.string.compare_team_risk));
+            s.setSpan(new AkkuratBoldTypefaceSpan(this), 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.compare_team_risk);
+            actionBar.setTitle(s);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();

@@ -22,12 +22,19 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/risk"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/icon"
         tools:text="" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/object"
+        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
