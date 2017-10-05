@@ -99,6 +99,12 @@
             android:textColor="@color/perrywinkleTwo"
             android:textSize="12sp" />
 
+        <View
+            android:id="@+id/margin"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 

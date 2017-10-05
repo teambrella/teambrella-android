@@ -238,4 +238,6 @@
     <string name="compare_team_risk">Compare Team Risk</string>
     <string name="risk_from_to_format_string">"Risk:%1$.2f to %2$.2f"</string>
 
+    <string name="access_denied_title">We are sorry</string>
+    <string name="access_denied_description"><![CDATA[Currently you are unable to connect to Teambrella. Please, contact our support <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
 </resources>
