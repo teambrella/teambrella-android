@@ -10,8 +10,20 @@ public class TeambrellaClientException extends TeambrellaException {
         super(uri, message, cause);
     }
 
+
+    @Override
+    public String getMessage() {
+        return (mUri != null ? mUri.toString() : "") + " " + getCause().getMessage();
+    }
+
+
+    @Override
+    public String getLocalizedMessage() {
+        return (mUri != null ? mUri.toString() : "") + " " + getCause().getMessage();
+    }
+
     @Override
     public String toString() {
-        return "[" + getUri() + "] " + super.toString();
+        return (mUri != null ? mUri.toString() : "") + " " + getCause().getMessage();
     }
 }

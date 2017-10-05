@@ -7,7 +7,7 @@ import android.net.Uri;
  */
 public class TeambrellaException extends Exception {
 
-    private final Uri mUri;
+    protected final Uri mUri;
 
     public TeambrellaException(Uri uri) {
         mUri = uri;

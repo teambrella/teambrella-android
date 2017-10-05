@@ -32,12 +32,11 @@ public class TeambrellaServerException extends TeambrellaException {
      * @param errorMessage server error message
      */
     public TeambrellaServerException(Uri uri, int errorCode, String errorMessage, long timestamp) {
-        super(uri, errorMessage, null);
+        super(uri, uri != null ? uri.toString() : "" + " " + errorMessage, null);
         this.mErrorCode = errorCode;
         this.mErrorMessage = errorMessage;
         this.mTimestamp = timestamp;
     }
-
 
     public int getErrorCode() {
         return mErrorCode;
@@ -45,5 +44,22 @@ public class TeambrellaServerException extends TeambrellaException {
 
     public long getTimestamp() {
         return mTimestamp;
+    }
+
+
+    @Override
+    public String getMessage() {
+        return (mUri != null ? mUri.toString() : "") + " " + mErrorMessage;
+    }
+
+
+    @Override
+    public String getLocalizedMessage() {
+        return (mUri != null ? mUri.toString() : "") + " " + mErrorMessage;
+    }
+
+    @Override
+    public String toString() {
+        return (mUri != null ? mUri.toString() : "") + " " + mErrorMessage;
     }
 }

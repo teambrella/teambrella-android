@@ -4,6 +4,7 @@ import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
+import com.teambrella.android.ui.TeambrellaUser;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -16,6 +17,7 @@ public class TeambrellaApplication extends MultiDexApplication {
         super.onCreate();
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics(), new Answers());
+            Crashlytics.setUserIdentifier(TeambrellaUser.get(this).getUserId());
         }
     }
 }
