@@ -25,6 +25,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.util.Locale;
 
@@ -90,6 +91,7 @@ public class TeamSelectionFragment extends DialogFragment {
         } else {
             exitDemoView.setOnClickListener(v -> {
                 mUser.resetDemoUser();
+                StatisticHelper.setUserId(null);
                 startActivity(new Intent(getContext(), WelcomeActivity.class));
                 getActivity().finish();
             });

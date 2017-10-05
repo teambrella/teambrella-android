@@ -119,12 +119,16 @@ public class TeambrellaServer {
                                     .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
                                     .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
                         } else {
-                            Crashlytics.logException(throwable);
+                            if (!BuildConfig.DEBUG) {
+                                Crashlytics.logException(throwable);
+                            }
                             return Observable.error(throwable);
                         }
                     }
                     Exception exception = new TeambrellaClientException(uri, throwable.getMessage(), throwable);
-                    Crashlytics.logException(exception);
+                    if (!BuildConfig.DEBUG) {
+                        Crashlytics.logException(exception);
+                    }
                     return Observable.error(exception);
                 });
     }

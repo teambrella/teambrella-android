@@ -1,5 +1,6 @@
 package com.teambrella.android.util;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.teambrella.android.BuildConfig;
@@ -44,6 +45,12 @@ public class StatisticHelper {
     public static void onUserRegistered() {
         if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(USER_REGISTERED));
+        }
+    }
+
+    public static void setUserId(String userId) {
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.setUserIdentifier(userId);
         }
     }
 }

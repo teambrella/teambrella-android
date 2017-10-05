@@ -250,6 +250,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         String userId = data != null ? data.getString(TeambrellaModel.ATTR_DATA_USER_ID) : null;
                         if (userId != null) {
                             mUser.setUserId(userId);
+                            StatisticHelper.setUserId(userId);
                         }
 
                         ArrayList<JsonWrapper> teams = data != null ? data.getArray(TeambrellaModel.ATTR_DATA_MY_TEAMS) : new ArrayList<>();
