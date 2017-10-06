@@ -41,6 +41,8 @@ import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 
+import java.util.Stack;
+
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -85,6 +87,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private Snackbar mSnackBar;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
+
+
+    private Stack<Integer> mBackStack = new Stack<>();
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -135,9 +140,19 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     }
 
     private boolean onNavigationItemSelected(View view) {
+        return onNavigationItemSelected(view, true);
+    }
+
+
+    private boolean onNavigationItemSelected(View view, boolean fromUser) {
 
         if (mSelectedItemId == view.getId()) {
             return false;
+        }
+
+        if (mSelectedItemId > 0 && fromUser) {
+            mBackStack.remove(Integer.valueOf(mSelectedItemId));
+            mBackStack.add(mSelectedItemId);
         }
 
         if (mSnackBar != null) {
@@ -167,7 +182,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         transaction.commit();
         fragmentManager.executePendingTransactions();
         mSelectedItemId = view.getId();
-
         return true;
     }
 
@@ -416,6 +430,17 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                 }
             });
             mSnackBar.show();
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Integer nextId = mBackStack.isEmpty() ? null : mBackStack.pop();
+        if (nextId != null) {
+            onNavigationItemSelected(findViewById(nextId), false);
+        } else {
+            super.onBackPressed();
         }
     }
 
