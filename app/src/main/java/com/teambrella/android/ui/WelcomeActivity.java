@@ -236,7 +236,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     }
                 })
                 .show();
-        Crashlytics.logException(throwable);
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.logException(throwable);
+        }
     }
 
 
