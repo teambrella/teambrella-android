@@ -39,4 +39,9 @@ public interface IMainDataHost extends IDataHost {
     String getFundAddress();
 
     void launchActivity(Intent intent);
+
+    void showCoverage();
+
+    void showWallet();
+
 }

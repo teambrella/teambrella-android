@@ -47,6 +47,10 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
         mSubmitClaim = view.findViewById(R.id.submit_claim);
         mCoverageType = view.findViewById(R.id.coverage_type);
         mWalletAmount = view.findViewById(R.id.wallet_amount);
+
+        view.findViewById(R.id.coverageInfo).setOnClickListener(v -> mDataHost.showCoverage());
+        view.findViewById(R.id.walletInfo).setOnClickListener(v -> mDataHost.showWallet());
+
         return view;
     }
 

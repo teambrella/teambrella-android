@@ -458,6 +458,25 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         startActivityForResult(intent, DEFAULT_REQUEST_CODE);
     }
 
+
+    @Override
+    public void showCoverage() {
+        onNavigationItemSelected(findViewById(R.id.me));
+        UserFragment userFragment = (UserFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_TAG);
+        if (userFragment != null) {
+            userFragment.showCoverage();
+        }
+    }
+
+    @Override
+    public void showWallet() {
+        onNavigationItemSelected(findViewById(R.id.me));
+        UserFragment userFragment = (UserFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_TAG);
+        if (userFragment != null) {
+            userFragment.showWallet();
+        }
+    }
+
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
 
         MainNotificationClient(Context context) {
