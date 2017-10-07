@@ -17,6 +17,7 @@ import android.util.Log;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.util.ConnectivityUtils;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -128,6 +129,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean notifyPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
         boolean result = false;
         for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
@@ -257,6 +259,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 String avatar = messageParts[6];
                 String text = messageParts[7];
                 notifyPostCreated(teamId, userId, topicId, postId, name, avatar, text);
+                StatisticHelper.onPostCreatedNotification(teamId, userId, topicId, postId);
             }
             break;
 
@@ -290,6 +293,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (!notifyNewClaim(teamId, userId, claimId, name, imageUrl, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showNewClaimNotification(teamId, claimId, name, amount, teamName);
                 }
+                StatisticHelper.onNewClaimNotification(teamId, userId, claimId);
             }
             break;
 
@@ -314,6 +318,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (!notifyWalletFunded(teamId, userId, mEthAmount, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showWalletIsFundedNotification(mEthAmount);
                 }
+                StatisticHelper.onWalletFundedNotification(teamId, userId, mEthAmount);
             }
             break;
 
@@ -340,6 +345,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 //noinspection unused
                 String teamName = messageParts[8];
                 mTeambrellaNotificationManager.showNewTeammates(name, totalCount, teamName);
+
+                StatisticHelper.onNewTeammateNotification(teamId, userId, teammateId);
             }
             break;
             case NEW_DISCUSSION: {
@@ -359,7 +366,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
                     mTeambrellaNotificationManager.showNewDiscussion(teamName, userName, teamId, topicName, topicId);
                 }
-
+                StatisticHelper.onNewDiscussionNotification(teamId, topicId);
             }
             break;
         }
