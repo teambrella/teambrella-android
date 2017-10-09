@@ -43,6 +43,12 @@ import com.teambrella.android.util.TeambrellaUtilService;
 
 import java.util.Stack;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -89,6 +95,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private EtherAccount mEtherAccount;
 
 
+    @Inject
+    int id;
+
     private Stack<Integer> mBackStack = new Stack<>();
 
 
@@ -131,6 +140,13 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
 
+
+        mActivityComponent = DaggerMainActivity_ActivityComponent.builder()
+                .activityModule(new ActivityModule())
+                .build();
+
+        mActivityComponent.inject(this);
+        Log.e("TEST", "" + id);
     }
 
 
@@ -520,6 +536,25 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             return false;
         }
     }
+
+
+    @Singleton
+    @Component(modules = {ActivityModule.class})
+    public interface ActivityComponent {
+        void inject(MainActivity activity);
+    }
+
+    @Module
+    public class ActivityModule {
+
+        @Provides
+        @Singleton
+        public int getId() {
+            return 104;
+        }
+    }
+
+    private ActivityComponent mActivityComponent;
 }
 
 
