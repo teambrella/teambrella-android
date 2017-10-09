@@ -163,7 +163,7 @@ class EthWallet {
     }
 
     public long getGasPrice(){
-        return mIsTestNet ? 150_000_000_000L : 2_000_000_000L;  // 150 Gwei for TestNet and 2 Gwei for MainNet (1 Gwei = 10^9 wei)
+        return mIsTestNet ? 150_000_000_001L : 2_000_000_001L;  // 150 Gwei for TestNet and 2 Gwei for MainNet (1 Gwei = 10^9 wei)
     }
 
     public long checkMyNonce(){
