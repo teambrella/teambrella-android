@@ -13,8 +13,8 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTextView;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * All Teammates sorted by Risk
  */
-public class TeammatesByRiskActivity extends ADataHostActivity implements ITeammateByRiskActivity {
+public class TeammatesByRiskActivity extends TeambrellaDataHostActivity implements ITeammateByRiskActivity {
 
     private static final String EXTRA_TEAM_ID = "teamId";
     private static final String EXTRA_RISK_RANGES = "risk_ranges";

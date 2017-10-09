@@ -1,6 +1,5 @@
 package com.teambrella.android.data.base;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -9,7 +8,10 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.dagger.Dependencies;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -26,7 +28,6 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
 
     private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
     private final PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
-    private final TeambrellaServer mServer;
     private Uri mUri;
     private long mSince = -1;
 
@@ -43,10 +44,14 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
     private int mPreviousIndex = 0;
 
 
-    public TeambrellaChatDataPagerLoader(Context context, Uri uri) {
+    @Inject
+    @Named(Dependencies.TEAMBRELLA_SERVER)
+    TeambrellaServer mServer;
+
+
+    public TeambrellaChatDataPagerLoader(Uri uri) {
         mConnectableObservable = mPublisher.publish();
         mConnectableObservable.connect();
-        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
         mUri = uri;
     }
 

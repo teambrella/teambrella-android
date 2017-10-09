@@ -1,11 +1,13 @@
 package com.teambrella.android.data.base;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonObject;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -34,7 +36,9 @@ public class TeambrellaDataFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mLoader = new TeambrellaDataLoader(getContext());
+        Context context = getContext();
+        mLoader = new TeambrellaDataLoader();
+        ((TeambrellaDataHostActivity) context).getComponent().inject(mLoader);
         mUri = getArguments().getParcelable(EXTRA_URI);
     }
 

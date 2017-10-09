@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.chat;
 
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -26,8 +25,8 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     private static final String LOG_TAG = ChatDataPagerLoader.class.getSimpleName();
 
-    public ChatDataPagerLoader(Context context, Uri uri) {
-        super(context, uri);
+    public ChatDataPagerLoader(Uri uri) {
+        super(uri);
     }
 
     @Override

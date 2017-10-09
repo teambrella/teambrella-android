@@ -31,7 +31,7 @@ import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
-import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -48,7 +48,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Claim chat
  */
-public class ChatActivity extends ADataHostActivity implements IChatActivity {
+public class ChatActivity extends TeambrellaDataHostActivity implements IChatActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";

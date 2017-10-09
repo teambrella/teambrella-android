@@ -23,13 +23,14 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 import com.teambrella.android.ui.home.HomeFragment;
@@ -44,11 +45,8 @@ import com.teambrella.android.util.TeambrellaUtilService;
 import java.util.Stack;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -56,7 +54,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Main Activity
  */
-public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
+public class MainActivity extends TeambrellaDataHostActivity implements IMainDataHost, ITeammateActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
@@ -96,7 +94,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     @Inject
-    int id;
+    @Named(Dependencies.TEAMBRELLA_USER)
+    TeambrellaUser mUser;
 
     private Stack<Integer> mBackStack = new Stack<>();
 
@@ -140,13 +139,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
 
-
-        mActivityComponent = DaggerMainActivity_ActivityComponent.builder()
-                .activityModule(new ActivityModule())
-                .build();
-
-        mActivityComponent.inject(this);
-        Log.e("TEST", "" + id);
+        getComponent().inject(this);
+        Log.e("TEST", "" + mUser.getPrivateKey());
     }
 
 
@@ -536,25 +530,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             return false;
         }
     }
-
-
-    @Singleton
-    @Component(modules = {ActivityModule.class})
-    public interface ActivityComponent {
-        void inject(MainActivity activity);
-    }
-
-    @Module
-    public class ActivityModule {
-
-        @Provides
-        @Singleton
-        public int getId() {
-            return 104;
-        }
-    }
-
-    private ActivityComponent mActivityComponent;
 }
 
 

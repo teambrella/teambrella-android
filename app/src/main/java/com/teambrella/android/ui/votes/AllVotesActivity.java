@@ -15,13 +15,13 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 /**
  * All Votes Activity
  */
-public class AllVotesActivity extends ADataHostActivity implements IAllVoteActivity {
+public class AllVotesActivity extends TeambrellaDataHostActivity implements IAllVoteActivity {
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
     private static final String EXTRA_TEAMMATE_ID = "extra_teammate_id";

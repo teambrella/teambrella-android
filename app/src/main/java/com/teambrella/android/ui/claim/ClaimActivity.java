@@ -23,8 +23,8 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.StatisticHelper;
 
@@ -35,7 +35,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Claim Activity
  */
-public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
+public class ClaimActivity extends TeambrellaDataHostActivity implements IClaimActivity {
 
     private static final String CLAIM_DATA_TAG = "claim_data_tag";
     private static final String VOTE_DATA_TAG = "vote_data_tag";

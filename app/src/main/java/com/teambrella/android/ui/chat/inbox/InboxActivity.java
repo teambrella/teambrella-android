@@ -15,11 +15,12 @@ import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 /**
  * Inbox Activity.
  */
-public class InboxActivity extends ADataHostActivity {
+public class InboxActivity extends TeambrellaDataHostActivity {
 
     public static final String INBOX_DATA_TAG = "inbox_data_tag";
     public static final String INBOX_UI_TAG = "inbox_ui_tag";

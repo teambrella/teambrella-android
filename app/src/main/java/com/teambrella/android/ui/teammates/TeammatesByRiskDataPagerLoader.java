@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.teammates;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -20,8 +19,8 @@ class TeammatesByRiskDataPagerLoader extends TeambrellaDataPagerLoader {
     private final ArrayList<JsonArray> mRiskRanges;
     private final ArrayList<RiskRange> mRanges;
 
-    TeammatesByRiskDataPagerLoader(Context context, Uri uri, ArrayList<RiskRange> ranges) {
-        super(context, uri, null, 1000);
+    TeammatesByRiskDataPagerLoader(Uri uri, ArrayList<RiskRange> ranges) {
+        super(uri, null, 1000);
         mRiskRanges = new ArrayList<>();
         mRanges = ranges;
     }

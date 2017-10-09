@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonArray;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 /**
  * Teambrella Data Pager Fragment
@@ -36,7 +37,6 @@ public class TeambrellaDataPagerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         mLoader = createLoader(getArguments());
-
     }
 
     public IDataPager<JsonArray> getPager() {
@@ -46,6 +46,8 @@ public class TeambrellaDataPagerFragment extends Fragment {
     protected IDataPager<JsonArray> createLoader(Bundle args) {
         final Uri uri = args != null ? args.getParcelable(EXTRA_URI) : null;
         final String property = args != null ? args.getString(EXTRA_PROPERTY) : null;
-        return new TeambrellaDataPagerLoader(getContext(), uri, property);
+        TeambrellaDataPagerLoader loader = new TeambrellaDataPagerLoader(uri, property);
+        ((TeambrellaDataHostActivity) getContext()).getComponent().inject(loader);
+        return loader;
     }
 }

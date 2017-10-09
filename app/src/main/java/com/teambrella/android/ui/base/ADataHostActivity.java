@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,6 +11,7 @@ import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.ui.base.dagger.ADaggerActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -19,7 +19,7 @@ import io.reactivex.Observable;
 /**
  * A Data Host Activity
  */
-public abstract class ADataHostActivity extends AppCompatActivity implements IDataHost {
+public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements IDataHost {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

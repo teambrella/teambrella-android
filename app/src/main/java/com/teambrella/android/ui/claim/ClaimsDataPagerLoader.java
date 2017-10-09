@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.claim;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -35,8 +34,8 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
     private JsonArray mProcessedClaims = new JsonArray();
 
 
-    ClaimsDataPagerLoader(Context context, Uri uri) {
-        super(context, uri, null);
+    ClaimsDataPagerLoader(Uri uri) {
+        super(uri, null);
     }
 
 

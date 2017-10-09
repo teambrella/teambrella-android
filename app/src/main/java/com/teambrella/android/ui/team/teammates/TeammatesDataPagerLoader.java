@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.team.teammates;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -28,8 +27,8 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
     private JsonArray mNewMembers;
     private JsonArray mTeammates;
 
-    TeammatesDataPagerLoader(Context context, Uri uri) {
-        super(context, uri, null);
+    TeammatesDataPagerLoader(Uri uri) {
+        super(uri, null);
         mNewMembers = new JsonArray();
         mTeammates = new JsonArray();
     }

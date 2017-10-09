@@ -29,7 +29,7 @@ public class TeambrellaUser {
     private SharedPreferences mPreferences;
 
 
-    private TeambrellaUser(Context context) {
+    public TeambrellaUser(Context context) {
         mPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 
         if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_PENDING_KEY, null))) {

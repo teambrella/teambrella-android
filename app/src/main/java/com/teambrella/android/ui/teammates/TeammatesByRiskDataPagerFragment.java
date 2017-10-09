@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.google.gson.JsonArray;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,9 @@ public class TeammatesByRiskDataPagerFragment extends TeambrellaDataPagerFragmen
     protected IDataPager<JsonArray> createLoader(Bundle args) {
         final Uri uri = args != null ? args.getParcelable(EXTRA_URI) : null;
         final ArrayList<RiskRange> ranges = args != null ? args.getParcelableArrayList(EXTRA_RANGES) : null;
-        return new TeammatesByRiskDataPagerLoader(getContext(), uri, ranges);
+        TeammatesByRiskDataPagerLoader loader = new TeammatesByRiskDataPagerLoader(uri, ranges);
+        ((TeambrellaDataHostActivity) getContext()).getComponent().inject(loader);
+        return loader;
     }
 
 }

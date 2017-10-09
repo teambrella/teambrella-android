@@ -1,6 +1,5 @@
 package com.teambrella.android.data.base;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -8,7 +7,10 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.dagger.Dependencies;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -27,7 +29,6 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
     private final PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
-    private final TeambrellaServer mServer;
     private final Uri mUri;
     private final String mProperty;
     protected JsonArray mArray = new JsonArray();
@@ -39,18 +40,21 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     private int mLimit = LIMIT;
 
 
-    public TeambrellaDataPagerLoader(Context context, Uri uri, String property) {
+    @Inject
+    @Named(Dependencies.TEAMBRELLA_SERVER)
+    TeambrellaServer mServer;
+
+
+    public TeambrellaDataPagerLoader(Uri uri, String property) {
         mConnectableObservable = mPublisher.publish();
         mConnectableObservable.connect();
-        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
         mUri = uri;
         mProperty = property;
     }
 
-    public TeambrellaDataPagerLoader(Context context, Uri uri, String property, int limit) {
+    public TeambrellaDataPagerLoader(Uri uri, String property, int limit) {
         mConnectableObservable = mPublisher.publish();
         mConnectableObservable.connect();
-        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
         mUri = uri;
         mProperty = property;
         mLimit = limit;

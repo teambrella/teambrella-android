@@ -1,17 +1,18 @@
 package com.teambrella.android.data.base;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.dagger.Dependencies;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -23,13 +24,16 @@ public class TeambrellaDataLoader {
 
     private ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
     private PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
-    private TeambrellaServer mServer;
+
+    @SuppressWarnings("WeakerAccess")
+    @Inject
+    @Named(Dependencies.TEAMBRELLA_SERVER)
+    TeambrellaServer mServer;
 
 
-    public TeambrellaDataLoader(Context context) {
+    TeambrellaDataLoader() {
         mConnectableObservable = mPublisher.replay(1);
         mConnectableObservable.connect();
-        mServer = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
     }
 
 
