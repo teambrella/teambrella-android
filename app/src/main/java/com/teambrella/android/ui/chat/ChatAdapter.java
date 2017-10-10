@@ -3,6 +3,8 @@ package com.teambrella.android.ui.chat;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,6 +170,8 @@ class ChatAdapter extends ChatDataPagerAdapter {
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
             mMessage = itemView.findViewById(R.id.message);
+            mMessage.setMovementMethod(LinkMovementMethod.getInstance());
+            mMessage.setLinksClickable(true);
             mTeammateName = itemView.findViewById(R.id.teammate_name);
             mVote = itemView.findViewById(R.id.vote);
             mHeader = itemView.findViewById(R.id.header);
@@ -176,7 +180,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
-            mMessage.setText(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim());
+            mMessage.setText(Html.fromHtml(object.getString(TeambrellaModel.ATTR_DATA_TEXT, "").trim()));
             JsonWrapper teammate = object.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART);
             String name = teammate != null ? teammate.getString(TeambrellaModel.ATTR_DATA_NAME) : null;
 
