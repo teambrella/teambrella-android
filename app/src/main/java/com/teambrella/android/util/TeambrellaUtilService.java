@@ -23,10 +23,8 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherNode;
-import com.teambrella.android.blockchain.Hex;
 import com.teambrella.android.blockchain.Scan;
 import com.teambrella.android.blockchain.ScanResultTxReceipt;
-import com.teambrella.android.blockchain.Sha3;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.content.model.Multisig;
@@ -39,10 +37,6 @@ import com.teambrella.android.ui.TeambrellaUser;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
-import org.ethereum.geth.Account;
-import org.ethereum.geth.Accounts;
-import org.ethereum.geth.Geth;
-import org.ethereum.geth.KeyStore;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -285,7 +279,8 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        long myNonce = getMyNonce();
+        EthWallet myWallet = getWallet();
+        long myNonce = myWallet.checkMyNonce();
         for (Multisig m : myUncreatedMultisigs) {
             Multisig sameTeammateMultisig = getMyTeamMultisigIfAny(myPublicKey, m.teammateId, myUncreatedMultisigs);
             if (sameTeammateMultisig != null) {
@@ -295,7 +290,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 ////operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
 
             } else {
-                String txHex = getWallet().createOneWallet(myNonce, m, gasLimit);
+                String txHex = myWallet.createOneWallet(myNonce, m, gasLimit);
                 if (txHex != null) {
                     // There could be 2 my pending mutisigs (Current and Next) for the same team. So we remember the first creation tx and don't create 2 contracts for the same team.
                     m.creationTx = txHex;
@@ -479,7 +474,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
         for (Tx tx : txs) {
 
-            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
             EthWallet wallet = getWallet();
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
@@ -504,8 +498,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
-            createWallets(3_000_000);
-            verifyIfWalletIsCreated(3_000_000);
+            createWallets(1_500_000);
+            verifyIfWalletIsCreated(1_500_000);
             depositWallet();
             autoApproveTxs();
             cosignApprovedTransactions();
@@ -516,49 +510,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
-    private KeyStore getEthKeyStore() throws RemoteException {
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        String documentsPath = getApplicationContext().getFilesDir().getPath();     //!!!
-        KeyStore ks = new KeyStore(documentsPath + "/keystore/" + myPublicKey, Geth.LightScryptN, Geth.LightScryptP);
-
-        return ks;
-    }
-
-    private Account getEthAccount(KeyStore ks) throws RemoteException {
-        try {
-            String secret = mKey.getPrivateKeyAsWiF(new MainNetParams());
-
-            Accounts aaa = ks.getAccounts();
-            Account acc;
-            if (aaa.size() > 0)
-                acc = aaa.get(0);
-            else
-                //com.teambrella.android W/System.err: go.Universe$proxyerror: invalid length, need 256 bits
-                acc = ks.importECDSAKey(mKey.getPrivKeyBytes(), secret);
-
-            return acc;
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Was unnable to read account.", e);
-            throw new RemoteException(e.getMessage());
-        }
-    }
-
-    private long getMyNonce() throws RemoteException {
-
-        KeyStore ks = getEthKeyStore();
-        Account myAccount = getEthAccount(ks);
-        String myHex = myAccount.getAddress().getHex();
-
-        long myNonce = getNonce(myHex);
-        return myNonce;
-    }
-
-    private long getNonce(String addressHex) {
-        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
-        return blockchain.checkNonce(addressHex);
-    }
-
-    // TODO: xxx: move the two methods to ETHWallet
     private static String toCreationInfoString(Multisig m) {
         if (null == m) return "null";
 
