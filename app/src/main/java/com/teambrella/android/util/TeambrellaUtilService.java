@@ -168,29 +168,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         return super.onStartCommand(intent, i, i1);
     }
 
-    private static final String METHOD_ID_TRANSFER = "91f34dbd";
-    private static final String TX_PREFIX = "5452";
-    private static final String NS_PREFIX = "4E53";
-
-    private byte[] getTransferDataHash(int teamId, int opNum, String[] addresses, long[] values) {
-
-        String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
-        String a1 = String.format("%064x", teamId);
-        String a2 = String.format("%064x", opNum);
-        int n = addresses.length;
-        String[] a3 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a3[i] = addresses[i].startsWith("0x") ? addresses[i].substring(2) : addresses[i];
-        }
-        String[] a4 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a4[i] = String.format("%064x", values[i]);
-        }
-
-        byte[] data = Hex.toBytes(a0, a1, a2, a3, a4);
-        return Sha3.getKeccak256Hash(data);
-    }
-
     @Override
     public int onRunTask(TaskParams taskParams) {
         String tag = taskParams.getTag();
