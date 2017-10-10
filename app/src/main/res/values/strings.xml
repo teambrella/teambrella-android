@@ -240,4 +240,10 @@
 
     <string name="access_denied_title">We are sorry</string>
     <string name="access_denied_description"><![CDATA[Currently you are unable to connect to Teambrella. Please, contact our support <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
+
+    <string name="notification_title_your_claim">@string/your_claim</string>
+    <string name="notification_title_your_application">Your application</string>
+    <string name="notification_title_other_claim">"%s\'s claim"</string>
+    <string name="notification_title_other_application">"%s\'s application"</string>
+    <string name="notification_chat_text_format_string">%1$s: %2$s</string>
 </resources>
