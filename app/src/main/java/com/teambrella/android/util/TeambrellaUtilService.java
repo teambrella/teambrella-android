@@ -31,6 +31,7 @@ import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
 
@@ -143,7 +144,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 //        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 //
 //        if(BuildConfig.DEBUG){
-//            new AsyncTask<Void, Void, Void>() {
+//            new android.os.AsyncTask<Void, Void, Void>() {
 //                @Override
 //                protected Void doInBackground(Void... voids) {
 //                    try {
@@ -290,11 +291,13 @@ public class TeambrellaUtilService extends GcmTaskService {
                 ////operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
 
             } else {
-                String txHex = myWallet.createOneWallet(myNonce, m, gasLimit);
+                long gasPrice = myWallet.getGasPrice();
+                String txHex = myWallet.createOneWallet(myNonce, m, gasLimit, gasPrice);
                 if (txHex != null) {
                     // There could be 2 my pending mutisigs (Current and Next) for the same team. So we remember the first creation tx and don't create 2 contracts for the same team.
                     m.creationTx = txHex;
                     operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
+                    operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, new Date()));
                     myNonce++;
                 }
             }
@@ -324,7 +327,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return null;
     }
 
-    private boolean verifyIfWalletIsCreated(long gasLimit) throws RemoteException, OperationApplicationException {
+    private boolean verifyIfWalletIsCreated(long gasLimit) throws CryptoException, RemoteException, OperationApplicationException {
 
         EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
 
@@ -342,9 +345,11 @@ public class TeambrellaUtilService extends GcmTaskService {
                     allGasIsUsed = gasUsed == gasLimit;
                     if (!allGasIsUsed) {
 
-                        operations.add(mTeambrellaClient.setMutisigAddressAndNeedsServerUpdate(m, res.contractAddress));
+                        operations.add(mTeambrellaClient.setMultisigAddressAndNeedsServerUpdate(m, res.contractAddress));
 
                     }
+                }else{
+                    recreateIfTimedOut(operations, m, gasLimit);
                 }
                 addErrorOperationIfAny(operations, m, receipt, allGasIsUsed);
             }
@@ -360,10 +365,27 @@ public class TeambrellaUtilService extends GcmTaskService {
     private void addErrorOperationIfAny(List<ContentProviderOperation> operations, Multisig m, Scan<ScanResultTxReceipt> receipt, boolean allGasIsUsed) {
         if (allGasIsUsed) {
             Log.e(LOG_TAG, toCreationInfoString(m) + " did not create the contract and consumed all the gas. Holding the tx status for later investigation.");
-            operations.add(mTeambrellaClient.setMutisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
+            operations.add(mTeambrellaClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
         } else if (receipt.error != null) {
             Log.e(LOG_TAG, toCreationInfoString(m) + " denied. Resetting tx and mark for retry. Error was: " + receipt.error.toString());
             operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
+        }
+    }
+
+    private void recreateIfTimedOut(List<ContentProviderOperation> operations, Multisig m, long gasLimit) throws CryptoException, RemoteException {
+
+        Date yesterday = new Date(System.currentTimeMillis()-48*60*60*1000);
+        Unconfirmed unconfirmed = mTeambrellaClient.getOutdatedUnconfirmed(m.id, yesterday);
+        if (unconfirmed != null){
+
+            EthWallet myWallet = getWallet();
+            long gasPrice = myWallet.getGasPrice();
+            String txHex = myWallet.createOneWallet(myWallet.checkMyNonce(), m, gasLimit, gasPrice);
+            if (txHex != null){
+                m.creationTx = txHex;
+                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
+                operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, new Date()));
+            }
         }
     }
 

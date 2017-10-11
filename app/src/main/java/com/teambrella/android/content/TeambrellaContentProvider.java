@@ -105,6 +105,9 @@ public class TeambrellaContentProvider extends ContentProvider {
             case TeambrellaRepository.TX_SIGNATURE:
                 rowId = db.insertOrThrow(TeambrellaRepository.TX_SIGNATURE_TABLE, null, values);
                 break;
+            case TeambrellaRepository.UNCONFIRMED:
+                rowId = db.insertOrThrow(TeambrellaRepository.UNCONFIRMED_TABLE, null, values);
+                break;
 
             default:
                 rowId = db.insertWithOnConflict(getTableName(uri), null, values, SQLiteDatabase.CONFLICT_IGNORE);
@@ -163,6 +166,8 @@ public class TeambrellaContentProvider extends ContentProvider {
                 return TeambrellaRepository.TX_OUTPUT_TABLE;
             case TeambrellaRepository.TX_SIGNATURE:
                 return TeambrellaRepository.TX_SIGNATURE_TABLE;
+            case TeambrellaRepository.UNCONFIRMED:
+                return TeambrellaRepository.UNCONFIRMED_TABLE;
             default:
                 throw new RuntimeException("Unknown uri ->" + uri);
         }
@@ -171,7 +176,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private static class TeambrellaSQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final int VERSION = 204;
+        private static final int VERSION = 205;
         private static final String NAME = "teambrella";
 
 
@@ -284,6 +289,15 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "NeedUpdateServer BOOLEAN NOT NULL" +
                     ")");
 
+            db.execSQL("CREATE TABLE Unconfirmed (" +
+                    "Id INTEGER PRIMARY KEY UNIQUE NOT NULL, " +
+                    "MultisigId INTEGER NOT NULL, " +
+                    "TxId varchar, " +
+                    "CryptoTx varchar NOT NULL, " +
+                    "CryptoFee INTEGER NOT NULL, " +
+                    "DateCreated DATETIME NOT NULL)"
+            );
+
             db.execSQL("CREATE TABLE User (" +
                     "Id INTEGER PRIMARY KEY, " +
                     "PrivateKey TEXT, " +
@@ -296,7 +310,7 @@ public class TeambrellaContentProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            if (oldVersion < VERSION
+            if (oldVersion < 204
                     ) {
                 db.execSQL("DROP TABLE IF EXISTS Multisig");
                 db.execSQL("DROP TABLE IF EXISTS Connection");
@@ -311,6 +325,18 @@ public class TeambrellaContentProvider extends ContentProvider {
                 db.execSQL("DROP TABLE IF EXISTS User");
 
                 onCreate(db);
+            }else if (oldVersion < 205
+                    ){
+                db.execSQL("CREATE TABLE Unconfirmed (" +
+                        "Id INTEGER PRIMARY KEY UNIQUE NOT NULL, " +
+                        "MultisigId INTEGER NOT NULL, " +
+                        "TxId varchar, " +
+                        "CryptoTx varchar NOT NULL, " +
+                        "CryptoFee INTEGER NOT NULL, " +
+                        "DateCreated DATETIME NOT NULL)"
+                );
+                db.execSQL("INSERT INTO Unconfirmed(MultisigId, CryptoTx, CryptoFee, DateCreated) " +
+                        "SELECT Id, CreationTx, 2000000000, DateCreated FROM Multisig WHERE CreationTx IS NOT NULL;");
             }
 
         }
