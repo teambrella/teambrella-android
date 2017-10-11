@@ -70,12 +70,12 @@ class EthWallet {
     }
 
 
-    public boolean deposit(Multisig multisig) throws CryptoException, RemoteException{
+    public boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
         BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
 
-        BigDecimal txPriceLimit = eth(200_000 * getGasPrice());
+        BigDecimal txPriceLimit = eth(100_000 * getGasPrice());
         if (gasWalletAmount.compareTo(dec(30).multiply(txPriceLimit)) > 0) {
             BigDecimal minRestForGas = dec(25).multiply(txPriceLimit); // min restt in the Gas Wallet is an amount for 25 transactions.
 
@@ -90,7 +90,7 @@ class EthWallet {
         return true;
     }
 
-    public byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException{
+    public byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
 
         int opNum = payFrom.previousTxIndex + 1;
 
@@ -109,12 +109,12 @@ class EthWallet {
         return sig;
     }
 
-    public String publish(Tx tx) throws CryptoException, RemoteException{
+    public String publish(Tx tx) throws CryptoException, RemoteException {
 
         List<TxInput> inputs = tx.txInputs;
-        if (inputs.size() != 1){
+        if (inputs.size() != 1) {
             String msg = "Unexpected count of tx inputs of ETH tx. Expected: 1, was: " + inputs.size();
-            Log.e(LOG_TAG,msg);
+            Log.e(LOG_TAG, msg);
             throw new ArithmeticException(msg);
         }
 
@@ -133,10 +133,10 @@ class EthWallet {
         int[] pos = new int[3];
         byte[][] sig = new byte[3][];
         sig[0] = sig[1] = sig[2] = new byte[0];
-        Map<Long,TXSignature> txSignatures = payFrom.signatures;
+        Map<Long, TXSignature> txSignatures = payFrom.signatures;
         int index = 0, j = 0;
-        for (Cosigner cos : tx.cosigners){
-            if (txSignatures.containsKey(cos.teammateId)){
+        for (Cosigner cos : tx.cosigners) {
+            if (txSignatures.containsKey(cos.teammateId)) {
                 TXSignature s = txSignatures.get(cos.teammateId);
                 pos[j] = index;
                 sig[j] = s.bSignature;
@@ -149,10 +149,10 @@ class EthWallet {
             index++;
         }
 
-        Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1],sig[2]);
-        try{
+        Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
+        try {
             Log.v(LOG_TAG, "tx cratated: " + cryptoTx.encodeJSON());
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(LOG_TAG, "could not encode JSON to log tx: " + e.getMessage(), e);
         }
 
@@ -162,20 +162,20 @@ class EthWallet {
         return publish(cryptoTx);
     }
 
-    public long getGasPrice(){
-        return mIsTestNet ? 150_000_000_001L : 2_000_000_001L;  // 150 Gwei for TestNet and 2 Gwei for MainNet (1 Gwei = 10^9 wei)
+    public long getGasPrice() {
+        return mIsTestNet ? 1_000_000_001L : 4_000_000_001L;  // 1 Gwei for TestNet and 4 Gwei for MainNet (1 Gwei = 10^9 wei)
     }
 
-    public long checkMyNonce(){
+    public long checkMyNonce() {
         EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
         return blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
 
-    private static BigDecimal dec(long val){
+    private static BigDecimal dec(long val) {
         return new BigDecimal(val, MathContext.UNLIMITED);
     }
 
-    private static BigDecimal eth(long weis){
+    private static BigDecimal eth(long weis) {
         return new BigDecimal(weis, MathContext.UNLIMITED).divide(AbiArguments.WEIS_IN_ETH);
     }
 
@@ -194,31 +194,31 @@ class EthWallet {
         }
     }
 
-    private String[] toAddresses(List<TxOutput> destinations){
+    private String[] toAddresses(List<TxOutput> destinations) {
 
         int n = destinations.size();
         String[] destinationAddresses = new String[n];
 
-        for (int i=0; i<n; i++){
+        for (int i = 0; i < n; i++) {
             destinationAddresses[i] = destinations.get(i).address;
         }
 
         return destinationAddresses;
     }
 
-    private String[] toValues(List<TxOutput> destinations){
+    private String[] toValues(List<TxOutput> destinations) {
 
         int n = destinations.size();
         String[] destinationValues = new String[n];
 
-        for (int i=0; i<n; i++){
+        for (int i = 0; i < n; i++) {
             destinationValues[i] = AbiArguments.parseDecimalAmount(destinations.get(i).cryptoAmount);
         }
 
         return destinationValues;
     }
 
-    private byte[] getHash(long teamId, int opNum, String[] addresses, String[] values){
+    private byte[] getHash(long teamId, int opNum, String[] addresses, String[] values) {
 
         String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
         String a1 = String.format("%064x", teamId);
