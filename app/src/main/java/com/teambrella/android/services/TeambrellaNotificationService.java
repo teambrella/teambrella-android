@@ -1,6 +1,5 @@
 package com.teambrella.android.services;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,14 +13,16 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -29,6 +30,36 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Teambrella Notification Service
  */
 public class TeambrellaNotificationService extends Service implements TeambrellaServer.SocketClientListener {
+
+    private static final String CMD = "cmd";
+    private static final String USER_ID = "userId";
+    private static final String TEAM_ID = "teamId";
+    private static final String TOPIC_ID = "topicId";
+    private static final String POST_ID = "postId";
+    private static final String USER_NAME = "userName";
+    private static final String USER_IMAGE = "userImage";
+    private static final String CONTENT = "content";
+    private static final String CLAIM_ID = "claimId";
+    private static final String AMOUNT = "amount";
+    private static final String TEAM_LOGO = "teamLogo";
+    private static final String TEAM_NAME = "teamName";
+    private static final String COUNT = "count";
+    private static final String BALANCE_CRYPTO = "balanceCrypto";
+    private static final String BALANCE_FIAT = "balanceFiat";
+    private static final String MESSAGE = "message";
+    private static final String TEAMMATE_ID = "teammateId";
+    private static final String TOPIC_NAME = "topicName";
+
+
+    private static final int CREATED_POST = 1;
+    private static final int DELETED_POST = 2;
+    private static final int TYPING = 13;
+    private static final int NEW_CLAIM = 4;
+    private static final int PRIVATE_MSG = 5;
+    private static final int WALLET_FUNDED = 6;
+    private static final int POSTS_SINCE_INTERACTED = 7;
+    private static final int NEW_TEAMMATE = 8;
+    private static final int NEW_DISCUSSION = 9;
 
 
     public interface ITeambrellaNotificationServiceBinder extends IBinder {
@@ -65,42 +96,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
     private CopyOnWriteArrayList<ITeambrellaNotificationServiceBinder.INotificationServiceListener> mListeners = new CopyOnWriteArrayList<>();
-
-
-    public enum NotificationTypes {
-        CREATED_POST(1),
-        DELETED_POST(2),
-        TYPING(13),
-        NEW_CLAIM(4),
-        PRIVATE_MSG(5),
-        WALLET_FUNDED(6),
-        POSTS_SINCE_INTERACTED(7),
-        NEW_TEAMMATE(8),
-        NEW_DISCUSSION(9);
-
-        private final int id;
-
-        @SuppressLint("UseSparseArrays")
-        private static Map<Integer, NotificationTypes> map = new HashMap<>();
-
-        static {
-            for (NotificationTypes item : NotificationTypes.values()) {
-                map.put(item.id, item);
-            }
-        }
-
-        NotificationTypes(int id) {
-            this.id = id;
-        }
-
-        public int getValue() {
-            return id;
-        }
-
-        public static NotificationTypes valueOf(int id) {
-            return map.get(id);
-        }
-    }
+    private Gson mGson = new GsonBuilder().setLenient().create();
 
     private TeambrellaServer.TeambrellaSocketClient mTeambrellaSocketClient;
     private TeambrellaNotificationManager mTeambrellaNotificationManager;
@@ -246,50 +242,55 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     }
 
     private void processMessage(String message) {
-        //Log.d(LOG_TAG, message);
-        String messageParts[] = message.split(";");
-        NotificationTypes type = NotificationTypes.valueOf(Integer.parseInt(messageParts[0]));
-        switch (type) {
+
+        JsonWrapper messageWrapper = new JsonWrapper(mGson.fromJson(message, JsonObject.class));
+
+
+        Log.e(LOG_TAG, message);
+        switch (messageWrapper.getInt(CMD, -1)) {
             case CREATED_POST: {
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                String topicId = messageParts[3];
-                String postId = messageParts[4];
-                String name = messageParts[5];
-                String avatar = messageParts[6];
-                String text = messageParts[7];
-                notifyPostCreated(teamId, userId, topicId, postId, name, avatar, text);
-                StatisticHelper.onPostCreatedNotification(teamId, userId, topicId, postId);
+                notifyPostCreated(messageWrapper.getInt(TEAM_ID)
+                        , messageWrapper.getString(USER_ID)
+                        , messageWrapper.getString(TOPIC_ID)
+                        , messageWrapper.getString(POST_ID)
+                        , messageWrapper.getString(USER_IMAGE)
+                        , messageWrapper.getString(USER_IMAGE)
+                        , messageWrapper.getString(CONTENT));
+
+                StatisticHelper.onPostCreatedNotification(messageWrapper.getInt(TEAM_ID)
+                        , messageWrapper.getString(USER_ID)
+                        , messageWrapper.getString(TOPIC_ID)
+                        , messageWrapper.getString(POST_ID));
             }
             break;
 
             case DELETED_POST: {
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                String topicId = messageParts[3];
-                String postId = messageParts[4];
-                notifyPostDeleted(teamId, userId, topicId, postId);
+//                int teamId = Integer.parseInt(messageParts[1]);
+//                String userId = messageParts[2];
+//                String topicId = messageParts[3];
+//                String postId = messageParts[4];
+//                notifyPostDeleted(teamId, userId, topicId, postId);
             }
             break;
 
             case TYPING: {
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                String topicId = messageParts[3];
-                String name = messageParts[4];
-                notifyTyping(teamId, userId, topicId, name);
+//                int teamId = Integer.parseInt(messageParts[1]);
+//                String userId = messageParts[2];
+//                String topicId = messageParts[3];
+//                String name = messageParts[4];
+//                notifyTyping(teamId, userId, topicId, name);
             }
             break;
 
             case NEW_CLAIM: {
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                int claimId = Integer.parseInt(messageParts[3]);
-                String name = messageParts[4];
-                String imageUrl = messageParts[5];
-                String amount = messageParts[6];
-                String teamImgUrl = messageParts[7];
-                String teamName = messageParts[8];
+                int teamId = messageWrapper.getInt(TEAM_ID);
+                String userId = messageWrapper.getString(USER_ID);
+                int claimId = messageWrapper.getInt(CLAIM_ID);
+                String name = messageWrapper.getString(USER_NAME);
+                String imageUrl = messageWrapper.getString(USER_IMAGE);
+                String amount = messageWrapper.getString(AMOUNT);
+                String teamImgUrl = messageWrapper.getString(TEAM_LOGO);
+                String teamName = messageWrapper.getString(TEAM_NAME);
                 if (!notifyNewClaim(teamId, userId, claimId, name, imageUrl, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showNewClaimNotification(teamId, claimId, name, amount, teamName);
                 }
@@ -298,10 +299,10 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             break;
 
             case PRIVATE_MSG: {
-                String userId = messageParts[1];
-                String name = messageParts[2];
-                String imgUrl = messageParts[3];
-                String text = messageParts[4];
+                String userId = messageWrapper.getString(USER_ID);
+                String name = messageWrapper.getString(USER_NAME);
+                String imgUrl = messageWrapper.getString(USER_IMAGE);
+                String text = messageWrapper.getString(MESSAGE);
                 if (!notifyPrivateMessage(userId, name, imgUrl, text)) {
                     mTeambrellaNotificationManager.showPrivateMessageNotification(userId, name, imgUrl, text);
                 }
@@ -309,12 +310,12 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             break;
 
             case WALLET_FUNDED: {
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                String mEthAmount = messageParts[3];
-                String amount = messageParts[4];
-                String teamImgUrl = messageParts[5];
-                String teamName = messageParts[6];
+                int teamId = messageWrapper.getInt(TEAM_ID);
+                String userId = messageWrapper.getString(USER_ID);
+                String mEthAmount = messageWrapper.getString(BALANCE_CRYPTO);
+                String amount = messageWrapper.getString(BALANCE_FIAT);
+                String teamImgUrl = messageWrapper.getString(TEAM_LOGO);
+                String teamName = messageWrapper.getString(TEAM_NAME);
                 if (!notifyWalletFunded(teamId, userId, mEthAmount, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showWalletIsFundedNotification(mEthAmount);
                 }
@@ -323,46 +324,31 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             break;
 
             case POSTS_SINCE_INTERACTED:
-                int count = Integer.parseInt(messageParts[1]);
+                int count = messageWrapper.getInt(COUNT);
                 if (!notifyPostsSinceInteracted(count)) {
                     mTeambrellaNotificationManager.showNewMessagesSinceLastVisit(count);
                 }
                 break;
 
             case NEW_TEAMMATE: {
-                //noinspection unused
-                int teamId = Integer.parseInt(messageParts[1]);
-                //noinspection unused
-                String userId = messageParts[2];
-                //noinspection unused
-                int teammateId = Integer.parseInt(messageParts[3]);
-                String name = messageParts[4];
-                //noinspection unused
-                String avatar = messageParts[5];
-                int totalCount = Integer.parseInt(messageParts[6]);
-                //noinspection unused
-                String teamUrl = messageParts[7];
-                //noinspection unused
-                String teamName = messageParts[8];
-                mTeambrellaNotificationManager.showNewTeammates(name, totalCount, teamName);
-
-                StatisticHelper.onNewTeammateNotification(teamId, userId, teammateId);
+                mTeambrellaNotificationManager.showNewTeammates(messageWrapper.getString(USER_IMAGE), messageWrapper.getInt(COUNT), messageWrapper.getString(TEAM_NAME));
+                StatisticHelper.onNewTeammateNotification(messageWrapper.getInt(TEAM_ID), messageWrapper.getString(USER_ID), messageWrapper.getInt(TEAMMATE_ID));
             }
             break;
             case NEW_DISCUSSION: {
                 //noinspection unused
-                int teamId = Integer.parseInt(messageParts[1]);
-                String userId = messageParts[2];
-                String topicId = messageParts[3];
-                String topicName = messageParts[4];
+                int teamId = messageWrapper.getInt(TEAM_ID);
+                String userId = messageWrapper.getString(USER_ID);
+                String topicId = messageWrapper.getString(TOPIC_ID);
+                String topicName = messageWrapper.getString(TOPIC_NAME);
                 //noinspection unused
-                String postId = messageParts[5];
-                String userName = messageParts[6];
+                String postId = messageWrapper.getString(POST_ID);
+                String userName = messageWrapper.getString(USER_NAME);
                 //noinspection unused
-                String avatar = messageParts[7];
+                String avatar = messageWrapper.getString(USER_IMAGE);
                 //noinspection unused
-                String teamUrl = messageParts[8];
-                String teamName = messageParts[9];
+                String teamUrl = messageWrapper.getString(TEAM_LOGO);
+                String teamName = messageWrapper.getString(TEAM_NAME);
                 if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
                     mTeambrellaNotificationManager.showNewDiscussion(teamName, userName, teamId, topicName, topicId);
                 }
