@@ -247,7 +247,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
 
         Log.e(LOG_TAG, message);
-        switch (messageWrapper.getInt(CMD, -1)) {
+
+        int command = messageWrapper.getInt(CMD, -1);
+        switch (command) {
             case CREATED_POST: {
                 notifyPostCreated(messageWrapper.getInt(TEAM_ID)
                         , messageWrapper.getString(USER_ID)
@@ -265,20 +267,20 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             break;
 
             case DELETED_POST: {
-//                int teamId = Integer.parseInt(messageParts[1]);
-//                String userId = messageParts[2];
-//                String topicId = messageParts[3];
-//                String postId = messageParts[4];
-//                notifyPostDeleted(teamId, userId, topicId, postId);
+                int teamId = messageWrapper.getInt(TEAM_ID);
+                String userId = messageWrapper.getString(USER_ID);
+                String topicId = messageWrapper.getString(TOPIC_ID);
+                String postId = messageWrapper.getString(POST_ID);
+                notifyPostDeleted(teamId, userId, topicId, postId);
             }
             break;
 
             case TYPING: {
-//                int teamId = Integer.parseInt(messageParts[1]);
-//                String userId = messageParts[2];
-//                String topicId = messageParts[3];
-//                String name = messageParts[4];
-//                notifyTyping(teamId, userId, topicId, name);
+                int teamId = messageWrapper.getInt(TEAM_ID);
+                String userId = messageWrapper.getString(USER_ID);
+                String topicId = messageWrapper.getString(TOPIC_ID);
+                String userName = messageWrapper.getString(USER_NAME);
+                notifyTyping(teamId, userId, topicId, userName);
             }
             break;
 
