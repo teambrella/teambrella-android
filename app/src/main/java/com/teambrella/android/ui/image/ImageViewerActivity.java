@@ -60,6 +60,8 @@ public class ImageViewerActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             mViewPager.setCurrentItem(position);
         }
+
+        findViewById(R.id.back).setOnClickListener(v -> finish());
     }
 
 
