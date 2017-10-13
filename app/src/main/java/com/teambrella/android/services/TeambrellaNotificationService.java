@@ -394,7 +394,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                         , messageWrapper.getString(TOPIC_ID)
                                         , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
                     } else if (claim != null) {
-                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
+                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
                                 , claim.getString(USER_NAME)
                                 , messageWrapper.getString(USER_NAME)
                                 , messageWrapper.getString(CONTENT)
@@ -408,7 +408,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                         , messageWrapper.getString(TOPIC_ID)
                                         , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
                     } else if (discussion != null) {
-                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
+                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
                                 , discussion.getString(TOPIC_NAME)
                                 , messageWrapper.getString(USER_NAME)
                                 , messageWrapper.getString(CONTENT)
