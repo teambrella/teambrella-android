@@ -45,4 +45,6 @@ public class Multisig {
 
 
     public List<Cosigner> cosigners;
+    public Unconfirmed unconfirmed;
+
 }

@@ -576,6 +576,13 @@ public class TeambrellaContentProviderClient {
                         TeambrellaRepository.Multisig.CREATION_TX + " IS NOT NULL AND " +
                         TeambrellaRepository.Multisig.STATUS + " <> " + TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED,
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
+        Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                com.teambrella.android.content.model.Multisig m = iterator.next();
+                m.cosigners = getCosigners(m);
+            }
+        }
         return list;
     }
 
@@ -632,19 +639,31 @@ public class TeambrellaContentProviderClient {
         return op.build();
     }
 
-    public Unconfirmed getOutdatedUnconfirmed(long multisigId, Date threshold) throws RemoteException {
+    public Unconfirmed getUnconfirmed(long multisigId, String txHash) throws RemoteException {
 
-        return queryOne(TeambrellaRepository.Unconfirmed.CONTENT_URI, TeambrellaRepository.Unconfirmed.MULTISIG_ID + "=?" +
-                " AND " + TeambrellaRepository.Unconfirmed.DATE_CREATED + "<?",
-                new String[]{Long.toString(multisigId), mSDF.format(threshold)}, Unconfirmed.class);
+        Unconfirmed result = queryOne(TeambrellaRepository.Unconfirmed.CONTENT_URI, TeambrellaRepository.Unconfirmed.MULTISIG_ID + "=?" +
+                " AND " + TeambrellaRepository.Unconfirmed.CRYPTO_TX + "=?",
+                new String[]{Long.toString(multisigId), txHash}, Unconfirmed.class);
+
+        if (result != null){
+            result.initDates(mSDF);
+        }
+
+        return result;
     }
 
-    public ContentProviderOperation insertUnconfirmed(long multisigId, String txHash, long gasPrice, Date dateCreated) throws RemoteException{
+    public ContentProviderOperation insertUnconfirmed(Unconfirmed newUnconfirmed) throws RemoteException{
+
+        return insertUnconfirmed(newUnconfirmed.multisigId, newUnconfirmed.cryptoTx, newUnconfirmed.cryptoFee, newUnconfirmed.cryptoNonce, newUnconfirmed.getDateCreated());
+    }
+
+    public ContentProviderOperation insertUnconfirmed(long multisigId, String txHash, long gasPrice, long nonce, Date dateCreated) throws RemoteException{
 
         return ContentProviderOperation.newInsert(TeambrellaRepository.Unconfirmed.CONTENT_URI)
                 .withValue(TeambrellaRepository.Unconfirmed.MULTISIG_ID, multisigId)
                 .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_TX, txHash)
                 .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_FEE, gasPrice)
+                .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_NONCE, nonce)
                 .withValue(TeambrellaRepository.Unconfirmed.DATE_CREATED, mSDF.format(dateCreated))
                 .build();
     }
