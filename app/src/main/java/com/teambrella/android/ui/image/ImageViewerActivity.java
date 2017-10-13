@@ -12,8 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
 
@@ -27,7 +27,9 @@ public class ImageViewerActivity extends AppCompatActivity {
     private static final String EXTRA_URIS = "uris";
     private static final String EXTRA_POSITION = "position";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private ViewPager mViewPager;
+    private TextView mPagerIndicator;
 
 
     public static Intent getLaunchIntent(Context context, ArrayList<String> uris, int position) {
@@ -41,10 +43,10 @@ public class ImageViewerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
-        supportPostponeEnterTransition();
         mViewPager = findViewById(R.id.pager);
         final ArrayList<String> uris = getIntent().getStringArrayListExtra(EXTRA_URIS);
         int position = getIntent().getIntExtra(EXTRA_POSITION, 0);
+        mPagerIndicator = findViewById(R.id.pager_indicator);
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -57,9 +59,33 @@ public class ImageViewerActivity extends AppCompatActivity {
             }
         });
 
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mPagerIndicator.setText(getString(R.string.image_full_screen_indicator_format_string,
+                        position + 1
+                        , uris.size()));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
         if (savedInstanceState == null) {
             mViewPager.setCurrentItem(position);
         }
+
+        mPagerIndicator.setText(getString(R.string.image_full_screen_indicator_format_string
+                , mViewPager.getCurrentItem() + 1
+                , uris.size()));
 
         findViewById(R.id.back).setOnClickListener(v -> finish());
     }
@@ -81,17 +107,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView, new Callback() {
-                @Override
-                public void onSuccess() {
-                    getActivity().supportStartPostponedEnterTransition();
-                }
-
-                @Override
-                public void onError() {
-                    getActivity().supportStartPostponedEnterTransition();
-                }
-            });
+            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
             return imageView;
         }
     }
