@@ -81,8 +81,6 @@ public class EtherAccount {
 
     public Transaction newContractTx(long nonce, long gasLimit, long gasPrice, String bytecode, Object... methodArgs) throws CryptoException {
 
-        // TODO: xxx: use newMessageTx with
-
         String json = String.format("{\"nonce\":\"0x%x\",\"gasPrice\":\"0x%x\",\"gas\":\"0x%x\",\"value\":\"0x0\",\"input\":\"%s\",\"v\":\"0x29\",\"r\":\"0x29\",\"s\":\"0x29\"}",
                 nonce,
                 gasPrice,

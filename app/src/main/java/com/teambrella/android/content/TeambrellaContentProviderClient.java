@@ -21,6 +21,7 @@ import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
 import com.teambrella.android.content.model.TxOutput;
+import com.teambrella.android.content.model.Unconfirmed;
 
 import org.chalup.microorm.MicroOrm;
 import org.chalup.microorm.TypeAdapter;
@@ -556,21 +557,6 @@ public class TeambrellaContentProviderClient {
                 .build();
     }
 
-    public List<com.teambrella.android.content.model.Multisig> getMultisigsToCreate(String publicKey) throws RemoteException {
-        List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
-                TeambrellaRepository.Multisig.ADDRESS + " IS NULL AND " +
-                        TeambrellaRepository.Multisig.STATUS + " = " + TeambrellaModel.USER_MULTISIG_STATUS_CURRENT + " AND " +
-                TeambrellaRepository.Teammate.PUBLIC_KEY + "=?",
-                new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
-        Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                com.teambrella.android.content.model.Multisig m = iterator.next();
-                m.cosigners = getCosigners(m);
-            }
-        }
-        return list;
-    }
 
     public List<com.teambrella.android.content.model.Multisig> getMultisigsWithAddressByTeammate(String publicKey, long teammateId) throws RemoteException {
         List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
@@ -590,6 +576,13 @@ public class TeambrellaContentProviderClient {
                         TeambrellaRepository.Multisig.CREATION_TX + " IS NOT NULL AND " +
                         TeambrellaRepository.Multisig.STATUS + " <> " + TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED,
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
+        Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                com.teambrella.android.content.model.Multisig m = iterator.next();
+                m.cosigners = getCosigners(m);
+            }
+        }
         return list;
     }
 
@@ -603,7 +596,23 @@ public class TeambrellaContentProviderClient {
         return list;
     }
 
-    public static ContentProviderOperation setMutisigStatus(com.teambrella.android.content.model.Multisig m, int newStatus) {
+    public List<com.teambrella.android.content.model.Multisig> getMultisigsToCreate(String publicKey) throws RemoteException {
+        List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
+                TeambrellaRepository.Multisig.ADDRESS + " IS NULL AND " +
+                        TeambrellaRepository.Multisig.STATUS + " = " + TeambrellaModel.USER_MULTISIG_STATUS_CURRENT + " AND " +
+                        TeambrellaRepository.Teammate.PUBLIC_KEY + "=?",
+                new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
+        Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                com.teambrella.android.content.model.Multisig m = iterator.next();
+                m.cosigners = getCosigners(m);
+            }
+        }
+        return list;
+    }
+
+    public static ContentProviderOperation setMultisigStatus(com.teambrella.android.content.model.Multisig m, int newStatus) {
         ContentProviderOperation.Builder op;
         op = ContentProviderOperation.newUpdate(TeambrellaRepository.Multisig.CONTENT_URI);
         op = op.withValue(TeambrellaRepository.Multisig.STATUS, newStatus);
@@ -611,7 +620,7 @@ public class TeambrellaContentProviderClient {
         return op.build();
     }
 
-    public static ContentProviderOperation setMutisigAddressAndNeedsServerUpdate(com.teambrella.android.content.model.Multisig m, String newAddress) {
+    public static ContentProviderOperation setMultisigAddressAndNeedsServerUpdate(com.teambrella.android.content.model.Multisig m, String newAddress) {
         ContentProviderOperation.Builder op;
         op = ContentProviderOperation.newUpdate(TeambrellaRepository.Multisig.CONTENT_URI);
         op = op.withValue(TeambrellaRepository.Multisig.ADDRESS, newAddress);
@@ -628,6 +637,35 @@ public class TeambrellaContentProviderClient {
         op = op.withValue(TeambrellaRepository.Multisig.NEED_UPDATE_SERVER, needServerUpdate);
         op = op.withSelection(TeambrellaRepository.Multisig.ID + "=?", new String[]{Long.toString(m.id)});
         return op.build();
+    }
+
+    public Unconfirmed getUnconfirmed(long multisigId, String txHash) throws RemoteException {
+
+        Unconfirmed result = queryOne(TeambrellaRepository.Unconfirmed.CONTENT_URI, TeambrellaRepository.Unconfirmed.MULTISIG_ID + "=?" +
+                " AND " + TeambrellaRepository.Unconfirmed.CRYPTO_TX + "=?",
+                new String[]{Long.toString(multisigId), txHash}, Unconfirmed.class);
+
+        if (result != null){
+            result.initDates(mSDF);
+        }
+
+        return result;
+    }
+
+    public ContentProviderOperation insertUnconfirmed(Unconfirmed newUnconfirmed) throws RemoteException{
+
+        return insertUnconfirmed(newUnconfirmed.multisigId, newUnconfirmed.cryptoTx, newUnconfirmed.cryptoFee, newUnconfirmed.cryptoNonce, newUnconfirmed.getDateCreated());
+    }
+
+    public ContentProviderOperation insertUnconfirmed(long multisigId, String txHash, long gasPrice, long nonce, Date dateCreated) throws RemoteException{
+
+        return ContentProviderOperation.newInsert(TeambrellaRepository.Unconfirmed.CONTENT_URI)
+                .withValue(TeambrellaRepository.Unconfirmed.MULTISIG_ID, multisigId)
+                .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_TX, txHash)
+                .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_FEE, gasPrice)
+                .withValue(TeambrellaRepository.Unconfirmed.CRYPTO_NONCE, nonce)
+                .withValue(TeambrellaRepository.Unconfirmed.DATE_CREATED, mSDF.format(dateCreated))
+                .build();
     }
 
     private List<Cosigner> getCosigners(com.teambrella.android.content.model.Multisig multisig) throws RemoteException {

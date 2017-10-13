@@ -24,6 +24,7 @@ public class TeambrellaRepository {
     static final String TX_INPUT_TABLE = "TxInput";
     static final String TX_OUTPUT_TABLE = "TxOutput";
     static final String TX_SIGNATURE_TABLE = "TxSignature";
+    public static final String UNCONFIRMED_TABLE = "Unconfirmed";
 
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -39,6 +40,7 @@ public class TeambrellaRepository {
     static final int TX_INPUT = 8;
     static final int TX_OUTPUT = 9;
     static final int TX_SIGNATURE = 10;
+    static final int UNCONFIRMED = 11;
 
 
     static {
@@ -52,6 +54,7 @@ public class TeambrellaRepository {
         sUriMatcher.addURI(AUTHORITY, TX_INPUT_TABLE, TX_INPUT);
         sUriMatcher.addURI(AUTHORITY, TX_OUTPUT_TABLE, TX_OUTPUT);
         sUriMatcher.addURI(AUTHORITY, TX_SIGNATURE_TABLE, TX_SIGNATURE);
+        sUriMatcher.addURI(AUTHORITY, UNCONFIRMED_TABLE, UNCONFIRMED);
 
     }
 
@@ -66,7 +69,6 @@ public class TeambrellaRepository {
         public static final String STATUS = "Status";
         public static final String DATE_CREATED = "DateCreated";
         public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
-
 
     }
 
@@ -160,6 +162,20 @@ public class TeambrellaRepository {
         public static final String TEAMMATE_ID = "TeammateId";
         public static final String SIGNATURE = "Signature";
         public static final String NEED_UPDATE_SERVER = "NeedUpdateServer";
+    }
+
+    public static final class Unconfirmed {
+        public static final Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(UNCONFIRMED_TABLE).build();
+
+        public static final String ID = "Id";
+        public static final String MULTISIG_ID = "MultisigId";
+        public static final String TX_ID = "TxId";
+        public static final String CRYPTO_TX = "CryptoTx";
+        public static final String CRYPTO_FEE = "CryptoFee";
+        public static final String CRYPTO_NONCE = "CryptoNonce";
+        public static final String DATE_CREATED = "DateCreated";
+
     }
 
     public static class Team {

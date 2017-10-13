@@ -22,27 +22,23 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
-import com.teambrella.android.blockchain.EtherNode;
-import com.teambrella.android.blockchain.Hex;
-import com.teambrella.android.blockchain.Scan;
-import com.teambrella.android.blockchain.ScanResultTxReceipt;
-import com.teambrella.android.blockchain.Sha3;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
+import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.ServerUpdates;
+import com.teambrella.android.content.model.TXSignature;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
+import com.teambrella.android.content.model.TxInput;
+import com.teambrella.android.content.model.TxOutput;
+import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
-import org.ethereum.geth.Account;
-import org.ethereum.geth.Accounts;
-import org.ethereum.geth.Geth;
-import org.ethereum.geth.KeyStore;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,7 +145,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 //        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 //
 //        if(BuildConfig.DEBUG){
-//            new AsyncTask<Void, Void, Void>() {
+//            new android.os.AsyncTask<Void, Void, Void>() {
 //                @Override
 //                protected Void doInBackground(Void... voids) {
 //                    try {
@@ -166,29 +162,6 @@ public class TeambrellaUtilService extends GcmTaskService {
 //        }else
 
         return super.onStartCommand(intent, i, i1);
-    }
-
-    private static final String METHOD_ID_TRANSFER = "91f34dbd";
-    private static final String TX_PREFIX = "5452";
-    private static final String NS_PREFIX = "4E53";
-
-    private byte[] getTransferDataHash(int teamId, int opNum, String[] addresses, long[] values) {
-
-        String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
-        String a1 = String.format("%064x", teamId);
-        String a2 = String.format("%064x", opNum);
-        int n = addresses.length;
-        String[] a3 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a3[i] = addresses[i].startsWith("0x") ? addresses[i].substring(2) : addresses[i];
-        }
-        String[] a4 = new String[n];
-        for (int i = 0; i < n; i++) {
-            a4[i] = String.format("%064x", values[i]);
-        }
-
-        byte[] data = Hex.toBytes(a0, a1, a2, a3, a4);
-        return Sha3.getKeccak256Hash(data);
     }
 
     @Override
@@ -251,6 +224,9 @@ public class TeambrellaUtilService extends GcmTaskService {
                 case ACTION_SYNC:
                     sync();
                     break;
+                case "test":
+                    Log.e(LOG_TAG, "Test message is OK!");
+                    break;
                 default:
                     Log.e(LOG_TAG, "unknown action " + action);
             }
@@ -308,7 +284,8 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        long myNonce = getMyNonce();
+        EthWallet myWallet = getWallet();
+        long myNonce = myWallet.checkMyNonce();
         for (Multisig m : myUncreatedMultisigs) {
             Multisig sameTeammateMultisig = getMyTeamMultisigIfAny(myPublicKey, m.teammateId, myUncreatedMultisigs);
             if (sameTeammateMultisig != null) {
@@ -318,11 +295,13 @@ public class TeambrellaUtilService extends GcmTaskService {
                 ////operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
 
             } else {
-                String txHex = getWallet().createOneWallet(myNonce, m, gasLimit);
+                long gasPrice = myWallet.getGasPriceForContractCreation();
+                String txHex = myWallet.createOneWallet(myNonce, m, gasLimit, gasPrice);
                 if (txHex != null) {
                     // There could be 2 my pending mutisigs (Current and Next) for the same team. So we remember the first creation tx and don't create 2 contracts for the same team.
                     m.creationTx = txHex;
                     operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
+                    operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, myNonce, new Date()));
                     myNonce++;
                 }
             }
@@ -352,29 +331,34 @@ public class TeambrellaUtilService extends GcmTaskService {
         return null;
     }
 
-    private boolean verifyIfWalletIsCreated(long gasLimit) throws RemoteException, OperationApplicationException {
-
-        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+    private boolean verifyIfWalletIsCreated(long gasLimit) throws CryptoException, RemoteException, OperationApplicationException {
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> creationTxes = mTeambrellaClient.getMultisigsInCreation(myPublicKey);
         for (Multisig m : creationTxes) {
 
-            Scan<ScanResultTxReceipt> receipt = blockchain.checkTx(m.creationTx);
-            if (receipt != null) {
-                ScanResultTxReceipt res = receipt.result;
-                boolean allGasIsUsed = false;
-                if (res != null && res.blockNumber != null) {
-                    long gasUsed = Long.parseLong(res.gasUsed.substring(2), 16);
-                    allGasIsUsed = gasUsed == gasLimit;
-                    if (!allGasIsUsed) {
+            Unconfirmed oldUnconfirmed = mTeambrellaClient.getUnconfirmed(m.id, m.creationTx);
+            m.unconfirmed = oldUnconfirmed;
 
-                        operations.add(mTeambrellaClient.setMutisigAddressAndNeedsServerUpdate(m, res.contractAddress));
+            getWallet().validateCreationTx(m, gasLimit);
+            if (m.address != null){
 
-                    }
-                }
-                addErrorOperationIfAny(operations, m, receipt, allGasIsUsed);
+                operations.add(mTeambrellaClient.setMultisigAddressAndNeedsServerUpdate(m, m.address));
+
+            }else if (m.unconfirmed != oldUnconfirmed){
+
+                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
+                operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
+
+            }else if (m.status == TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED){
+
+                operations.add(mTeambrellaClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
+
+            }else if (m.unconfirmed == null){
+
+                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
+
             }
 
         }
@@ -383,16 +367,6 @@ public class TeambrellaUtilService extends GcmTaskService {
             return true;
         }
         return false;
-    }
-
-    private void addErrorOperationIfAny(List<ContentProviderOperation> operations, Multisig m, Scan<ScanResultTxReceipt> receipt, boolean allGasIsUsed) {
-        if (allGasIsUsed) {
-            Log.e(LOG_TAG, toCreationInfoString(m) + " did not create the contract and consumed all the gas. Holding the tx status for later investigation.");
-            operations.add(mTeambrellaClient.setMutisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
-        } else if (receipt.error != null) {
-            Log.e(LOG_TAG, toCreationInfoString(m) + " denied. Resetting tx and mark for retry. Error was: " + receipt.error.toString());
-            operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
-        }
     }
 
     private boolean depositWallet() throws CryptoException, RemoteException {
@@ -502,7 +476,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
         for (Tx tx : txs) {
 
-            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
             EthWallet wallet = getWallet();
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
@@ -527,8 +500,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
-            createWallets(3_000_000);
-            verifyIfWalletIsCreated(3_000_000);
+            createWallets(1_300_000);
+            verifyIfWalletIsCreated(1_300_000);
             depositWallet();
             autoApproveTxs();
             cosignApprovedTransactions();
@@ -537,58 +510,5 @@ public class TeambrellaUtilService extends GcmTaskService {
 
             hasNews = update();
         }
-    }
-
-    private KeyStore getEthKeyStore() throws RemoteException {
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        String documentsPath = getApplicationContext().getFilesDir().getPath();     //!!!
-        KeyStore ks = new KeyStore(documentsPath + "/keystore/" + myPublicKey, Geth.LightScryptN, Geth.LightScryptP);
-
-        return ks;
-    }
-
-    private Account getEthAccount(KeyStore ks) throws RemoteException {
-        try {
-            String secret = mKey.getPrivateKeyAsWiF(new MainNetParams());
-
-            Accounts aaa = ks.getAccounts();
-            Account acc;
-            if (aaa.size() > 0)
-                acc = aaa.get(0);
-            else
-                //com.teambrella.android W/System.err: go.Universe$proxyerror: invalid length, need 256 bits
-                acc = ks.importECDSAKey(mKey.getPrivKeyBytes(), secret);
-
-            return acc;
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Was unnable to read account.", e);
-            throw new RemoteException(e.getMessage());
-        }
-    }
-
-    private long getMyNonce() throws RemoteException {
-
-        KeyStore ks = getEthKeyStore();
-        Account myAccount = getEthAccount(ks);
-        String myHex = myAccount.getAddress().getHex();
-
-        long myNonce = getNonce(myHex);
-        return myNonce;
-    }
-
-    private long getNonce(String addressHex) {
-        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
-        return blockchain.checkNonce(addressHex);
-    }
-
-    // TODO: xxx: move the two methods to ETHWallet
-    private static String toCreationInfoString(Multisig m) {
-        if (null == m) return "null";
-
-        return toCreationInfoString(m.teamId, m.creationTx);
-    }
-
-    private static String toCreationInfoString(long teamId, String creationTx) {
-        return String.format("'Multisig creation(teamId=%s)' tx:%s", teamId, creationTx);
     }
 }
