@@ -13,9 +13,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -247,6 +249,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             processMessage(message);
         } catch (Exception e) {
             Log.e(LOG_TAG, e.toString());
+            if (!BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+            }
         }
 
     }
@@ -256,7 +261,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         JsonWrapper messageWrapper = new JsonWrapper(mGson.fromJson(message, JsonObject.class));
 
 
-        Log.e(LOG_TAG, message);
+        //Log.e(LOG_TAG, message);
 
         int command = messageWrapper.getInt(CMD, -1);
         switch (command) {
@@ -439,6 +444,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     @Override
     public void onError(Exception ex) {
         Log.e(LOG_TAG, "on error " + ex.getMessage());
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.logException(ex);
+        }
         if (mTeambrellaSocketClient != null) {
             mTeambrellaSocketClient.close();
             mTeambrellaSocketClient = null;
