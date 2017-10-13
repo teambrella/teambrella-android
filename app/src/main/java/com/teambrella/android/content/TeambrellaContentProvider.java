@@ -295,6 +295,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                     "TxId varchar, " +
                     "CryptoTx varchar NOT NULL, " +
                     "CryptoFee INTEGER NOT NULL, " +
+                    "CryptoNonce INTEGER NOT NULL, " +
                     "DateCreated DATETIME NOT NULL)"
             );
 
@@ -333,10 +334,11 @@ public class TeambrellaContentProvider extends ContentProvider {
                         "TxId varchar, " +
                         "CryptoTx varchar NOT NULL, " +
                         "CryptoFee INTEGER NOT NULL, " +
+                        "CryptoNonce INTEGER NOT NULL, " +
                         "DateCreated DATETIME NOT NULL)"
                 );
-                db.execSQL("INSERT INTO Unconfirmed(MultisigId, CryptoTx, CryptoFee, DateCreated) " +
-                        "SELECT Id, CreationTx, 2000000000, DateCreated FROM Multisig WHERE CreationTx IS NOT NULL;");
+                db.execSQL("INSERT INTO Unconfirmed(MultisigId, CryptoTx, CryptoFee, CryptoNonce, DateCreated) " +
+                        "SELECT Id, CreationTx, 2000000000, 0, DateCreated FROM Multisig WHERE CreationTx IS NOT NULL;");
             }
 
         }

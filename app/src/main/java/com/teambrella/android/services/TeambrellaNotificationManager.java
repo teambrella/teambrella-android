@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -18,8 +16,6 @@ import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
-import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
-import com.teambrella.android.ui.widget.AkkuratRegularTypefaceSpan;
 
 import java.util.UUID;
 
@@ -28,6 +24,13 @@ import java.util.UUID;
  */
 @SuppressWarnings("WeakerAccess")
 public class TeambrellaNotificationManager {
+
+    public enum ChatType {
+        APPLICATION,
+        CLAIM,
+        DISCUSSION
+    }
+
 
     private final Context mContext;
     private final NotificationManager mNotificationManager;
@@ -40,8 +43,8 @@ public class TeambrellaNotificationManager {
     @SuppressWarnings("ConstantConditions")
     public void showPrivateMessageNotification(String userId, String userName, String avatar, String text) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(mContext.getString(R.string.private_message_notification_title, userName)))
-                .setContentText(getMessage(text))
+                .setContentTitle(mContext.getString(R.string.private_message_notification_title, userName))
+                .setContentText(text)
                 .setContentIntent(getChatPendingIntent(userId, userName, avatar))
                 .build();
         mNotificationManager.notify(UUID.fromString(userId).hashCode(), notification);
@@ -50,8 +53,8 @@ public class TeambrellaNotificationManager {
     @SuppressWarnings("ConstantConditions")
     public void showNewClaimNotification(int teamId, int claimId, String name, String amount, String teamName) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(mContext.getString(R.string.notification_claim_header, teamName)))
-                .setContentText(getMessage(mContext.getString(R.string.notification_claim_text, name, amount)))
+                .setContentTitle(mContext.getString(R.string.notification_claim_header, teamName))
+                .setContentText(mContext.getString(R.string.notification_claim_text, name, amount))
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
                         , ClaimActivity.getLaunchIntent(mContext, claimId, null, teamId)
@@ -63,8 +66,8 @@ public class TeambrellaNotificationManager {
     @SuppressWarnings("ConstantConditions")
     public void showWalletIsFundedNotification(String amount) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(mContext.getString(R.string.notification_funded_header)))
-                .setContentText(getMessage("+ " + amount + "mETH"))
+                .setContentTitle(mContext.getString(R.string.notification_funded_header))
+                .setContentText("+ " + amount + "mETH")
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
                         , new Intent(mContext, MainActivity.class)
@@ -76,7 +79,7 @@ public class TeambrellaNotificationManager {
     @SuppressWarnings("ConstantConditions")
     public void showNewMessagesSinceLastVisit(int count) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(mContext.getString(R.string.notification_messages_since, count)))
+                .setContentTitle(mContext.getString(R.string.notification_messages_since, count))
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
                         , new Intent(mContext, MainActivity.class)
@@ -87,12 +90,12 @@ public class TeambrellaNotificationManager {
 
     public void showNewTeammates(String name, int othersCount, String teamName) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(teamName))
-                .setContentText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
-                        : mContext.getString(R.string.new_teammate_notification_description, name)))
+                .setContentTitle(teamName)
+                .setContentText(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                        : mContext.getString(R.string.new_teammate_notification_description, name))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(getTitle(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
-                                : mContext.getString(R.string.new_teammate_notification_description, name))))
+                        .bigText(othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
+                                : mContext.getString(R.string.new_teammate_notification_description, name)))
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
                         , new Intent(mContext, MainActivity.class)
@@ -105,10 +108,10 @@ public class TeambrellaNotificationManager {
 
     public void showNewDiscussion(String teamName, String userName, int teamId, String topicName, String topicId) {
         Notification notification = getBuilder()
-                .setContentTitle(getTitle(teamName))
-                .setContentText(getTitle(mContext.getString(R.string.new_discussion_notification_description, userName, topicName)))
+                .setContentTitle(teamName)
+                .setContentText(mContext.getString(R.string.new_discussion_notification_description, userName, topicName))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(getTitle(mContext.getString(R.string.new_discussion_notification_description, userName, topicName))))
+                        .bigText(mContext.getString(R.string.new_discussion_notification_description, userName, topicName)))
                 .setContentIntent(PendingIntent.getActivities(mContext
                         , 1
                         , new Intent[]{new Intent(mContext, MainActivity.class), ChatActivity.getFeedChat(mContext, topicName,
@@ -117,6 +120,41 @@ public class TeambrellaNotificationManager {
                 .build();
 
         mNotificationManager.notify(29, notification);
+    }
+
+    public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, boolean userTopic, String topicId, Intent intent) {
+        NotificationCompat.Builder builder = getBuilder().setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(mContext.getString(R.string.notification_chat_text_format_string, sender, text)))
+                .setContentText(mContext.getString(R.string.notification_chat_text_format_string, sender, text))
+                .setContentIntent(PendingIntent.getActivity(mContext
+                        , 0
+                        , intent
+                        , PendingIntent.FLAG_UPDATE_CURRENT));
+
+        switch (type) {
+            case APPLICATION: {
+                builder.setContentTitle(userTopic ? mContext.getString(R.string.notification_title_your_application) :
+                        mContext.getString(R.string.notification_title_other_application, title));
+                builder.setContentIntent(PendingIntent.getActivity(mContext
+                        , 0
+                        , intent
+                        , PendingIntent.FLAG_UPDATE_CURRENT));
+            }
+            break;
+
+            case CLAIM: {
+                builder.setContentTitle(userTopic ? mContext.getString(R.string.notification_title_your_claim) :
+                        mContext.getString(R.string.notification_title_other_claim, title));
+            }
+            break;
+
+            case DISCUSSION: {
+                builder.setContentTitle(title);
+            }
+
+            break;
+        }
+        mNotificationManager.notify(topicId.hashCode(), builder.build());
     }
 
 
@@ -128,20 +166,6 @@ public class TeambrellaNotificationManager {
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
     }
 
-
-    private SpannableString getTitle(String title) {
-        SpannableString spannableTitle = new SpannableString(title);
-        spannableTitle.setSpan(new AkkuratBoldTypefaceSpan(mContext), 0, title.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableTitle;
-    }
-
-    private SpannableString getMessage(String message) {
-        SpannableString spannableMessage = new SpannableString(message);
-        spannableMessage.setSpan(new AkkuratRegularTypefaceSpan(mContext), 0, message.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableMessage;
-    }
 
     private PendingIntent getChatPendingIntent(String userId, String userName, String avatar) {
         return PendingIntent.getActivities(mContext, 1, new Intent[]

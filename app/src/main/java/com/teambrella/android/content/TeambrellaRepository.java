@@ -173,6 +173,7 @@ public class TeambrellaRepository {
         public static final String TX_ID = "TxId";
         public static final String CRYPTO_TX = "CryptoTx";
         public static final String CRYPTO_FEE = "CryptoFee";
+        public static final String CRYPTO_NONCE = "CryptoNonce";
         public static final String DATE_CREATED = "DateCreated";
 
     }
