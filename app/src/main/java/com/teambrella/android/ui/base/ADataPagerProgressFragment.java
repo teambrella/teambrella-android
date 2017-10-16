@@ -35,8 +35,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected ATeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
 
-    boolean a = false;
-
     public static <T extends ADataPagerProgressFragment> T getInstance(String tag, Class<T> clazz) {
         T fragment;
         try {
@@ -82,23 +80,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         });
         mAdapter = getAdapter();
         mList.setAdapter(mAdapter);
-        mRefreshable.setOnChildScrollUpCallback((parent, child) -> a);
-
-        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    a = false;
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                a = dy > 0 || a;
-            }
-        });
         return view;
     }
 

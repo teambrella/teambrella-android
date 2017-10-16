@@ -538,7 +538,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case SHOW_CLAIM_CHAT_ACTION:
                 case SHOW_FEED_CHAT_ACTION:
                 case SHOW_TEAMMATE_CHAT_ACTION:
-                    if (topicId.equals(mTopicId) && userId == null || !userId.equals(TeambrellaUser.get(ChatActivity.this).getUserId())) {
+                    if (topicId.equals(mTopicId) && (userId != null && !userId.equals(TeambrellaUser.get(ChatActivity.this).getUserId()))) {
                         getPager(DATA_FRAGMENT_TAG).loadNext(true);
                         return true;
                     }
