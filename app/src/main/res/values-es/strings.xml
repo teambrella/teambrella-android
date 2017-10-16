@@ -240,4 +240,8 @@
     <string name="notification_title_other_claim">"Reclamación de %s"</string>
     <string name="notification_title_other_application">"Solicitud de %s"</string>
     <string name="image_full_screen_indicator_format_string">%1$d de %2$d</string>
+
+    <string name="pending_application_title">Tu solicitud todavía no está completa</string>
+    <string name="pending_application_description"><![CDATA[Por favor, verifica las puntas que faltan y finalízala. Te esperamos! Contáctanos en <a href="mailto:support@teambrella.com">support@teambrella.com</a> si tienes alguna pregunta.]]></string>
+
 </resources>
