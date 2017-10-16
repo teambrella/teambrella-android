@@ -53,7 +53,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         LOADING,
         INVITE_ONLY,
         ALMOST_READY,
-        ACCESS_DENIED
+        ACCESS_DENIED,
+        PENDING_APPLICATION
     }
 
 
@@ -146,6 +147,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mTryDemoInvite.setVisibility(View.GONE);
                 mMarginView.setVisibility(View.VISIBLE);
                 break;
+            case PENDING_APPLICATION:
+                mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mTryDemoButton.setVisibility(View.INVISIBLE);
+                mInvitationOnlyView.setVisibility(View.VISIBLE);
+                mInvitationTitle.setText(R.string.pending_application_title);
+                setInvitationDescription(R.string.pending_application_description);
+                mTryDemoInvite.setVisibility(View.GONE);
+                mMarginView.setVisibility(View.VISIBLE);
+                break;
         }
 
         mState = state;
@@ -200,6 +210,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case INVITE_ONLY:
             case ALMOST_READY:
             case ACCESS_DENIED:
+            case PENDING_APPLICATION:
                 setState(State.INIT);
                 break;
             default:
@@ -319,11 +330,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM:
                         setState(State.INVITE_ONLY);
                         break;
-                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION:
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED:
                         setState(State.ALMOST_READY);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_ANOTHER_KEY:
                         setState(State.ACCESS_DENIED);
+                        break;
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
+                        setState(State.PENDING_APPLICATION);
                         break;
                     default:
                         tryAgainLater(error);
