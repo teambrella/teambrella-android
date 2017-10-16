@@ -500,6 +500,10 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
+
+            boolean fixed = hotFix4CorruptedContract();
+            if (!fixed) continue;
+
             createWallets(1_300_000);
             verifyIfWalletIsCreated(1_300_000);
             depositWallet();
@@ -510,5 +514,32 @@ public class TeambrellaUtilService extends GcmTaskService {
 
             hasNews = update();
         }
+    }
+
+    private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException{
+
+        String myPublicKey = mKey.getPublicKeyAsHex();
+        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
+        mTeambrellaClient.joinCosigners(myCurrentMultisigs);
+
+        if (myCurrentMultisigs.size() == 1) {
+
+            Multisig m = myCurrentMultisigs.get(0);
+            Unconfirmed oldUnconfirmed = m.unconfirmed;
+            String oldCreationTx = m.creationTx;
+
+            boolean fixed =  getWallet().hotFix4CorruptedContract(myCurrentMultisigs.get(0));
+            if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx){
+
+                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
+                operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
+                mClient.applyBatch(operations);
+
+            }
+            return fixed;
+        }
+
+        return true;
     }
 }

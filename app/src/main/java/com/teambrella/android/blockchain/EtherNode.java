@@ -120,6 +120,23 @@ public class EtherNode {
         return new BigDecimal(-1, MathContext.UNLIMITED);
     }
 
+    public int readContractInt(String to, String callData) {
+
+        for (EtherAPI api : mEtherAPIs) {
+            try {
+                Response<Scan<String>> response = api.readContractString(to, callData).execute();
+                Thread.currentThread().sleep(1000);
+
+                return parseBigIntegerOrMinusOne(response).intValue();
+
+            } catch (IOException | InterruptedException | JsonSyntaxException e) {
+                Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+            }
+        }
+
+        return -1;
+    }
+
     public String pushTx(String hex) {
         JsonObject result = null;
         for (EtherAPI api : mEtherAPIs) {
@@ -153,5 +170,22 @@ public class EtherNode {
             }
         }
         return null;
+    }
+
+    private BigInteger parseBigIntegerOrMinusOne(Response<Scan<String>> response){
+
+        if (response.isSuccessful()) {
+            Scan<String> responceBody = response.body();
+
+            String s = responceBody.result;
+            if (s != null){
+
+                byte[] bytes = Hex.toBytes(s);
+                return new BigInteger(bytes);
+
+            }
+        }
+
+        return new BigInteger("-1");
     }
 }

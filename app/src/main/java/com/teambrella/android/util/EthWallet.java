@@ -32,6 +32,8 @@ import java.util.Map;
 class EthWallet {
 
     private static final String LOG_TAG = EthWallet.class.getSimpleName();
+    private static final String METHOD_ID_M_TEAMID = "8d475461";
+    private static final String METHOD_ID_M_COSIGNERS = "22c5ec0f";
     private static final String METHOD_ID_TRANSFER = "91f34dbd";
     private static final String TX_PREFIX = "5452";
     private static final String NS_PREFIX = "4E53";
@@ -79,7 +81,7 @@ class EthWallet {
     }
 
     /**
-     * Verfifies if a given contract creation TX has been mined in the blockchein.
+     * Verfifies if a given contract creation TX has been mined in the blockchain.
      * @param gasLimit original gas limit, that has been set to the original creation TX. When a TX consumes all the gas up to the limit, that indicates an error.
      * @param m the given multisig object with original TX hash to check.
      * @return The original multisig object with updated address (when verified successfully), updated error status (if any), or new unconfirmed tx if original TX is outdated.
@@ -120,7 +122,7 @@ class EthWallet {
             Date timeout = new Date(System.currentTimeMillis()-48*60*60*1000);
 
             if (unconfirmedDate.before(timeout)){
-                long betterGasPrice = getBetterDoubleGasPrice(unconfirmed.cryptoFee);
+                long betterGasPrice = getBetterGasPriceForContractCreation(unconfirmed.cryptoFee);
                 String recreatedTxHash = createOneWallet(unconfirmed.cryptoNonce, m, gasLimit, betterGasPrice);
 
                 if (recreatedTxHash != null){
@@ -172,6 +174,7 @@ class EthWallet {
 
         return true;
     }
+
 
     public byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
 
@@ -246,11 +249,11 @@ class EthWallet {
     }
 
     public long getGasPrice() {
-        return mIsTestNet ? 4_000_000_001L : 4_000_000_001L;  // 4 Gwei for TestNet and 4 Gwei for MainNet (1 Gwei = 10^9 wei)
+        return mIsTestNet ? 1_000_000_001L : 1_000_000_001L;  // 1 Gwei for TestNet and 1 Gwei for MainNet (1 Gwei = 10^9 wei)
     }
 
     public long getGasPriceForContractCreation() {
-        return 2 * getGasPrice();
+        return mIsTestNet ? 7_000_000_001L : 7_000_000_001L;
     }
 
 
@@ -259,16 +262,16 @@ class EthWallet {
         return blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
 
-    private long getBetterDoubleGasPrice(long oldDoublePrice){
+    private long getBetterGasPriceForContractCreation(long oldPrice){
 
-        long betterDoublePrice = oldDoublePrice + 1;
-        long recommendedDoublePrice = getGasPrice() * 2;
+        long betterPrice = oldPrice + 1;
+        long recommendedPrice = getGasPriceForContractCreation();
 
-        if (recommendedDoublePrice > betterDoublePrice){
-            betterDoublePrice = recommendedDoublePrice;
+        if (recommendedPrice > betterPrice){
+            betterPrice = recommendedPrice;
         }
 
-        return betterDoublePrice;
+        return betterPrice;
     }
 
     private static BigDecimal dec(long val) {
@@ -346,4 +349,40 @@ class EthWallet {
     private static String toCreationInfoString(long teamId, String creationTx) {
         return String.format("'Multisig creation(teamId=%s)' tx:%s", teamId, creationTx);
     }
+
+
+    public boolean hotFix4CorruptedContract(Multisig m) throws CryptoException, RemoteException {
+
+        EtherNode blockchain = new EtherNode(mIsTestNet);
+        int teamId = blockchain.readContractInt(m.address, METHOD_ID_M_TEAMID);
+        if (teamId == 0x40){
+            // corrupted !
+
+            long gasPrice = getGasPriceForContractCreation();
+            long nonce = checkMyNonce();
+            String recreatedTxHash = createOneWallet(nonce, m, 1_300_000, gasPrice);
+
+            if (recreatedTxHash != null){
+                Unconfirmed newUnconfirmed = new Unconfirmed();
+                newUnconfirmed.setDateCreated(new Date());
+                newUnconfirmed.cryptoFee = gasPrice;
+                newUnconfirmed.cryptoTx = recreatedTxHash;
+                newUnconfirmed.cryptoNonce = nonce;
+                newUnconfirmed.multisigId = m.id;
+
+                m.unconfirmed = newUnconfirmed;
+                m.creationTx = recreatedTxHash;
+                return true;
+            }
+
+            return false;   // stop syncing. Wait for fix.
+        }
+        else if (teamId < 2000){
+            return false;   // stop syncing. Wait for fix.
+        }
+
+        return true;
+    }
+
+
 }

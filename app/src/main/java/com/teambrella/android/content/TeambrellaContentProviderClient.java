@@ -576,13 +576,8 @@ public class TeambrellaContentProviderClient {
                         TeambrellaRepository.Multisig.CREATION_TX + " IS NOT NULL AND " +
                         TeambrellaRepository.Multisig.STATUS + " <> " + TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED,
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
-        Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                com.teambrella.android.content.model.Multisig m = iterator.next();
-                m.cosigners = getCosigners(m);
-            }
-        }
+
+        joinCosigners(list);
         return list;
     }
 
@@ -602,6 +597,13 @@ public class TeambrellaContentProviderClient {
                         TeambrellaRepository.Multisig.STATUS + " = " + TeambrellaModel.USER_MULTISIG_STATUS_CURRENT + " AND " +
                         TeambrellaRepository.Teammate.PUBLIC_KEY + "=?",
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
+
+        joinCosigners(list);
+        return list;
+    }
+
+    public List<com.teambrella.android.content.model.Multisig> joinCosigners(List<com.teambrella.android.content.model.Multisig> list) throws RemoteException {
+
         Iterator<com.teambrella.android.content.model.Multisig> iterator = list != null ? list.iterator() : null;
         if (iterator != null) {
             while (iterator.hasNext()) {
