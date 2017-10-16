@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -48,6 +49,7 @@ import io.reactivex.functions.Predicate;
  */
 public class TeambrellaContentProviderClient {
 
+    private static final String LOG_TAG = TeambrellaContentProviderClient.class.getSimpleName();
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 
@@ -495,13 +497,18 @@ public class TeambrellaContentProviderClient {
                                 , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
                     }
 
+                    com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
+                    if (currentMultisig == null) {
+                        Log.w(LOG_TAG, "Could not cosign Tx " + tx.id + ". I'm a cosigner for next addresses, not for the current.");
+                        iterator.remove();
+                    } else{
 
-                    tx.cosigners = getCosigners(tx.getFromMultisig());
+                        tx.cosigners = getCosigners(currentMultisig);
+                        Collections.sort(tx.cosigners);
 
-                    Collections.sort(tx.cosigners);
-
-                    tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
-                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                        tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                                TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                    }
                 }
             }
         }
