@@ -55,6 +55,7 @@
             android:id="@+id/message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="web"
             android:lineSpacingExtra="5dp"
             android:paddingBottom="4dp"
             android:paddingEnd="8dp"
