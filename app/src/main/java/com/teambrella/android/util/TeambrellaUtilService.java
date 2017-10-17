@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
@@ -24,14 +25,10 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
-import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.ServerUpdates;
-import com.teambrella.android.content.model.TXSignature;
 import com.teambrella.android.content.model.Teammate;
 import com.teambrella.android.content.model.Tx;
-import com.teambrella.android.content.model.TxInput;
-import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
@@ -179,6 +176,9 @@ public class TeambrellaUtilService extends GcmTaskService {
                         Log.e(LOG_TAG, "sync attempt failed:");
                         Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
                         Log.e(LOG_TAG, "sync error call stack was: ", e);
+                        if (!BuildConfig.DEBUG) {
+                            Crashlytics.logException(e);
+                        }
                     }
                     break;
                 case CHECK_SOCKET:
@@ -342,20 +342,20 @@ public class TeambrellaUtilService extends GcmTaskService {
             m.unconfirmed = oldUnconfirmed;
 
             getWallet().validateCreationTx(m, gasLimit);
-            if (m.address != null){
+            if (m.address != null) {
 
                 operations.add(mTeambrellaClient.setMultisigAddressAndNeedsServerUpdate(m, m.address));
 
-            }else if (m.unconfirmed != oldUnconfirmed){
+            } else if (m.unconfirmed != oldUnconfirmed) {
 
                 operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
                 operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
 
-            }else if (m.status == TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED){
+            } else if (m.status == TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED) {
 
                 operations.add(mTeambrellaClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
 
-            }else if (m.unconfirmed == null){
+            } else if (m.unconfirmed == null) {
 
                 operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
 

@@ -458,6 +458,7 @@ public class TeambrellaServer {
         headers.put("t", Long.toString(timestamp));
         headers.put("key", publicKey);
         headers.put("sig", signature);
+        headers.put("clientVersion", BuildConfig.VERSION_NAME);
         return new TeambrellaSocketClient(uri, headers, listener);
     }
 
