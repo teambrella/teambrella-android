@@ -104,6 +104,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             } else {
                 getTeams(mUser.getPrivateKey());
             }
+        } else if (BuildConfig.DEBUG) {
+            Intent intent = getIntent();
+            Uri uri = intent.getData();
+            if (uri != null) {
+                mUser.setPrivateKey(uri.getQueryParameter("key"));
+                getTeams(mUser.getPrivateKey());
+            }
         }
     }
 
