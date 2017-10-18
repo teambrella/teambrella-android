@@ -41,6 +41,9 @@ class EthWallet {
     private final EtherAccount mEtherAcc;
     private final boolean mIsTestNet;
 
+    public static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
+    public static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
+
     public long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
     public long mContractGasPrice = 100_000_001L;
     public long mTestGasPrice = 100_000_001L;
@@ -124,7 +127,7 @@ class EthWallet {
         Unconfirmed unconfirmed = m.unconfirmed;
         if (unconfirmed != null){
             Date unconfirmedDate = unconfirmed.getDateCreated();
-            Date timeout = new Date(System.currentTimeMillis()-48*60*60*1000);
+            Date timeout = new Date(System.currentTimeMillis()-12*60*60*1000);
 
             if (unconfirmedDate.before(timeout)){
                 long betterGasPrice = getBetterGasPriceForContractCreation(unconfirmed.cryptoFee);
@@ -165,12 +168,10 @@ class EthWallet {
         EtherNode blockchain = new EtherNode(mIsTestNet);
         BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
 
-        BigDecimal txPriceLimit = eth(100_000 * getGasPrice());
-        if (gasWalletAmount.compareTo(dec(30).multiply(txPriceLimit)) > 0) {
-            BigDecimal minRestForGas = dec(25).multiply(txPriceLimit); // min restt in the Gas Wallet is an amount for 25 transactions.
+        if (gasWalletAmount.compareTo(MAX_GAS_WALLET_BALANCE) > 0) {
 
             long myNonce = checkMyNonce();
-            BigDecimal value = gasWalletAmount.subtract(minRestForGas, MathContext.UNLIMITED);
+            BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
             depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, getGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
