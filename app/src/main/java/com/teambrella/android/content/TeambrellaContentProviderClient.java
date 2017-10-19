@@ -508,6 +508,7 @@ public class TeambrellaContentProviderClient {
 
                         tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                                 TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                        Collections.sort(tx.txOutputs);
                     }
                 }
             }
@@ -717,6 +718,7 @@ public class TeambrellaContentProviderClient {
 
                     tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                             TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                    Collections.sort(tx.txOutputs);
                 }
             }
         }
@@ -748,6 +750,8 @@ public class TeambrellaContentProviderClient {
                 Tx tx = iterator.next();
                 tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
                         TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                Collections.sort(tx.txOutputs);
+
                 tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
             }
