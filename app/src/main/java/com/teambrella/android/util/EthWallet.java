@@ -41,13 +41,21 @@ class EthWallet {
     private final EtherAccount mEtherAcc;
     private final boolean mIsTestNet;
 
+    public static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
+    public static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
+
+    public long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
+    public long mContractGasPrice = 100_000_001L;
+    public long mTestGasPrice = 100_000_001L;
+    public long mTestContractGasPrice = 100_000_001L;
+
     public EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
     }
 
     public String createOneWallet(long myNonce, Multisig m, long gasLimit) throws CryptoException, RemoteException {
-        return createOneWallet(myNonce, m, gasLimit, getGasPrice());
+        return createOneWallet(myNonce, m, gasLimit, getGasPriceForContractCreation());
     }
 
     public String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
@@ -73,7 +81,7 @@ class EthWallet {
         Log.v(LOG_TAG, "Constructing " + toCreationInfoString(m.teamId, null));
         Transaction cryptoTx;
         cryptoTx = mEtherAcc.newContractTx(myNonce, gasLimit, gasPrice, contractV002, cosignerAddresses, m.teamId);
-        cryptoTx = mEtherAcc.signTx(cryptoTx, BuildConfig.isTestNet);
+        cryptoTx = mEtherAcc.signTx(cryptoTx, mIsTestNet);
         Log.v(LOG_TAG, toCreationInfoString(m) + " signed.");
 
         String txHex = publish(cryptoTx);
@@ -88,7 +96,7 @@ class EthWallet {
      */
     public void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
 
-        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+        EtherNode blockchain = new EtherNode(mIsTestNet);
 
         Scan<ScanResultTxReceipt> receipt = blockchain.checkTx(m.creationTx);
         if (receipt != null) {
@@ -119,7 +127,7 @@ class EthWallet {
         Unconfirmed unconfirmed = m.unconfirmed;
         if (unconfirmed != null){
             Date unconfirmedDate = unconfirmed.getDateCreated();
-            Date timeout = new Date(System.currentTimeMillis()-48*60*60*1000);
+            Date timeout = new Date(System.currentTimeMillis()-12*60*60*1000);
 
             if (unconfirmedDate.before(timeout)){
                 long betterGasPrice = getBetterGasPriceForContractCreation(unconfirmed.cryptoFee);
@@ -160,15 +168,13 @@ class EthWallet {
         EtherNode blockchain = new EtherNode(mIsTestNet);
         BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
 
-        BigDecimal txPriceLimit = eth(100_000 * getGasPrice());
-        if (gasWalletAmount.compareTo(dec(30).multiply(txPriceLimit)) > 0) {
-            BigDecimal minRestForGas = dec(25).multiply(txPriceLimit); // min restt in the Gas Wallet is an amount for 25 transactions.
+        if (gasWalletAmount.compareTo(MAX_GAS_WALLET_BALANCE) > 0) {
 
             long myNonce = checkMyNonce();
-            BigDecimal value = gasWalletAmount.subtract(minRestForGas, MathContext.UNLIMITED);
+            BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
             depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, getGasPrice(), value);
-            depositTx = mEtherAcc.signTx(depositTx, BuildConfig.isTestNet);
+            depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
             publish(depositTx);
         }
 
@@ -249,16 +255,16 @@ class EthWallet {
     }
 
     public long getGasPrice() {
-        return mIsTestNet ? 1_000_000_001L : 1_000_000_001L;  // 1 Gwei for TestNet and 1 Gwei for MainNet (1 Gwei = 10^9 wei)
+        return mIsTestNet ? mTestGasPrice : mGasPrice;
     }
 
     public long getGasPriceForContractCreation() {
-        return mIsTestNet ? 7_000_000_001L : 7_000_000_001L;
+        return mIsTestNet ? mTestContractGasPrice : mContractGasPrice;
     }
 
 
     public long checkMyNonce() {
-        EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+        EtherNode blockchain = new EtherNode(mIsTestNet);
         return blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
 
@@ -288,7 +294,7 @@ class EthWallet {
             Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
             String hex = "0x" + Hex.fromBytes(rlp);
 
-            EtherNode blockchain = new EtherNode(BuildConfig.isTestNet);
+            EtherNode blockchain = new EtherNode(mIsTestNet);
             return blockchain.pushTx(hex);
 
         } catch (Exception e) {
