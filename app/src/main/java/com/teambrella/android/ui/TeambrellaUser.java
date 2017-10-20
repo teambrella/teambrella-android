@@ -21,6 +21,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_TEAM_ID = "team_id_key";
     private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
     private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
+    private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
 
 
     private static TeambrellaUser sUser;
@@ -91,6 +92,14 @@ public class TeambrellaUser {
 
     public int getTeamId() {
         return mPreferences.getInt(PREFERENCE_TEAM_ID, -1);
+    }
+
+    public long getNotificationTimeStamp() {
+        return mPreferences.getLong(PREFERENCE_NOTIFICATION_TIMESTAMP, -1);
+    }
+
+    public void setNotificationTimeStamp(long timestamp) {
+        mPreferences.edit().putLong(PREFERENCE_NOTIFICATION_TIMESTAMP, timestamp).apply();
     }
 
 

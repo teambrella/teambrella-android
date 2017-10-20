@@ -545,5 +545,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             }
             return false;
         }
+
+        @Override
+        public boolean onChatNotification(String topicId) {
+            return topicId.equals(mTopicId);
+        }
     }
 }
