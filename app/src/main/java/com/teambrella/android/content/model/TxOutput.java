@@ -43,6 +43,7 @@ public class TxOutput implements Comparable<TxOutput> {
 
     @Override
     public int compareTo(@NonNull TxOutput o) {
-        return id.compareTo(o.id);
+        return id.toString().toLowerCase()
+                .compareTo(o.id.toString().toLowerCase());
     }
 }
