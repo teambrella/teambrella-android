@@ -34,6 +34,7 @@ class EthWallet {
     private static final String LOG_TAG = EthWallet.class.getSimpleName();
     private static final String METHOD_ID_M_TEAMID = "8d475461";
     private static final String METHOD_ID_M_COSIGNERS = "22c5ec0f";
+    private static final String METHOD_ID_M_OPNUM = "df98ba00";
     private static final String METHOD_ID_TRANSFER = "91f34dbd";
     private static final String TX_PREFIX = "5452";
     private static final String NS_PREFIX = "4E53";
