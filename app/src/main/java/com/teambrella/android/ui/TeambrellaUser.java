@@ -95,7 +95,7 @@ public class TeambrellaUser {
     }
 
     public long getNotificationTimeStamp() {
-        return mPreferences.getLong(PREFERENCE_NOTIFICATION_TIMESTAMP, -1);
+        return mPreferences.getLong(PREFERENCE_NOTIFICATION_TIMESTAMP, Long.MIN_VALUE);
     }
 
     public void setNotificationTimeStamp(long timestamp) {
