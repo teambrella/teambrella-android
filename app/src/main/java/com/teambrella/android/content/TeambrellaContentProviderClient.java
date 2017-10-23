@@ -123,18 +123,18 @@ public class TeambrellaContentProviderClient {
      * @param teammates list of teammates
      * @return a list of operations to apply
      */
-    public List<ContentProviderOperation> insertTeammates(Teammate[] teammates) throws RemoteException{
+    public List<ContentProviderOperation> insertTeammates(Teammate[] teammates) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
         for (Teammate teammate : teammates) {
             ContentProviderOperation op = insertOrUpdateOneTeammate(teammate);
-            if (op != null){
+            if (op != null) {
                 list.add(op);
             }
         }
         return list;
     }
 
-    private ContentProviderOperation insertOrUpdateOneTeammate(Teammate teammate) throws RemoteException{
+    private ContentProviderOperation insertOrUpdateOneTeammate(Teammate teammate) throws RemoteException {
         Teammate existingTeammate = getTeammateById(teammate.id);
         if (existingTeammate == null) {
             ContentValues cv = new ContentValues();
@@ -145,20 +145,20 @@ public class TeambrellaContentProviderClient {
             cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY, teammate.publicKey);
             cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS, teammate.publicKeyAddress);
             return ContentProviderOperation.newInsert(TeambrellaRepository.Teammate.CONTENT_URI).withValues(cv).build();
-        }else{
+        } else {
             if (existingTeammate.publicKey != null && !Objects.equals(teammate.publicKey, existingTeammate.publicKey) ||
-                existingTeammate.publicKeyAddress != null && !Objects.equals(teammate.publicKeyAddress, existingTeammate.publicKeyAddress) ||
-                existingTeammate.facebookName != null && !Objects.equals(teammate.facebookName, existingTeammate.facebookName)){
+                    existingTeammate.publicKeyAddress != null && !Objects.equals(teammate.publicKeyAddress, existingTeammate.publicKeyAddress) ||
+                    existingTeammate.facebookName != null && !Objects.equals(teammate.facebookName, existingTeammate.facebookName)) {
                 return null; // we don't allow to change basic info
             }
 
             ContentProviderOperation.Builder op;
             op = ContentProviderOperation.newUpdate(TeambrellaRepository.Teammate.CONTENT_URI);
             op = op.withValue(TeambrellaRepository.Teammate.NAME, teammate.name);
-            if (existingTeammate.publicKey == null){
+            if (existingTeammate.publicKey == null) {
                 op = op.withValue(TeambrellaRepository.Teammate.PUBLIC_KEY, teammate.publicKey);
             }
-            if (existingTeammate.publicKeyAddress == null){
+            if (existingTeammate.publicKeyAddress == null) {
                 op = op.withValue(TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS, teammate.publicKeyAddress);
             }
             op = op.withSelection(TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(teammate.id)});
@@ -267,12 +267,7 @@ public class TeambrellaContentProviderClient {
                 cursor.close();
             }
 
-            long count = Observable.fromArray(txs).filter(new Predicate<Tx>() {
-                @Override
-                public boolean test(Tx iTx) throws Exception {
-                    return iTx.id.equals(txInput.txId);
-                }
-            }).count().blockingGet();
+            long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txInput.txId)).count().blockingGet();
 
 
             if (count > 0) {
@@ -501,7 +496,7 @@ public class TeambrellaContentProviderClient {
                     if (currentMultisig == null) {
                         Log.w(LOG_TAG, "Could not cosign Tx " + tx.id + ". I'm a cosigner for next addresses, not for the current.");
                         iterator.remove();
-                    } else{
+                    } else {
 
                         tx.cosigners = getCosigners(currentMultisig);
                         Collections.sort(tx.cosigners);
@@ -579,7 +574,7 @@ public class TeambrellaContentProviderClient {
 
     public List<com.teambrella.android.content.model.Multisig> getMultisigsInCreation(String publicKey) throws RemoteException {
         List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
-                        TeambrellaRepository.Teammate.PUBLIC_KEY + "=? AND " +
+                TeambrellaRepository.Teammate.PUBLIC_KEY + "=? AND " +
                         TeambrellaRepository.Multisig.ADDRESS + " IS NULL AND " +
                         TeambrellaRepository.Multisig.CREATION_TX + " IS NOT NULL AND " +
                         TeambrellaRepository.Multisig.STATUS + " <> " + TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED,
@@ -591,12 +586,11 @@ public class TeambrellaContentProviderClient {
 
 
     public List<com.teambrella.android.content.model.Multisig> getCurrentMultisigsWithAddress(String publicKey) throws RemoteException {
-        List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,
+        return queryList(TeambrellaRepository.Multisig.CONTENT_URI,
                 TeambrellaRepository.Teammate.PUBLIC_KEY + "=? AND " +
                         TeambrellaRepository.Multisig.ADDRESS + " IS NOT NULL AND " +
                         TeambrellaRepository.Multisig.STATUS + "=" + TeambrellaModel.USER_MULTISIG_STATUS_CURRENT,
                 new String[]{publicKey}, com.teambrella.android.content.model.Multisig.class);
-        return list;
     }
 
     public List<com.teambrella.android.content.model.Multisig> getMultisigsToCreate(String publicKey) throws RemoteException {
@@ -652,22 +646,22 @@ public class TeambrellaContentProviderClient {
     public Unconfirmed getUnconfirmed(long multisigId, String txHash) throws RemoteException {
 
         Unconfirmed result = queryOne(TeambrellaRepository.Unconfirmed.CONTENT_URI, TeambrellaRepository.Unconfirmed.MULTISIG_ID + "=?" +
-                " AND " + TeambrellaRepository.Unconfirmed.CRYPTO_TX + "=?",
+                        " AND " + TeambrellaRepository.Unconfirmed.CRYPTO_TX + "=?",
                 new String[]{Long.toString(multisigId), txHash}, Unconfirmed.class);
 
-        if (result != null){
+        if (result != null) {
             result.initDates(mSDF);
         }
 
         return result;
     }
 
-    public ContentProviderOperation insertUnconfirmed(Unconfirmed newUnconfirmed) throws RemoteException{
+    public ContentProviderOperation insertUnconfirmed(Unconfirmed newUnconfirmed) throws RemoteException {
 
         return insertUnconfirmed(newUnconfirmed.multisigId, newUnconfirmed.cryptoTx, newUnconfirmed.cryptoFee, newUnconfirmed.cryptoNonce, newUnconfirmed.getDateCreated());
     }
 
-    public ContentProviderOperation insertUnconfirmed(long multisigId, String txHash, long gasPrice, long nonce, Date dateCreated) throws RemoteException{
+    public ContentProviderOperation insertUnconfirmed(long multisigId, String txHash, long gasPrice, long nonce, Date dateCreated) throws RemoteException {
 
         return ContentProviderOperation.newInsert(TeambrellaRepository.Unconfirmed.CONTENT_URI)
                 .withValue(TeambrellaRepository.Unconfirmed.MULTISIG_ID, multisigId)
@@ -902,7 +896,7 @@ public class TeambrellaContentProviderClient {
                 JsonObject info = new JsonObject();
                 info.add(TeambrellaModel.ATTR_DATA_ID, new JsonPrimitive(cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.ID))));
                 String cryptoTx = cursor.getString(cursor.getColumnIndex(TeambrellaRepository.Tx.CRYPTO_TX));
-                if (cryptoTx != null){
+                if (cryptoTx != null) {
                     info.add(TeambrellaModel.ATTR_DATA_TX_Hash, new JsonPrimitive(cryptoTx));
                 }
                 info.add(TeambrellaModel.ATTR_DATA_RESOLUTION, new JsonPrimitive(cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.Tx.RESOLUTION))));

@@ -22,6 +22,7 @@ import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
@@ -283,6 +284,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return result;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean createWallets(long gasLimit) throws RemoteException, TeambrellaException, OperationApplicationException, CryptoException {
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> myUncreatedMultisigs;
@@ -308,7 +310,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 if (txHex != null) {
                     // There could be 2 my pending mutisigs (Current and Next) for the same team. So we remember the first creation tx and don't create 2 contracts for the same team.
                     m.creationTx = txHex;
-                    operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
+                    operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
                     operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, myNonce, new Date()));
                     myNonce++;
                 }
@@ -339,6 +341,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return null;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean verifyIfWalletIsCreated(long gasLimit) throws CryptoException, RemoteException, OperationApplicationException {
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -352,20 +355,20 @@ public class TeambrellaUtilService extends GcmTaskService {
             getWallet().validateCreationTx(m, gasLimit);
             if (m.address != null) {
 
-                operations.add(mTeambrellaClient.setMultisigAddressAndNeedsServerUpdate(m, m.address));
+                operations.add(TeambrellaContentProviderClient.setMultisigAddressAndNeedsServerUpdate(m, m.address));
 
             } else if (m.unconfirmed != oldUnconfirmed) {
 
-                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
+                operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
                 operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
 
             } else if (m.status == TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED) {
 
-                operations.add(mTeambrellaClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
+                operations.add(TeambrellaContentProviderClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
 
             } else if (m.unconfirmed == null) {
 
-                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
+                operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
 
             }
 
@@ -377,6 +380,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return false;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean depositWallet() throws CryptoException, RemoteException {
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
@@ -387,6 +391,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return true;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean autoApproveTxs() throws RemoteException, OperationApplicationException {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.addAll(mTeambrellaClient.autoApproveTxs());
@@ -439,6 +444,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         return new EthWallet(privateKey, keyStorePath, keyStoreSecret, BuildConfig.isTestNet);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException, CryptoException {
         List<Tx> list = mTeambrellaClient.getCosinableTx();
         Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
@@ -454,6 +460,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean masterSign() throws RemoteException, OperationApplicationException, CryptoException {
         return false;
     }
@@ -479,6 +486,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException, CryptoException {
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -510,6 +518,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             Log.v(LOG_TAG, "start syncing...");
         }
 
+
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
 
@@ -524,8 +533,11 @@ public class TeambrellaUtilService extends GcmTaskService {
             masterSign();
             publishApprovedAndCosignedTxs();
 
+
             hasNews = update();
         }
+
+        backUpPrivateKey();
     }
 
     private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException {
@@ -544,7 +556,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx) {
 
                 ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-                operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
+                operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
                 operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
                 mClient.applyBatch(operations);
 
@@ -553,5 +565,17 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         return true;
+    }
+
+
+    private void backUpPrivateKey() throws CryptoException, RemoteException, OperationApplicationException {
+        TeambrellaBackupData backupData = new TeambrellaBackupData(this);
+        Teammate teammate = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
+        if (teammate != null && teammate.facebookName != null) {
+            String key = Integer.toString(teammate.facebookName.hashCode());
+            if (backupData.getValue(key) == null) {
+                backupData.setValue(key, TeambrellaUser.get(this).getPrivateKey());
+            }
+        }
     }
 }
