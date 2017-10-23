@@ -9,7 +9,7 @@
 
     <application
         android:name=".TeambrellaApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:backupAgent=".backup.TeambrellaBackupAgent"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

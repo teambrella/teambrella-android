@@ -4,14 +4,7 @@
     package="com.teambrella.android"
     android:installLocation="auto">
 
-    <application
-        android:name=".TeambrellaApplication"
-        android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
+    <application>
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
