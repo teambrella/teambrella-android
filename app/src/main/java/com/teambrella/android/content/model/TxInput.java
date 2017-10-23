@@ -41,6 +41,7 @@ public class TxInput implements Comparable<TxInput> {
 
     @Override
     public int compareTo(@NonNull TxInput o) {
-        return id.compareTo(o.id);
+        return id.toString().toLowerCase()
+                .compareTo(o.id.toString().toLowerCase());
     }
 }

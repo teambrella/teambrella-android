@@ -167,15 +167,19 @@ public class TeambrellaUtilService extends GcmTaskService {
         if (tag != null) {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
-                    Log.v(LOG_TAG, "Sync wallet task ran");
+                    if (BuildConfig.DEBUG) {
+                        Log.v(LOG_TAG, "Sync wallet task ran");
+                    }
                     try {
                         if (tryInit()) {
                             sync();
                         }
                     } catch (Exception e) {
-                        Log.e(LOG_TAG, "sync attempt failed:");
-                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-                        Log.e(LOG_TAG, "sync error call stack was: ", e);
+                        if (BuildConfig.DEBUG) {
+                            Log.e(LOG_TAG, "sync attempt failed:");
+                            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+                            Log.e(LOG_TAG, "sync error call stack was: ", e);
+                        }
                         if (!BuildConfig.DEBUG) {
                             Crashlytics.logException(e);
                         }
@@ -225,10 +229,14 @@ public class TeambrellaUtilService extends GcmTaskService {
                     sync();
                     break;
                 case "test":
-                    Log.e(LOG_TAG, "Test message is OK!");
+                    if (BuildConfig.DEBUG) {
+                        Log.e(LOG_TAG, "Test message is OK!");
+                    }
                     break;
                 default:
-                    Log.e(LOG_TAG, "unknown action " + action);
+                    if (BuildConfig.DEBUG) {
+                        Log.e(LOG_TAG, "unknown action " + action);
+                    }
             }
         } else {
             Log.e(LOG_TAG, "action is null");
@@ -456,11 +464,12 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                Log.e(LOG_TAG, "***");
-                for (String name : cursor.getColumnNames()) {
-                    Log.d(LOG_TAG, name + ":" + cursor.getString(cursor.getColumnIndex(name)));
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, "***");
+                    for (String name : cursor.getColumnNames()) {
+                        Log.d(LOG_TAG, name + ":" + cursor.getString(cursor.getColumnIndex(name)));
+                    }
                 }
-
             } while (cursor.moveToNext());
         }
 
@@ -496,7 +505,10 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private void sync() throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
-        Log.v(LOG_TAG, "start syncing...");
+
+        if (BuildConfig.DEBUG) {
+            Log.v(LOG_TAG, "start syncing...");
+        }
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
@@ -516,7 +528,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
-    private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException{
+    private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException {
 
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
@@ -528,8 +540,8 @@ public class TeambrellaUtilService extends GcmTaskService {
             Unconfirmed oldUnconfirmed = m.unconfirmed;
             String oldCreationTx = m.creationTx;
 
-            boolean fixed =  getWallet().hotFix4CorruptedContract(myCurrentMultisigs.get(0));
-            if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx){
+            boolean fixed = getWallet().hotFix4CorruptedContract(myCurrentMultisigs.get(0));
+            if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx) {
 
                 ArrayList<ContentProviderOperation> operations = new ArrayList<>();
                 operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));

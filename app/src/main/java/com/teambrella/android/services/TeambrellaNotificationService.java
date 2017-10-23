@@ -1,14 +1,9 @@
 package com.teambrella.android.services;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,7 +19,6 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
 
 import java.net.URI;
@@ -37,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class TeambrellaNotificationService extends Service implements TeambrellaServer.SocketClientListener {
 
     private static final String CMD = "Cmd";
+    private static final String TIMESTAMP = TeambrellaModel.ATTR_STATUS_TIMESTAMP;
     private static final String USER_ID = TeambrellaModel.ATTR_DATA_USER_ID;
     private static final String TEAM_ID = TeambrellaModel.ATTR_DATA_TEAM_ID;
     private static final String TOPIC_ID = TeambrellaModel.ATTR_DATA_TOPIC_ID;
@@ -92,6 +87,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
             boolean onPostsSinceInteracted(int count);
 
+            boolean onChatNotification(String topicId);
+
         }
 
         void registerListener(INotificationServiceListener listener);
@@ -112,6 +109,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     private TeambrellaServer.TeambrellaSocketClient mTeambrellaSocketClient;
     private TeambrellaNotificationManager mTeambrellaNotificationManager;
+    private TeambrellaUser mUser;
 
 
     @Nullable
@@ -194,19 +192,27 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         return result;
     }
 
+    private boolean notifyChatNotification(String topicId) {
+        boolean result = false;
+        for (ITeambrellaNotificationServiceBinder.INotificationServiceListener listener : mListeners) {
+            result |= listener.onChatNotification(topicId);
+        }
+        return result;
+    }
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mConnectivityBroadcastReceiver, filter);
         mTeambrellaNotificationManager = new TeambrellaNotificationManager(this);
+        mUser = TeambrellaUser.get(this);
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(mConnectivityBroadcastReceiver);
+        if (mTeambrellaSocketClient != null) {
+            mTeambrellaSocketClient.close();
+        }
         super.onDestroy();
     }
 
@@ -218,6 +224,15 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             switch (action) {
                 case CONNECT_ACTION:
                     TeambrellaUser user = TeambrellaUser.get(this);
+
+                    if (mTeambrellaSocketClient != null) {
+                        if (mTeambrellaSocketClient.isClosed()
+                                || mTeambrellaSocketClient.isClosing()) {
+                            mTeambrellaSocketClient.close();
+                            mTeambrellaSocketClient = null;
+                        }
+                    }
+
                     if (mTeambrellaSocketClient == null && !user.isDemoUser() && user.getPrivateKey() != null) {
                         URI uri = URI.create(new Uri.Builder()
                                 .scheme("wss")
@@ -225,7 +240,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
                         mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey())
-                                .createSocketClient(uri, this);
+                                .createSocketClient(uri, this, mUser.getNotificationTimeStamp());
                         mTeambrellaSocketClient.connect();
                     }
                     return START_STICKY;
@@ -235,7 +250,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     onMessage(message);
                     return START_STICKY;
                 case Intent.ACTION_BOOT_COMPLETED:
-                    Log.e(LOG_TAG, "boot complete");
+                    if (BuildConfig.DEBUG) {
+                        Log.e(LOG_TAG, "boot complete");
+                    }
             }
         }
 
@@ -248,7 +265,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         try {
             processMessage(message);
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.toString());
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, e.toString());
+            }
             if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
@@ -261,9 +280,21 @@ public class TeambrellaNotificationService extends Service implements Teambrella
         JsonWrapper messageWrapper = new JsonWrapper(mGson.fromJson(message, JsonObject.class));
 
 
-        //Log.e(LOG_TAG, message);
+        if (BuildConfig.DEBUG) {
+            Log.e(LOG_TAG, message);
+        }
 
         int command = messageWrapper.getInt(CMD, -1);
+        long timestamp = messageWrapper.getLong(TIMESTAMP, -1);
+
+        if (timestamp != -1 && timestamp <= mUser.getNotificationTimeStamp()) {
+            return;
+        }
+
+        if (timestamp > 0) {
+            mUser.setNotificationTimeStamp(timestamp);
+        }
+
         switch (command) {
             case CREATED_POST: {
                 notifyPostCreated(messageWrapper.getInt(TEAM_ID)
@@ -375,52 +406,53 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
             case TOPIC_MESSAGE_NOTIFICATION: {
                 String userId = messageWrapper.getString(USER_ID);
-                if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
-                    JsonWrapper teammate = messageWrapper.getObject(TEAMMATE);
-                    JsonWrapper claim = messageWrapper.getObject(CLAIM);
-                    JsonWrapper discussion = messageWrapper.getObject(DISCUSSION);
-                    if (teammate != null) {
-                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
-                                , teammate.getString(USER_NAME)
-                                , messageWrapper.getString(USER_NAME)
-                                , messageWrapper.getString(CONTENT)
-                                , messageWrapper.getBoolean(MY_TOPIC, false)
-                                , messageWrapper.getString(TOPIC_ID)
-                                , ChatActivity.getTeammateChat(this
-                                        , messageWrapper.getInt(TEAM_ID)
-                                        , teammate.getString(USER_ID)
-                                        , teammate.getString(USER_NAME)
-                                        , TeambrellaImageLoader.getImageUri(teammate.getString(USER_IMAGE))
-                                        , messageWrapper.getString(TOPIC_ID)
-                                        , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
-                    } else if (claim != null) {
-                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
-                                , claim.getString(USER_NAME)
-                                , messageWrapper.getString(USER_NAME)
-                                , messageWrapper.getString(CONTENT)
-                                , messageWrapper.getBoolean(MY_TOPIC, false)
-                                , messageWrapper.getString(TOPIC_ID)
-                                , ChatActivity.getClaimChat(this
-                                        , messageWrapper.getInt(TEAM_ID)
-                                        , claim.getInt(CLAIM_ID)
-                                        , claim.getString(OBJECT_NAME)
-                                        , TeambrellaImageLoader.getImageUri(claim.getString(CLAIM_PHOTO))
-                                        , messageWrapper.getString(TOPIC_ID)
-                                        , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
-                    } else if (discussion != null) {
-                        mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
-                                , discussion.getString(TOPIC_NAME)
-                                , messageWrapper.getString(USER_NAME)
-                                , messageWrapper.getString(CONTENT)
-                                , messageWrapper.getBoolean(MY_TOPIC, false)
-                                , messageWrapper.getString(TOPIC_ID)
-                                , ChatActivity.getFeedChat(this
-                                        , discussion.getString(TOPIC_NAME)
-                                        , messageWrapper.getString(TOPIC_ID)
-                                        , messageWrapper.getInt(TEAM_ID)
-                                        , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                if (!notifyChatNotification(messageWrapper.getString(TOPIC_ID))) {
+                    if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
+                        JsonWrapper teammate = messageWrapper.getObject(TEAMMATE);
+                        JsonWrapper claim = messageWrapper.getObject(CLAIM);
+                        JsonWrapper discussion = messageWrapper.getObject(DISCUSSION);
+                        if (teammate != null) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
+                                    , teammate.getString(USER_NAME)
+                                    , messageWrapper.getString(USER_NAME)
+                                    , messageWrapper.getString(CONTENT)
+                                    , messageWrapper.getBoolean(MY_TOPIC, false)
+                                    , messageWrapper.getString(TOPIC_ID)
+                                    , ChatActivity.getTeammateChat(this
+                                            , messageWrapper.getInt(TEAM_ID)
+                                            , teammate.getString(USER_ID)
+                                            , teammate.getString(USER_NAME)
+                                            , TeambrellaImageLoader.getImageUri(teammate.getString(USER_IMAGE))
+                                            , messageWrapper.getString(TOPIC_ID)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                        } else if (claim != null) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
+                                    , claim.getString(USER_NAME)
+                                    , messageWrapper.getString(USER_NAME)
+                                    , messageWrapper.getString(CONTENT)
+                                    , messageWrapper.getBoolean(MY_TOPIC, false)
+                                    , messageWrapper.getString(TOPIC_ID)
+                                    , ChatActivity.getClaimChat(this
+                                            , messageWrapper.getInt(TEAM_ID)
+                                            , claim.getInt(CLAIM_ID)
+                                            , claim.getString(OBJECT_NAME)
+                                            , TeambrellaImageLoader.getImageUri(claim.getString(CLAIM_PHOTO))
+                                            , messageWrapper.getString(TOPIC_ID)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                        } else if (discussion != null) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
+                                    , discussion.getString(TOPIC_NAME)
+                                    , messageWrapper.getString(USER_NAME)
+                                    , messageWrapper.getString(CONTENT)
+                                    , messageWrapper.getBoolean(MY_TOPIC, false)
+                                    , messageWrapper.getString(TOPIC_ID)
+                                    , ChatActivity.getFeedChat(this
+                                            , discussion.getString(TOPIC_NAME)
+                                            , messageWrapper.getString(TOPIC_ID)
+                                            , messageWrapper.getInt(TEAM_ID)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                        }
                     }
-
                 }
             }
 
@@ -430,20 +462,27 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
     @Override
     public void onOpen() {
-        //Log.e(LOG_TAG, "on Open");
+        if (BuildConfig.DEBUG) {
+            Log.e(LOG_TAG, "on Open");
+        }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        Log.e(LOG_TAG, "on close " + reason);
+        if (BuildConfig.DEBUG) {
+            Log.e(LOG_TAG, "on close " + reason);
+        }
         if (mTeambrellaSocketClient != null) {
+            mTeambrellaSocketClient.close();
             mTeambrellaSocketClient = null;
         }
     }
 
     @Override
     public void onError(Exception ex) {
-        Log.e(LOG_TAG, "on error " + ex.getMessage());
+        if (BuildConfig.DEBUG) {
+            Log.e(LOG_TAG, "on error " + ex.getMessage());
+        }
         if (!BuildConfig.DEBUG) {
             Crashlytics.logException(ex);
         }
@@ -452,23 +491,4 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             mTeambrellaSocketClient = null;
         }
     }
-
-
-    private BroadcastReceiver mConnectivityBroadcastReceiver = new BroadcastReceiver() {
-
-        private Handler mHandler = new Handler();
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (ConnectivityUtils.isNetworkAvailable(TeambrellaNotificationService.this)) {
-                mHandler.removeCallbacks(mRunnable);
-                mHandler.postDelayed(mRunnable, 1000);
-            }
-        }
-
-        private Runnable mRunnable = () ->
-                startService(new Intent(TeambrellaNotificationService.this, TeambrellaNotificationService.class).setAction(CONNECT_ACTION));
-    };
-
-
 }
