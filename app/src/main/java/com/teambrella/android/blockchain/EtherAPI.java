@@ -28,4 +28,10 @@ public interface EtherAPI {
 
     @GET("api?module=account&action=balance")
     Call<Scan<BigInteger>> checkBalance(@Query("address") String address);
+
+    @GET("api/eth_gasPrice")
+    Call<Long> checkGasPrice();
+
+    @GET("api/eth_gasPrice/ContractCreation")
+    Call<Long> checkContractCreationGasPrice();
 }

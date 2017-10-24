@@ -3,11 +3,13 @@ package com.teambrella.android.util;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.blockchain.AbiArguments;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.blockchain.EtherGasStation;
 import com.teambrella.android.blockchain.EtherNode;
 import com.teambrella.android.blockchain.Hex;
 import com.teambrella.android.blockchain.Scan;
@@ -53,10 +55,6 @@ class EthWallet {
     public EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
-    }
-
-    public String createOneWallet(long myNonce, Multisig m, long gasLimit) throws CryptoException, RemoteException {
-        return createOneWallet(myNonce, m, gasLimit, getGasPriceForContractCreation());
     }
 
     public String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
@@ -174,7 +172,7 @@ class EthWallet {
             long myNonce = checkMyNonce();
             BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
-            depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, getGasPrice(), value);
+            depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, refreshGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
             publish(depositTx);
         }
@@ -206,9 +204,13 @@ class EthWallet {
 
         List<TxInput> inputs = tx.txInputs;
         if (inputs.size() != 1) {
-            String msg = "Unexpected count of tx inputs of ETH tx. Expected: 1, was: " + inputs.size();
+            String msg = "Unexpected count of tx inputs of ETH tx. Expected: 1, was: " + inputs.size() + ". (tx ID: " + tx.id + ")";
             Log.e(LOG_TAG, msg);
-            throw new ArithmeticException(msg);
+            if (!BuildConfig.DEBUG){
+                Crashlytics.log(msg);
+            }
+
+            return null;
         }
 
         Multisig myMultisig = tx.getFromMultisig();
@@ -255,6 +257,38 @@ class EthWallet {
         return publish(cryptoTx);
     }
 
+    public long refreshGasPrice()
+    {
+        EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
+        long price = gasStation.checkGasPrice();
+        if (price < 0 || price > 4_000_000_001L){
+            // The server is kidding us
+            return getGasPrice();
+        }
+
+        if (mIsTestNet) {
+            return mTestGasPrice = price;
+        }
+
+        return mGasPrice = price;
+    }
+
+    public long refreshContractCreateGasPrice()
+    {
+        EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
+        long price = gasStation.checkContractCreationGasPrice();
+        if (price < 0 || price > 8_000_000_002L){
+            // The server is kidding us
+            return getGasPriceForContractCreation();
+        }
+
+        if (mIsTestNet) {
+            return mTestContractGasPrice = price;
+        }
+
+        return mContractGasPrice = price;
+    }
+
     public long getGasPrice() {
         return mIsTestNet ? mTestGasPrice : mGasPrice;
     }
@@ -272,7 +306,7 @@ class EthWallet {
     private long getBetterGasPriceForContractCreation(long oldPrice){
 
         long betterPrice = oldPrice + 1;
-        long recommendedPrice = getGasPriceForContractCreation();
+        long recommendedPrice = refreshContractCreateGasPrice();
 
         if (recommendedPrice > betterPrice){
             betterPrice = recommendedPrice;
@@ -365,7 +399,7 @@ class EthWallet {
         if (teamId == 0x40){
             // corrupted !
 
-            long gasPrice = getGasPriceForContractCreation();
+            long gasPrice = refreshContractCreateGasPrice();
             long nonce = checkMyNonce();
             String recreatedTxHash = createOneWallet(nonce, m, 1_300_000, gasPrice);
 
@@ -391,5 +425,5 @@ class EthWallet {
         return true;
     }
 
-
+    
 }

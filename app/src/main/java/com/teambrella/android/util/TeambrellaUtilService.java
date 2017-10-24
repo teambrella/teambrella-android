@@ -139,8 +139,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-//        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
-//
+        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+
 //        if(BuildConfig.DEBUG){
 //            new android.os.AsyncTask<Void, Void, Void>() {
 //                @Override
@@ -285,6 +285,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         EthWallet myWallet = getWallet();
+        myWallet.refreshGasPrice();
         long myNonce = myWallet.checkMyNonce();
         for (Multisig m : myUncreatedMultisigs) {
             Multisig sameTeammateMultisig = getMyTeamMultisigIfAny(myPublicKey, m.teammateId, myUncreatedMultisigs);
@@ -477,6 +478,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         for (Tx tx : txs) {
 
             EthWallet wallet = getWallet();
+            wallet.refreshGasPrice();
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
                 case TeambrellaModel.TX_KIND_WITHDRAW:

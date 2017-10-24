@@ -9,9 +9,11 @@ import android.os.RemoteException;
 import android.util.Base64;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.PayTo;
@@ -51,6 +53,8 @@ public class TeambrellaContentProviderClient {
 
     private static final String LOG_TAG = TeambrellaContentProviderClient.class.getSimpleName();
     private static SimpleDateFormat mSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+
+    public boolean needFullClientUpdate;
 
 
     private static MicroOrm sMicroOrm = new MicroOrm.Builder().registerTypeAdapter(UUID.class, new TypeAdapter<UUID>() {
@@ -499,7 +503,8 @@ public class TeambrellaContentProviderClient {
 
                     com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
                     if (currentMultisig == null) {
-                        Log.w(LOG_TAG, "Could not cosign Tx " + tx.id + ". I'm a cosigner for next addresses, not for the current.");
+                        setNeedsFullCleintUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+
                         iterator.remove();
                     } else{
 
@@ -695,31 +700,42 @@ public class TeambrellaContentProviderClient {
                 Tx tx = iterator.next();
                 tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
+                    Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
                     iterator.remove();
-                } else {
-                    Collections.sort(tx.txInputs);
-
-                    tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
-                            TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
-                    if (tx.teammate != null) {
-                        tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
-                                , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
-                    }
-
-                    tx.cosigners = getCosigners(tx.getFromMultisig());
-                    for (TxInput txInput : tx.txInputs) {
-                        List<TXSignature> signatures = queryList(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=?",
-                                new String[]{txInput.id.toString()}, TXSignature.class);
-                        for (TXSignature signature : signatures) {
-                            txInput.signatures.put(signature.teammateId, signature);
-                        }
-                    }
-
-
-                    tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
-                            TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
-                    Collections.sort(tx.txOutputs);
+                    continue;
                 }
+
+                Collections.sort(tx.txInputs);
+
+                tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
+                        TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
+                if (tx.teammate != null) {
+                    tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
+                            , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
+                }
+
+                com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
+                if (currentMultisig == null) {
+                    setNeedsFullCleintUpdate("Could not publish Tx " + tx.id + ". No current Multisig for my teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+
+                    iterator.remove();
+                    continue;
+                }
+
+                tx.cosigners = getCosigners(tx.getFromMultisig());
+                for (TxInput txInput : tx.txInputs) {
+                    List<TXSignature> signatures = queryList(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=?",
+                            new String[]{txInput.id.toString()}, TXSignature.class);
+                    for (TXSignature signature : signatures) {
+                        txInput.signatures.put(signature.teammateId, signature);
+                    }
+                }
+
+
+                tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                        TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                Collections.sort(tx.txOutputs);
+
             }
         }
         return list;
@@ -847,6 +863,8 @@ public class TeambrellaContentProviderClient {
             }
             cursor.close();
         }
+
+        needFullClientUpdate = false;
     }
 
 
@@ -866,7 +884,10 @@ public class TeambrellaContentProviderClient {
         JsonObject body = new JsonObject();
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            long since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
+            long since = 0;
+            if (!needFullClientUpdate){
+                since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
+            }
             body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
         }
         if (cursor != null) {
@@ -960,4 +981,11 @@ public class TeambrellaContentProviderClient {
         return result;
     }
 
+    private void setNeedsFullCleintUpdate(String msg){
+        Log.w(LOG_TAG, msg);
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.log(msg);
+        }
+        needFullClientUpdate = true;
+    }
 }
