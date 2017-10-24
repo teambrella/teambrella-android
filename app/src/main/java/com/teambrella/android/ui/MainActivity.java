@@ -130,6 +130,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
+        TeambrellaUtilService.oneoffWalletSync(this);
 
     }
 

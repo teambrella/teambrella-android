@@ -62,7 +62,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<ScanResultTxReceipt>> response = api.checkTx(creationTx).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
                 if (response.isSuccessful()) {
                     receipt = response.body();
                 }
@@ -85,7 +85,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<String>> response = api.checkNonce(addressHex).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
                 if (response.isSuccessful()) {
                     responceBody = response.body();
 
@@ -112,7 +112,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<BigInteger>> response = api.checkBalance(addressHex).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
                 if (response.isSuccessful()) {
                     responceBody = response.body();
 
@@ -139,7 +139,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<String>> response = api.readContractString(to, callData).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
 
                 return parseBigIntegerOrMinusOne(response).intValue();
 

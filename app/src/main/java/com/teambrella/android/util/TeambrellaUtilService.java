@@ -13,6 +13,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
@@ -51,6 +52,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 public class TeambrellaUtilService extends GcmTaskService {
 
     public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
+    public static final String SYNC_WALLET_ONCE_TAG = "TEAMBRELLA-SYNC-WALLET-ONCE";
     public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
@@ -85,8 +87,18 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setPersisted(true)
                 .setPeriod(30 * 60)     // 30 minutes period
-                .setFlex(10 * 60)       // +/- 10 minutes
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .setRequiresCharging(false)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void oneoffWalletSync(Context context) {
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(SYNC_WALLET_ONCE_TAG)
+                .setExecutionWindow(0L, 1L)
+                .setRequiresCharging(false)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
     }
@@ -168,6 +180,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         if (tag != null) {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
+                case SYNC_WALLET_ONCE_TAG:
                     if (BuildConfig.DEBUG) {
                         Log.v(LOG_TAG, "Sync wallet task ran");
                     }
