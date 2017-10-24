@@ -3,6 +3,9 @@ package com.teambrella.android.blockchain;
 import android.content.Context;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.teambrella.android.BuildConfig;
+
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
@@ -29,15 +32,15 @@ public class EtherAccount {
     private String mKeyStoreSecret;
     private Account mAccount;
 
-    public static String toDepositAddress(String privateKey, Context context) throws CryptoException{
+    public static String toDepositAddress(String privateKey, Context context) throws CryptoException {
         return new EtherAccount(privateKey, context).getDepositAddress();
     }
 
-    public static String toPublicKeySignature(String privateKeyAsWiF, Context context, String hex) throws CryptoException{
+    public static String toPublicKeySignature(String privateKeyAsWiF, Context context, String hex) throws CryptoException {
         return new EtherAccount(privateKeyAsWiF, context).getPublicKeySignature(hex);
     }
 
-    public EtherAccount(String privateKeyAsWiF, Context context) throws CryptoException{
+    public EtherAccount(String privateKeyAsWiF, Context context) throws CryptoException {
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, privateKeyAsWiF);
         ECKey key = dpk.getKey();
         String myPublicKey = key.getPublicKeyAsHex();
@@ -45,22 +48,22 @@ public class EtherAccount {
         byte[] privateKey = key.getPrivKeyBytes();
 
         mKeyStoreSecret = key.getPrivateKeyAsWiF(new MainNetParams());
-        mKeyStore = new KeyStore(keyStorePath , Geth.LightScryptN, Geth.LightScryptP);
+        mKeyStore = new KeyStore(keyStorePath, Geth.LightScryptN, Geth.LightScryptP);
         mAccount = initEthAccount(privateKey, mKeyStore, mKeyStoreSecret);
     }
 
-    public EtherAccount(ECKey key, Context context) throws CryptoException{
+    public EtherAccount(ECKey key, Context context) throws CryptoException {
         String myPublicKey = key.getPublicKeyAsHex();
         String keyStorePath = context.getFilesDir().getPath() + "/keystore/" + myPublicKey;
         byte[] privateKey = key.getPrivKeyBytes();
 
         mKeyStoreSecret = key.getPrivateKeyAsWiF(new MainNetParams());
-        mKeyStore = new KeyStore(keyStorePath , Geth.LightScryptN, Geth.LightScryptP);
+        mKeyStore = new KeyStore(keyStorePath, Geth.LightScryptN, Geth.LightScryptP);
         mAccount = initEthAccount(privateKey, mKeyStore, mKeyStoreSecret);
     }
 
     ////TODO: remove not ETH dependencies from this class. Leave only this ctor:
-    public EtherAccount(byte[] privateKey, String keyStorePath, String keyStoreSecret) throws CryptoException{
+    public EtherAccount(byte[] privateKey, String keyStorePath, String keyStoreSecret) throws CryptoException {
 
         mKeyStoreSecret = keyStoreSecret;
         mKeyStore = new KeyStore(keyStorePath, Geth.LightScryptN, Geth.LightScryptP);
@@ -68,12 +71,11 @@ public class EtherAccount {
     }
 
 
-
     public String getDepositAddress() {
         return mAccount.getAddress().getHex();
     }
 
-    public String getPublicKeySignature(String hex){
+    public String getPublicKeySignature(String hex) {
         byte[] signature = sign(hex);
         reverseAndCalculateV(signature);
         return "0x" + Hex.fromBytes(signature);
@@ -89,12 +91,20 @@ public class EtherAccount {
         );
 
         try {
-            Log.v(LOG_TAG, "Constructing tx: " + json);
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "Constructing tx: " + json);
+            }
             Transaction tx = Geth.newTransactionFromJSON(json);
-            Log.v(LOG_TAG, "Tx constructed.");
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "Tx constructed.");
+            }
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "" + e.getMessage(), e);
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, "" + e.getMessage(), e);
+            } else {
+                Crashlytics.logException(e);
+            }
             throw new CryptoException("" + e.getMessage(), e);
         }
     }
@@ -110,14 +120,22 @@ public class EtherAccount {
                 weis
         );
 
-        Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+        if (BuildConfig.DEBUG) {
+            Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+        }
 
         try {
             Transaction tx = Geth.newTransactionFromJSON(json);
-            Log.v(LOG_TAG, "deposit tx constructed.");
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "deposit tx constructed.");
+            }
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "", e);
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, "", e);
+            } else {
+                Crashlytics.logException(e);
+            }
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -132,40 +150,58 @@ public class EtherAccount {
                 "0x" + methodId + AbiArguments.encodeToHexString(methodArgs)
         );
 
-        Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+        if (BuildConfig.DEBUG) {
+            Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+        }
 
         try {
             Transaction tx = Geth.newTransactionFromJSON(json);
-            Log.v(LOG_TAG, "deposit tx constructed.");
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "deposit tx constructed.");
+            }
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "", e);
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, "", e);
+            } else {
+                Crashlytics.logException(e);
+            }
             throw new CryptoException(e.getMessage(), e);
         }
     }
 
-    public Transaction signTx(Transaction unsignedTx, boolean isTestnet) throws CryptoException{
-
-            try {
-                return mKeyStore.signTxPassphrase(mAccount, mKeyStoreSecret, unsignedTx, getChainId(isTestnet));
-            }catch (Exception e){
-                Log.e(LOG_TAG, "Could not sign tx; isTestnet:" + isTestnet + ". " + e.getMessage(), e);
-                throw new CryptoException(e.getMessage(), e);
-            }
-    }
-
-    public byte[] signHash(byte[] hash256) throws CryptoException{
+    public Transaction signTx(Transaction unsignedTx, boolean isTestnet) throws CryptoException {
 
         try {
-            Log.v(LOG_TAG, "signing hash: " + Hex.fromBytes(hash256));
-            return mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, hash256);
-        }catch (Exception e){
-            Log.e(LOG_TAG, "Could not sign hash:" + Hex.fromBytes(hash256) + ". " + e.getMessage(), e);
+            return mKeyStore.signTxPassphrase(mAccount, mKeyStoreSecret, unsignedTx, getChainId(isTestnet));
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, "Could not sign tx; isTestnet:" + isTestnet + ". " + e.getMessage(), e);
+            } else {
+                Crashlytics.logException(e);
+            }
             throw new CryptoException(e.getMessage(), e);
         }
     }
 
-    public byte[] signHashAndCalculateV(byte[] hash256) throws CryptoException{
+    public byte[] signHash(byte[] hash256) throws CryptoException {
+
+        try {
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "signing hash: " + Hex.fromBytes(hash256));
+            }
+            return mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, hash256);
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, "Could not sign hash:" + Hex.fromBytes(hash256) + ". " + e.getMessage(), e);
+            } else {
+                Crashlytics.logException(e);
+            }
+            throw new CryptoException(e.getMessage(), e);
+        }
+    }
+
+    public byte[] signHashAndCalculateV(byte[] hash256) throws CryptoException {
 
         byte[] sig = signHash(hash256);
         sig[sig.length - 1] += 27;
@@ -183,38 +219,49 @@ public class EtherAccount {
                 acc = ks.importECDSAKey(privateKey, ksSecret);
 
             return acc;
-        } catch (Exception e){
-            Log.e("Test", "Was unnable to read account.", e);
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("Test", "Was unnable to read account.", e);
+            } else {
+                Crashlytics.logException(e);
+            }
             throw new CryptoException(e.getMessage(), e);
         }
     }
 
-    private BigInt getChainId(boolean isTestNet){
+    private BigInt getChainId(boolean isTestNet) {
         return new BigInt(isTestNet ? 3 : 1);   // 3 is for Ropsten TestNet; 1 is for MainNet
     }
 
     private byte[] sign(String target) {
 
-        try{
-            Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
+        try {
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
+            }
 
             byte[] targetAsBytes = Hex.toBytes(target);
             int len = targetAsBytes.length;
-            if (len < 32) throw new UnsupportedOperationException("Can only sign message of 32+ bytes");
-            byte[] last32Bytes = Arrays.copyOfRange(targetAsBytes, len -32, len);
+            if (len < 32)
+                throw new UnsupportedOperationException("Can only sign message of 32+ bytes");
+            byte[] last32Bytes = Arrays.copyOfRange(targetAsBytes, len - 32, len);
 
             byte[] sig = mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, last32Bytes);
             return sig;
 
-        }catch (Exception e){
-            Log.e(LOG_TAG, e.getMessage(), e);
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+            } else {
+                Crashlytics.logException(e);
+            }
         }
 
         return null;
     }
 
-    private void reverseAndCalculateV(byte[] array){
-        for (int i = 0, n = array.length, m = n/2 ; i < m; i++) {
+    private void reverseAndCalculateV(byte[] array) {
+        for (int i = 0, n = array.length, m = n / 2; i < m; i++) {
             byte temp = array[i];
             array[i] = array[n - 1 - i];
             array[n - 1 - i] = temp;

@@ -87,6 +87,11 @@ public class TeambrellaNotificationServiceClient implements TeambrellaNotificati
     }
 
     @Override
+    public boolean onChatNotification(String topicId) {
+        return false;
+    }
+
+    @Override
     public boolean onPostsSinceInteracted(int count) {
         return false;
     }

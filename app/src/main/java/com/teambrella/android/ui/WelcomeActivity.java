@@ -29,6 +29,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
@@ -47,6 +48,8 @@ import io.reactivex.Notification;
  * Wellcome activity
  */
 public class WelcomeActivity extends AppCompatRequestActivity {
+
+    public static final String FACEBOOK_ID_EXTRA = "EXTRA_FACEBOOK_ID";
 
     private enum State {
         INIT,
@@ -69,6 +72,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private TextView mInvitationDescription;
     private TeambrellaUser mUser;
     private State mState;
+    private String mFacebookId;
+    private TeambrellaBackupData mBackupData;
 
 
     @Override
@@ -76,6 +81,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         super.onCreate(savedInstanceState);
 
         mUser = TeambrellaUser.get(this);
+        mBackupData = new TeambrellaBackupData(this);
+
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -92,6 +99,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mTryDemoInvite = findViewById(R.id.try_demo_invite);
         mMarginView = findViewById(R.id.margin);
         mTryDemoInvite.setOnClickListener(this::onTryDemo);
+
+        mFacebookId = savedInstanceState != null ? savedInstanceState.getString(FACEBOOK_ID_EXTRA, null) : null;
+
         setState(State.INIT);
     }
 
@@ -102,6 +112,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             if (mUser.isDemoUser()) {
                 getDemoTeams(mUser.getPrivateKey());
             } else {
+                getTeams(mUser.getPrivateKey());
+            }
+        } else if (BuildConfig.DEBUG) {
+            Intent intent = getIntent();
+            Uri uri = intent.getData();
+            if (uri != null) {
+                mUser.setPrivateKey(uri.getQueryParameter("key"));
                 getTeams(mUser.getPrivateKey());
             }
         }
@@ -179,8 +196,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken token = loginResult.getAccessToken();
-                ECKey key = DumpedPrivateKey.fromBase58(null, mUser.getPendingPrivateKey()).getKey();
-                registerUser(token.getToken(), mUser.getPendingPrivateKey(), key.getPublicKeyAsHex());
+                mFacebookId = loginResult.getAccessToken().getUserId();
+
+                String backUpKey = mBackupData.getValue(Integer.toString(mFacebookId.hashCode()));
+                if (backUpKey == null) {
+                    backUpKey = mUser.getPendingPrivateKey();
+                }
+                ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
+                registerUser(token.getToken(), backUpKey, key.getPublicKeyAsHex());
                 LoginManager.getInstance().logOut();
             }
 
@@ -202,6 +225,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         permissions.add("public_profile");
         permissions.add("email");
         loginManager.logInWithReadPermissions(this, permissions);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(FACEBOOK_ID_EXTRA, mFacebookId);
     }
 
     @Override
@@ -312,7 +342,20 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     }
                     break;
                     case TeambrellaUris.ME_REGISTER_KEY:
-                        mUser.setPrivateKey(mUser.getPendingPrivateKey());
+
+                        String privateKey = mFacebookId != null ? mBackupData.getValue(Integer.toString(mFacebookId.hashCode())) : null;
+
+                        if (privateKey == null) {
+                            privateKey = mUser.getPendingPrivateKey();
+                        }
+
+                        mUser.setPrivateKey(privateKey);
+
+                        if (mFacebookId != null) {
+                            mBackupData.setValue(Integer.toString(mFacebookId.hashCode()), privateKey);
+                            mFacebookId = null;
+                        }
+
                         StatisticHelper.onUserRegistered();
                         if (!BuildConfig.DEBUG) {
                             Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
@@ -335,6 +378,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_ANOTHER_KEY:
                         setState(State.ACCESS_DENIED);
+                        if (mFacebookId != null) {
+                            mBackupData.setValue(Integer.toString(mFacebookId.hashCode()), null);
+                        }
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
                         setState(State.PENDING_APPLICATION);
@@ -346,6 +392,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             } else {
                 tryAgainLater(error);
             }
+
+            mFacebookId = null;
         }
     }
 
