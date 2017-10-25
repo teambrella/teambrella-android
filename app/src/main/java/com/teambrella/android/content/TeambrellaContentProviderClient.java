@@ -694,7 +694,9 @@ public class TeambrellaContentProviderClient {
                 Tx tx = iterator.next();
                 tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
-                    Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
+                    if (BuildConfig.DEBUG) {
+                        Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
+                    }
                     iterator.remove();
                     continue;
                 }
@@ -879,7 +881,7 @@ public class TeambrellaContentProviderClient {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             long since = 0;
-            if (!needFullClientUpdate){
+            if (!needFullClientUpdate) {
                 since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
             }
             body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
@@ -975,7 +977,7 @@ public class TeambrellaContentProviderClient {
         return result;
     }
 
-    private void setNeedsFullCleintUpdate(String msg){
+    private void setNeedsFullCleintUpdate(String msg) {
         Log.w(LOG_TAG, msg);
         if (!BuildConfig.DEBUG) {
             Crashlytics.log(msg);

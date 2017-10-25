@@ -89,8 +89,9 @@ class EthWallet {
 
     /**
      * Verfifies if a given contract creation TX has been mined in the blockchain.
+     *
      * @param gasLimit original gas limit, that has been set to the original creation TX. When a TX consumes all the gas up to the limit, that indicates an error.
-     * @param m the given multisig object with original TX hash to check.
+     * @param m        the given multisig object with original TX hash to check.
      * @return The original multisig object with updated address (when verified successfully), updated error status (if any), or new unconfirmed tx if original TX is outdated.
      */
     public void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
@@ -110,7 +111,7 @@ class EthWallet {
                     return;
 
                 }
-            }else{
+            } else {
 
                 recreateIfTimedOut(m, gasLimit);
                 return;
@@ -124,15 +125,15 @@ class EthWallet {
     private void recreateIfTimedOut(Multisig m, long gasLimit) throws CryptoException, RemoteException {
 
         Unconfirmed unconfirmed = m.unconfirmed;
-        if (unconfirmed != null){
+        if (unconfirmed != null) {
             Date unconfirmedDate = unconfirmed.getDateCreated();
-            Date timeout = new Date(System.currentTimeMillis()-12*60*60*1000);
+            Date timeout = new Date(System.currentTimeMillis() - 12 * 60 * 60 * 1000);
 
-            if (unconfirmedDate.before(timeout)){
+            if (unconfirmedDate.before(timeout)) {
                 long betterGasPrice = getBetterGasPriceForContractCreation(unconfirmed.cryptoFee);
                 String recreatedTxHash = createOneWallet(unconfirmed.cryptoNonce, m, gasLimit, betterGasPrice);
 
-                if (recreatedTxHash != null){
+                if (recreatedTxHash != null) {
                     Unconfirmed newUnconfirmed = new Unconfirmed();
                     newUnconfirmed.setDateCreated(new Date());
                     newUnconfirmed.cryptoFee = betterGasPrice;
@@ -206,7 +207,7 @@ class EthWallet {
         if (inputs.size() != 1) {
             String msg = "Unexpected count of tx inputs of ETH tx. Expected: 1, was: " + inputs.size() + ". (tx ID: " + tx.id + ")";
             Log.e(LOG_TAG, msg);
-            if (!BuildConfig.DEBUG){
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.log(msg);
             }
 
@@ -257,11 +258,10 @@ class EthWallet {
         return publish(cryptoTx);
     }
 
-    public long refreshGasPrice()
-    {
+    public long refreshGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
-        if (price < 0 || price > 4_000_000_001L){
+        if (price < 0 || price > 4_000_000_001L) {
             // The server is kidding us
             return getGasPrice();
         }
@@ -273,11 +273,10 @@ class EthWallet {
         return mGasPrice = price;
     }
 
-    public long refreshContractCreateGasPrice()
-    {
+    public long refreshContractCreateGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkContractCreationGasPrice();
-        if (price < 0 || price > 8_000_000_002L){
+        if (price < 0 || price > 8_000_000_002L) {
             // The server is kidding us
             return getGasPriceForContractCreation();
         }
@@ -303,12 +302,12 @@ class EthWallet {
         return blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
 
-    private long getBetterGasPriceForContractCreation(long oldPrice){
+    private long getBetterGasPriceForContractCreation(long oldPrice) {
 
         long betterPrice = oldPrice + 1;
         long recommendedPrice = refreshContractCreateGasPrice();
 
-        if (recommendedPrice > betterPrice){
+        if (recommendedPrice > betterPrice) {
             betterPrice = recommendedPrice;
         }
 
@@ -326,7 +325,9 @@ class EthWallet {
     private String publish(Transaction cryptoTx) throws RemoteException {
         try {
             byte[] rlp = cryptoTx.encodeRLP();
-            Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
+            if (BuildConfig.DEBUG) {
+                Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
+            }
             String hex = "0x" + Hex.fromBytes(rlp);
 
             EtherNode blockchain = new EtherNode(mIsTestNet);
@@ -396,14 +397,14 @@ class EthWallet {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
         int teamId = blockchain.readContractInt(m.address, METHOD_ID_M_TEAMID);
-        if (teamId == 0x40){
+        if (teamId == 0x40) {
             // corrupted !
 
             long gasPrice = refreshContractCreateGasPrice();
             long nonce = checkMyNonce();
             String recreatedTxHash = createOneWallet(nonce, m, 1_300_000, gasPrice);
 
-            if (recreatedTxHash != null){
+            if (recreatedTxHash != null) {
                 Unconfirmed newUnconfirmed = new Unconfirmed();
                 newUnconfirmed.setDateCreated(new Date());
                 newUnconfirmed.cryptoFee = gasPrice;
@@ -417,13 +418,12 @@ class EthWallet {
             }
 
             return false;   // stop syncing. Wait for fix.
-        }
-        else if (teamId < 2000){
+        } else if (teamId < 2000) {
             return false;   // stop syncing. Wait for fix.
         }
 
         return true;
     }
 
-    
+
 }
