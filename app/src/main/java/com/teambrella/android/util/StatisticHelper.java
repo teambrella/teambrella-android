@@ -19,6 +19,8 @@ public class StatisticHelper {
     private static final String WALLET_FUNDED = "Wallet Funded";
     private static final String NEW_TEAMMATE = "New Teammate";
     private static final String NEW_DISCUSSION = "New Discussion";
+    private static final String BACK_UP = "Back Up";
+    private static final String RESTORE = "Restore";
 
 
     private static final String TEAM_ID = "TeamId";
@@ -109,6 +111,19 @@ public class StatisticHelper {
     public static void setUserId(String userId) {
         if (!BuildConfig.DEBUG) {
             Crashlytics.setUserIdentifier(userId);
+        }
+    }
+
+    public static void onBackUp() {
+        if (!BuildConfig.DEBUG) {
+            Answers.getInstance().logCustom(new CustomEvent(BACK_UP));
+        }
+    }
+
+
+    public static void onRestore() {
+        if (!BuildConfig.DEBUG) {
+            Answers.getInstance().logCustom(new CustomEvent(RESTORE));
         }
     }
 }
