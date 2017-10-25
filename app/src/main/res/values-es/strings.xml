@@ -243,5 +243,5 @@
 
     <string name="pending_application_title">Tu solicitud todavía no está completa</string>
     <string name="pending_application_description"><![CDATA[Por favor, verifica las puntas que faltan y finalízala. Te esperamos! Contáctanos en <a href="mailto:support@teambrella.com">support@teambrella.com</a> si tienes alguna pregunta.]]></string>
-
+    <string name="retry">Reintentar</string>
 </resources>
