@@ -22,6 +22,7 @@ import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 
 import io.reactivex.Notification;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Coverage and Wallet fragment.
@@ -63,7 +64,8 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
             mObjectModel.setText(objectName);
             final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            picasso.load(objectImageUri).into(mObjectPicture);
+            picasso.load(objectImageUri).centerCrop().resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40).transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).
+                    into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)) * 100))));
             mSubmitClaim.setVisibility(mDataHost.getTeamAccessLevel() == TeambrellaModel.TeamAccessLevel.FULL_ACCESS
                     ? View.VISIBLE : View.INVISIBLE);
