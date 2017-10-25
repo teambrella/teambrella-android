@@ -3,11 +3,13 @@ package com.teambrella.android.blockchain;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.teambrella.android.BuildConfig;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,7 +38,7 @@ public class EtherNode {
         this.mIsTestNet = testNet;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Gson gson = new GsonBuilder()
@@ -59,13 +61,17 @@ public class EtherNode {
         Scan<ScanResultTxReceipt> receipt = null;
         for (EtherAPI api : mEtherAPIs) {
             try {
-                    Response<Scan<ScanResultTxReceipt>> response = api.checkTx(creationTx).execute();
-                    Thread.currentThread().sleep(1000);
-                    if (response.isSuccessful()) {
-                        receipt = response.body();
-                    }
+                Response<Scan<ScanResultTxReceipt>> response = api.checkTx(creationTx).execute();
+                Thread.currentThread().sleep(200);
+                if (response.isSuccessful()) {
+                    receipt = response.body();
+                }
             } catch (IOException | InterruptedException e) {
-                Log.e(LOG_TAG, "Failed to check Tx.", e);
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, "Failed to check Tx.", e);
+                } else {
+                    Crashlytics.logException(e);
+                }
             }
             if (receipt != null) {
                 break;
@@ -79,7 +85,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<String>> response = api.checkNonce(addressHex).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
                 if (response.isSuccessful()) {
                     responceBody = response.body();
 
@@ -90,7 +96,11 @@ public class EtherNode {
                     return Long.parseLong(hex, 16);
                 }
             } catch (IOException | InterruptedException e) {
-                Log.e(LOG_TAG, "Failed to check Nonce:" + e.getMessage(), e);
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, "Failed to check Nonce:" + e.getMessage(), e);
+                } else {
+                    Crashlytics.logException(e);
+                }
             }
         }
 
@@ -102,7 +112,7 @@ public class EtherNode {
         for (EtherAPI api : mEtherAPIs) {
             try {
                 Response<Scan<BigInteger>> response = api.checkBalance(addressHex).execute();
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(200);
                 if (response.isSuccessful()) {
                     responceBody = response.body();
 
@@ -113,11 +123,36 @@ public class EtherNode {
                     return new BigDecimal(balance, MathContext.UNLIMITED).divide(AbiArguments.WEIS_IN_ETH);
                 }
             } catch (IOException | InterruptedException | JsonSyntaxException e) {
-                Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+                } else {
+                    Crashlytics.logException(e);
+                }
             }
         }
 
         return new BigDecimal(-1, MathContext.UNLIMITED);
+    }
+
+    public int readContractInt(String to, String callData) {
+
+        for (EtherAPI api : mEtherAPIs) {
+            try {
+                Response<Scan<String>> response = api.readContractString(to, callData).execute();
+                Thread.currentThread().sleep(200);
+
+                return parseBigIntegerOrMinusOne(response).intValue();
+
+            } catch (IOException | InterruptedException | JsonSyntaxException e) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+                } else {
+                    Crashlytics.logException(e);
+                }
+            }
+        }
+
+        return -1;
     }
 
     public String pushTx(String hex) {
@@ -144,14 +179,36 @@ public class EtherNode {
                     JsonElement r = result.get("result");
                     if (r != null)
                         return r.getAsString();
-                    else
+                    else if (BuildConfig.DEBUG) {
                         Log.e(LOG_TAG, "Could not publish eth multisig creation tx. The answer was: " + result.toString());
+                    }
 
                 }
             } catch (IOException e) {
-                Log.e(LOG_TAG, e.toString());
+                if (BuildConfig.DEBUG) {
+                    Log.e(LOG_TAG, e.toString());
+                } else {
+                    Crashlytics.logException(e);
+                }
             }
         }
         return null;
+    }
+
+    private BigInteger parseBigIntegerOrMinusOne(Response<Scan<String>> response) {
+
+        if (response.isSuccessful()) {
+            Scan<String> responceBody = response.body();
+
+            String s = responceBody.result;
+            if (s != null) {
+
+                byte[] bytes = Hex.toBytes(s);
+                return new BigInteger(bytes);
+
+            }
+        }
+
+        return new BigInteger("-1");
     }
 }

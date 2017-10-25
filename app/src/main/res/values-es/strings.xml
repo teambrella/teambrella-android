@@ -91,7 +91,7 @@
     <string name="proxy_vote">Proxy </string>
     <string name="my_proxies">Mis Proxies</string>
     <string name="proxy_for">Proxy Para</string>
-    <string name="user_index">Indice</string>
+    <string name="user_index">Índice</string>
     <string name="remove_from_my_proxies">Eliminar de mis proxies</string>
     <string name="total_commission">Comisión Total</string>
     <string name="commission_format_string">%1$s%2$.2f</string>
@@ -234,5 +234,14 @@
     <string name="risk_from_to_format_string">"Reisgo:%1$.2f a %2$.2f"</string>
     <string name="access_denied_title">Lo sentimos</string>
     <string name="access_denied_description"><![CDATA[De momento no puedes connectar con Teambrella. Por favor, contacta con nuestro soporte <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
+
+    <string name="notification_title_your_claim">@string/your_claim</string>
+    <string name="notification_title_your_application">Tu solicitud</string>
+    <string name="notification_title_other_claim">"Reclamación de %s"</string>
+    <string name="notification_title_other_application">"Solicitud de %s"</string>
+    <string name="image_full_screen_indicator_format_string">%1$d de %2$d</string>
+
+    <string name="pending_application_title">Tu solicitud todavía no está completa</string>
+    <string name="pending_application_description"><![CDATA[Por favor, verifica las puntas que faltan y finalízala. Te esperamos! Contáctanos en <a href="mailto:support@teambrella.com">support@teambrella.com</a> si tienes alguna pregunta.]]></string>
 
 </resources>

@@ -26,7 +26,6 @@ import org.bitcoinj.script.ScriptOpCodes;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -65,12 +64,7 @@ class SignHelper {
         BigDecimal totalBTCAmount = new BigDecimal(0, MathContext.UNLIMITED);
         Transaction transaction = null;
         if (tx.txInputs != null) {
-            Collections.sort(tx.txInputs, new Comparator<TxInput>() {
-                @Override
-                public int compare(TxInput o1, TxInput o2) {
-                    return o1.id.compareTo(o2.id);
-                }
-            });
+            Collections.sort(tx.txInputs);
 
             transaction = new Transaction(params);
 
@@ -89,12 +83,7 @@ class SignHelper {
             }
 
             if (tx.kind == TeambrellaModel.TX_KIND_PAYOUT || tx.kind == TeambrellaModel.TX_KIND_WITHDRAW) {
-                Collections.sort(tx.txOutputs, new Comparator<TxOutput>() {
-                    @Override
-                    public int compare(TxOutput o1, TxOutput o2) {
-                        return o1.id.compareTo(o2.id);
-                    }
-                });
+                Collections.sort(tx.txOutputs);
 
                 BigDecimal outputSum = new BigDecimal(0f, MathContext.UNLIMITED);
 

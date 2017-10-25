@@ -243,6 +243,8 @@ public class ClaimActivity extends TeambrellaDataHostActivity implements IClaimA
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
                                     , pictureUri));
                 }
+
+                setTitle(basic.getString(TeambrellaModel.ATTR_DATA_MODEL));
             }
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);
 

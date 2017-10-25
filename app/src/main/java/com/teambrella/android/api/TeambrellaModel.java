@@ -192,10 +192,10 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
     public static final int VALUE_STATUS_RESULT_CODE_FATAL = 1;
     public static final int VALUE_STATUS_RESULT_CODE_AUTH = 2;
-    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM = 6;
-    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION = 8;
     public static final int VALUE_STATUS_RESULT_USER_HAS_ANOTHER_KEY = 5;
-
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM = 6;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING = 8;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED = 9;
 
     /*Data*/
     public static final String ATTR_DATA_MY_TEAMMATE_ID = "MyTeammateId";

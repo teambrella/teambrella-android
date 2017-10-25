@@ -23,7 +23,15 @@ public interface EtherAPI {
     @GET("api?module=proxy&action=eth_getTransactionReceipt")
     Call<Scan<ScanResultTxReceipt>> checkTx(@Query("txhash") String txHash);
 
+    @GET("api?module=proxy&action=eth_call")
+    Call<Scan<String>> readContractString(@Query("to") String to, @Query("data") String callData);
 
     @GET("api?module=account&action=balance")
     Call<Scan<BigInteger>> checkBalance(@Query("address") String address);
+
+    @GET("api/eth_gasPrice")
+    Call<Long> checkGasPrice();
+
+    @GET("api/eth_gasPrice/ContractCreation")
+    Call<Long> checkContractCreationGasPrice();
 }

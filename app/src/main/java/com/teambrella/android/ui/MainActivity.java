@@ -138,6 +138,7 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
+        TeambrellaUtilService.oneoffWalletSync(this);
 
         getComponent().inject(this);
         Log.e("TEST", "" + mUser.getPrivateKey());
