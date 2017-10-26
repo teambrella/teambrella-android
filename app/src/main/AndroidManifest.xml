@@ -52,7 +52,8 @@
 
         <activity
             android:name=".ui.chat.ChatActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name=".ui.claim.ReportClaimActivity"

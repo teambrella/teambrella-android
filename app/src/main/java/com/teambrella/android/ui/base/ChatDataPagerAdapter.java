@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.base;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +92,18 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         return VIEW_TYPE_REGULAR;
     }
 
+
+    protected RecyclerView.ViewHolder createErrorViewHolder(ViewGroup parent) {
+        Context context = parent.getContext();
+        return new ErrorViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_reload, parent, false));
+    }
+
+    protected RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
+        Context context = parent.getContext();
+        return new LoadingViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_loading, parent, false));
+    }
+
+
     public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         JsonArray data = mPager.getLoadedData();
         int srcPosition = viewHolder.getAdapterPosition();
@@ -104,12 +117,11 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case VIEW_TYPE_LOADING:
-                return new LoadingViewHolder(inflater.inflate(R.layout.list_item_loading, parent, false));
+                return createLoadingViewHolder(parent);
             case VIEW_TYPE_ERROR:
-                return new ErrorViewHolder(inflater.inflate(R.layout.list_item_reload, parent, false));
+                return createErrorViewHolder(parent);
         }
         return null;
     }

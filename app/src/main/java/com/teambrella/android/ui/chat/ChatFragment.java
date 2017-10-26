@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.chat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setRefreshable(false);
+        mList.setBackgroundColor(Color.TRANSPARENT);
         mList.setItemAnimator(null);
     }
 
@@ -64,22 +66,22 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 mLastRead = data.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, Long.MAX_VALUE);
             }
 
-            IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
+            if (mLastRead != -1) {
+                IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
 
-            int moveTo = pager.getLoadedData().size() - 1;
-            for (int i = 0; i < pager.getLoadedData().size(); i++) {
-                JsonWrapper item = new JsonWrapper(pager.getLoadedData().get(i).getAsJsonObject());
-                long created = item.getLong(TeambrellaModel.ATTR_DATA_CREATED, -1);
-                if (created >= mLastRead) {
-                    moveTo = i;
-                    break;
+                int moveTo = pager.getLoadedData().size() - 1;
+                for (int i = 0; i < pager.getLoadedData().size(); i++) {
+                    JsonWrapper item = new JsonWrapper(pager.getLoadedData().get(i).getAsJsonObject());
+                    long created = item.getLong(TeambrellaModel.ATTR_DATA_CREATED, -1);
+                    if (created >= mLastRead) {
+                        moveTo = i;
+                        break;
+                    }
                 }
+                LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
+                manager.scrollToPositionWithOffset(moveTo, 0);
+                mLastRead = -1;
             }
-
-
-            LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
-            manager.scrollToPositionWithOffset(moveTo, 0);
         }
-
     }
 }

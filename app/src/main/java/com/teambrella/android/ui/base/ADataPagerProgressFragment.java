@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -123,10 +122,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
     protected void onDataUpdated(Notification<JsonObject> notification) {
-        if (notification.isOnNext()) {
-        } else {
-            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-        }
         setContentShown(true);
     }
 

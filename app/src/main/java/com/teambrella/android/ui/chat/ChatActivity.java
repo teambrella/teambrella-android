@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -22,6 +25,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -38,6 +42,8 @@ import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 
 import java.io.File;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -159,6 +165,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
+
+
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
 
         mUri = intent.getParcelableExtra(EXTRA_URI);
         mTopicId = intent.getStringExtra(EXTRA_TOPIC_ID);
@@ -310,7 +319,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
         mClient = new ChatNotificationClient(this);
         mClient.connect();
-
         setResult(RESULT_OK);
     }
 
@@ -412,6 +420,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
+    @SuppressWarnings("ThrowableNotThrown")
     private void onDataUpdated(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             Observable.just(response.getValue())
@@ -422,6 +431,30 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     .onErrorReturn(Notification::createOnError)
                     .doOnNext(this::onBasicPartUpdated)
                     .blockingFirst();
+        } else {
+            Throwable error = response.getError();
+
+            @StringRes final int message;
+
+            if (error instanceof TeambrellaClientException) {
+                Throwable cause = error.getCause();
+                message = cause instanceof SocketTimeoutException
+                        || cause instanceof UnknownHostException ? R.string.no_internet_connection : R.string.something_went_wrong_error;
+            } else {
+                message = R.string.something_went_wrong_error;
+            }
+
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.container), message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.retry, v -> getPager(DATA_FRAGMENT_TAG).reload())
+                    .setActionTextColor(getResources().getColor(R.color.lightGold));
+
+            snackbar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    ((CoordinatorLayout.LayoutParams) sb.getView().getLayoutParams()).setBehavior(null);
+                }
+            });
+            snackbar.show();
         }
     }
 
