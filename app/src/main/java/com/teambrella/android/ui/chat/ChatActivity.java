@@ -485,6 +485,22 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            mClient.onPause();
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mClient != null) {
+            mClient.onResume();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -549,6 +565,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
 
+        private boolean mResumed;
+        private boolean mReloadOnResume;
+
         ChatNotificationClient(Context context) {
             super(context);
         }
@@ -558,8 +577,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
             if (mAction.equals(SHOW_CONVERSATION_CHAT)
                     && userId.equals(mUserId)) {
-                getPager(DATA_FRAGMENT_TAG).loadNext(true);
-                return true;
+                if (mResumed) {
+                    getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                } else {
+                    mReloadOnResume = true;
+                }
+                return mResumed;
             }
 
             return false;
@@ -572,8 +595,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case SHOW_FEED_CHAT_ACTION:
                 case SHOW_TEAMMATE_CHAT_ACTION:
                     if (topicId.equals(mTopicId) && (userId != null && !userId.equals(TeambrellaUser.get(ChatActivity.this).getUserId()))) {
-                        getPager(DATA_FRAGMENT_TAG).loadNext(true);
-                        return true;
+                        if (mResumed) {
+                            getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                        } else {
+                            mReloadOnResume = true;
+                        }
+                        return mResumed;
                     }
             }
             return false;
@@ -583,5 +610,20 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         public boolean onChatNotification(String topicId) {
             return topicId.equals(mTopicId);
         }
+
+
+        private void onResume() {
+            mResumed = true;
+            if (mReloadOnResume) {
+                getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                mReloadOnResume = false;
+            }
+        }
+
+        private void onPause() {
+            mResumed = false;
+
+        }
+
     }
 }

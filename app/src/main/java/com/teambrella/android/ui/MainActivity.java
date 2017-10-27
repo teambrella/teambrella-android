@@ -385,6 +385,22 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mClient != null) {
+            mClient.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            mClient.onPause();
+        }
+    }
+
+    @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
@@ -505,21 +521,59 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
 
+
+        private boolean mResumed;
+        private boolean mPrivateMessageOnResume;
+        private boolean mFeedDataOnResume;
+
+
         MainNotificationClient(Context context) {
             super(context);
         }
 
         @Override
         public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
-            load(HOME_DATA_TAG);
+            if (mResumed) {
+                load(HOME_DATA_TAG);
+            }
+            mPrivateMessageOnResume = !mResumed;
             return false;
         }
 
         @Override
         public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
-            //getPager(FEED_DATA_TAG).reload();
+
+            if (mResumed) {
+                getPager(FEED_DATA_TAG).reload();
+                load(HOME_DATA_TAG);
+            }
+
+            mFeedDataOnResume = !mResumed;
             return false;
         }
+
+
+        private void onResume() {
+
+            mResumed = true;
+
+            if (mPrivateMessageOnResume || mFeedDataOnResume) {
+                load(HOME_DATA_TAG);
+                mPrivateMessageOnResume = false;
+            }
+
+            if (mFeedDataOnResume) {
+                getPager(FEED_DATA_TAG).reload();
+                mFeedDataOnResume = false;
+            }
+        }
+
+
+        private void onPause() {
+            mResumed = false;
+        }
+
+
     }
 }
 
