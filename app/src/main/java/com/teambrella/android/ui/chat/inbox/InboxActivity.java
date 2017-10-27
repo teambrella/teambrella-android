@@ -96,6 +96,23 @@ public class InboxActivity extends ADataHostActivity {
         return null;
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNotificationClient != null) {
+            mNotificationClient.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mNotificationClient != null) {
+            mNotificationClient.onPause();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -105,14 +122,33 @@ public class InboxActivity extends ADataHostActivity {
 
     private class InboxNotificationClient extends TeambrellaNotificationServiceClient {
 
+        private boolean mResumed;
+        private boolean mUpdateOnResume;
+
         InboxNotificationClient(Context context) {
             super(context);
         }
 
         @Override
         public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
-            getPager(INBOX_DATA_TAG).reload();
+            if (mResumed) {
+                getPager(INBOX_DATA_TAG).reload();
+            } else {
+                mUpdateOnResume = true;
+            }
             return false;
+        }
+
+        void onPause() {
+            mResumed = false;
+        }
+
+        void onResume() {
+            mResumed = true;
+            if (mUpdateOnResume) {
+                getPager(INBOX_DATA_TAG).reload();
+                mUpdateOnResume = false;
+            }
         }
     }
 }
