@@ -67,7 +67,7 @@ public class TeambrellaNotificationManager {
     public void showWalletIsFundedNotification(String amount) {
         Notification notification = getBuilder()
                 .setContentTitle(mContext.getString(R.string.notification_funded_header))
-                .setContentText("+ " + amount + "mETH")
+                .setContentText("+ " + amount + " mETH")
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
                         , new Intent(mContext, MainActivity.class)
@@ -121,6 +121,17 @@ public class TeambrellaNotificationManager {
 
         mNotificationManager.notify(29, notification);
     }
+
+
+    /**
+     * Cancel chat notification
+     *
+     * @param topicId topic Id
+     */
+    public void cancelChatNotification(String topicId) {
+        mNotificationManager.cancel(topicId.hashCode());
+    }
+
 
     public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, boolean userTopic, String topicId, Intent intent) {
         NotificationCompat.Builder builder = getBuilder().setStyle(new NotificationCompat.BigTextStyle()

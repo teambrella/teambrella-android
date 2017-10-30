@@ -33,6 +33,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
@@ -98,6 +99,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private ImageView mIcon;
     private Picasso mPicasso;
     private ChatNotificationClient mClient;
+    private TeambrellaNotificationManager mNotificationManager;
 
     public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(getTeammateChat(context, teamId, userId, userName, imageUri, topicId, accessLevel));
@@ -181,6 +183,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim_chat);
+
+        mNotificationManager = new TeambrellaNotificationManager(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -431,6 +436,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     .onErrorReturn(Notification::createOnError)
                     .doOnNext(this::onBasicPartUpdated)
                     .blockingFirst();
+
+            if (mTopicId != null) {
+                mNotificationManager.cancelChatNotification(mTopicId);
+            }
+
         } else {
             Throwable error = response.getError();
 
@@ -608,7 +618,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
         @Override
         public boolean onChatNotification(String topicId) {
-            return topicId.equals(mTopicId);
+            if (topicId.equals(mTopicId)) {
+                if (!mResumed) {
+                    mReloadOnResume = true;
+                }
+            }
+            return mResumed && topicId.equals(mTopicId);
         }
 
 
