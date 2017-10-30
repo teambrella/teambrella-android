@@ -23,6 +23,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
@@ -60,10 +61,13 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     private String mUserId = null;
     private String mUserName = null;
     private int mTeamId;
+    private String mTopicId;
     private Uri mAvatar = null;
     private String mCurrency;
     private Snackbar mSnackBar;
     private TextView mTitleView;
+
+    private TeammateNotificationClient mNotificationClient;
 
 
     public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
@@ -87,6 +91,10 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         mTeamId = getIntent().getIntExtra(TEAM_ID, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
+
+
+        mNotificationClient = new TeammateNotificationClient(this);
+        mNotificationClient.connect();
 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -136,6 +144,22 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNotificationClient != null) {
+            mNotificationClient.onResume();
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mNotificationClient != null) {
+            mNotificationClient.onPause();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -276,6 +300,16 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
                     .doOnNext(node -> mAvatar = TeambrellaImageLoader.getImageUri(node.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
+
+            Observable.fromArray(notification.getValue())
+                    .map(JsonWrapper::new)
+                    .map(node -> node.getObject(TeambrellaModel.ATTR_DATA))
+                    .map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
+                    .doOnNext(node -> mTopicId = node.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
+                    .onErrorReturnItem(new JsonWrapper(null))
+                    .blockingFirst();
+
+
         }
     }
 
@@ -283,5 +317,49 @@ public class TeammateActivity extends ADataHostActivity implements ITeammateActi
     @Override
     public void launchActivity(Intent intent) {
         startActivityForResult(intent, DEFAULT_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNotificationClient != null) {
+            mNotificationClient.disconnect();
+            mNotificationClient = null;
+        }
+    }
+
+    private class TeammateNotificationClient extends TeambrellaNotificationServiceClient {
+
+        private boolean mResumed;
+        private boolean mUpdateOnResume;
+
+        TeammateNotificationClient(Context context) {
+            super(context);
+        }
+
+
+        @Override
+        public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
+            if (topicId != null && topicId.equals(mTopicId)) {
+                if (mResumed) {
+                    load(DATA_FRAGMENT);
+                } else {
+                    mUpdateOnResume = true;
+                }
+            }
+            return false;
+        }
+
+        void onPause() {
+            mResumed = false;
+        }
+
+        void onResume() {
+            mResumed = true;
+            if (mUpdateOnResume) {
+                load(DATA_FRAGMENT);
+                mUpdateOnResume = false;
+            }
+        }
     }
 }

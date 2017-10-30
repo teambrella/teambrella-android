@@ -23,6 +23,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
@@ -56,8 +57,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
-
     private Snackbar mSnackBar;
+    private String mTopicId;
+    private ClaimNotificationClient mNotificationClient;
 
 
     public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
@@ -86,6 +88,9 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
                     .add(R.id.container, ADataProgressFragment.getInstance(new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG}, ClaimFragment.class), UI_TAG)
                     .commit();
         }
+
+        mNotificationClient = new ClaimNotificationClient(this);
+        mNotificationClient.connect();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -205,6 +210,23 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNotificationClient != null) {
+            mNotificationClient.onResume();
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mNotificationClient != null) {
+            mNotificationClient.onPause();
+        }
+    }
+
+    @Override
     public int getClaimId() {
         return mClaimId;
     }
@@ -231,6 +253,7 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            JsonWrapper discussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
             if (basic != null) {
                 String pictureUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
@@ -246,8 +269,49 @@ public class ClaimActivity extends ADataHostActivity implements IClaimActivity {
 
                 setTitle(basic.getString(TeambrellaModel.ATTR_DATA_MODEL));
             }
+
+
+            if (discussion != null) {
+                mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
+            }
+
+
             mClaimId = data.getInt(TeambrellaModel.ATTR_DATA_ID, 0);
 
+        }
+    }
+
+    private class ClaimNotificationClient extends TeambrellaNotificationServiceClient {
+
+        private boolean mResumed;
+        private boolean mUpdateOnResume;
+
+        ClaimNotificationClient(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
+            if (topicId != null && topicId.equals(mTopicId)) {
+                if (mResumed) {
+                    load(CLAIM_DATA_TAG);
+                } else {
+                    mUpdateOnResume = true;
+                }
+            }
+            return false;
+        }
+
+        void onPause() {
+            mResumed = false;
+        }
+
+        void onResume() {
+            mResumed = true;
+            if (mUpdateOnResume) {
+                load(CLAIM_DATA_TAG);
+                mUpdateOnResume = false;
+            }
         }
     }
 }
