@@ -7,7 +7,7 @@
 //import android.database.Cursor;
 //import android.net.Uri;
 //import android.os.RemoteException;
-//import android.util.Log;
+//import com.teambrella.android.util.log.Log;
 //
 //import com.google.android.gms.gcm.GcmNetworkManager;
 //import com.google.android.gms.gcm.GcmTaskService;

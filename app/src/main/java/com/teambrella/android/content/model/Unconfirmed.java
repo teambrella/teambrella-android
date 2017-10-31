@@ -1,6 +1,6 @@
 package com.teambrella.android.content.model;
 
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 
 import com.teambrella.android.content.TeambrellaRepository;
 import com.teambrella.android.util.TeambrellaUtilService;

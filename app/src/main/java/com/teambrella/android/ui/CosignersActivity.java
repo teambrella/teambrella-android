@@ -13,7 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;

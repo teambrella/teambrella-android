@@ -8,7 +8,6 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -34,6 +33,7 @@ import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -152,7 +152,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
 //            new android.os.AsyncTask<Void, Void, Void>() {
@@ -181,19 +181,15 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG:
-                    if (BuildConfig.DEBUG) {
-                        Log.v(LOG_TAG, "Sync wallet task ran");
-                    }
+                    Log.v(LOG_TAG, "Sync wallet task ran");
                     try {
                         if (tryInit()) {
                             sync();
                         }
                     } catch (Exception e) {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(LOG_TAG, "sync attempt failed:");
-                            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-                            Log.e(LOG_TAG, "sync error call stack was: ", e);
-                        }
+                        Log.e(LOG_TAG, "sync attempt failed:");
+                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+                        Log.e(LOG_TAG, "sync error call stack was: ", e);
                         if (!BuildConfig.DEBUG) {
                             Crashlytics.logException(e);
                         }
@@ -529,9 +525,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private void sync() throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
 
-        if (BuildConfig.DEBUG) {
-            Log.v(LOG_TAG, "start syncing...");
-        }
+        Log.v(LOG_TAG, "start syncing...");
 
 
         boolean hasNews = true;

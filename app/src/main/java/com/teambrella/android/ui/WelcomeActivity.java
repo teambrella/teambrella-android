@@ -9,7 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 import android.view.View;
 import android.widget.TextView;
 
