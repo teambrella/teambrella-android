@@ -44,20 +44,20 @@ class EthWallet {
     private final EtherAccount mEtherAcc;
     private final boolean mIsTestNet;
 
-    public static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
-    public static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
+    private static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
+    private static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
 
-    public long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
-    public long mContractGasPrice = 100_000_001L;
-    public long mTestGasPrice = 100_000_001L;
-    public long mTestContractGasPrice = 100_000_001L;
+    private long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
+    private long mContractGasPrice = 100_000_001L;
+    private long mTestGasPrice = 100_000_001L;
+    private long mTestContractGasPrice = 100_000_001L;
 
-    public EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
+    EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
     }
 
-    public String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
+    String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
 
         List<Cosigner> cosigners = m.cosigners;
         int n = cosigners.size();
@@ -83,8 +83,7 @@ class EthWallet {
         cryptoTx = mEtherAcc.signTx(cryptoTx, mIsTestNet);
         Log.v(LOG_TAG, toCreationInfoString(m) + " signed.");
 
-        String txHex = publish(cryptoTx);
-        return txHex;
+        return publish(cryptoTx);
     }
 
     /**
@@ -94,7 +93,7 @@ class EthWallet {
      * @param m        the given multisig object with original TX hash to check.
      * @return The original multisig object with updated address (when verified successfully), updated error status (if any), or new unconfirmed tx if original TX is outdated.
      */
-    public void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
+    void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
 
@@ -118,7 +117,6 @@ class EthWallet {
             }
 
             setErrorStatusIfAny(m, receipt, allGasIsUsed);
-            return;
         }
     }
 
@@ -143,7 +141,6 @@ class EthWallet {
 
                     m.unconfirmed = newUnconfirmed;
                     m.creationTx = recreatedTxHash;
-                    return;
                 }
             }
         }
@@ -163,7 +160,7 @@ class EthWallet {
         }
     }
 
-    public boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
+    boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
         BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
@@ -182,7 +179,7 @@ class EthWallet {
     }
 
 
-    public byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
+    byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
 
         int opNum = payFrom.previousTxIndex + 1;
 
@@ -258,7 +255,7 @@ class EthWallet {
         return publish(cryptoTx);
     }
 
-    public long refreshGasPrice() {
+    long refreshGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
         if (price < 0 || price > 4_000_000_001L) {
@@ -273,7 +270,7 @@ class EthWallet {
         return mGasPrice = price;
     }
 
-    public long refreshContractCreateGasPrice() {
+    private long refreshContractCreateGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkContractCreationGasPrice();
         if (price < 0 || price > 8_000_000_002L) {
@@ -288,16 +285,16 @@ class EthWallet {
         return mContractGasPrice = price;
     }
 
-    public long getGasPrice() {
+    private long getGasPrice() {
         return mIsTestNet ? mTestGasPrice : mGasPrice;
     }
 
-    public long getGasPriceForContractCreation() {
+    long getGasPriceForContractCreation() {
         return mIsTestNet ? mTestContractGasPrice : mContractGasPrice;
     }
 
 
-    public long checkMyNonce() {
+    long checkMyNonce() {
         EtherNode blockchain = new EtherNode(mIsTestNet);
         return blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
@@ -392,7 +389,7 @@ class EthWallet {
     }
 
 
-    public boolean hotFix4CorruptedContract(Multisig m) throws CryptoException, RemoteException {
+    boolean hotFix4CorruptedContract(Multisig m) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
         int teamId = blockchain.readContractInt(m.address, METHOD_ID_M_TEAMID);
