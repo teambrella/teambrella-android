@@ -12,7 +12,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;

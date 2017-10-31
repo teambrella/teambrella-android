@@ -1,7 +1,6 @@
 package com.teambrella.android.util;
 
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.teambrella.android.BuildConfig;
@@ -22,6 +21,7 @@ import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
 import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Unconfirmed;
+import com.teambrella.android.util.log.Log;
 
 import org.ethereum.geth.Transaction;
 
@@ -325,9 +325,8 @@ class EthWallet {
     private String publish(Transaction cryptoTx) throws RemoteException {
         try {
             byte[] rlp = cryptoTx.encodeRLP();
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
-            }
+            Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
+
             String hex = "0x" + Hex.fromBytes(rlp);
 
             EtherNode blockchain = new EtherNode(mIsTestNet);

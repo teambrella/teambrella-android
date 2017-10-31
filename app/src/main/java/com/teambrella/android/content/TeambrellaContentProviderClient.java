@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Base64;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
@@ -25,6 +24,7 @@ import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
 import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Unconfirmed;
+import com.teambrella.android.util.log.Log;
 
 import org.chalup.microorm.MicroOrm;
 import org.chalup.microorm.TypeAdapter;
@@ -694,9 +694,7 @@ public class TeambrellaContentProviderClient {
                 Tx tx = iterator.next();
                 tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
-                    if (BuildConfig.DEBUG) {
-                        Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
-                    }
+                    Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
                     iterator.remove();
                     continue;
                 }

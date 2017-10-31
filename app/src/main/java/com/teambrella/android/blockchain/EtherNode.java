@@ -1,8 +1,6 @@
 package com.teambrella.android.blockchain;
 
 
-import android.util.Log;
-
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.teambrella.android.BuildConfig;
+import com.teambrella.android.util.log.Log;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -67,9 +66,8 @@ public class EtherNode {
                     receipt = response.body();
                 }
             } catch (IOException | InterruptedException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(LOG_TAG, "Failed to check Tx.", e);
-                } else {
+                Log.e(LOG_TAG, "Failed to check Tx.", e);
+                if (!BuildConfig.DEBUG) {
                     Crashlytics.logException(e);
                 }
             }
@@ -96,9 +94,8 @@ public class EtherNode {
                     return Long.parseLong(hex, 16);
                 }
             } catch (IOException | InterruptedException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(LOG_TAG, "Failed to check Nonce:" + e.getMessage(), e);
-                } else {
+                Log.e(LOG_TAG, "Failed to check Nonce:" + e.getMessage(), e);
+                if (!BuildConfig.DEBUG) {
                     Crashlytics.logException(e);
                 }
             }
@@ -123,9 +120,8 @@ public class EtherNode {
                     return new BigDecimal(balance, MathContext.UNLIMITED).divide(AbiArguments.WEIS_IN_ETH);
                 }
             } catch (IOException | InterruptedException | JsonSyntaxException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
-                } else {
+                Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+                if (!BuildConfig.DEBUG) {
                     Crashlytics.logException(e);
                 }
             }
@@ -144,9 +140,8 @@ public class EtherNode {
                 return parseBigIntegerOrMinusOne(response).intValue();
 
             } catch (IOException | InterruptedException | JsonSyntaxException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
-                } else {
+                Log.e(LOG_TAG, "Failed to check balance: " + e.getMessage(), e);
+                if (!BuildConfig.DEBUG) {
                     Crashlytics.logException(e);
                 }
             }
@@ -179,15 +174,14 @@ public class EtherNode {
                     JsonElement r = result.get("result");
                     if (r != null)
                         return r.getAsString();
-                    else if (BuildConfig.DEBUG) {
+                    else {
                         Log.e(LOG_TAG, "Could not publish eth multisig creation tx. The answer was: " + result.toString());
                     }
 
                 }
             } catch (IOException e) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(LOG_TAG, e.toString());
-                } else {
+                Log.e(LOG_TAG, "", e);
+                if (!BuildConfig.DEBUG) {
                     Crashlytics.logException(e);
                 }
             }

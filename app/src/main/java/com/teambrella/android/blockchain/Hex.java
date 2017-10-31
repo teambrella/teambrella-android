@@ -1,6 +1,6 @@
 package com.teambrella.android.blockchain;
 
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 
 import org.bouncycastle.crypto.digests.KeccakDigest;
 
