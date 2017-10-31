@@ -417,11 +417,9 @@ class EthWallet {
             }
 
             return false;   // stop syncing. Wait for fix.
-        } else if (teamId < 2000) {
-            return false;   // stop syncing. Wait for fix.
         }
 
-        return true;
+        return true;    // in case of any doubts - do not block the syncing!
     }
 
 
