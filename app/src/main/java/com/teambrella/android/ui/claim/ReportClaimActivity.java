@@ -33,7 +33,6 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
@@ -182,14 +181,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         });
 
         AmountCurrencyUtil.setAmount(findViewById(R.id.deductible), 0f, mCurrency);
-
         mDescriptionView = findViewById(R.id.description);
         mAddressView = findViewById(R.id.address);
-
-        TeambrellaNotificationManager manager = new TeambrellaNotificationManager(this);
-        manager.showWalletIsFundedNotification("15");
-        manager.showNewMessagesSinceLastVisit(45);
-
     }
 
     /**
