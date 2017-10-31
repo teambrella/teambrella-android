@@ -55,6 +55,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     public static final String FACEBOOK_ID_EXTRA = "EXTRA_FACEBOOK_ID";
 
+    public static final String CUSTOM_ACTION = "extra_custom_action";
+
     private enum State {
         INIT,
         LOADING,
@@ -357,7 +359,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
                         startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
                                 , mUser.getUserId()
-                                , team.getObject().toString()));
+                                , team.getObject().toString()).setAction(getIntent().getStringExtra(CUSTOM_ACTION)));
 
                         mUser.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
                         finish();

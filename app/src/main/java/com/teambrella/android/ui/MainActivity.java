@@ -52,8 +52,19 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 public class MainActivity extends ADataHostActivity implements IMainDataHost, ITeammateActivity {
 
+    /**
+     * Action to show feed
+     */
+    public static final String ACTION_SHOW_FEED = "action_show_feed";
+
+    /**
+     * Action to show wallet
+     */
+    public static final String ACTION_SHOW_WALLET = "action_show_wallet";
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
+
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
@@ -123,21 +134,36 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             }
             mClient = new MainNotificationClient(this);
             mClient.connect();
+            onNewIntent(intent);
         } else {
             finish();
-            startActivity(new Intent(this, WelcomeActivity.class));
+            startActivity(new Intent(this, WelcomeActivity.class)
+                    .putExtra(WelcomeActivity.CUSTOM_ACTION, intent.getAction()));
         }
 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
-
     }
 
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        String action = intent.getAction();
+
+        if (action != null) {
+            switch (action) {
+                case ACTION_SHOW_WALLET:
+                    showWallet();
+                    break;
+                case ACTION_SHOW_FEED:
+                    showFeed();
+                    break;
+            }
+            load(HOME_DATA_TAG);
+        }
+
     }
 
     private boolean onNavigationItemSelected(View view) {
@@ -518,6 +544,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
             userFragment.showWallet();
         }
     }
+
+
+    private void showFeed() {
+        onNavigationItemSelected(findViewById(R.id.team));
+    }
+
 
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
 

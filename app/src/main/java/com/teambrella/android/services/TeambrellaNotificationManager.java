@@ -70,7 +70,7 @@ public class TeambrellaNotificationManager {
                 .setContentText("+ " + amount + " mETH")
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class)
+                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_WALLET)
                         , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         mNotificationManager.notify(17, notification);
@@ -82,7 +82,7 @@ public class TeambrellaNotificationManager {
                 .setContentTitle(mContext.getString(R.string.notification_messages_since, count))
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class)
+                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_FEED)
                         , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         mNotificationManager.notify(19, notification);
