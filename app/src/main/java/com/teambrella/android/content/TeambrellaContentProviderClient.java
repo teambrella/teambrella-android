@@ -44,7 +44,6 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Predicate;
 
 /**
  * Teambrella Content Provider Client
@@ -693,12 +692,12 @@ public class TeambrellaContentProviderClient {
 
                 tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
-                if (tx.teammate == null){
+                if (tx.teammate == null) {
                     iterator.remove();
                     Crashlytics.logException(new Exception("tx id: " + tx.id + " has no teammate to pay from"));
                     continue;
                 }
-                if (!Objects.equals(tx.teammate.publicKeyAddress, publicKey)){
+                if (!Objects.equals(tx.teammate.publicKey, publicKey)) {
                     iterator.remove();
                     continue;           // filter out not my Tx (where I was just a cosigner.
                 }
