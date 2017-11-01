@@ -311,12 +311,7 @@ public class TeambrellaContentProviderClient {
 
             }
 
-            long count = Observable.fromArray(txs).filter(new Predicate<Tx>() {
-                @Override
-                public boolean test(Tx iTx) throws Exception {
-                    return iTx.id.equals(txOutput.txId);
-                }
-            }).count().blockingGet();
+            long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txOutput.txId)).count().blockingGet();
 
             if (count > 0) {
                 list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
@@ -404,12 +399,7 @@ public class TeambrellaContentProviderClient {
 
             if (!hasRecord(mClient, TeambrellaRepository.TXInput.CONTENT_URI, new String[]{TeambrellaRepository.TXInput.ID},
                     new String[]{txSignature.txInputId})) {
-                long count = Observable.fromArray(txInputs).filter(new Predicate<TxInput>() {
-                    @Override
-                    public boolean test(TxInput iTxInput) throws Exception {
-                        return iTxInput.id.toString().equals(txSignature.txInputId);
-                    }
-                }).count().blockingGet();
+                long count = Observable.fromArray(txInputs).filter(iTxInput -> iTxInput.id.toString().equals(txSignature.txInputId)).count().blockingGet();
 
                 if (count == 0) {
                     continue;
