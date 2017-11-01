@@ -246,6 +246,11 @@ class EthWallet {
         }
 
         Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
+        if (cryptoTx == null){
+            Log.w(LOG_TAG, "tx was skipped. Seek details in the log above. Tx.id: " + tx.id);
+            return null;
+        }
+
         try {
             Log.v(LOG_TAG, "tx cratated: " + cryptoTx.encodeJSON());
         } catch (Exception e) {

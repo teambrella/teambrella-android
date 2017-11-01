@@ -141,19 +141,21 @@ public class EtherAccount {
                 "0x" + methodId + AbiArguments.encodeToHexString(methodArgs)
         );
 
-        Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+        Log.v(LOG_TAG, "Constructing message tx:" + json);
 
 
         try {
             Transaction tx = Geth.newTransactionFromJSON(json);
-            Log.v(LOG_TAG, "deposit tx constructed.");
+            Log.v(LOG_TAG, "message tx constructed.");
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "", e);
             if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
+            }else{
+                Log.e(LOG_TAG, "" + e.getMessage(), e);
             }
-            throw new CryptoException(e.getMessage(), e);
+
+            return null;
         }
     }
 

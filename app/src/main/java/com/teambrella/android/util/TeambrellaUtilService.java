@@ -500,7 +500,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException, CryptoException {
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
+        List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs(mKey.getPublicKeyAsHex());
         for (Tx tx : txs) {
 
             EthWallet wallet = getWallet();
