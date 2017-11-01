@@ -674,7 +674,7 @@ public class TeambrellaContentProviderClient {
         return list;
     }
 
-    public List<Tx> getApprovedAndCosignedTxs() throws RemoteException {
+    public List<Tx> getApprovedAndCosignedTxs(String publicKey) throws RemoteException {
         List<Tx> list = queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
                 + TeambrellaRepository.Tx.STATE + "= ?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
                 Integer.toString(TeambrellaModel.TX_STATE_COSIGNED)}, Tx.class);
@@ -693,10 +693,17 @@ public class TeambrellaContentProviderClient {
 
                 tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
-                if (tx.teammate != null) {
-                    tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
-                            , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
+                if (tx.teammate == null){
+                    iterator.remove();
+                    Crashlytics.logException(new Exception("tx id: " + tx.id + " has no teammate to pay from"));
+                    continue;
                 }
+                if (!Objects.equals(tx.teammate.publicKeyAddress, publicKey)){
+                    iterator.remove();
+                    continue;           // filter out not my Tx (where I was just a cosigner.
+                }
+                tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
+                        , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
 
                 com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
                 if (currentMultisig == null) {
