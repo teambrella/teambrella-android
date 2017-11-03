@@ -6,4 +6,5 @@
     </string>
 
     <integer name="ga_dispatchPeriod">90</integer>
+    <bool name="ga_autoActivityTracking">true</bool>
 </resources>

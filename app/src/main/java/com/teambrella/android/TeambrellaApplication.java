@@ -39,6 +39,7 @@ public class TeambrellaApplication extends MultiDexApplication {
     synchronized public Tracker geTracker() {
         if (sTracker == null) {
             sTracker = sAnalytics.newTracker(R.xml.ga_tracker);
+            sTracker.enableAutoActivityTracking(true);
         }
         sTracker.set("&uid", TeambrellaUser.get(this).getUserId());
         return sTracker;
