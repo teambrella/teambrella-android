@@ -182,6 +182,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG:
                     Log.v(LOG_TAG, "Sync wallet task ran");
+                    StatisticHelper.onWalletSync(this, tag);
                     try {
                         if (tryInit()) {
                             sync();
