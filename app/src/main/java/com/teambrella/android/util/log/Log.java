@@ -30,7 +30,7 @@ public final class Log {
             Crashlytics.log(msg);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
 
@@ -57,7 +57,7 @@ public final class Log {
             Crashlytics.log(msg);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
 
@@ -71,7 +71,7 @@ public final class Log {
             Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
     }
@@ -84,7 +84,7 @@ public final class Log {
             Crashlytics.log(msg);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
     }
@@ -97,7 +97,7 @@ public final class Log {
             Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
     }
@@ -110,7 +110,7 @@ public final class Log {
             Crashlytics.log(msg);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
 
@@ -125,7 +125,7 @@ public final class Log {
             Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
     }
@@ -138,7 +138,7 @@ public final class Log {
             Crashlytics.log(tr != null ? tr.getMessage() : "");
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(tr != null ? tr.getMessage() : "");
         }
 
@@ -151,7 +151,7 @@ public final class Log {
             Crashlytics.log(msg);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg);
         }
     }
@@ -163,7 +163,7 @@ public final class Log {
             Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
         }
 
@@ -176,7 +176,7 @@ public final class Log {
             Crashlytics.logException(e);
         }
 
-        if (sLoggerHandler != null) {
+        if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
             sLoggerHandler.msg(e != null ? e.getMessage() : "");
         }
     }
@@ -239,17 +239,18 @@ public final class Log {
                         mPrintStream.close();
                         sLoggerThread.quitSafely();
                     }
+                } catch (Exception e) {
+
+                } finally {
                     synchronized (lock) {
                         lock.notify();
                     }
-                } catch (Exception e) {
-
                 }
             });
 
             synchronized (lock) {
                 try {
-                    lock.wait();
+                    lock.wait(1000);
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
                 }
