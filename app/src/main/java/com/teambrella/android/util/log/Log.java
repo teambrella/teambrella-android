@@ -175,6 +175,10 @@ public final class Log {
         } else {
             Crashlytics.logException(e);
         }
+
+        if (sLoggerHandler != null) {
+            sLoggerHandler.msg(e != null ? e.getMessage() : "");
+        }
     }
 
     public static void reportNonFatal(String tag, String msg) {
