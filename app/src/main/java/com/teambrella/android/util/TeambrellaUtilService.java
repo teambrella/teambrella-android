@@ -56,6 +56,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     public static final String SYNC_WALLET_ONCE_TAG = "TEAMBRELLA-SYNC-WALLET-ONCE";
     public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
     public static final String DEBUG_DB_TASK_TAG = "TEAMBRELLA_DEBUG_DB";
+    public static final String DEBUG_UPDATE_TAG = "TEAMBRELLA_DEBUG_UPDATE";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
@@ -107,6 +108,19 @@ public class TeambrellaUtilService extends GcmTaskService {
         OneoffTask task = new OneoffTask.Builder()
                 .setService(TeambrellaUtilService.class)
                 .setTag(SYNC_WALLET_ONCE_TAG)
+                .setExecutionWindow(0L, 1L)
+                .setRequiresCharging(false)
+                .setExtras(extra)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void oneOffUpdate(Context context, boolean debug) {
+        Bundle extra = new Bundle();
+        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(DEBUG_UPDATE_TAG)
                 .setExecutionWindow(0L, 1L)
                 .setRequiresCharging(false)
                 .setExtras(extra)
@@ -225,6 +239,31 @@ public class TeambrellaUtilService extends GcmTaskService {
                         }
                     }
                     break;
+
+                case DEBUG_UPDATE_TAG: {
+                    if (isDebugLogging(taskParams)) {
+                        Log.startDebugging(this);
+                    }
+                    Log.d(LOG_TAG, "---> UPDATE -> onRunTask() started... tag:" + tag);
+                    try {
+                        if (tryInit()) {
+                            update();
+                        }
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "update attempt failed:");
+                        Log.e(LOG_TAG, "update error message was: " + e.getMessage());
+                        Log.e(LOG_TAG, "update error call stack was: ", e);
+                        Log.reportNonFatal(LOG_TAG, e);
+                    } finally {
+                        if (isDebugLogging(taskParams)) {
+                            String path = Log.stopDebugging();
+                            if (path != null) {
+                                debugLog(this, path);
+                            }
+                        }
+                    }
+                }
+                break;
 
                 case CHECK_SOCKET:
                     startService(new Intent(this, TeambrellaNotificationService.class)
