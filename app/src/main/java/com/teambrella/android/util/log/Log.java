@@ -106,4 +106,15 @@ public final class Log {
         }
     }
 
+    public static void reportNonFatal(String tag, Exception e) {
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(tag, "" + e.getMessage(), e);
+        } else {
+            Crashlytics.logException(e);
+        }
+    }
+
+    public static void reportNonFatal(String tag, String msg) {
+        reportNonFatal(tag, new Exception(msg));
+    }
 }
