@@ -321,6 +321,7 @@ public class TeambrellaServer {
             case TeambrellaUris.INBOX:
             case TeambrellaUris.DEMO_TEAMS:
             case TeambrellaUris.DEBUG_DB:
+            case TeambrellaUris.DEBUG_LOG:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -376,6 +377,8 @@ public class TeambrellaServer {
                 return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.DEBUG_DB:
                 return mAPI.debugDB(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.DEBUG_LOG:
+                return mAPI.debugLog(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.GET_COVERAGE_FOR_DATE:
                 return mAPI.getCoverageForDate(requestBody);
             case TeambrellaUris.NEW_CLAIM:

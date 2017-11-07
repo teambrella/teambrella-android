@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.RemoteException;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.OneoffTask;
@@ -39,6 +39,7 @@ import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
+    private static final String EXTRA_DEBUG_LOGGING = "debug_logging";
 
 
     private final static String ACTION_UPDATE = "update";
@@ -95,11 +97,19 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void oneoffWalletSync(Context context) {
+        oneoffWalletSync(context, false);
+    }
+
+
+    public static void oneoffWalletSync(Context context, boolean debug) {
+        Bundle extra = new Bundle();
+        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
         OneoffTask task = new OneoffTask.Builder()
                 .setService(TeambrellaUtilService.class)
                 .setTag(SYNC_WALLET_ONCE_TAG)
                 .setExecutionWindow(0L, 1L)
                 .setRequiresCharging(false)
+                .setExtras(extra)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
     }
@@ -193,6 +203,9 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG:
+                    if (isDebugLogging(taskParams)) {
+                        Log.startDebugging(this);
+                    }
                     Log.d(LOG_TAG, "---> SYNC -> onRunTask() started... tag:" + tag);
                     try {
                         if (tryInit()) {
@@ -203,8 +216,16 @@ public class TeambrellaUtilService extends GcmTaskService {
                         Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
                         Log.e(LOG_TAG, "sync error call stack was: ", e);
                         Log.reportNonFatal(LOG_TAG, e);
+                    } finally {
+                        if (isDebugLogging(taskParams)) {
+                            String path = Log.stopDebugging();
+                            if (path != null) {
+                                debugLog(this, path);
+                            }
+                        }
                     }
                     break;
+
                 case CHECK_SOCKET:
                     startService(new Intent(this, TeambrellaNotificationService.class)
                             .setAction(TeambrellaNotificationService.CONNECT_ACTION));
@@ -213,8 +234,8 @@ public class TeambrellaUtilService extends GcmTaskService {
                     debugDB(this);
                     break;
             }
-        }else {
-            Log.reportNonFatal(LOG_TAG,"onRunTask got null tag.");
+        } else {
+            Log.reportNonFatal(LOG_TAG, "onRunTask got null tag.");
         }
 
         return GcmNetworkManager.RESULT_SUCCESS;
@@ -462,7 +483,7 @@ public class TeambrellaUtilService extends GcmTaskService {
      * @return list of operations to apply
      */
     private List<ContentProviderOperation> cosignTransaction(Tx tx, long userId) throws CryptoException {
-        
+
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         ////btc:Transaction transaction = SignHelper.getTransaction(tx);
         ////if (transaction != null) {
@@ -629,11 +650,33 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
+    private static boolean isDebugLogging(TaskParams params) {
+        Bundle extras = params.getExtras();
+        return extras != null && extras.getBoolean(EXTRA_DEBUG_LOGGING, false);
+    }
+
+
     private static void debugDB(Context context) {
         try {
             TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
             server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
                     .blockingFirst();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "", e);
+        }
+    }
+
+    private static void debugLog(Context context, String logPath) {
+        try {
+            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
+                    .blockingFirst();
+
+            File file = new File(logPath);
+            if (file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
+            }
         } catch (Exception e) {
             Log.e(LOG_TAG, "", e);
         }

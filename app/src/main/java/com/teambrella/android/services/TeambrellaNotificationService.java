@@ -69,6 +69,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     private static final int NEW_DISCUSSION = 9;
     private static final int TOPIC_MESSAGE_NOTIFICATION = 21;
     private static final int DEBUG_DB = 101;
+    private static final int DEBUG_SYNC = 103;
 
 
     public interface ITeambrellaNotificationServiceBinder extends IBinder {
@@ -455,6 +456,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
             }
             case DEBUG_DB:
                 TeambrellaUtilService.scheduleDebugDB(this);
+                break;
+            case DEBUG_SYNC:
+                TeambrellaUtilService.oneoffWalletSync(this, true);
                 break;
         }
     }
