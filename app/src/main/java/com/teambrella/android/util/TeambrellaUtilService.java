@@ -110,6 +110,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setTag(SYNC_WALLET_ONCE_TAG)
                 .setExecutionWindow(0L, 1L)
                 .setRequiresCharging(false)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setExtras(extra)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
@@ -123,6 +124,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setTag(DEBUG_UPDATE_TAG)
                 .setExecutionWindow(0L, 1L)
                 .setRequiresCharging(false)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setExtras(extra)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
@@ -136,6 +138,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setPersisted(true)
                 .setPeriod(60)     // 30 minutes period
                 .setFlex(30)       // +/- 10 minutes
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
