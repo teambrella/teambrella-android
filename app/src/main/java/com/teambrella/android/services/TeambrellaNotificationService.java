@@ -19,6 +19,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
 import java.net.URI;
@@ -67,6 +68,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     private static final int NEW_TEAMMATE = 8;
     private static final int NEW_DISCUSSION = 9;
     private static final int TOPIC_MESSAGE_NOTIFICATION = 21;
+    private static final int DEBUG_DB = 101;
 
 
     public interface ITeambrellaNotificationServiceBinder extends IBinder {
@@ -451,7 +453,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     }
                 }
             }
-
+            case DEBUG_DB:
+                TeambrellaUtilService.scheduleDebugDB(this);
+                break;
         }
     }
 

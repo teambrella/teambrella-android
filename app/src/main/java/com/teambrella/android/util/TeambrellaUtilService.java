@@ -54,6 +54,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
     public static final String SYNC_WALLET_ONCE_TAG = "TEAMBRELLA-SYNC-WALLET-ONCE";
     public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
+    public static final String DEBUG_DB_TASK_TAG = "TEAMBRELLA_DEBUG_DB";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
@@ -112,6 +113,16 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setPeriod(60)     // 30 minutes period
                 .setFlex(30)       // +/- 10 minutes
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void scheduleDebugDB(Context context) {
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(DEBUG_DB_TASK_TAG)
+                .setExecutionWindow(0L, 1L)
+                .setRequiresCharging(false)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
     }
@@ -198,6 +209,9 @@ public class TeambrellaUtilService extends GcmTaskService {
                 case CHECK_SOCKET:
                     startService(new Intent(this, TeambrellaNotificationService.class)
                             .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+                    break;
+                case DEBUG_DB_TASK_TAG:
+                    debugDB(this);
                     break;
             }
         }
@@ -574,6 +588,17 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         return true;
+    }
+
+
+    private static void debugDB(Context context) {
+        try {
+            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
+                    .blockingFirst();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "", e);
+        }
     }
 
 

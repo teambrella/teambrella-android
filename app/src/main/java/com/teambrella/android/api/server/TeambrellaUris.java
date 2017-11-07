@@ -44,6 +44,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_VOTES = "votes";
     private static final String SEGMENT_WALLET = "wallet";
     private static final String SEGMENT_DEMO = "demo";
+    private static final String SEGMENT_DEBUG_DB = "debugDb";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -102,6 +103,7 @@ public class TeambrellaUris {
     public static final int CLAIMS_VOTES = 29;
     public static final int WALLET = 30;
     public static final int DEMO_TEAMS = 31;
+    public static final int DEBUG_DB = 32;
 
 
     static {
@@ -136,6 +138,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_DB, DEBUG_DB);
     }
 
 
@@ -186,6 +189,15 @@ public class TeambrellaUris {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendPath(SEGMENT_NEW_FILE)
+                .appendQueryParameter(KEY_URI, path)
+                .build();
+    }
+
+    public static Uri getDebugDbUri(String path) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_DEBUG_DB)
                 .appendQueryParameter(KEY_URI, path)
                 .build();
     }
