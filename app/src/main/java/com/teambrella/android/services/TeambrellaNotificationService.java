@@ -265,6 +265,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     @Override
     public void onMessage(String message) {
         try {
+            Log.reportNonFatal(LOG_TAG, "Got a message: " + message);
             processMessage(message);
         } catch (Exception e) {
             Log.e(LOG_TAG, e.toString());
@@ -455,6 +456,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     }
                 }
             }
+            break;
+
             case DEBUG_DB:
                 TeambrellaUtilService.scheduleDebugDB(this);
                 break;
