@@ -394,35 +394,4 @@ class EthWallet {
     }
 
 
-    boolean hotFix4CorruptedContract(Multisig m) throws CryptoException, RemoteException {
-
-        EtherNode blockchain = new EtherNode(mIsTestNet);
-        int teamId = blockchain.readContractInt(m.address, METHOD_ID_M_TEAMID);
-        if (teamId == 0x40) {
-            // corrupted !
-
-            long gasPrice = refreshContractCreateGasPrice();
-            long nonce = checkMyNonce();
-            String recreatedTxHash = createOneWallet(nonce, m, 1_300_000, gasPrice);
-
-            if (recreatedTxHash != null) {
-                Unconfirmed newUnconfirmed = new Unconfirmed();
-                newUnconfirmed.setDateCreated(new Date());
-                newUnconfirmed.cryptoFee = gasPrice;
-                newUnconfirmed.cryptoTx = recreatedTxHash;
-                newUnconfirmed.cryptoNonce = nonce;
-                newUnconfirmed.multisigId = m.id;
-
-                m.unconfirmed = newUnconfirmed;
-                m.creationTx = recreatedTxHash;
-                return true;
-            }
-
-            return false;   // stop syncing. Wait for fix.
-        }
-
-        return true;    // in case of any doubts - do not block the syncing!
-    }
-
-
 }

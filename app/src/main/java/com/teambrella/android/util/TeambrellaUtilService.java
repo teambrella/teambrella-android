@@ -644,9 +644,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
             Log.d(LOG_TAG, " ---- SYNC -- sync() attempt:" + attempt);
 
-            boolean fixed = hotFix4CorruptedContract();
-            if (!fixed) continue;
-
             createWallets(1_300_000);
             verifyIfWalletIsCreated(1_300_000);
             depositWallet();
@@ -660,36 +657,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         backUpPrivateKey();
-    }
-
-    private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException {
-        Log.d(LOG_TAG, "---> SYNC -> hotFix4CorruptedContract() started...");
-
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
-        mTeambrellaClient.joinCosigners(myCurrentMultisigs);
-
-        if (myCurrentMultisigs.size() == 1) {
-
-            Multisig m = myCurrentMultisigs.get(0);
-            Unconfirmed oldUnconfirmed = m.unconfirmed;
-            String oldCreationTx = m.creationTx;
-
-            boolean fixed = getWallet().hotFix4CorruptedContract(myCurrentMultisigs.get(0));
-            if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx) {
-
-                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-                operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
-                operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
-                mClient.applyBatch(operations);
-
-            }
-            Log.d(LOG_TAG, " ^--- SYNC ^- hotFix4CorruptedContract() finished! result:" + fixed);
-            return fixed;
-        }
-
-        Log.d(LOG_TAG, " ^--- SYNC ^- hotFix4CorruptedContract() finished! result:TRUE");
-        return true;
     }
 
 
