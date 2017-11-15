@@ -681,14 +681,6 @@ public class TeambrellaContentProviderClient {
         if (iterator != null) {
             while (iterator.hasNext()) {
                 Tx tx = iterator.next();
-                tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
-                if (tx.txInputs == null || tx.txInputs.isEmpty()) {
-                    Log.w(LOG_TAG, "No tx inputs for tx id: " + tx.id);
-                    iterator.remove();
-                    continue;
-                }
-
-                Collections.sort(tx.txInputs);
 
                 tx.teammate = queryOne(TeambrellaRepository.Teammate.CONTENT_URI,
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
@@ -701,6 +693,15 @@ public class TeambrellaContentProviderClient {
                     iterator.remove();
                     continue;           // filter out not my Tx (where I was just a cosigner.
                 }
+
+                tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
+                if (tx.txInputs == null || tx.txInputs.isEmpty()) {
+                    setNeedsFullCleintUpdate("No tx inputs for tx id: " + tx.id);
+                    iterator.remove();
+                    continue;
+                }
+                Collections.sort(tx.txInputs);
+
                 tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
                         , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
 
@@ -972,10 +973,7 @@ public class TeambrellaContentProviderClient {
     }
 
     private void setNeedsFullCleintUpdate(String msg) {
-        Log.w(LOG_TAG, msg);
-        if (!BuildConfig.DEBUG) {
-            Crashlytics.log(msg);
-        }
+        Log.reportNonFatal(LOG_TAG, "Full client update to be executed: " + msg);
         needFullClientUpdate = true;
     }
 }
