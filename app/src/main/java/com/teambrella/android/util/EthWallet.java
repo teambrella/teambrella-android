@@ -47,6 +47,9 @@ class EthWallet {
     private static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
     private static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
 
+    private BigDecimal mBalance = new BigDecimal(-1, MathContext.UNLIMITED);    // cashed balance to minimise Blockchain Node traffic during multiple sync loops.
+    private long mNonce = -1;                                                       // cashed nonce to minimise Blockchain Node traffic during multiple sync loops.
+
     private long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
     private long mContractGasPrice = 100_000_001L;
     private long mTestGasPrice = 100_000_001L;
@@ -55,6 +58,10 @@ class EthWallet {
     EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
+    }
+
+    String createOneWallet(Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
+        return createOneWallet(getMyNonce(), m, gasLimit, gasPrice);
     }
 
     String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
@@ -163,16 +170,18 @@ class EthWallet {
     boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
-        BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
+        BigDecimal gasWalletAmount = getBalance();
 
         if (gasWalletAmount.compareTo(MAX_GAS_WALLET_BALANCE) > 0) {
 
-            long myNonce = checkMyNonce();
             BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
-            depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, refreshGasPrice(), value);
+            depositTx = mEtherAcc.newDepositTx(getMyNonce(), 50_000L, multisig.address, refreshGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
-            publish(depositTx);
+            String txHash = publish(depositTx);
+            if (txHash != null){
+                mBalance = mBalance.subtract(value, MathContext.UNLIMITED);    // neglect gas cost; estimate value only. Until tx is mined rough balance estimate is ok..
+            }
         }
 
         return true;
@@ -212,7 +221,7 @@ class EthWallet {
         }
 
         Multisig myMultisig = tx.getFromMultisig();
-        long myNonce = checkMyNonce();
+        long myNonce = getMyNonce();
         long gasLimit = 500_000L;
         long gasPrice = getGasPrice();
         String multisigAddress = myMultisig.address;
@@ -299,9 +308,22 @@ class EthWallet {
     }
 
 
-    long checkMyNonce() {
+    long refreshMyNonce() {
         EtherNode blockchain = new EtherNode(mIsTestNet);
-        return blockchain.checkNonce(mEtherAcc.getDepositAddress());
+        return mNonce = blockchain.checkNonce(mEtherAcc.getDepositAddress());
+    }
+
+    long getMyNonce() {
+        return mNonce < 0 ? refreshMyNonce() : mNonce;
+    }
+
+    BigDecimal refreshBalance(){
+        EtherNode blockchain = new EtherNode(mIsTestNet);
+        return mBalance = blockchain.checkBalance(mEtherAcc.getDepositAddress());
+    }
+
+    BigDecimal getBalance(){
+        return  (mBalance.compareTo(BigDecimal.ZERO) < 0) ? refreshBalance() : mBalance;
     }
 
     private long getBetterGasPriceForContractCreation(long oldPrice) {
@@ -332,7 +354,12 @@ class EthWallet {
             String hex = "0x" + Hex.fromBytes(rlp);
 
             EtherNode blockchain = new EtherNode(mIsTestNet);
-            return blockchain.pushTx(hex);
+            String txHash = blockchain.pushTx(hex);
+            if (txHash != null){
+                mNonce++;
+            }
+            return txHash;
+
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "" + e.getMessage(), e);
