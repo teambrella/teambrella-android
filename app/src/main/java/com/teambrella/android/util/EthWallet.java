@@ -50,10 +50,10 @@ class EthWallet {
     private BigDecimal mBalance = new BigDecimal(-1, MathContext.UNLIMITED);    // cashed balance to minimise Blockchain Node traffic during multiple sync loops.
     private long mNonce = -1;                                                       // cashed nonce to minimise Blockchain Node traffic during multiple sync loops.
 
-    private long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
-    private long mContractGasPrice = 100_000_001L;
-    private long mTestGasPrice = 100_000_001L;
-    private long mTestContractGasPrice = 100_000_001L;
+    private long mGasPrice = -1;
+    private long mContractGasPrice = -1;
+    private long mTestGasPrice = -1;
+    private long mTestContractGasPrice = -1;
 
     EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
@@ -176,7 +176,7 @@ class EthWallet {
 
             BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
-            depositTx = mEtherAcc.newDepositTx(getMyNonce(), 50_000L, multisig.address, refreshGasPrice(), value);
+            depositTx = mEtherAcc.newDepositTx(getMyNonce(), 50_000L, multisig.address, getGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
             String txHash = publish(depositTx);
             if (txHash != null){
@@ -272,9 +272,13 @@ class EthWallet {
     long refreshGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
-        if (price < 0 || price > 4_000_000_001L) {
-            // The server is kidding us
-            return getGasPrice();
+        if (price < 0) {
+            Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
+            return 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
+        }else if (price > 4_000_000_001L) {
+            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the gas price: " + price);
+            // The server is kidding with us
+            return 4_000_000_001L;
         }
 
         if (mIsTestNet) {
@@ -287,10 +291,15 @@ class EthWallet {
     private long refreshContractCreateGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkContractCreationGasPrice();
-        if (price < 0 || price > 8_000_000_002L) {
-            // The server is kidding us
-            return getGasPriceForContractCreation();
+        if (price < 0) {
+            Log.reportNonFatal(LOG_TAG, "Failed to get the contract gas price from a server. A default contract gas price will be used.");
+            return 100_000_001L;
+        }else if (price > 8_000_000_002L) {
+            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the contract gas price: " + price);
+            // The server is kidding with us
+            return 8_000_000_002L;
         }
+
 
         if (mIsTestNet) {
             return mTestContractGasPrice = price;
@@ -300,11 +309,17 @@ class EthWallet {
     }
 
     private long getGasPrice() {
-        return mIsTestNet ? mTestGasPrice : mGasPrice;
+        if (mIsTestNet){
+            return mTestGasPrice < 0 ? refreshGasPrice() : mTestGasPrice;
+        }
+        return mGasPrice < 0 ? refreshGasPrice() : mGasPrice;
     }
 
     long getGasPriceForContractCreation() {
-        return mIsTestNet ? mTestContractGasPrice : mContractGasPrice;
+        if (mIsTestNet){
+            return mTestContractGasPrice < 0 ? refreshContractCreateGasPrice() : mTestContractGasPrice;
+        }
+        return mContractGasPrice < 0 ? refreshContractCreateGasPrice() : mContractGasPrice;
     }
 
 

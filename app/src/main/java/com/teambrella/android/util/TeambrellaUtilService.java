@@ -392,7 +392,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        mWallet.refreshGasPrice();
         for (Multisig m : myUncreatedMultisigs) {
             Log.d(LOG_TAG, " ---- SYNC -- createWallets() detected 1 multisig to created. id:" + m.id);
 
@@ -619,7 +618,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         for (Tx tx : txs) {
             Log.d(LOG_TAG, " ---- SYNC -- publishApprovedAndCosignedTxs() detected tx to publish. id:" + tx.id);
 
-            mWallet.refreshGasPrice();
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
                 case TeambrellaModel.TX_KIND_WITHDRAW:

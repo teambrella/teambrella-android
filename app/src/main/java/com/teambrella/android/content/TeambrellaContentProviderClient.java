@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.crashlytics.android.Crashlytics;
@@ -15,6 +16,7 @@ import com.google.gson.JsonPrimitive;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.model.Cosigner;
+import com.teambrella.android.content.model.Multisig;
 import com.teambrella.android.content.model.PayTo;
 import com.teambrella.android.content.model.ServerUpdates;
 import com.teambrella.android.content.model.TXSignature;
@@ -29,6 +31,8 @@ import com.teambrella.android.util.log.Log;
 import org.chalup.microorm.MicroOrm;
 import org.chalup.microorm.TypeAdapter;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -152,7 +156,8 @@ public class TeambrellaContentProviderClient {
             if (existingTeammate.publicKey != null && !Objects.equals(teammate.publicKey, existingTeammate.publicKey) ||
                     existingTeammate.publicKeyAddress != null && !Objects.equals(teammate.publicKeyAddress, existingTeammate.publicKeyAddress) ||
                     existingTeammate.facebookName != null && !Objects.equals(teammate.facebookName, existingTeammate.facebookName)) {
-                return null; // we don't allow to change basic info
+                Log.reportNonFatal(LOG_TAG, "An attempt to alter basic teammate info: \n\texisting:" + existingTeammate + ", \n\t new one:" + teammate);
+                return null;
             }
 
             ContentProviderOperation.Builder op;
@@ -195,6 +200,7 @@ public class TeambrellaContentProviderClient {
             }
 
             if (isDefault) {
+                Log.w(LOG_TAG, "Marking other (if any) PayTo addresses as non-default for teammate: " + payTo.teammateId + ". New default: " + address);
                 ContentValues cv = new ContentValues();
                 cv.put(TeambrellaRepository.PayTo.IS_DEFAULT, false);
                 list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.PayTo.CONTENT_URI).withValues(cv)
@@ -297,33 +303,38 @@ public class TeambrellaContentProviderClient {
     public List<ContentProviderOperation> insertTXOutputs(Tx[] txs, TxOutput[] txOutputs) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
         for (final TxOutput txOutput : txOutputs) {
-            Cursor cursor = mClient.query(TeambrellaRepository.TXOutput.CONTENT_URI, new String[]{TeambrellaRepository.TXOutput.ID}, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
-                    new String[]{txOutput.id.toString()}, null);
+            TxOutput existing =  queryOne(TeambrellaRepository.TXOutput.CONTENT_URI, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
+                    new String[]{txOutput.id.toString()}, TxOutput.class);
 
-            if (cursor != null && cursor.moveToFirst()) {
-                cursor.close();
-                continue;
+            if (existing != null) {
+                if (Objects.equals(txOutput.txId, existing.txId) &&  Objects.equals(txOutput.payToId, existing.payToId) && compareDecimalStrings(txOutput.cryptoAmount, existing.cryptoAmount) <= 0) {
+                    list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.TXOutput.CONTENT_URI)
+                            .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount).build());
+                }else{
+                    Log.reportNonFatal(LOG_TAG, "An attempt to cheat wtih tx output values: \n\texisting:" + existing + ", \n\t new one:" + txOutput);
+                }
+            } else {
+                long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txOutput.txId)).count().blockingGet();
+
+                if (count > 0) {
+                    list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
+                            .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id.toString())
+                            .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId.toString())
+                            .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount)
+                            .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.payToId)
+                            .build());
+                }
+
             }
-
-            if (cursor != null) {
-                cursor.close();
-
-            }
-
-            long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txOutput.txId)).count().blockingGet();
-
-            if (count > 0) {
-                list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
-                        .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id.toString())
-                        .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId.toString())
-                        .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount)
-                        .withValue(TeambrellaRepository.TXOutput.PAY_TO_ID, txOutput.payToId)
-                        .build());
-            }
-
         }
 
         return list;
+    }
+
+    private static final int compareDecimalStrings(String s1, String s2){
+        BigDecimal d1 = new BigDecimal(s1, MathContext.UNLIMITED);
+        BigDecimal d2 = new BigDecimal(s2, MathContext.UNLIMITED);
+        return d1.compareTo(d2);
     }
 
 
@@ -374,16 +385,42 @@ public class TeambrellaContentProviderClient {
         List<ContentProviderOperation> list = new LinkedList<>();
 
         for (com.teambrella.android.content.model.Multisig multisig : multisigs) {
-            ContentValues cv = new ContentValues();
-            cv.put(TeambrellaRepository.Multisig.ID, multisig.id);
-            cv.put(TeambrellaRepository.Multisig.ADDRESS, multisig.address);
-            cv.put(TeambrellaRepository.Multisig.TEAMMATE_ID, multisig.teammateId);
-            cv.put(TeambrellaRepository.Multisig.DATE_CREATED, multisig.dateCreated);
-            cv.put(TeambrellaRepository.Multisig.STATUS, multisig.status);
-            cv.put(TeambrellaRepository.Multisig.NEED_UPDATE_SERVER, false);
-            list.add(ContentProviderOperation.newInsert(TeambrellaRepository.Multisig.CONTENT_URI).withValues(cv).build());
+            ContentProviderOperation op = insertOrUpdateOneMultisig(multisig);
+            if (op != null) {
+                list.add(op);
+            }
         }
         return list;
+    }
+
+    @NonNull
+    private ContentProviderOperation insertOrUpdateOneMultisig(Multisig newOne) throws RemoteException{
+        Multisig existing = getMultisigById(newOne.id);
+        if (existing == null) {
+            ContentValues cv = new ContentValues();
+            cv.put(TeambrellaRepository.Multisig.ID, newOne.id);
+            cv.put(TeambrellaRepository.Multisig.ADDRESS, newOne.address);
+            cv.put(TeambrellaRepository.Multisig.TEAMMATE_ID, newOne.teammateId);
+            cv.put(TeambrellaRepository.Multisig.DATE_CREATED, newOne.dateCreated);
+            cv.put(TeambrellaRepository.Multisig.STATUS, newOne.status);
+            cv.put(TeambrellaRepository.Multisig.NEED_UPDATE_SERVER, false);
+            return ContentProviderOperation.newInsert(TeambrellaRepository.Multisig.CONTENT_URI).withValues(cv).build();
+        } else {
+            if (existing.address != null && !Objects.equals(newOne.address, existing.address) ||
+                existing.teammateId != newOne.teammateId) {
+                Log.reportNonFatal(LOG_TAG, "An attempt to alter basic multisig info: \n\texisting:" + existing + ", \n\t new one:" + newOne);
+                return null;
+            }
+
+            ContentProviderOperation.Builder op;
+            op = ContentProviderOperation.newUpdate(TeambrellaRepository.Multisig.CONTENT_URI);
+            op = op.withValue(TeambrellaRepository.Multisig.STATUS, newOne.status);
+            if (existing.address == null) {
+                op = op.withValue(TeambrellaRepository.Multisig.ADDRESS, newOne.address);
+            }
+            op = op.withSelection(TeambrellaRepository.Multisig.ID + "=?", new String[]{Long.toString(existing.id)});
+            return op.build();
+        }
     }
 
 
@@ -554,6 +591,11 @@ public class TeambrellaContentProviderClient {
                 .build();
     }
 
+
+    private Multisig getMultisigById(long id) throws RemoteException {
+        return queryOne(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.MULTISIG_TABLE + "." + TeambrellaRepository.Multisig.ID + "=?",
+                new String[]{Long.toString(id)}, Multisig.class);
+    }
 
     public List<com.teambrella.android.content.model.Multisig> getMultisigsWithAddressByTeammate(String publicKey, long teammateId) throws RemoteException {
         List<com.teambrella.android.content.model.Multisig> list = queryList(TeambrellaRepository.Multisig.CONTENT_URI,

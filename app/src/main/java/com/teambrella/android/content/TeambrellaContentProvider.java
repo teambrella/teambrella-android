@@ -94,10 +94,10 @@ public class TeambrellaContentProvider extends ContentProvider {
         long rowId;
         switch (TeambrellaRepository.sUriMatcher.match(uri)) {
             case TeambrellaRepository.TEAMMATE:
-                rowId = db.insertWithOnConflict(TeambrellaRepository.TEAMMATE_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                rowId = db.insertOrThrow(TeambrellaRepository.TEAMMATE_TABLE, null, values);
                 break;
             case TeambrellaRepository.MULTISIG:
-                rowId = db.insertWithOnConflict(TeambrellaRepository.MULTISIG_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                rowId = db.insertOrThrow(TeambrellaRepository.MULTISIG_TABLE, null, values);
                 break;
             case TeambrellaRepository.TX_INPUT:
                 rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
@@ -110,7 +110,7 @@ public class TeambrellaContentProvider extends ContentProvider {
                 break;
 
             default:
-                rowId = db.insertWithOnConflict(getTableName(uri), null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                rowId = db.insertOrThrow(getTableName(uri), null, values);
                 break;
         }
         return Uri.withAppendedPath(uri, Long.toString(rowId));
@@ -176,7 +176,7 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     private static class TeambrellaSQLiteOpenHelper extends SQLiteOpenHelper {
 
-        private static final int VERSION = 205;
+        private static final int VERSION = 206;
         private static final String NAME = "teambrella";
 
 
@@ -326,7 +326,10 @@ public class TeambrellaContentProvider extends ContentProvider {
                 db.execSQL("DROP TABLE IF EXISTS User");
 
                 onCreate(db);
-            }else if (oldVersion < 205
+                return;
+            }
+
+            if (oldVersion < 205
                     ){
                 db.execSQL("CREATE TABLE Unconfirmed (" +
                         "Id INTEGER PRIMARY KEY UNIQUE NOT NULL, " +
@@ -340,6 +343,14 @@ public class TeambrellaContentProvider extends ContentProvider {
                 db.execSQL("INSERT INTO Unconfirmed(MultisigId, CryptoTx, CryptoFee, CryptoNonce, DateCreated) " +
                         "SELECT Id, CreationTx, 2000000000, 0, DateCreated FROM Multisig WHERE CreationTx IS NOT NULL;");
             }
+
+            // now the table scheme is 205 level or higher:
+
+            // temp hot fix for lost contract:
+            if (oldVersion == 205){
+                db.execSQL("UPDATE Multisig SET Address=NULL WHERE Address='0x4225d04ea2e2235e6dd15062d004a0cc769b6ad0'");
+            }
+
 
         }
     }

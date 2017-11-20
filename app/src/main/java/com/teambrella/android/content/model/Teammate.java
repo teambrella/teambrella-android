@@ -87,4 +87,10 @@ public class Teammate {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "{id:" + id + ", teamId:" + teamId + ", fb:" + facebookName + ", publicKey:" + publicKey + ", publicKeyAddress:" + publicKeyAddress + "}";
+    }
+
 }
