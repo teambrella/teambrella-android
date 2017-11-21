@@ -107,7 +107,9 @@ public class TeambrellaContentProviderClient {
 
             if (cursor != null && cursor.moveToFirst()) {
                 list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Team.CONTENT_URI)
-                        .withValue(TeambrellaRepository.Team.NAME, team.name).build());
+                        .withValue(TeambrellaRepository.Team.NAME, team.name)
+                        .withSelection(TeambrellaRepository.Team.ID + "=?", new String[]{Long.toString(team.id)})
+                        .build());
                 cursor.close();
             } else {
                 if (cursor != null) {
@@ -306,17 +308,11 @@ public class TeambrellaContentProviderClient {
             TxOutput existing =  queryOne(TeambrellaRepository.TXOutput.CONTENT_URI, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
                     new String[]{txOutput.id.toString()}, TxOutput.class);
 
-            if (existing != null) {
-                if (Objects.equals(txOutput.txId, existing.txId) &&  Objects.equals(txOutput.payToId, existing.payToId) && compareDecimalStrings(txOutput.cryptoAmount, existing.cryptoAmount) <= 0) {
-                    list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.TXOutput.CONTENT_URI)
-                            .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount).build());
-                }else{
-                    Log.reportNonFatal(LOG_TAG, "An attempt to cheat wtih tx output values: \n\texisting:" + existing + ", \n\t new one:" + txOutput);
-                }
-            } else {
+            if (existing == null)  {
                 long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txOutput.txId)).count().blockingGet();
 
                 if (count > 0) {
+                    Log.v(LOG_TAG, "Inserting tx output: " + txOutput);
                     list.add(ContentProviderOperation.newInsert(TeambrellaRepository.TXOutput.CONTENT_URI)
                             .withValue(TeambrellaRepository.TXOutput.ID, txOutput.id.toString())
                             .withValue(TeambrellaRepository.TXOutput.TX_ID, txOutput.txId.toString())
@@ -325,6 +321,16 @@ public class TeambrellaContentProviderClient {
                             .build());
                 }
 
+            }else{
+                if (Objects.equals(txOutput.txId, existing.txId) &&  Objects.equals(txOutput.payToId, existing.payToId) && compareDecimalStrings(txOutput.cryptoAmount, existing.cryptoAmount) <= 0) {
+                    list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.TXOutput.CONTENT_URI)
+                            .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount)
+                            .withSelection(TeambrellaRepository.TXOutput.ID + "=?", new String[]{txOutput.id.toString()})
+                            .build());
+                    Log.v(LOG_TAG, "Updating tx output amount: " + existing.cryptoAmount + " with a new record:" + txOutput);
+                }else{
+                    Log.reportNonFatal(LOG_TAG, "An attempt to cheat with tx output values: \n\texisting:" + existing + ", \n\t new one:" + txOutput);
+                }
             }
         }
 
@@ -347,6 +353,7 @@ public class TeambrellaContentProviderClient {
 //            if (!isWalletMove && outputs.isEmpty()) {
 //                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
 //                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
+//                        .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
 //                        .encodeToHexString());
 //                continue;
 //            }
@@ -360,6 +367,7 @@ public class TeambrellaContentProviderClient {
 //            if (!isWalletMove && Math.abs(totalAmount - tx.cryptoAmount) > 0.000001f) {
 //                operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
 //                        .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_ERROR_BAD_REQUEST)
+//                        .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
 //                        .encodeToHexString());
 //                continue;
 //            }
@@ -367,6 +375,7 @@ public class TeambrellaContentProviderClient {
             if (tx.resolution == TeambrellaModel.TX_CLIENT_RESOLUTION_NONE) {
                 operations.add(ContentProviderOperation.newUpdate(TeambrellaRepository.Tx.CONTENT_URI)
                         .withValue(TeambrellaRepository.Tx.RESOLUTION, TeambrellaModel.TX_CLIENT_RESOLUTION_RECEIVED)
+                        .withSelection(TeambrellaRepository.Tx.ID + "=?", new String[]{tx.id.toString()})
                         .build());
             }
         }
@@ -918,7 +927,7 @@ public class TeambrellaContentProviderClient {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             long since = 0;
-            if (!needFullClientUpdate) {
+           if (!needFullClientUpdate) {
                 since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
             }
             body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
