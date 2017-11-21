@@ -47,4 +47,8 @@ public class Multisig {
     public List<Cosigner> cosigners;
     public Unconfirmed unconfirmed;
 
+    @Override
+    public String toString() {
+        return "{id:" + id + ", teammateId:" + teammateId + ", address:" + address + ", status:" + status + "}";
+    }
 }
