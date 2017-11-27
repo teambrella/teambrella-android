@@ -81,6 +81,11 @@
             android:name=".ui.teammates.TeammatesByRiskActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.demo.NewDemoSessionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Modal" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"
