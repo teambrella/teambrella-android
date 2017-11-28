@@ -179,4 +179,10 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> getDemoTeams(@Path("language") String language);
 
 
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("wallet/getWithdraw")
+    Observable<Response<JsonObject>> getWithdrawls(@Body JsonElement body);
+
+
 }

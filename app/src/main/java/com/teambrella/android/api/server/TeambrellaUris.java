@@ -46,6 +46,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_DEMO = "demo";
     private static final String SEGMENT_DEBUG_DB = "debugDb";
     private static final String SEGMENT_DEBUG_LOG = "debugLog";
+    private static final String SEGMENT_WITHDRAWALS = "withdrawals";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -106,6 +107,7 @@ public class TeambrellaUris {
     public static final int DEMO_TEAMS = 31;
     public static final int DEBUG_DB = 32;
     public static final int DEBUG_LOG = 33;
+    public static final int WITHDRAWALS = 34;
 
 
     static {
@@ -142,6 +144,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_DB, DEBUG_DB);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_LOG, DEBUG_LOG);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_WITHDRAWALS, WITHDRAWALS);
     }
 
 
@@ -526,6 +529,15 @@ public class TeambrellaUris {
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_WALLET)
                 .appendEncodedPath(SEGMENT_ONE)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getWithdrawals(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_WALLET)
+                .appendEncodedPath(SEGMENT_WITHDRAWALS)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .build();
     }

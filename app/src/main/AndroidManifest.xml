@@ -86,6 +86,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
 
+        <activity
+            android:name=".ui.withdraw.WithdrawActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"
