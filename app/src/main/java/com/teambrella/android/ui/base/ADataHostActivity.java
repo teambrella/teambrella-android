@@ -114,7 +114,8 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
                 switch (serverException.getErrorCode()) {
                     case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
                         if (!isFinishing()) {
-                            startActivity(new Intent(this, NewDemoSessionActivity.class));
+                            startActivity(new Intent(this, NewDemoSessionActivity.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                             finish();
                         }
                 }
