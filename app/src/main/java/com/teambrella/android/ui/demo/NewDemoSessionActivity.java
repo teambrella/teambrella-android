@@ -30,4 +30,12 @@ public class NewDemoSessionActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        TeambrellaUser.get(this).resetDemoUser();
+        StatisticHelper.setUserId(null);
+        startActivity(new Intent(this, WelcomeActivity.class));
+        finish();
+    }
 }
