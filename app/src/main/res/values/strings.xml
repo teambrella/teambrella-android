@@ -252,4 +252,8 @@
     <string name="pending_application_title">Your application is not complete</string>
     <string name="pending_application_description"><![CDATA[Please, check missing points and finalise it. We are waiting for you! Feel free to contact us at <a href="mailto:support@teambrella.com">support@teambrella.com</a> if you have any questions.]]></string>
     <string name="retry">Retry</string>
+
+    <string name="new_demo_session_title">New demo session</string>
+    <string name="new_demo_session_description">We created a fresh demo team for you. It is compatible with all new features and updates.</string>
+    <string name="back">Back</string>
 </resources>
