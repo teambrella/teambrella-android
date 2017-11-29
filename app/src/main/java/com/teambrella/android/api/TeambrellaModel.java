@@ -361,6 +361,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_VOTING_ENDS_IN = "VotingEndsIn";
     public static final String ATTR_DATA_OBJECT_COVERAGE = "ObjectCoverage";
     public static final String ATTR_DATA_VOTED_BY_PROXY_USER_ID = "VotedByProxyUserId";
+    public static final String ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS = "DefaultWithdrawAddress";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

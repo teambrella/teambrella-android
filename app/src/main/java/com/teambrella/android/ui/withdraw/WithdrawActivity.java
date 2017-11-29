@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -77,7 +78,18 @@ public class WithdrawActivity extends ADataHostActivity {
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getWithdrawals(mTeamId),
                         TeambrellaModel.ATTR_DATA_TXS, TeambrellaDataPagerFragment.class);
         }
-        
+
         return null;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
