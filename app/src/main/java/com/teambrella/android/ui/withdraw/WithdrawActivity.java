@@ -20,10 +20,11 @@ import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 /**
  * Withdraw Activity
  */
-public class WithdrawActivity extends ADataHostActivity {
+public class WithdrawActivity extends ADataHostActivity implements IWithdrawActivity {
 
     public static final String WITHDRAWALS_DATA_TAG = "withdrawals_data";
     public static final String WITHDRAWALS_UI_TAG = "withdrawals_ui";
+    public static final String WITHDRAWALS_INFO_DIALOG_TAG = "info_dialog";
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
 
@@ -91,5 +92,18 @@ public class WithdrawActivity extends ADataHostActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void showInfoDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(WITHDRAWALS_INFO_DIALOG_TAG) == null) {
+            WithdrawInfoDialogFragment.getInstance(0, 0).show(fragmentManager, WITHDRAWALS_INFO_DIALOG_TAG);
+        }
+    }
+
+    @Override
+    public void showWithdrawInfo() {
+        showInfoDialog();
     }
 }

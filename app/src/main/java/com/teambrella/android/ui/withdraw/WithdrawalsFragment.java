@@ -3,7 +3,6 @@ package com.teambrella.android.ui.withdraw;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
@@ -13,10 +12,10 @@ import io.reactivex.Observable;
 /**
  * Withdrawals Fragment
  */
-public class WithdrawalsFragment extends ADataPagerProgressFragment<IDataHost> {
+public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawActivity> {
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new WithdrawalsAdapter(mDataHost.getPager(mTag));
+        return new WithdrawalsAdapter(mDataHost.getPager(mTag), mDataHost);
     }
 
     @Override

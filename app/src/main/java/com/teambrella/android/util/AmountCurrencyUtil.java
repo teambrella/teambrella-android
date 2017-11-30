@@ -42,7 +42,22 @@ public class AmountCurrencyUtil {
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        text.setSpan(new CurrencyRelativeSizeSpan("1234567890"/*String.format(Locale.US, "%.2f", amount).substring(start - 1)*/), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan("1234567890"), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textView.setText(text);
+    }
+
+    public static void setAmount(TextView textView, String source, String currency) {
+        final Context context = textView.getContext();
+        final SpannableString text = new SpannableString(source);
+        int index = 0;
+        while (index != -1) {
+            index = source.indexOf(currency, index);
+            if (index != -1) {
+                text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), index, index + currency.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                text.setSpan(new CurrencyRelativeSizeSpan("1234567890"), index, index + currency.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                index += currency.length();
+            }
+        }
         textView.setText(text);
     }
 

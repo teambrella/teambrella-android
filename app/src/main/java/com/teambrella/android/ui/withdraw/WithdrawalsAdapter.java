@@ -13,6 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -24,13 +25,27 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
     private String mDefaultWithdrawAddress;
 
-    WithdrawalsAdapter(IDataPager<JsonArray> pager) {
+    private float mAvailableValue;
+    private float mReservedValue;
+    private final IWithdrawActivity mWithdrawActivity;
+
+    WithdrawalsAdapter(IDataPager<JsonArray> pager, IWithdrawActivity withdrawActivity) {
         super(pager);
+        mWithdrawActivity = withdrawActivity;
     }
 
-    public void setDefaultWithdrawAddress(String address) {
+    void setDefaultWithdrawAddress(String address) {
         mDefaultWithdrawAddress = address;
         notifyItemChanged(0);
+    }
+
+    void setAvailableValue(float availableValue) {
+        mAvailableValue = availableValue;
+        notifyItemChanged(0);
+    }
+
+    void setReservedValue(float reservedValue) {
+        mReservedValue = reservedValue;
     }
 
     @Override
@@ -59,6 +74,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         super.onBindViewHolder(holder, position);
         if (holder instanceof SubmitWithdrawViewHolder) {
             ((SubmitWithdrawViewHolder) holder).setAddress(mDefaultWithdrawAddress);
+            ((SubmitWithdrawViewHolder) holder).setAvailableValue(mAvailableValue);
         }
     }
 
@@ -72,19 +88,26 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         private TextView mAddressView;
         private TextView mAmountView;
         private TextView mSubmitView;
+        private View mInfoView;
 
         SubmitWithdrawViewHolder(View itemView) {
             super(itemView);
             mAddressView = itemView.findViewById(R.id.eth_address_input);
             mAmountView = itemView.findViewById(R.id.amount_input);
             mSubmitView = itemView.findViewById(R.id.submit);
+            mInfoView = itemView.findViewById(R.id.info);
             mSubmitView.setOnClickListener(v -> Toast.makeText(itemView.getContext(), "" + checkEthereum(mAddressView.getText().toString()), Toast.LENGTH_SHORT).show());
+            mInfoView.setOnClickListener(v -> mWithdrawActivity.showWithdrawInfo());
         }
 
         void setAddress(String address) {
             if (TextUtils.isEmpty(mAddressView.getText())) {
                 mAddressView.setText(address);
             }
+        }
+
+        void setAvailableValue(float value) {
+            mAmountView.setHint(String.format(Locale.US, "%d", Math.round(value * 1000)));
         }
 
         private boolean checkEthereum(String address) {
