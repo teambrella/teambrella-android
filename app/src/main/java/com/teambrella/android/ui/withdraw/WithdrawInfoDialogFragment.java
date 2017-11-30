@@ -2,6 +2,7 @@ package com.teambrella.android.ui.withdraw;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ public class WithdrawInfoDialogFragment extends BottomSheetDialogFragment {
         Bundle args = new Bundle();
         args.putInt(EXTRA_AVAILABLE, available);
         args.putInt(EXTRA_RESERVED, reserved);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -45,6 +47,10 @@ public class WithdrawInfoDialogFragment extends BottomSheetDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Bundle args = getArguments();
+        final Resources resources = getResources();
+        int available = args != null ? args.getInt(EXTRA_AVAILABLE) : 0;
+        int reserved = args != null ? args.getInt(EXTRA_RESERVED) : 0;
         BottomSheetDialog dialog = new BottomSheetDialog(getContext(), R.style.InfoDialog) {
             @Override
             protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +62,13 @@ public class WithdrawInfoDialogFragment extends BottomSheetDialogFragment {
                 }
             }
         };
+
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_withdraw_info, null, false);
+        String text = reserved > 0 ? resources.getString(R.string.withdraw_info_description_reserved, available, reserved)
+                : resources.getString(R.string.withdraw_info_description, available);
         view.findViewById(R.id.close).setOnClickListener(v -> dismiss());
         TextView description = view.findViewById(R.id.description);
-        AmountCurrencyUtil.setAmount(description, getContext().getString(R.string.withdraw_info_description), "mETH");
+        AmountCurrencyUtil.setAmount(description, text, "mETH");
         dialog.setContentView(view);
         return dialog;
     }

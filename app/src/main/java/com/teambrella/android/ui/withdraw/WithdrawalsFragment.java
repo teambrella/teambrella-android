@@ -25,9 +25,10 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
             Observable.just(notification.getValue())
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
-                    .doOnNext(jsonWrapper ->
-                            ((WithdrawalsAdapter) mAdapter).setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS)))
-                    .blockingFirst();
+                    .doOnNext(jsonWrapper -> {
+                        ((WithdrawalsAdapter) mAdapter).setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
+                        ((WithdrawalsAdapter) mAdapter).setAvailableValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE));
+                    }).blockingFirst();
         }
     }
 }
