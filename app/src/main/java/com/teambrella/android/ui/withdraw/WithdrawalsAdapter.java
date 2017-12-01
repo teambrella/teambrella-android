@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
@@ -96,7 +95,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             mAmountView = itemView.findViewById(R.id.amount_input);
             mSubmitView = itemView.findViewById(R.id.submit);
             mInfoView = itemView.findViewById(R.id.info);
-            mSubmitView.setOnClickListener(v -> Toast.makeText(itemView.getContext(), "" + checkEthereum(mAddressView.getText().toString()), Toast.LENGTH_SHORT).show());
+            mSubmitView.setOnClickListener(v -> mWithdrawActivity.requestWithdraw(mAddressView.getText().toString(), Float.parseFloat(mAmountView.getText().toString()) / 1000));
             mInfoView.setOnClickListener(v -> mWithdrawActivity.showWithdrawInfo());
         }
 

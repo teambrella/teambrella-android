@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
@@ -16,6 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 
@@ -29,15 +31,17 @@ import io.reactivex.disposables.Disposable;
 public class WithdrawActivity extends ADataHostActivity implements IWithdrawActivity {
 
     public static final String WITHDRAWALS_DATA_TAG = "withdrawals_data";
+    public static final String WITHDRAWALS_REQUEST_DATA_TAG = "withdrawal_request_data";
     public static final String WITHDRAWALS_UI_TAG = "withdrawals_ui";
     public static final String WITHDRAWALS_INFO_DIALOG_TAG = "info_dialog";
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
 
     private int mTeamId;
-    private float mAvailalableValue;
+    private float mAvailableValue;
     private float mReservedValue;
-    private Disposable mDisposable;
+    private Disposable mWithdrawalsDisposable;
+    private Disposable mRequestDisposable;
 
     public static void start(Context context, int teamId) {
         context.startActivity(new Intent(context, WithdrawActivity.class)
@@ -52,10 +56,19 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
         setContentView(R.layout.activity_one_fragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(WITHDRAWALS_UI_TAG) == null) {
-            fragmentManager.beginTransaction().add(R.id.container
+            transaction.add(R.id.container
                     , ADataPagerProgressFragment.getInstance(WITHDRAWALS_DATA_TAG, WithdrawalsFragment.class)
-                    , WITHDRAWALS_UI_TAG).commit();
+                    , WITHDRAWALS_UI_TAG);
+        }
+
+        if (fragmentManager.findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG) == null) {
+            transaction.add(new TeambrellaRequestFragment(), WITHDRAWALS_REQUEST_DATA_TAG);
+        }
+
+        if (!transaction.isEmpty()) {
+            transaction.commit();
         }
 
         setTitle(R.string.withdraw);
@@ -96,15 +109,29 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
     @Override
     protected void onStart() {
         super.onStart();
-        mDisposable = getPager(WITHDRAWALS_DATA_TAG).getObservable().subscribe(this::onDataUpdated);
+        mWithdrawalsDisposable = getPager(WITHDRAWALS_DATA_TAG).getObservable().subscribe(this::onDataUpdated);
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
+        if (fragment != null) {
+            mRequestDisposable = fragment.getObservable().subscribe(this::onRequestResult);
+            fragment.start();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-            mDisposable = null;
+        if (mWithdrawalsDisposable != null && !mWithdrawalsDisposable.isDisposed()) {
+            mWithdrawalsDisposable.dispose();
+            mWithdrawalsDisposable = null;
+        }
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
+        if (fragment != null) {
+            fragment.stop();
+        }
+
+        if (mRequestDisposable != null && !mRequestDisposable.isDisposed()) {
+            mRequestDisposable.dispose();
+            mRequestDisposable = null;
         }
     }
 
@@ -117,11 +144,11 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     public void showInfoDialog() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(WITHDRAWALS_INFO_DIALOG_TAG) == null) {
-            WithdrawInfoDialogFragment.getInstance(Math.round(mAvailalableValue * 1000), Math.round(mReservedValue * 1000))
+            WithdrawInfoDialogFragment.getInstance(Math.round(mAvailableValue * 1000), Math.round(mReservedValue * 1000))
                     .show(fragmentManager, WITHDRAWALS_INFO_DIALOG_TAG);
         }
     }
@@ -131,6 +158,13 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
         showInfoDialog();
     }
 
+    @Override
+    public void requestWithdraw(String address, float amount) {
+        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
+        if (fragment != null) {
+            fragment.request(TeambrellaUris.getNewWithdrawUri(mTeamId, amount, address));
+        }
+    }
 
     private void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
@@ -138,9 +172,13 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                     .doOnNext(jsonWrapper -> {
-                        mAvailalableValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE);
+                        mAvailableValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE);
                         mReservedValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED);
                     }).blockingFirst();
         }
+    }
+
+    private void onRequestResult(Notification<JsonObject> response) {
+
     }
 }
