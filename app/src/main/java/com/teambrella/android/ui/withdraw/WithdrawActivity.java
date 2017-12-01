@@ -99,7 +99,7 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
         switch (tag) {
             case WITHDRAWALS_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getWithdrawals(mTeamId),
-                        TeambrellaModel.ATTR_DATA_TXS, TeambrellaDataPagerFragment.class);
+                        TeambrellaModel.ATTR_DATA_TXS, WithdrawalsDataPagerFragment.class);
         }
 
         return null;

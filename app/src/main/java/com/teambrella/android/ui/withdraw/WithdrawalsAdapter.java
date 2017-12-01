@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
@@ -21,6 +24,10 @@ import java.util.regex.Pattern;
 class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
     private static final int VIEW_TYPE_SUBMIT_WITHDRAWAL = VIEW_TYPE_REGULAR + 1;
+    private static final int VIEW_TYPE_QUEUED_HEADER = VIEW_TYPE_REGULAR + 2;
+    private static final int VIEW_TYPE_IN_PROCESS_HEADER = VIEW_TYPE_REGULAR + 3;
+    private static final int VIEW_TYPE_HISTORY_HEADER = VIEW_TYPE_REGULAR + 4;
+    private static final int VIEW_TYPE_WITHDRAWAL = VIEW_TYPE_REGULAR + 5;
 
     private String mDefaultWithdrawAddress;
 
@@ -49,11 +56,32 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public int getItemViewType(int position) {
-//        int viewType = super.getItemViewType(position);
-//        if (viewType == VIEW_TYPE_REGULAR) {
-        return VIEW_TYPE_SUBMIT_WITHDRAWAL;
-//        }
-//        return viewType;
+        int viewType = super.getItemViewType(position);
+        if (viewType == VIEW_TYPE_REGULAR) {
+            if (position == 0) {
+                return VIEW_TYPE_SUBMIT_WITHDRAWAL;
+            } else {
+                position--;
+                JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
+                switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString()) {
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_QUEUED_HEADER:
+                        viewType = VIEW_TYPE_QUEUED_HEADER;
+                        break;
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_IN_PROCESS_HEADER:
+                        viewType = VIEW_TYPE_IN_PROCESS_HEADER;
+                        break;
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_HISTORY_HEADER:
+                        viewType = VIEW_TYPE_HISTORY_HEADER;
+                        break;
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_HISTORY:
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_IN_PROCESS:
+                    case TeambrellaModel.WithdrawlsItemType.ITEM_QUEDUED:
+                        viewType = VIEW_TYPE_WITHDRAWAL;
+                        break;
+                }
+            }
+        }
+        return viewType;
     }
 
     @Override
@@ -63,6 +91,14 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             switch (viewType) {
                 case VIEW_TYPE_SUBMIT_WITHDRAWAL:
                     return new SubmitWithdrawViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_withdraw_request, parent, false));
+                case VIEW_TYPE_QUEUED_HEADER:
+                    return new Header(parent, R.string.deferred_withdrawals, R.string.milli_ethereum);
+                case VIEW_TYPE_IN_PROCESS_HEADER:
+                    return new Header(parent, R.string.withdrawals_in_progress, R.string.milli_ethereum);
+                case VIEW_TYPE_HISTORY_HEADER:
+                    return new Header(parent, R.string.history_withdrawals, R.string.milli_ethereum);
+                case VIEW_TYPE_WITHDRAWAL:
+                    return new WithdrawalViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_withdrawal, parent, false));
             }
         }
         return viewHolder;
@@ -74,12 +110,14 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         if (holder instanceof SubmitWithdrawViewHolder) {
             ((SubmitWithdrawViewHolder) holder).setAddress(mDefaultWithdrawAddress);
             ((SubmitWithdrawViewHolder) holder).setAvailableValue(mAvailableValue);
+        } else if (holder instanceof WithdrawalViewHolder) {
+            ((WithdrawalViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
         }
     }
 
     @Override
     public int getItemCount() {
-        return 1;
+        return super.getItemCount() + 1;
     }
 
     class SubmitWithdrawViewHolder extends RecyclerView.ViewHolder {
@@ -112,5 +150,26 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         private boolean checkEthereum(String address) {
             return Pattern.matches("^0x[a-fA-F0-9]{40}$", address);
         }
+    }
+
+    class WithdrawalViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView mDateView;
+        private TextView mAddressView;
+        private TextView mAmount;
+
+        WithdrawalViewHolder(View itemView) {
+            super(itemView);
+            mDateView = itemView.findViewById(R.id.date);
+            mAddressView = itemView.findViewById(R.id.address);
+            mAmount = itemView.findViewById(R.id.amount);
+        }
+
+        void onBind(JsonWrapper item) {
+            mDateView.setText(item.getString(TeambrellaModel.ATTR_DATA_WITHDRAWAL_DATE));
+            mAddressView.setText(mDefaultWithdrawAddress);
+            mAmount.setText("10");
+        }
+
     }
 }

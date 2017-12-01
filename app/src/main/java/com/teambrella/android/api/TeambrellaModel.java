@@ -59,6 +59,16 @@ public class TeambrellaModel {
     }
 
 
+    public static final class WithdrawlsItemType {
+        public static final String ITEM_QUEUED_HEADER = "queued_header";
+        public static final String ITEM_QUEDUED = "queued";
+        public static final String ITEM_IN_PROCESS_HEADER = "in_process_header";
+        public static final String ITEM_IN_PROCESS = "in_procees";
+        public static final String ITEM_HISTORY_HEADER = "history_header";
+        public static final String ITEM_HISTORY = "history";
+    }
+
+
     public static final class TeamAccessLevel {
         public static final int NO_ACCESS = 0;
         public static final int HIDDEN_DETAILS_AND_EDIT_MINE = 1;
@@ -364,6 +374,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_OBJECT_COVERAGE = "ObjectCoverage";
     public static final String ATTR_DATA_VOTED_BY_PROXY_USER_ID = "VotedByProxyUserId";
     public static final String ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS = "DefaultWithdrawAddress";
+    public static final String ATTR_DATA_SERVER_TX_STATE = "ServerTxState";
+    public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
+
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";
