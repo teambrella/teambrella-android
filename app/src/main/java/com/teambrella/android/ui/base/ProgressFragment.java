@@ -78,7 +78,7 @@ public abstract class ProgressFragment extends Fragment {
         }
     }
 
-    protected void setRefreshing(@SuppressWarnings("SameParameterValue") boolean refreshing) {
+    public void setRefreshing(@SuppressWarnings("SameParameterValue") boolean refreshing) {
         if (mRefreshable != null) {
             mRefreshable.setRefreshing(refreshing);
         }

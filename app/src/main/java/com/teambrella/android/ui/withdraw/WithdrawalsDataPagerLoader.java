@@ -68,14 +68,17 @@ class WithdrawalsDataPagerLoader extends TeambrellaDataPagerLoader {
 
         if (mQueuedWithdrawals.size() > 1) {
             mArray.addAll(mQueuedWithdrawals);
+            mQueuedWithdrawals = new JsonArray();
         }
 
         if (mInProcessWithdrawals.size() > 1) {
             mArray.addAll(mInProcessWithdrawals);
+            mInProcessWithdrawals = new JsonArray();
         }
 
         if (mHistoryWithdrawals.size() > 1) {
             mArray.addAll(mHistoryWithdrawals);
+            mHistoryWithdrawals = new JsonArray();
         }
     }
 }

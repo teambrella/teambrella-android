@@ -17,7 +17,6 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.ui.base.ADataHostActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 
@@ -31,7 +30,6 @@ import io.reactivex.disposables.Disposable;
 public class WithdrawActivity extends ADataHostActivity implements IWithdrawActivity {
 
     public static final String WITHDRAWALS_DATA_TAG = "withdrawals_data";
-    public static final String WITHDRAWALS_REQUEST_DATA_TAG = "withdrawal_request_data";
     public static final String WITHDRAWALS_UI_TAG = "withdrawals_ui";
     public static final String WITHDRAWALS_INFO_DIALOG_TAG = "info_dialog";
 
@@ -41,7 +39,6 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
     private float mAvailableValue;
     private float mReservedValue;
     private Disposable mWithdrawalsDisposable;
-    private Disposable mRequestDisposable;
 
     public static void start(Context context, int teamId) {
         context.startActivity(new Intent(context, WithdrawActivity.class)
@@ -61,10 +58,6 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
             transaction.add(R.id.container
                     , ADataPagerProgressFragment.getInstance(WITHDRAWALS_DATA_TAG, WithdrawalsFragment.class)
                     , WITHDRAWALS_UI_TAG);
-        }
-
-        if (fragmentManager.findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG) == null) {
-            transaction.add(new TeambrellaRequestFragment(), WITHDRAWALS_REQUEST_DATA_TAG);
         }
 
         if (!transaction.isEmpty()) {
@@ -110,11 +103,6 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
     protected void onStart() {
         super.onStart();
         mWithdrawalsDisposable = getPager(WITHDRAWALS_DATA_TAG).getObservable().subscribe(this::onDataUpdated);
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
-        if (fragment != null) {
-            mRequestDisposable = fragment.getObservable().subscribe(this::onRequestResult);
-            fragment.start();
-        }
     }
 
     @Override
@@ -123,15 +111,6 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
         if (mWithdrawalsDisposable != null && !mWithdrawalsDisposable.isDisposed()) {
             mWithdrawalsDisposable.dispose();
             mWithdrawalsDisposable = null;
-        }
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
-        if (fragment != null) {
-            fragment.stop();
-        }
-
-        if (mRequestDisposable != null && !mRequestDisposable.isDisposed()) {
-            mRequestDisposable.dispose();
-            mRequestDisposable = null;
         }
     }
 
@@ -160,10 +139,17 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
 
     @Override
     public void requestWithdraw(String address, float amount) {
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(WITHDRAWALS_REQUEST_DATA_TAG);
-        if (fragment != null) {
-            fragment.request(TeambrellaUris.getNewWithdrawUri(mTeamId, amount, address));
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(WITHDRAWALS_DATA_TAG);
+        if (dataFragment != null) {
+            dataFragment.getPager().reload(TeambrellaUris.getNewWithdrawUri(mTeamId, amount, address));
         }
+
+        ADataPagerProgressFragment fragment = (ADataPagerProgressFragment) fragmentManager.findFragmentByTag(WITHDRAWALS_UI_TAG);
+        if (fragment != null) {
+            fragment.setRefreshing(true);
+        }
+
     }
 
     private void onDataUpdated(Notification<JsonObject> notification) {
@@ -176,9 +162,5 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
                         mReservedValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED);
                     }).blockingFirst();
         }
-    }
-
-    private void onRequestResult(Notification<JsonObject> response) {
-
     }
 }

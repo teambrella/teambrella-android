@@ -378,7 +378,6 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
 
 
-
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";
     public static final String ATTR_DATA_HE_COVERS_ME_IF1 = "HeCoversMeIf1";
     public static final String ATTR_DATA_HE_COVERS_ME_IF499 = "HeCoversMeIf499";

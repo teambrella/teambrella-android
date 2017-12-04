@@ -14,8 +14,8 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
  */
 class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
-    private static final int VIEW_TYPE_SUBMIT_WITHDRAWAL = VIEW_TYPE_REGULAR + 1;
-    private static final int VIEW_TYPE_QUEUED_HEADER = VIEW_TYPE_REGULAR + 2;
-    private static final int VIEW_TYPE_IN_PROCESS_HEADER = VIEW_TYPE_REGULAR + 3;
-    private static final int VIEW_TYPE_HISTORY_HEADER = VIEW_TYPE_REGULAR + 4;
+    static final int VIEW_TYPE_SUBMIT_WITHDRAWAL = VIEW_TYPE_REGULAR + 1;
+    static final int VIEW_TYPE_QUEUED_HEADER = VIEW_TYPE_REGULAR + 2;
+    static final int VIEW_TYPE_IN_PROCESS_HEADER = VIEW_TYPE_REGULAR + 3;
+    static final int VIEW_TYPE_HISTORY_HEADER = VIEW_TYPE_REGULAR + 4;
     private static final int VIEW_TYPE_WITHDRAWAL = VIEW_TYPE_REGULAR + 5;
 
     private String mDefaultWithdrawAddress;
@@ -56,12 +56,13 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        int viewType = super.getItemViewType(position);
-        if (viewType == VIEW_TYPE_REGULAR) {
-            if (position == 0) {
-                return VIEW_TYPE_SUBMIT_WITHDRAWAL;
-            } else {
-                position--;
+        int viewType;
+        if (position == 0) {
+            viewType = VIEW_TYPE_SUBMIT_WITHDRAWAL;
+        } else {
+            position--;
+            viewType = super.getItemViewType(position);
+            if (viewType == VIEW_TYPE_REGULAR) {
                 JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
                 switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString()) {
                     case TeambrellaModel.WithdrawlsItemType.ITEM_QUEUED_HEADER:
@@ -94,7 +95,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
                 case VIEW_TYPE_QUEUED_HEADER:
                     return new Header(parent, R.string.deferred_withdrawals, R.string.milli_ethereum);
                 case VIEW_TYPE_IN_PROCESS_HEADER:
-                    return new Header(parent, R.string.withdrawals_in_progress, R.string.milli_ethereum);
+                    return new Header(parent, R.string.withdrawals_in_progress, R.string.milli_ethereum, R.drawable.list_item_header_background_top);
                 case VIEW_TYPE_HISTORY_HEADER:
                     return new Header(parent, R.string.history_withdrawals, R.string.milli_ethereum);
                 case VIEW_TYPE_WITHDRAWAL:
@@ -133,7 +134,24 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             mAmountView = itemView.findViewById(R.id.amount_input);
             mSubmitView = itemView.findViewById(R.id.submit);
             mInfoView = itemView.findViewById(R.id.info);
-            mSubmitView.setOnClickListener(v -> mWithdrawActivity.requestWithdraw(mAddressView.getText().toString(), Float.parseFloat(mAmountView.getText().toString()) / 1000));
+            mSubmitView.setOnClickListener(v -> {
+                String address = mAddressView.getText().toString();
+                if (!checkEthereum(address)) {
+                    mAddressView.setError(itemView.getContext().getString(R.string.invalid_ethereum_address_error));
+                    return;
+                }
+
+                float amount = Float.parseFloat(mAmountView.getText().toString()) / 1000;
+
+                if (amount > mAvailableValue) {
+                    mAmountView.setError(itemView.getContext().getResources().getString(R.string.invalid_withdraw_amount_error, mAvailableValue));
+                    return;
+                }
+
+                mWithdrawActivity.requestWithdraw(address, amount);
+                mAmountView.setText(null);
+
+            });
             mInfoView.setOnClickListener(v -> mWithdrawActivity.showWithdrawInfo());
         }
 
@@ -144,7 +162,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void setAvailableValue(float value) {
-            mAmountView.setHint(String.format(Locale.US, "%d", Math.round(value * 1000)));
+            mAmountView.setHint(itemView.getContext().getResources().getString(R.string.eth_amount_format_string, value * 1000));
         }
 
         private boolean checkEthereum(String address) {
@@ -166,10 +184,11 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void onBind(JsonWrapper item) {
-            mDateView.setText(item.getString(TeambrellaModel.ATTR_DATA_WITHDRAWAL_DATE));
-            mAddressView.setText(mDefaultWithdrawAddress);
-            mAmount.setText("10");
+            mDateView.setText(TeambrellaDateUtils.getDatePresentation(mDateView.getContext()
+                    , TeambrellaDateUtils.TEAMBRELLA_UI_DATE_SHORT
+                    , item.getString(TeambrellaModel.ATTR_DATA_WITHDRAWAL_DATE)));
+            mAddressView.setText(item.getString(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS));
+            mAmount.setText(mDateView.getContext().getString(R.string.eth_amount_short_format_string, 1000 * item.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)));
         }
-
     }
 }
