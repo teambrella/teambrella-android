@@ -75,7 +75,7 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/header_button"
+                    android:background="@drawable/header_button_normal"
                     android:text="@string/report_claim"
                     android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="@+id/object_icon"
