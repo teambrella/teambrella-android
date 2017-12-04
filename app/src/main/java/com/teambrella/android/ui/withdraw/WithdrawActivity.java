@@ -158,8 +158,8 @@ public class WithdrawActivity extends ADataHostActivity implements IWithdrawActi
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                     .doOnNext(jsonWrapper -> {
-                        mAvailableValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE);
                         mReservedValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED);
+                        mAvailableValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE) - mReservedValue;
                     }).blockingFirst();
         }
     }

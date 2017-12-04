@@ -82,8 +82,9 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                     .doOnNext(jsonWrapper -> {
-                        ((WithdrawalsAdapter) mAdapter).setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
-                        ((WithdrawalsAdapter) mAdapter).setAvailableValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE));
+                        WithdrawalsAdapter adapter = (WithdrawalsAdapter) mAdapter;
+                        adapter.setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
+                        adapter.setAvailableValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE) - jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED));
                     }).blockingFirst();
         }
     }
