@@ -2,6 +2,8 @@
     <string name="ethereum" translatable="false">ETH</string>
     <string name="milli_ethereum" translatable="false">mETH</string>
     <string name="drop_down_icon">&#x25BC;</string>
+    <string name="eth_amount_format_string" translatable="false">%f</string>
+    <string name="eth_amount_short_format_string" translatable="false">%.2f</string>
 
     <string name="unknown_value">…</string>
     <string name="object_format_string" translatable="false">%1$s, %2$s</string>
@@ -267,4 +269,6 @@
     <string name="withdrawals_in_progress">Withdrawals in progress</string>
     <string name="deferred_withdrawals">Deferred withdrawals</string>
     <string name="history_withdrawals">History</string>
+    <string name="invalid_ethereum_address_error">Invalid ethereum address</string>
+    <string name="invalid_withdraw_amount_error">Withdraw amount must not be greater than %.2f mETH</string>
 </resources>
