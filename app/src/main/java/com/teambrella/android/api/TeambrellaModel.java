@@ -376,6 +376,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS = "DefaultWithdrawAddress";
     public static final String ATTR_DATA_SERVER_TX_STATE = "ServerTxState";
     public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
+    public static final String ATTR_DATA_IS_NEW = "IsNew";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

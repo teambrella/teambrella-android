@@ -57,7 +57,7 @@ class WithdrawalsDataPagerLoader extends TeambrellaDataPagerLoader {
             if (state < 0) {
                 item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.WithdrawlsItemType.ITEM_QUEDUED);
                 mQueuedWithdrawals.add(item);
-            } else if (state <= 10) {
+            } else if (state < 10) {
                 item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.WithdrawlsItemType.ITEM_IN_PROCESS);
                 mInProcessWithdrawals.add(item);
             } else {

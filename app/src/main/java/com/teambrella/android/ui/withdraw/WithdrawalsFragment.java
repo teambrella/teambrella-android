@@ -43,7 +43,7 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                     case WithdrawalsAdapter.VIEW_TYPE_BOTTOM:
                     case WithdrawalsAdapter.VIEW_TYPE_ERROR:
                     case WithdrawalsAdapter.VIEW_TYPE_LOADING:
-
+                    case WithdrawalsAdapter.VIEW_TYPE_EMPTY:
                         drawDivider = false;
                 }
 
@@ -56,6 +56,7 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                         case WithdrawalsAdapter.VIEW_TYPE_BOTTOM:
                         case WithdrawalsAdapter.VIEW_TYPE_ERROR:
                         case WithdrawalsAdapter.VIEW_TYPE_LOADING:
+                        case WithdrawalsAdapter.VIEW_TYPE_EMPTY:
                             drawDivider = false;
                     }
                 }

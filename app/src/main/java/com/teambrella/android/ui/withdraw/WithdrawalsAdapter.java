@@ -32,7 +32,6 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
     private String mDefaultWithdrawAddress;
 
     private float mAvailableValue;
-    private float mReservedValue;
     private final IWithdrawActivity mWithdrawActivity;
 
     WithdrawalsAdapter(IDataPager<JsonArray> pager, IWithdrawActivity withdrawActivity) {
@@ -48,10 +47,6 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
     void setAvailableValue(float availableValue) {
         mAvailableValue = availableValue;
         notifyItemChanged(0);
-    }
-
-    void setReservedValue(float reservedValue) {
-        mReservedValue = reservedValue;
     }
 
     @Override
@@ -113,7 +108,17 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             ((SubmitWithdrawViewHolder) holder).setAvailableValue(mAvailableValue);
         } else if (holder instanceof WithdrawalViewHolder) {
             ((WithdrawalViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
+        } else if (holder instanceof Header && getItemCount() > 2) {
+            ((Header) holder).setBackgroundDrawable(position == 1 ? R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
+            TextView subtitleView = holder.itemView.findViewById(R.id.status_subtitle);
+            subtitleView.setAllCaps(false);
         }
+    }
+
+    @Override
+    protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
+        return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+        };
     }
 
     @Override
@@ -164,6 +169,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
 
         void setAvailableValue(float value) {
             mAmountView.setHint(itemView.getContext().getResources().getString(R.string.eth_amount_format_string, value * 1000));
+            mSubmitView.setEnabled(mAvailableValue > 0f);
         }
 
         private boolean checkEthereum(String address) {
@@ -176,12 +182,14 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         private TextView mDateView;
         private TextView mAddressView;
         private TextView mAmount;
+        private View mNewIndicator;
 
         WithdrawalViewHolder(View itemView) {
             super(itemView);
             mDateView = itemView.findViewById(R.id.date);
             mAddressView = itemView.findViewById(R.id.address);
             mAmount = itemView.findViewById(R.id.amount);
+            mNewIndicator = itemView.findViewById(R.id.new_indicator);
         }
 
         void onBind(JsonWrapper item) {
@@ -190,6 +198,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
                     , item.getString(TeambrellaModel.ATTR_DATA_WITHDRAWAL_DATE)));
             mAddressView.setText(item.getString(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS));
             mAmount.setText(mDateView.getContext().getString(R.string.eth_amount_short_format_string, 1000 * item.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)));
+            mNewIndicator.setVisibility(item.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEW, false) ? View.VISIBLE : View.INVISIBLE);
         }
     }
 }
