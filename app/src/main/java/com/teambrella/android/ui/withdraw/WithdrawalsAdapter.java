@@ -150,7 +150,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
                 float amount = !TextUtils.isEmpty(amountString) ? Float.parseFloat(mAmountView.getText().toString()) / 1000 : 0;
 
                 if (amount <= 0 || amount > mAvailableValue) {
-                    mAmountView.setError(itemView.getContext().getResources().getString(R.string.invalid_withdraw_amount_error, mAvailableValue));
+                    mAmountView.setError(itemView.getContext().getResources().getString(R.string.invalid_withdraw_amount_error, mAvailableValue * 1000));
                     return;
                 }
 
