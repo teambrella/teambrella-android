@@ -1,10 +1,7 @@
 package com.teambrella.android.ui.withdraw;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -14,6 +11,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.widget.DividerItemDecoration;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -31,10 +29,10 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                LinearLayoutManager.VERTICAL) {
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
+
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            protected boolean canDrawChild(View view, RecyclerView parent) {
                 int position = parent.getChildAdapterPosition(view);
                 boolean drawDivider = true;
                 switch (parent.getAdapter().getItemViewType(position)) {
@@ -62,15 +60,9 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                     }
                 }
 
-                if (position != parent.getAdapter().getItemCount() - 1
-                        && drawDivider) {
-                    super.getItemOffsets(outRect, view, parent, state);
-                } else {
-                    outRect.setEmpty();
-                }
+                return drawDivider;
             }
         };
-        dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
     }
 
