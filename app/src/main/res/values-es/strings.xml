@@ -148,7 +148,7 @@
     <string name="claim_header_fully_paid">Completamente pagado</string>
     <string name="claim_vote_format_string">Votado(%d%%)</string>
     <string name="claim_reimbursed">Reembolsado</string>
-    <string name="bike_insurance">Cobertura para bicicleta</string>
+    <string name="bike_insurance">Robo</string>
     <string name="something_went_wrong_error">¡Oops, algo no ha ido bien…</string>
     <string name="no_internet_connection">No hay conexión de Internet</string>
     <string name="chat_not_voted_yet">No votado aún</string>
