@@ -262,7 +262,7 @@
     <string name="withdraw_details">Withdraw details</string>
     <string name="withdraw_information">Withdraw Information</string>
     <string name="to_address">To</string>
-    <string name="withdraw_amount_title">AMOUNT mETH</string>
+    <string name="withdraw_amount_title">AMOUNT</string>
     <string name="balance">Balance</string>
     <string name="withdraw_info_description_reserved">\nYou may request up to balance amount for withdrawal %1$dmETH.\n\nYou have %2$dmETH reserved for payment of claims. If some part of reserved funds becomes available, it would be automatically scheduled for the withdrawal.\n</string>
     <string name="withdraw_info_description">\nYou may request up to balance amount for withdrawal %1$dmETH.\n\n</string>

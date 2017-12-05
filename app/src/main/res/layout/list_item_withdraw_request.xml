@@ -57,10 +57,10 @@
 
     <com.teambrella.android.ui.widget.AkkuratRegularEditText
         android:id="@+id/amount_input"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/default_edit_text_background"
+        android:background="@drawable/postfix_edit_text_backround"
         android:inputType="numberDecimal"
         android:paddingBottom="10dp"
         android:paddingEnd="16dp"
@@ -68,7 +68,27 @@
         android:paddingTop="10dp"
         android:textColor="@color/charcoalGrey"
         android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/amount_prefix"
         app:layout_constraintTop_toBottomOf="@id/amount_title" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/amount_prefix"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/prefix_subtitle_background"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/milli_ethereum"
+        android:textColor="#71BEE0"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/amount_input"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amount_input" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
