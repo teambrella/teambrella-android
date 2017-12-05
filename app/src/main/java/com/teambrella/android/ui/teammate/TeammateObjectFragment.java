@@ -98,18 +98,8 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             dataObservable.map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM))
                     .doOnNext(jsonWrapper -> mCoverageType.setText(TeambrellaModel.getInsuranceTypeName(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))))
                     .doOnNext(jsonWrapper -> mCurrency = jsonWrapper.getString(TeambrellaModel.ATTR_DATA_CURRENCY, mCurrency))
-                    .doOnNext(jsonWrapper -> {
-                        if (mDataHost.getTeamId() == 2021) {
-                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.CAT)
-                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.CAT, mGender));
-                        } else if (mDataHost.getTeamId() == 2020) {
-                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(TeambrellaModel.InsuranceType.DOG)
-                                    : TeambrellaModel.getObjectNameWithOwner(TeambrellaModel.InsuranceType.DOG, mGender));
-                        } else {
-                            mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))
-                                    : TeambrellaModel.getObjectNameWithOwner(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE), mGender));
-                        }
-                    })
+                    .doOnNext(jsonWrapper -> mObjectTitle.setText(mDataHost.isItMe() ? TeambrellaModel.getMyObjectNamer(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE))
+                            : TeambrellaModel.getObjectNameWithOwner(jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE), mGender)))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
 
