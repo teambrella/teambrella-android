@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/default_edit_text_background"
+        android:hint="@string/ethereum_address"
         android:maxLength="42"
         android:paddingBottom="10dp"
         android:paddingEnd="16dp"
