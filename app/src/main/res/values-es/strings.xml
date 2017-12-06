@@ -251,7 +251,7 @@
 
     <string name="withdraw_details">Detalles de retirada</string>
     <string name="withdraw_information">Información de retirada</string>
-    <string name="to_address">A</string>
+    <string name="to_address">transferir a</string>
     <string name="withdraw_amount_title">CANTIDAD</string>
     <string name="balance">Balance</string>
     <string name="withdraw_info_description_reserved">Tu puedes solicitar hasta el saldo de la cantidad de retirada %1$dmETH.\n\n Tienes %2$dmETH reservado, si alguna parte de los fondos reservados está disponible, sería programado automáticamente para la retirada.</string>
