@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.withdraw;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.google.gson.JsonArray;
@@ -30,8 +29,8 @@ class WithdrawalsDataPagerLoader extends TeambrellaDataPagerLoader {
     private JsonArray mHistoryWithdrawals = new JsonArray();
 
 
-    WithdrawalsDataPagerLoader(Context context, Uri uri, String property) {
-        super(context, uri, property);
+    WithdrawalsDataPagerLoader(Uri uri, String property) {
+        super(uri, property);
     }
 
     @Override
