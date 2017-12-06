@@ -26,7 +26,7 @@
     <color name="divider">#d3d3d3</color>
     <color name="blueWithAHintOfPurple">#414ecc</color>
     <color name="listBackgroundColor">#F8FAFD</color>
-    <color name="listItemBackground">#FDFEFF</color>
+    <color name="listItemBackground">#FFFFFF</color>
     <color name="paleGrey">#e8edf2</color>
     <color name="battleshipGrey">#66737d</color>
     <color name="lightPeriwinkle20">#33bdc3ff</color>
