@@ -189,6 +189,12 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         public void setTitle(String title) {
             ((TextView) itemView.findViewById(R.id.status_title)).setText(title);
         }
+
+        public void setBackgroundDrawable(@DrawableRes int backgroundResId) {
+            if (backgroundResId > 0) {
+                itemView.setBackgroundResource(backgroundResId);
+            }
+        }
     }
 
 
@@ -234,5 +240,4 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             }
         }
     }
-
 }

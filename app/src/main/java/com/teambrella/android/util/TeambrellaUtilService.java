@@ -268,8 +268,12 @@ public class TeambrellaUtilService extends GcmTaskService {
                 break;
 
                 case CHECK_SOCKET:
-                    startService(new Intent(this, TeambrellaNotificationService.class)
-                            .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+                    try {
+                        startService(new Intent(this, TeambrellaNotificationService.class)
+                                .setAction(TeambrellaNotificationService.CONNECT_ACTION));
+                    } catch (Exception e) {
+                        Log.reportNonFatal(LOG_TAG, e);
+                    }
                     break;
                 case DEBUG_DB_TASK_TAG:
                     debugDB(this);
@@ -386,7 +390,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! No multisigs to create.");
             return false;
         }
-        if (isZeroBalance()){
+        if (isZeroBalance()) {
             Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! No funds.");
             return false;
         }

@@ -46,6 +46,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_DEMO = "demo";
     private static final String SEGMENT_DEBUG_DB = "debugDb";
     private static final String SEGMENT_DEBUG_LOG = "debugLog";
+    private static final String SEGMENT_WITHDRAWALS = "withdrawals";
+    private static final String SEGMENT_NEW_WITHDRAW = "newWithdraw";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -70,6 +72,7 @@ public class TeambrellaUris {
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_LANGUAGE = "language";
     public static final String KEY_SORTED_BY_RISK = "sortedByRisk";
+    public static final String KEY_AMOUNT = "amount";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -106,6 +109,8 @@ public class TeambrellaUris {
     public static final int DEMO_TEAMS = 31;
     public static final int DEBUG_DB = 32;
     public static final int DEBUG_LOG = 33;
+    public static final int WITHDRAWALS = 34;
+    public static final int NEW_WITHDRAW = 35;
 
 
     static {
@@ -142,6 +147,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_DB, DEBUG_DB);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_LOG, DEBUG_LOG);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_WITHDRAWALS, WITHDRAWALS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_NEW_WITHDRAW, NEW_WITHDRAW);
     }
 
 
@@ -527,6 +534,26 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_WALLET)
                 .appendEncodedPath(SEGMENT_ONE)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getWithdrawals(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_WALLET)
+                .appendEncodedPath(SEGMENT_WITHDRAWALS)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getNewWithdrawUri(int teamId, float amount, String address) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_WALLET)
+                .appendEncodedPath(SEGMENT_NEW_WITHDRAW)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_ADDRESS, address)
+                .appendQueryParameter(KEY_AMOUNT, Float.toString(amount))
                 .build();
     }
 

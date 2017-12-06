@@ -25,15 +25,14 @@ public class TeambrellaModel {
         public static final int DRONE = 140;
         public static final int MOBILE = 200;
         public static final int HOME_APPLIANCES = 220;
-        public static final int PET = 240;
+        public static final int DOG = 240;
+        public static final int CAT = 241;
         public static final int UNEMPLOYMENT = 260;
         public static final int HEALTH_DENTAL = 280;
         public static final int HEALTH_OTHER = 290;
         public static final int BUSINESS_BEES = 400;
         public static final int BUSINESS_CRIME = 440;
         public static final int BUSINESS_LIABILITY = 460;
-        public static final int CAT = 1001;
-        public static final int DOG = 1002;
     }
 
 
@@ -56,6 +55,16 @@ public class TeambrellaModel {
         public static final String ITEM_IN_PAYMENT = "in_payment";
         public static final String ITEM_PROCESSED_HEADER = "processed_header";
         public static final String ITEM_PROCESSED = "processed";
+    }
+
+
+    public static final class WithdrawlsItemType {
+        public static final String ITEM_QUEUED_HEADER = "queued_header";
+        public static final String ITEM_QUEDUED = "queued";
+        public static final String ITEM_IN_PROCESS_HEADER = "in_process_header";
+        public static final String ITEM_IN_PROCESS = "in_procees";
+        public static final String ITEM_HISTORY_HEADER = "history_header";
+        public static final String ITEM_HISTORY = "history";
     }
 
 
@@ -155,6 +164,8 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_IMAGES = "Images";
     public static final String ATTR_REQUEST_ADDRESS = "Address";
     public static final String ATTR_REQUEST_SORTED_BY_RISK = "OrderByRisk";
+    public static final String ATTR_REQUEST_TO_ADDRESS = "ToAddress";
+    public static final String ATTR_REQUEST_AMOUNT = "Amount";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
@@ -361,6 +372,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_VOTING_ENDS_IN = "VotingEndsIn";
     public static final String ATTR_DATA_OBJECT_COVERAGE = "ObjectCoverage";
     public static final String ATTR_DATA_VOTED_BY_PROXY_USER_ID = "VotedByProxyUserId";
+    public static final String ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS = "DefaultWithdrawAddress";
+    public static final String ATTR_DATA_SERVER_TX_STATE = "ServerTxState";
+    public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
+    public static final String ATTR_DATA_IS_NEW = "IsNew";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";
@@ -414,7 +429,8 @@ public class TeambrellaModel {
         switch (type) {
             case InsuranceType.CAR_COLLISION_DEDUCTIBLE:
                 return R.string.collision_deductible_insurance;
-            case InsuranceType.PET:
+            case InsuranceType.DOG:
+            case InsuranceType.CAT:
                 return R.string.pet_insurance;
             case InsuranceType.BICYCLE:
                 return R.string.bike_insurance;
@@ -427,7 +443,8 @@ public class TeambrellaModel {
     @StringRes
     public static int getObjectType(int type) {
         switch (type) {
-            case InsuranceType.PET:
+            case InsuranceType.CAT:
+            case InsuranceType.DOG:
                 return R.string.object_pet;
             case InsuranceType.BICYCLE:
                 return R.string.object_bike;
@@ -440,15 +457,6 @@ public class TeambrellaModel {
     @StringRes
     public static int getObjectNameWithOwner(int type, int gender) {
         switch (type) {
-            case InsuranceType.PET:
-                switch (gender) {
-                    case Gender.MALE:
-                        return R.string.his_pet;
-                    case Gender.FEMALE:
-                        return R.string.her_pet;
-                    default:
-                        return R.string.object_pet;
-                }
             case InsuranceType.BICYCLE:
                 switch (gender) {
                     case Gender.MALE:
@@ -486,8 +494,6 @@ public class TeambrellaModel {
     @StringRes
     public static int getMyObjectNamer(int type) {
         switch (type) {
-            case InsuranceType.PET:
-                return R.string.my_pet;
             case InsuranceType.BICYCLE:
                 return R.string.my_bike;
             case InsuranceType.CAT:

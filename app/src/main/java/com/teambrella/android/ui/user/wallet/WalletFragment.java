@@ -19,6 +19,7 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.ui.withdraw.WithdrawActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.QRCodeUtils;
 
@@ -40,12 +41,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private TextView mCurrencyView;
     private TextView mReservedValueView;
     private TextView mAvailableValueView;
-    private ImageView mQRCodeView;
     private TextView mMaxCoverageCryptoValue;
     private TextView mUninterruptedCoverageCryptoValue;
     private TextView mMaxCoverageCurrencyValue;
     private TextView mUninterruptedCoverageCurrencyValue;
-    private TextView mFundWalletButton;
     private View mCosignersView;
     private TeambrellaAvatarsWidgets mCosignersAvatar;
     private TextView mCosignersCountView;
@@ -59,12 +58,12 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mCurrencyView = view.findViewById(R.id.currency);
         mReservedValueView = view.findViewById(R.id.reserved_value);
         mAvailableValueView = view.findViewById(R.id.available_value);
-        mQRCodeView = view.findViewById(R.id.qr_code);
+        ImageView QRCodeView = view.findViewById(R.id.qr_code);
         mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
         mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
         mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
         mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
-        mFundWalletButton = view.findViewById(R.id.fund_wallet);
+        TextView fundWalletButton = view.findViewById(R.id.fund_wallet);
         mCosignersView = view.findViewById(R.id.cosigners);
         mCosignersAvatar = view.findViewById(R.id.cosigners_avatar);
         mCosignersCountView = view.findViewById(R.id.cosigners_count);
@@ -89,15 +88,15 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
             Observable.just(fundAddress).map(QRCodeUtils::createBitmap)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mQRCodeView::setImageBitmap, throwable -> {
+                    .subscribe(QRCodeView::setImageBitmap, throwable -> {
                     });
-            mFundWalletButton.setEnabled(true);
-            mQRCodeView.setVisibility(View.VISIBLE);
-            mQRCodeView.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
-            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
+            fundWalletButton.setEnabled(true);
+            QRCodeView.setVisibility(View.VISIBLE);
+            QRCodeView.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
+            fundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
         } else {
-            mFundWalletButton.setEnabled(false);
-            mQRCodeView.setVisibility(View.INVISIBLE);
+            fundWalletButton.setEnabled(false);
+            QRCodeView.setVisibility(View.INVISIBLE);
         }
 
 
@@ -114,7 +113,11 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
 
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
+        view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
+
         return view;
+
+
     }
 
     @SuppressLint("SetTextI18n")
