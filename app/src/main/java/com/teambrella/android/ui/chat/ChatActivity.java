@@ -182,7 +182,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         mAction = intent.getAction();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_claim_chat);
+        setContentView(R.layout.activity_chat);
 
         mNotificationManager = new TeambrellaNotificationManager(this);
 

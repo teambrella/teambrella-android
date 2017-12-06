@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -51,6 +52,12 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         setRefreshable(false);
         mList.setBackgroundColor(Color.TRANSPARENT);
         mList.setItemAnimator(null);
+    }
+
+
+    @Override
+    protected int getContentLayout() {
+        return R.layout.fragment_chat;
     }
 
     @Override
