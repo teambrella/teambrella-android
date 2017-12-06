@@ -181,7 +181,6 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         });
 
         AmountCurrencyUtil.setAmount(findViewById(R.id.deductible), 0f, mCurrency);
-
         mDescriptionView = findViewById(R.id.description);
         mAddressView = findViewById(R.id.address);
     }

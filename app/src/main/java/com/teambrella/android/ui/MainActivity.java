@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -41,6 +40,7 @@ import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
+import com.teambrella.android.util.log.Log;
 
 import java.util.Stack;
 
@@ -56,8 +56,19 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
  */
 public class MainActivity extends TeambrellaDataHostActivity implements IMainDataHost, ITeammateActivity {
 
+    /**
+     * Action to show feed
+     */
+    public static final String ACTION_SHOW_FEED = "action_show_feed";
+
+    /**
+     * Action to show wallet
+     */
+    public static final String ACTION_SHOW_WALLET = "action_show_wallet";
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
+
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
@@ -131,23 +142,37 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
             }
             mClient = new MainNotificationClient(this);
             mClient.connect();
+            onNewIntent(intent);
         } else {
             finish();
-            startActivity(new Intent(this, WelcomeActivity.class));
+            startActivity(new Intent(this, WelcomeActivity.class)
+                    .putExtra(WelcomeActivity.CUSTOM_ACTION, intent.getAction()));
         }
 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
-
         getComponent().inject(this);
-        Log.e("TEST", "" + mUser.getPrivateKey());
     }
 
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        String action = intent.getAction();
+
+        if (action != null) {
+            switch (action) {
+                case ACTION_SHOW_WALLET:
+                    showWallet();
+                    break;
+                case ACTION_SHOW_FEED:
+                    showFeed();
+                    break;
+            }
+            load(HOME_DATA_TAG);
+        }
+
     }
 
     private boolean onNavigationItemSelected(View view) {
@@ -395,6 +420,22 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mClient != null) {
+            mClient.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            mClient.onPause();
+        }
+    }
+
+    @Override
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
@@ -513,7 +554,19 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
         }
     }
 
+
+    private void showFeed() {
+        onNavigationItemSelected(findViewById(R.id.team));
+    }
+
+
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
+
+
+        private boolean mResumed;
+        private boolean mPrivateMessageOnResume;
+        private boolean mFeedDataOnResume;
+
 
         MainNotificationClient(Context context) {
             super(context);
@@ -521,15 +574,47 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
 
         @Override
         public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
-            load(HOME_DATA_TAG);
+            if (mResumed) {
+                load(HOME_DATA_TAG);
+            }
+            mPrivateMessageOnResume = !mResumed;
             return false;
         }
 
         @Override
         public boolean onPostCreated(int teamId, String userId, String topicId, String postId, String name, String avatar, String text) {
-            //getPager(FEED_DATA_TAG).reload();
+
+            if (mResumed) {
+                getPager(FEED_DATA_TAG).reload();
+                load(HOME_DATA_TAG);
+            }
+
+            mFeedDataOnResume = !mResumed;
             return false;
         }
+
+
+        private void onResume() {
+
+            mResumed = true;
+
+            if (mPrivateMessageOnResume || mFeedDataOnResume) {
+                load(HOME_DATA_TAG);
+                mPrivateMessageOnResume = false;
+            }
+
+            if (mFeedDataOnResume) {
+                getPager(FEED_DATA_TAG).reload();
+                mFeedDataOnResume = false;
+            }
+        }
+
+
+        private void onPause() {
+            mResumed = false;
+        }
+
+
     }
 }
 

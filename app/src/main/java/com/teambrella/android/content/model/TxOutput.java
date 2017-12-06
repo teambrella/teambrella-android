@@ -46,4 +46,10 @@ public class TxOutput implements Comparable<TxOutput> {
         return id.toString().toLowerCase()
                 .compareTo(o.id.toString().toLowerCase());
     }
+
+
+    @Override
+    public String toString() {
+        return "{id:" + id + ", txId:" + txId + ", payToId:" + payToId + ", cryptoAmount:" + cryptoAmount + "}";
+    }
 }

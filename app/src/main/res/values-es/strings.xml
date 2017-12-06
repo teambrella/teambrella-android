@@ -243,5 +243,10 @@
 
     <string name="pending_application_title">Tu solicitud todavía no está completa</string>
     <string name="pending_application_description"><![CDATA[Por favor, verifica las puntas que faltan y finalízala. Te esperamos! Contáctanos en <a href="mailto:support@teambrella.com">support@teambrella.com</a> si tienes alguna pregunta.]]></string>
+    <string name="retry">Reintentar</string>
+
+    <string name="new_demo_session_title">Nueva sesión demo</string>
+    <string name="new_demo_session_description">Hemos creado un nuevo equipo demo para ti. Es compatible con todas nuevas funciones y actualizaciones.</string>
+    <string name="back">Atrás</string>
 
 </resources>

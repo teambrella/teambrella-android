@@ -24,7 +24,7 @@ import io.reactivex.subjects.PublishSubject;
  * Teambrella Chat Data Pager Loader
  */
 public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
-    private final static int LIMIT = 100;
+    private final static int LIMIT = 200;
 
     private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
     private final PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();

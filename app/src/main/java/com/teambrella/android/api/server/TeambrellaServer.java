@@ -320,6 +320,8 @@ public class TeambrellaServer {
             case TeambrellaUris.NEW_FILE:
             case TeambrellaUris.INBOX:
             case TeambrellaUris.DEMO_TEAMS:
+            case TeambrellaUris.DEBUG_DB:
+            case TeambrellaUris.DEBUG_LOG:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -373,6 +375,10 @@ public class TeambrellaServer {
                 return mAPI.setProxyPosition(requestBody);
             case TeambrellaUris.NEW_FILE:
                 return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.DEBUG_DB:
+                return mAPI.debugDB(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.DEBUG_LOG:
+                return mAPI.debugLog(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.GET_COVERAGE_FOR_DATE:
                 return mAPI.getCoverageForDate(requestBody);
             case TeambrellaUris.NEW_CLAIM:
@@ -450,7 +456,7 @@ public class TeambrellaServer {
     }
 
 
-    public TeambrellaSocketClient createSocketClient(URI uri, SocketClientListener listener, long timstamp) {
+    public TeambrellaSocketClient createSocketClient(URI uri, SocketClientListener listener, long lastNotificationTimeStamp) {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = mKey.getPublicKeyAsHex();
         String signature = mKey.signMessage(Long.toString(timestamp));
@@ -459,7 +465,7 @@ public class TeambrellaServer {
         headers.put("key", publicKey);
         headers.put("sig", signature);
         headers.put("clientVersion", BuildConfig.VERSION_NAME);
-        return new TeambrellaSocketClient(uri, headers, listener, timestamp);
+        return new TeambrellaSocketClient(uri, headers, listener, lastNotificationTimeStamp);
     }
 
 
@@ -477,13 +483,13 @@ public class TeambrellaServer {
     public static class TeambrellaSocketClient extends WebSocketClient {
 
         private final SocketClientListener mListener;
-        private final long mTimeStamp;
+        private final long mLastNotificationTimeStamp;
 
 
-        TeambrellaSocketClient(URI serverUri, Map<String, String> httpHeaders, SocketClientListener listener, long timeStamp) {
+        TeambrellaSocketClient(URI serverUri, Map<String, String> httpHeaders, SocketClientListener listener, long lastNotificationTimeStamp) {
             super(serverUri, new Draft_6455(), httpHeaders, 1000 * 30);
             this.mListener = listener;
-            mTimeStamp = timeStamp;
+            mLastNotificationTimeStamp = lastNotificationTimeStamp;
         }
 
 
@@ -501,7 +507,7 @@ public class TeambrellaServer {
 
         @Override
         public void onOpen(ServerHandshake handshakeData) {
-            send("0" + (mTimeStamp > 0 ? (";" + mTimeStamp) : ""));
+            send("0" + (mLastNotificationTimeStamp > 0 ? (";" + mLastNotificationTimeStamp) : ""));
             mListener.onOpen();
         }
 

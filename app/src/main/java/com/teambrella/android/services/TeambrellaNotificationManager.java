@@ -67,10 +67,10 @@ public class TeambrellaNotificationManager {
     public void showWalletIsFundedNotification(String amount) {
         Notification notification = getBuilder()
                 .setContentTitle(mContext.getString(R.string.notification_funded_header))
-                .setContentText("+ " + amount + "mETH")
+                .setContentText("+ " + amount + " mETH")
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class)
+                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_WALLET)
                         , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         mNotificationManager.notify(17, notification);
@@ -82,7 +82,7 @@ public class TeambrellaNotificationManager {
                 .setContentTitle(mContext.getString(R.string.notification_messages_since, count))
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class)
+                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_FEED)
                         , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         mNotificationManager.notify(19, notification);
@@ -121,6 +121,17 @@ public class TeambrellaNotificationManager {
 
         mNotificationManager.notify(29, notification);
     }
+
+
+    /**
+     * Cancel chat notification
+     *
+     * @param topicId topic Id
+     */
+    public void cancelChatNotification(String topicId) {
+        mNotificationManager.cancel(topicId.hashCode());
+    }
+
 
     public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, boolean userTopic, String topicId, Intent intent) {
         NotificationCompat.Builder builder = getBuilder().setStyle(new NotificationCompat.BigTextStyle()

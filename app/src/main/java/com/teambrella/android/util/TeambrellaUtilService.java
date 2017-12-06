@@ -7,10 +7,9 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.RemoteException;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.OneoffTask;
@@ -34,11 +33,14 @@ import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
 
+import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,9 +56,12 @@ public class TeambrellaUtilService extends GcmTaskService {
     public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
     public static final String SYNC_WALLET_ONCE_TAG = "TEAMBRELLA-SYNC-WALLET-ONCE";
     public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
+    public static final String DEBUG_DB_TASK_TAG = "TEAMBRELLA_DEBUG_DB";
+    public static final String DEBUG_UPDATE_TAG = "TEAMBRELLA_DEBUG_UPDATE";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_URI = "uri";
+    private static final String EXTRA_DEBUG_LOGGING = "debug_logging";
 
 
     private final static String ACTION_UPDATE = "update";
@@ -74,10 +79,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     private ContentProviderClient mClient;
     private TeambrellaContentProviderClient mTeambrellaClient;
 
-    /**
-     * Key
-     */
     private ECKey mKey;
+    private EthWallet mWallet;
 
 
     public static void scheduleWalletSync(Context context) {
@@ -94,11 +97,34 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void oneoffWalletSync(Context context) {
+        oneoffWalletSync(context, false);
+    }
+
+
+    public static void oneoffWalletSync(Context context, boolean debug) {
+        Bundle extra = new Bundle();
+        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
         OneoffTask task = new OneoffTask.Builder()
                 .setService(TeambrellaUtilService.class)
                 .setTag(SYNC_WALLET_ONCE_TAG)
                 .setExecutionWindow(0L, 1L)
                 .setRequiresCharging(false)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setExtras(extra)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void oneOffUpdate(Context context, boolean debug) {
+        Bundle extra = new Bundle();
+        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(DEBUG_UPDATE_TAG)
+                .setExecutionWindow(0L, 1L)
+                .setRequiresCharging(false)
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
+                .setExtras(extra)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
     }
@@ -111,7 +137,18 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setPersisted(true)
                 .setPeriod(60)     // 30 minutes period
                 .setFlex(30)       // +/- 10 minutes
+                .setUpdateCurrent(true) // kill tasks with the same tag if any
                 .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static void scheduleDebugDB(Context context) {
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(TeambrellaUtilService.class)
+                .setTag(DEBUG_DB_TASK_TAG)
+                .setExecutionWindow(0L, 1L)
+                .setRequiresCharging(false)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
     }
@@ -121,11 +158,10 @@ public class TeambrellaUtilService extends GcmTaskService {
     public void onCreate() {
         //Log.v(LOG_TAG, "Periodic task created");
         super.onCreate();
-
-        tryInit();
     }
 
-    private boolean tryInit() {
+    private boolean tryInit() throws CryptoException {
+        Log.d(LOG_TAG, "---> SYNC -> tryInit() started...");
         if (mKey != null) return true;
 
         TeambrellaUser user = TeambrellaUser.get(this);
@@ -135,6 +171,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             mServer = new TeambrellaServer(this, privateKey);
             mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
+            mWallet = getWallet();
             return true;
         } else {
             Log.w(LOG_TAG, "No crypto key has been generated for this user yet. Skipping the sync task till her Facebook login.");
@@ -152,7 +189,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
+        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
 
 //        if(BuildConfig.DEBUG){
 //            new android.os.AsyncTask<Void, Void, Void>() {
@@ -181,36 +218,74 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG:
-                    if (BuildConfig.DEBUG) {
-                        Log.v(LOG_TAG, "Sync wallet task ran");
+                    StatisticHelper.onWalletSync(this, tag);
+                    if (isDebugLogging(taskParams)) {
+                        Log.startDebugging(this);
                     }
+                    Log.d(LOG_TAG, "---> SYNC -> onRunTask() started... tag:" + tag);
                     try {
                         if (tryInit()) {
                             sync();
                         }
                     } catch (Exception e) {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(LOG_TAG, "sync attempt failed:");
-                            Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-                            Log.e(LOG_TAG, "sync error call stack was: ", e);
-                        }
-                        if (!BuildConfig.DEBUG) {
-                            Crashlytics.logException(e);
+                        Log.e(LOG_TAG, "sync attempt failed:");
+                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+                        Log.e(LOG_TAG, "sync error call stack was: ", e);
+                        Log.reportNonFatal(LOG_TAG, e);
+                    } finally {
+                        if (isDebugLogging(taskParams)) {
+                            String path = Log.stopDebugging();
+                            if (path != null) {
+                                debugLog(this, path);
+                            }
                         }
                     }
                     break;
+
+                case DEBUG_UPDATE_TAG: {
+                    if (isDebugLogging(taskParams)) {
+                        Log.startDebugging(this);
+                    }
+                    Log.d(LOG_TAG, "---> UPDATE -> onRunTask() started... tag:" + tag);
+                    try {
+                        if (tryInit()) {
+                            update();
+                        }
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "update attempt failed:");
+                        Log.e(LOG_TAG, "update error message was: " + e.getMessage());
+                        Log.e(LOG_TAG, "update error call stack was: ", e);
+                        Log.reportNonFatal(LOG_TAG, e);
+                    } finally {
+                        if (isDebugLogging(taskParams)) {
+                            String path = Log.stopDebugging();
+                            if (path != null) {
+                                debugLog(this, path);
+                            }
+                        }
+                    }
+                }
+                break;
+
                 case CHECK_SOCKET:
                     startService(new Intent(this, TeambrellaNotificationService.class)
                             .setAction(TeambrellaNotificationService.CONNECT_ACTION));
                     break;
+                case DEBUG_DB_TASK_TAG:
+                    debugDB(this);
+                    break;
             }
+        } else {
+            Log.reportNonFatal(LOG_TAG, "onRunTask got null tag.");
         }
+
         return GcmNetworkManager.RESULT_SUCCESS;
     }
 
     private void processIntent(Intent intent) throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
         String action = intent != null ? intent.getAction() : null;
         if (action != null) {
+            tryInit();
             switch (action) {
                 case ACTION_UPDATE:
                     update();
@@ -258,6 +333,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private boolean update() throws RemoteException, OperationApplicationException, TeambrellaException {
+        Log.d(LOG_TAG, "---> SYNC -> update() started...");
         boolean result = false;
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
@@ -277,6 +353,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             operations.addAll(mTeambrellaClient.applyUpdates(serverUpdates));
 
 
+            Log.d(LOG_TAG, " ---- SYNC -- update() operation count:" + operations.size());
             result = !operations.isEmpty();
 
             operations.addAll(TeambrellaContentProviderClient.clearNeedUpdateServerFlag());
@@ -294,39 +371,48 @@ public class TeambrellaUtilService extends GcmTaskService {
             mTeambrellaClient.setLastUpdatedTimestamp(timestamp);
 
         }
+        Log.d(LOG_TAG, " ^--- SYNC ^- update() finished! result:" + result);
         return result;
     }
 
     @SuppressWarnings("UnusedReturnValue")
     private boolean createWallets(long gasLimit) throws RemoteException, TeambrellaException, OperationApplicationException, CryptoException {
+        Log.d(LOG_TAG, "---> SYNC -> createWallets() started...");
+
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> myUncreatedMultisigs;
         myUncreatedMultisigs = mTeambrellaClient.getMultisigsToCreate(myPublicKey);
         if (myUncreatedMultisigs.size() == 0) {
+            Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! No multisigs to create.");
+            return false;
+        }
+        if (isZeroBalance()){
+            Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! No funds.");
             return false;
         }
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        EthWallet myWallet = getWallet();
-        myWallet.refreshGasPrice();
-        long myNonce = myWallet.checkMyNonce();
         for (Multisig m : myUncreatedMultisigs) {
+            Log.d(LOG_TAG, " ---- SYNC -- createWallets() detected 1 multisig to created. id:" + m.id);
+
             Multisig sameTeammateMultisig = getMyTeamMultisigIfAny(myPublicKey, m.teammateId, myUncreatedMultisigs);
             if (sameTeammateMultisig != null) {
 
+                Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() detected another multisig for the same teammate. Not supported.to created.");
                 // todo: move "cosigner list", and send to the server the move tx (not creation tx).
                 ////boolean needServerUpdate = (sameTeammateMultisig.address != null);
                 ////operations.add(mTeambrellaClient.setMutisigAddressTxAndNeedsServerUpdate(m, sameTeammateMultisig.address, sameTeammateMultisig.creationTx, needServerUpdate));
 
             } else {
-                long gasPrice = myWallet.getGasPriceForContractCreation();
-                String txHex = myWallet.createOneWallet(myNonce, m, gasLimit, gasPrice);
+                long gasPrice = mWallet.getGasPriceForContractCreation();
+                long myNonceBeforeCreation = mWallet.getMyNonce();
+                String txHex = mWallet.createOneWallet(m, gasLimit, gasPrice);
+                Log.d(LOG_TAG, " ---- SYNC -- createWallets() creation tx published. txHex:" + txHex);
                 if (txHex != null) {
                     // There could be 2 my pending mutisigs (Current and Next) for the same team. So we remember the first creation tx and don't create 2 contracts for the same team.
                     m.creationTx = txHex;
                     operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, txHex, false));
-                    operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, myNonce, new Date()));
-                    myNonce++;
+                    operations.add(mTeambrellaClient.insertUnconfirmed(m.id, txHex, gasPrice, myNonceBeforeCreation, new Date()));
                 }
             }
         }
@@ -334,8 +420,11 @@ public class TeambrellaUtilService extends GcmTaskService {
         if (!operations.isEmpty()) {
             // Since now the local db will remember all the created contracts.
             mClient.applyBatch(operations);
+            Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! result: true");
             return true;
         }
+
+        Log.d(LOG_TAG, " ^--- SYNC ^- createWallets() finished! result: false");
         return false;
     }
 
@@ -357,31 +446,37 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @SuppressWarnings("UnusedReturnValue")
     private boolean verifyIfWalletIsCreated(long gasLimit) throws CryptoException, RemoteException, OperationApplicationException {
+        Log.d(LOG_TAG, "---> SYNC -> verifyIfWalletIsCreated() started...");
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> creationTxes = mTeambrellaClient.getMultisigsInCreation(myPublicKey);
         for (Multisig m : creationTxes) {
+            Log.d(LOG_TAG, " ---- SYNC -- verifyIfWalletIsCreated() detected 1 multisig in creation. id:" + m.id);
 
             Unconfirmed oldUnconfirmed = mTeambrellaClient.getUnconfirmed(m.id, m.creationTx);
             m.unconfirmed = oldUnconfirmed;
 
-            getWallet().validateCreationTx(m, gasLimit);
+            mWallet.validateCreationTx(m, gasLimit);
             if (m.address != null) {
 
+                Log.d(LOG_TAG, " ---- SYNC -- verifyIfWalletIsCreated() address validated:" + m.address);
                 operations.add(TeambrellaContentProviderClient.setMultisigAddressAndNeedsServerUpdate(m, m.address));
 
             } else if (m.unconfirmed != oldUnconfirmed) {
 
+                Log.d(LOG_TAG, " ---- SYNC -- verifyIfWalletIsCreated() creation tx outdated. New creaton tx:" + m.creationTx);
                 operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
                 operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
 
             } else if (m.status == TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED) {
 
+                Log.d(LOG_TAG, " ---- SYNC -- verifyIfWalletIsCreated() creation tx failed");
                 operations.add(TeambrellaContentProviderClient.setMultisigStatus(m, TeambrellaModel.USER_MULTISIG_STATUS_CREATION_FAILED));
 
             } else if (m.unconfirmed == null) {
 
+                Log.d(LOG_TAG, " ---- SYNC -- verifyIfWalletIsCreated() creation tx not exist any more. Resetting creation tx.");
                 operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, null, false));
 
             }
@@ -389,17 +484,22 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
         if (!operations.isEmpty()) {
             mClient.applyBatch(operations);
+            Log.d(LOG_TAG, " ^--- SYNC ^- verifyIfWalletIsCreated() finished! result:true");
             return true;
         }
+        Log.d(LOG_TAG, " ^--- SYNC ^- verifyIfWalletIsCreated() finished! result:false");
         return false;
     }
 
     @SuppressWarnings("UnusedReturnValue")
     private boolean depositWallet() throws CryptoException, RemoteException {
+        Log.d(LOG_TAG, "---> SYNC -> depositWallet() started...");
+
         String myPublicKey = mKey.getPublicKeyAsHex();
         List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
         if (myCurrentMultisigs.size() == 1) {
-            return getWallet().deposit(myCurrentMultisigs.get(0));
+            Log.d(LOG_TAG, " ---- SYNC -- depositWallet() detected exactly 1 current multisig with address:" + myCurrentMultisigs.get(0).address);
+            return mWallet.deposit(myCurrentMultisigs.get(0));
         }
 
         return true;
@@ -407,11 +507,15 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @SuppressWarnings("UnusedReturnValue")
     private boolean autoApproveTxs() throws RemoteException, OperationApplicationException {
+        Log.d(LOG_TAG, "---> SYNC -> autoApproveTxs() started...");
+
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.addAll(mTeambrellaClient.autoApproveTxs());
         if (!operations.isEmpty()) {
+            Log.d(LOG_TAG, " ---- SYNC -- autoApproveTxs() detected approve count:" + operations.size());
             mClient.applyBatch(operations);
         }
+
         return !operations.isEmpty();
     }
 
@@ -432,11 +536,9 @@ public class TeambrellaUtilService extends GcmTaskService {
             case TeambrellaModel.TX_KIND_WITHDRAW:
                 Multisig multisig = tx.getFromMultisig();
                 if (multisig != null) {
-                    EthWallet wallet = getWallet();
 
-                    String from = multisig.address;
                     for (int i = 0; i < tx.txInputs.size(); i++) {
-                        byte[] signature = wallet.cosign(tx, tx.txInputs.get(i));
+                        byte[] signature = mWallet.cosign(tx, tx.txInputs.get(i));
                         operations.add(TeambrellaContentProviderClient.addSignature(tx.txInputs.get(i).id.toString(), userId, signature));
                     }
                 }
@@ -458,13 +560,20 @@ public class TeambrellaUtilService extends GcmTaskService {
         return new EthWallet(privateKey, keyStorePath, keyStoreSecret, BuildConfig.isTestNet);
     }
 
+    private boolean isZeroBalance() throws CryptoException {
+        return mWallet.getBalance().compareTo(BigDecimal.ZERO) <= 0;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException, CryptoException {
+        Log.d(LOG_TAG, "---> SYNC -> cosignApprovedTransactions() started...");
+
         List<Tx> list = mTeambrellaClient.getCosinableTx();
         Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
+                Log.d(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() detected tx to cosign. id:" + tx.id);
                 operations.addAll(cosignTransaction(tx, user.id));
                 operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
             }
@@ -502,17 +611,18 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @SuppressWarnings("UnusedReturnValue")
     private boolean publishApprovedAndCosignedTxs() throws RemoteException, OperationApplicationException, CryptoException {
+        Log.d(LOG_TAG, "---> SYNC -> publishApprovedAndCosignedTxs() started...");
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs();
+        List<Tx> txs = mTeambrellaClient.getApprovedAndCosignedTxs(mKey.getPublicKeyAsHex());
         for (Tx tx : txs) {
+            Log.d(LOG_TAG, " ---- SYNC -- publishApprovedAndCosignedTxs() detected tx to publish. id:" + tx.id);
 
-            EthWallet wallet = getWallet();
-            wallet.refreshGasPrice();
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
                 case TeambrellaModel.TX_KIND_WITHDRAW:
-                    String cryptoTxHash = wallet.publish(tx);
+                    String cryptoTxHash = mWallet.publish(tx);
+                    Log.d(LOG_TAG, " ---- SYNC -- publishApprovedAndCosignedTxs() published. tx hash:" + cryptoTxHash);
                     if (cryptoTxHash != null) {
                         operations.add(TeambrellaContentProviderClient.setTxPublished(tx, cryptoTxHash));
                         mClient.applyBatch(operations);
@@ -528,17 +638,12 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     private void sync() throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
-
-        if (BuildConfig.DEBUG) {
-            Log.v(LOG_TAG, "start syncing...");
-        }
+        Log.d(LOG_TAG, "---> SYNC -> sync() started...");
 
 
         boolean hasNews = true;
         for (int attempt = 0; attempt < 3 && hasNews; attempt++) {
-
-            boolean fixed = hotFix4CorruptedContract();
-            if (!fixed) continue;
+            Log.d(LOG_TAG, " ---- SYNC -- sync() attempt:" + attempt);
 
             createWallets(1_300_000);
             verifyIfWalletIsCreated(1_300_000);
@@ -555,31 +660,37 @@ public class TeambrellaUtilService extends GcmTaskService {
         backUpPrivateKey();
     }
 
-    private boolean hotFix4CorruptedContract() throws CryptoException, RemoteException, OperationApplicationException {
 
-        String myPublicKey = mKey.getPublicKeyAsHex();
-        List<Multisig> myCurrentMultisigs = mTeambrellaClient.getCurrentMultisigsWithAddress(myPublicKey);
-        mTeambrellaClient.joinCosigners(myCurrentMultisigs);
+    private static boolean isDebugLogging(TaskParams params) {
+        Bundle extras = params.getExtras();
+        return extras != null && extras.getBoolean(EXTRA_DEBUG_LOGGING, false);
+    }
 
-        if (myCurrentMultisigs.size() == 1) {
 
-            Multisig m = myCurrentMultisigs.get(0);
-            Unconfirmed oldUnconfirmed = m.unconfirmed;
-            String oldCreationTx = m.creationTx;
-
-            boolean fixed = getWallet().hotFix4CorruptedContract(myCurrentMultisigs.get(0));
-            if (fixed && m.unconfirmed != oldUnconfirmed && m.creationTx != oldCreationTx) {
-
-                ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-                operations.add(TeambrellaContentProviderClient.setMutisigAddressTxAndNeedsServerUpdate(m, null, m.creationTx, false));
-                operations.add(mTeambrellaClient.insertUnconfirmed(m.unconfirmed));
-                mClient.applyBatch(operations);
-
-            }
-            return fixed;
+    private static void debugDB(Context context) {
+        try {
+            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
+                    .blockingFirst();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "", e);
         }
+    }
 
-        return true;
+    private static void debugLog(Context context, String logPath) {
+        try {
+            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
+                    .blockingFirst();
+
+            File file = new File(logPath);
+            if (file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "", e);
+        }
     }
 
 

@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -22,6 +25,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -29,6 +33,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
@@ -38,6 +43,8 @@ import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 
 import java.io.File;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -92,6 +99,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     private ImageView mIcon;
     private Picasso mPicasso;
     private ChatNotificationClient mClient;
+    private TeambrellaNotificationManager mNotificationManager;
 
     public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
         context.startActivity(getTeammateChat(context, teamId, userId, userName, imageUri, topicId, accessLevel));
@@ -160,6 +168,9 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
 
+
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
+
         mUri = intent.getParcelableExtra(EXTRA_URI);
         mTopicId = intent.getStringExtra(EXTRA_TOPIC_ID);
         mUserId = intent.getStringExtra(EXTRA_USER_ID);
@@ -172,6 +183,9 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim_chat);
+
+        mNotificationManager = new TeambrellaNotificationManager(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -310,7 +324,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
         mClient = new ChatNotificationClient(this);
         mClient.connect();
-
         setResult(RESULT_OK);
     }
 
@@ -412,6 +425,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     }
 
 
+    @SuppressWarnings("ThrowableNotThrown")
     private void onDataUpdated(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             Observable.just(response.getValue())
@@ -422,6 +436,35 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                     .onErrorReturn(Notification::createOnError)
                     .doOnNext(this::onBasicPartUpdated)
                     .blockingFirst();
+
+            if (mTopicId != null) {
+                mNotificationManager.cancelChatNotification(mTopicId);
+            }
+
+        } else {
+            Throwable error = response.getError();
+
+            @StringRes final int message;
+
+            if (error instanceof TeambrellaClientException) {
+                Throwable cause = error.getCause();
+                message = cause instanceof SocketTimeoutException
+                        || cause instanceof UnknownHostException ? R.string.no_internet_connection : R.string.something_went_wrong_error;
+            } else {
+                message = R.string.something_went_wrong_error;
+            }
+
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.container), message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.retry, v -> getPager(DATA_FRAGMENT_TAG).reload())
+                    .setActionTextColor(getResources().getColor(R.color.lightGold));
+
+            snackbar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    ((CoordinatorLayout.LayoutParams) sb.getView().getLayoutParams()).setBehavior(null);
+                }
+            });
+            snackbar.show();
         }
     }
 
@@ -452,6 +495,22 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            mClient.onPause();
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mClient != null) {
+            mClient.onResume();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -516,6 +575,9 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
 
+        private boolean mResumed;
+        private boolean mReloadOnResume;
+
         ChatNotificationClient(Context context) {
             super(context);
         }
@@ -525,8 +587,12 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         public boolean onPrivateMessage(String userId, String name, String avatar, String text) {
             if (mAction.equals(SHOW_CONVERSATION_CHAT)
                     && userId.equals(mUserId)) {
-                getPager(DATA_FRAGMENT_TAG).loadNext(true);
-                return true;
+                if (mResumed) {
+                    getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                } else {
+                    mReloadOnResume = true;
+                }
+                return mResumed;
             }
 
             return false;
@@ -539,8 +605,12 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                 case SHOW_FEED_CHAT_ACTION:
                 case SHOW_TEAMMATE_CHAT_ACTION:
                     if (topicId.equals(mTopicId) && (userId != null && !userId.equals(TeambrellaUser.get(ChatActivity.this).getUserId()))) {
-                        getPager(DATA_FRAGMENT_TAG).loadNext(true);
-                        return true;
+                        if (mResumed) {
+                            getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                        } else {
+                            mReloadOnResume = true;
+                        }
+                        return mResumed;
                     }
             }
             return false;
@@ -548,7 +618,27 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
         @Override
         public boolean onChatNotification(String topicId) {
-            return topicId.equals(mTopicId);
+            if (topicId.equals(mTopicId)) {
+                if (!mResumed) {
+                    mReloadOnResume = true;
+                }
+            }
+            return mResumed && topicId.equals(mTopicId);
         }
+
+
+        private void onResume() {
+            mResumed = true;
+            if (mReloadOnResume) {
+                getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                mReloadOnResume = false;
+            }
+        }
+
+        private void onPause() {
+            mResumed = false;
+
+        }
+
     }
 }

@@ -1,9 +1,14 @@
 package com.teambrella.android.util;
 
+import android.content.Context;
+
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.teambrella.android.BuildConfig;
+import com.teambrella.android.TeambrellaApplication;
 
 /**
  * Statistic Helper
@@ -31,6 +36,10 @@ public class StatisticHelper {
     private static final String AMOUNT = "Amount";
     private static final String TEAMMATE_ID = "TeammateId";
     private static final String VOTE = "Vote";
+
+
+    private static final String CATEGORY_WALLET = "Wallet";
+    private static final String ACTION_SYNC = "Sync";
 
     public static void onTryDemo() {
         if (!BuildConfig.DEBUG) {
@@ -125,5 +134,14 @@ public class StatisticHelper {
         if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(RESTORE));
         }
+    }
+
+    public static void onWalletSync(Context context, String tag) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_WALLET)
+                .setAction(ACTION_SYNC)
+                .setLabel(tag)
+                .build());
     }
 }

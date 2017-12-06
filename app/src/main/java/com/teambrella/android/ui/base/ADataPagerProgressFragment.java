@@ -7,17 +7,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.util.log.Log;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -74,7 +74,9 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
                 try {
                     super.onLayoutChildren(recycler, state);
                 } catch (Throwable e) {
-                    Log.e("TEST", e.toString());
+                    if (BuildConfig.DEBUG) {
+                        Log.e("TEST", e.toString());
+                    }
                 }
             }
         });
@@ -123,10 +125,6 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     }
 
     protected void onDataUpdated(Notification<JsonObject> notification) {
-        if (notification.isOnNext()) {
-        } else {
-            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-        }
         setContentShown(true);
     }
 

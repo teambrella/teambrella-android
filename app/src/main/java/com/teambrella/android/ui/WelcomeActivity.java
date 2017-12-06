@@ -9,7 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,6 +25,7 @@ import com.facebook.login.LoginResult;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -33,11 +34,14 @@ import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
+import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -50,6 +54,8 @@ import io.reactivex.Notification;
 public class WelcomeActivity extends AppCompatRequestActivity {
 
     public static final String FACEBOOK_ID_EXTRA = "EXTRA_FACEBOOK_ID";
+
+    public static final String CUSTOM_ACTION = "extra_custom_action";
 
     private enum State {
         INIT,
@@ -263,7 +269,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
 
     private void tryAgainLater(Throwable throwable) {
-        Snackbar.make(findViewById(R.id.facebook_login), R.string.unable_to_connect_try_later, Snackbar.LENGTH_LONG)
+        boolean isInternetAvailable = ConnectivityUtils.isNetworkAvailable(this);
+        Snackbar.make(findViewById(R.id.facebook_login), isInternetAvailable ? R.string.unable_to_connect_try_later : R.string.no_internet_connection, Snackbar.LENGTH_LONG)
                 .addCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -276,6 +283,23 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         }
                     }
                 })
+                .show();
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.logException(throwable);
+        }
+    }
+
+    private void noInternetConnectionTryAgain(final Uri uri, Throwable throwable) {
+        Snackbar.make(findViewById(R.id.facebook_login), R.string.no_internet_connection, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry, view -> {
+                    switch (TeambrellaUris.sUriMatcher.match(uri)) {
+                        case TeambrellaUris.DEMO_TEAMS:
+                            onTryDemo(findViewById(R.id.try_demo));
+                        default:
+                            request(uri);
+                    }
+                })
+                .setActionTextColor(getResources().getColor(R.color.lightGold))
                 .show();
         if (!BuildConfig.DEBUG) {
             Crashlytics.logException(throwable);
@@ -335,7 +359,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
                         startActivity(MainActivity.getLaunchIntent(WelcomeActivity.this
                                 , mUser.getUserId()
-                                , team.getObject().toString()));
+                                , team.getObject().toString()).setAction(getIntent().getStringExtra(CUSTOM_ACTION)));
 
                         mUser.setTeamId(team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID));
                         finish();
@@ -382,6 +406,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                             mBackupData.setValue(Integer.toString(mFacebookId.hashCode()), null);
                         }
                         break;
+                    case TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH:
+                        setState(State.INIT);
+                        break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
                         setState(State.PENDING_APPLICATION);
                         break;
@@ -389,11 +416,20 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         tryAgainLater(error);
                         break;
                 }
+                mFacebookId = null;
+            } else if (error instanceof TeambrellaClientException) {
+                Throwable cause = error.getCause();
+                if (cause instanceof SocketTimeoutException
+                        || cause instanceof UnknownHostException) {
+                    noInternetConnectionTryAgain(((TeambrellaClientException) error).getUri(), error);
+                } else {
+                    mFacebookId = null;
+                    tryAgainLater(error);
+                }
             } else {
                 tryAgainLater(error);
+                mFacebookId = null;
             }
-
-            mFacebookId = null;
         }
     }
 

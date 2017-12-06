@@ -116,6 +116,18 @@ class ChatAdapter extends ChatDataPagerAdapter {
         }
     }
 
+    @Override
+    protected RecyclerView.ViewHolder createErrorViewHolder(ViewGroup parent) {
+        return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+        };
+    }
+
+
+    @Override
+    protected RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
+        return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+        };
+    }
 
     private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
         private SimpleDateFormat mDateFormat = new SimpleDateFormat("HH:mm d LLLL", Locale.ENGLISH);

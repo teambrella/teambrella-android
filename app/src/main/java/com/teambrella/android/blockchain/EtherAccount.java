@@ -1,10 +1,10 @@
 package com.teambrella.android.blockchain;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.teambrella.android.BuildConfig;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -91,18 +91,13 @@ public class EtherAccount {
         );
 
         try {
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "Constructing tx: " + json);
-            }
+            Log.v(LOG_TAG, "Constructing tx: " + json);
             Transaction tx = Geth.newTransactionFromJSON(json);
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "Tx constructed.");
-            }
+            Log.v(LOG_TAG, "Tx constructed.");
             return tx;
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, "" + e.getMessage(), e);
-            } else {
+            Log.e(LOG_TAG, "" + e.getMessage(), e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
             throw new CryptoException("" + e.getMessage(), e);
@@ -120,20 +115,16 @@ public class EtherAccount {
                 weis
         );
 
-        if (BuildConfig.DEBUG) {
-            Log.v(LOG_TAG, "Constructing deposit tx:" + json);
-        }
+        Log.v(LOG_TAG, "Constructing deposit tx:" + json);
+
 
         try {
             Transaction tx = Geth.newTransactionFromJSON(json);
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "deposit tx constructed.");
-            }
+            Log.v(LOG_TAG, "deposit tx constructed.");
             return tx;
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, "", e);
-            } else {
+            Log.e(LOG_TAG, "", e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
             throw new CryptoException(e.getMessage(), e);
@@ -150,23 +141,21 @@ public class EtherAccount {
                 "0x" + methodId + AbiArguments.encodeToHexString(methodArgs)
         );
 
-        if (BuildConfig.DEBUG) {
-            Log.v(LOG_TAG, "Constructing deposit tx:" + json);
-        }
+        Log.v(LOG_TAG, "Constructing message tx:" + json);
+
 
         try {
             Transaction tx = Geth.newTransactionFromJSON(json);
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "deposit tx constructed.");
-            }
+            Log.v(LOG_TAG, "message tx constructed.");
             return tx;
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, "", e);
-            } else {
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
+            }else{
+                Log.e(LOG_TAG, "" + e.getMessage(), e);
             }
-            throw new CryptoException(e.getMessage(), e);
+
+            return null;
         }
     }
 
@@ -175,9 +164,8 @@ public class EtherAccount {
         try {
             return mKeyStore.signTxPassphrase(mAccount, mKeyStoreSecret, unsignedTx, getChainId(isTestnet));
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, "Could not sign tx; isTestnet:" + isTestnet + ". " + e.getMessage(), e);
-            } else {
+            Log.e(LOG_TAG, "Could not sign tx; isTestnet:" + isTestnet + ". " + e.getMessage(), e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
             throw new CryptoException(e.getMessage(), e);
@@ -187,14 +175,11 @@ public class EtherAccount {
     public byte[] signHash(byte[] hash256) throws CryptoException {
 
         try {
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "signing hash: " + Hex.fromBytes(hash256));
-            }
+            Log.v(LOG_TAG, "signing hash: " + Hex.fromBytes(hash256));
             return mKeyStore.signHashPassphrase(mAccount, mKeyStoreSecret, hash256);
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, "Could not sign hash:" + Hex.fromBytes(hash256) + ". " + e.getMessage(), e);
-            } else {
+            Log.e(LOG_TAG, "Could not sign hash:" + Hex.fromBytes(hash256) + ". " + e.getMessage(), e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
             throw new CryptoException(e.getMessage(), e);
@@ -220,9 +205,8 @@ public class EtherAccount {
 
             return acc;
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e("Test", "Was unnable to read account.", e);
-            } else {
+            Log.e(LOG_TAG, "Was unnable to read account.", e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
             throw new CryptoException(e.getMessage(), e);
@@ -236,10 +220,7 @@ public class EtherAccount {
     private byte[] sign(String target) {
 
         try {
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
-            }
-
+            Log.v(LOG_TAG, "Signing last 32 bytes of a string: " + target);
             byte[] targetAsBytes = Hex.toBytes(target);
             int len = targetAsBytes.length;
             if (len < 32)
@@ -250,9 +231,8 @@ public class EtherAccount {
             return sig;
 
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-            } else {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
         }

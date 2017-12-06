@@ -1,7 +1,7 @@
 package com.teambrella.android.blockchain;
 
 
-import android.util.Log;
+import com.teambrella.android.util.log.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

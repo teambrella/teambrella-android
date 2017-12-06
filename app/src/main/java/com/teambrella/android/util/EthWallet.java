@@ -1,7 +1,6 @@
 package com.teambrella.android.util;
 
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.teambrella.android.BuildConfig;
@@ -22,6 +21,7 @@ import com.teambrella.android.content.model.Tx;
 import com.teambrella.android.content.model.TxInput;
 import com.teambrella.android.content.model.TxOutput;
 import com.teambrella.android.content.model.Unconfirmed;
+import com.teambrella.android.util.log.Log;
 
 import org.ethereum.geth.Transaction;
 
@@ -44,20 +44,27 @@ class EthWallet {
     private final EtherAccount mEtherAcc;
     private final boolean mIsTestNet;
 
-    public static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
-    public static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
+    private static final BigDecimal MIN_GAS_WALLET_BALANCE = new BigDecimal(0.0075, MathContext.UNLIMITED);
+    private static final BigDecimal MAX_GAS_WALLET_BALANCE = new BigDecimal(0.01, MathContext.UNLIMITED);
 
-    public long mGasPrice = 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
-    public long mContractGasPrice = 100_000_001L;
-    public long mTestGasPrice = 100_000_001L;
-    public long mTestContractGasPrice = 100_000_001L;
+    private BigDecimal mBalance = new BigDecimal(-1, MathContext.UNLIMITED);    // cashed balance to minimise Blockchain Node traffic during multiple sync loops.
+    private long mNonce = -1;                                                       // cashed nonce to minimise Blockchain Node traffic during multiple sync loops.
 
-    public EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
+    private long mGasPrice = -1;
+    private long mContractGasPrice = -1;
+    private long mTestGasPrice = -1;
+    private long mTestContractGasPrice = -1;
+
+    EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
     }
 
-    public String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
+    String createOneWallet(Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
+        return createOneWallet(getMyNonce(), m, gasLimit, gasPrice);
+    }
+
+    String createOneWallet(long myNonce, Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
 
         List<Cosigner> cosigners = m.cosigners;
         int n = cosigners.size();
@@ -83,8 +90,7 @@ class EthWallet {
         cryptoTx = mEtherAcc.signTx(cryptoTx, mIsTestNet);
         Log.v(LOG_TAG, toCreationInfoString(m) + " signed.");
 
-        String txHex = publish(cryptoTx);
-        return txHex;
+        return publish(cryptoTx);
     }
 
     /**
@@ -94,7 +100,7 @@ class EthWallet {
      * @param m        the given multisig object with original TX hash to check.
      * @return The original multisig object with updated address (when verified successfully), updated error status (if any), or new unconfirmed tx if original TX is outdated.
      */
-    public void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
+    void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
 
@@ -118,7 +124,6 @@ class EthWallet {
             }
 
             setErrorStatusIfAny(m, receipt, allGasIsUsed);
-            return;
         }
     }
 
@@ -143,7 +148,6 @@ class EthWallet {
 
                     m.unconfirmed = newUnconfirmed;
                     m.creationTx = recreatedTxHash;
-                    return;
                 }
             }
         }
@@ -163,26 +167,28 @@ class EthWallet {
         }
     }
 
-    public boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
+    boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
-        BigDecimal gasWalletAmount = blockchain.checkBalance(mEtherAcc.getDepositAddress());
+        BigDecimal gasWalletAmount = getBalance();
 
         if (gasWalletAmount.compareTo(MAX_GAS_WALLET_BALANCE) > 0) {
 
-            long myNonce = checkMyNonce();
             BigDecimal value = gasWalletAmount.subtract(MIN_GAS_WALLET_BALANCE, MathContext.UNLIMITED);
             org.ethereum.geth.Transaction depositTx;
-            depositTx = mEtherAcc.newDepositTx(myNonce, 50_000L, multisig.address, refreshGasPrice(), value);
+            depositTx = mEtherAcc.newDepositTx(getMyNonce(), 50_000L, multisig.address, getGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
-            publish(depositTx);
+            String txHash = publish(depositTx);
+            if (txHash != null){
+                mBalance = mBalance.subtract(value, MathContext.UNLIMITED);    // neglect gas cost; estimate value only. Until tx is mined rough balance estimate is ok..
+            }
         }
 
         return true;
     }
 
 
-    public byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
+    byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
 
         int opNum = payFrom.previousTxIndex + 1;
 
@@ -215,7 +221,7 @@ class EthWallet {
         }
 
         Multisig myMultisig = tx.getFromMultisig();
-        long myNonce = checkMyNonce();
+        long myNonce = getMyNonce();
         long gasLimit = 500_000L;
         long gasPrice = getGasPrice();
         String multisigAddress = myMultisig.address;
@@ -246,6 +252,11 @@ class EthWallet {
         }
 
         Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
+        if (cryptoTx == null){
+            Log.w(LOG_TAG, "tx was skipped. Seek details in the log above. Tx.id: " + tx.id);
+            return null;
+        }
+
         try {
             Log.v(LOG_TAG, "tx cratated: " + cryptoTx.encodeJSON());
         } catch (Exception e) {
@@ -258,12 +269,16 @@ class EthWallet {
         return publish(cryptoTx);
     }
 
-    public long refreshGasPrice() {
+    long refreshGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
-        if (price < 0 || price > 4_000_000_001L) {
-            // The server is kidding us
-            return getGasPrice();
+        if (price < 0) {
+            Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
+            return 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
+        }else if (price > 4_000_000_001L) {
+            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the gas price: " + price);
+            // The server is kidding with us
+            return 4_000_000_001L;
         }
 
         if (mIsTestNet) {
@@ -273,13 +288,18 @@ class EthWallet {
         return mGasPrice = price;
     }
 
-    public long refreshContractCreateGasPrice() {
+    private long refreshContractCreateGasPrice() {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkContractCreationGasPrice();
-        if (price < 0 || price > 8_000_000_002L) {
-            // The server is kidding us
-            return getGasPriceForContractCreation();
+        if (price < 0) {
+            Log.reportNonFatal(LOG_TAG, "Failed to get the contract gas price from a server. A default contract gas price will be used.");
+            return 100_000_001L;
+        }else if (price > 8_000_000_002L) {
+            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the contract gas price: " + price);
+            // The server is kidding with us
+            return 8_000_000_002L;
         }
+
 
         if (mIsTestNet) {
             return mTestContractGasPrice = price;
@@ -288,18 +308,37 @@ class EthWallet {
         return mContractGasPrice = price;
     }
 
-    public long getGasPrice() {
-        return mIsTestNet ? mTestGasPrice : mGasPrice;
+    private long getGasPrice() {
+        if (mIsTestNet){
+            return mTestGasPrice < 0 ? refreshGasPrice() : mTestGasPrice;
+        }
+        return mGasPrice < 0 ? refreshGasPrice() : mGasPrice;
     }
 
-    public long getGasPriceForContractCreation() {
-        return mIsTestNet ? mTestContractGasPrice : mContractGasPrice;
+    long getGasPriceForContractCreation() {
+        if (mIsTestNet){
+            return mTestContractGasPrice < 0 ? refreshContractCreateGasPrice() : mTestContractGasPrice;
+        }
+        return mContractGasPrice < 0 ? refreshContractCreateGasPrice() : mContractGasPrice;
     }
 
 
-    public long checkMyNonce() {
+    long refreshMyNonce() {
         EtherNode blockchain = new EtherNode(mIsTestNet);
-        return blockchain.checkNonce(mEtherAcc.getDepositAddress());
+        return mNonce = blockchain.checkNonce(mEtherAcc.getDepositAddress());
+    }
+
+    long getMyNonce() {
+        return mNonce < 0 ? refreshMyNonce() : mNonce;
+    }
+
+    BigDecimal refreshBalance(){
+        EtherNode blockchain = new EtherNode(mIsTestNet);
+        return mBalance = blockchain.checkBalance(mEtherAcc.getDepositAddress());
+    }
+
+    BigDecimal getBalance(){
+        return  (mBalance.compareTo(BigDecimal.ZERO) < 0) ? refreshBalance() : mBalance;
     }
 
     private long getBetterGasPriceForContractCreation(long oldPrice) {
@@ -325,13 +364,17 @@ class EthWallet {
     private String publish(Transaction cryptoTx) throws RemoteException {
         try {
             byte[] rlp = cryptoTx.encodeRLP();
-            if (BuildConfig.DEBUG) {
-                Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
-            }
+            Log.v(LOG_TAG, "Publishing 'Multisig creation' tx:" + cryptoTx.getHash().getHex() + " " + cryptoTx.encodeJSON());
+
             String hex = "0x" + Hex.fromBytes(rlp);
 
             EtherNode blockchain = new EtherNode(mIsTestNet);
-            return blockchain.pushTx(hex);
+            String txHash = blockchain.pushTx(hex);
+            if (txHash != null){
+                mNonce++;
+            }
+            return txHash;
+
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "" + e.getMessage(), e);
@@ -390,39 +433,6 @@ class EthWallet {
 
     private static String toCreationInfoString(long teamId, String creationTx) {
         return String.format("'Multisig creation(teamId=%s)' tx:%s", teamId, creationTx);
-    }
-
-
-    public boolean hotFix4CorruptedContract(Multisig m) throws CryptoException, RemoteException {
-
-        EtherNode blockchain = new EtherNode(mIsTestNet);
-        int teamId = blockchain.readContractInt(m.address, METHOD_ID_M_TEAMID);
-        if (teamId == 0x40) {
-            // corrupted !
-
-            long gasPrice = refreshContractCreateGasPrice();
-            long nonce = checkMyNonce();
-            String recreatedTxHash = createOneWallet(nonce, m, 1_300_000, gasPrice);
-
-            if (recreatedTxHash != null) {
-                Unconfirmed newUnconfirmed = new Unconfirmed();
-                newUnconfirmed.setDateCreated(new Date());
-                newUnconfirmed.cryptoFee = gasPrice;
-                newUnconfirmed.cryptoTx = recreatedTxHash;
-                newUnconfirmed.cryptoNonce = nonce;
-                newUnconfirmed.multisigId = m.id;
-
-                m.unconfirmed = newUnconfirmed;
-                m.creationTx = recreatedTxHash;
-                return true;
-            }
-
-            return false;   // stop syncing. Wait for fix.
-        } else if (teamId < 2000) {
-            return false;   // stop syncing. Wait for fix.
-        }
-
-        return true;
     }
 
 

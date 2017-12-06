@@ -93,12 +93,12 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
                     });
             mFundWalletButton.setEnabled(true);
             mQRCodeView.setVisibility(View.VISIBLE);
+            mQRCodeView.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
+            mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
         } else {
             mFundWalletButton.setEnabled(false);
             mQRCodeView.setVisibility(View.INVISIBLE);
         }
-
-        mFundWalletButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), mDataHost.getFundAddress()));
 
 
         AmountCurrencyUtil.setCryptoAmount(mMaxCoverageCryptoValue, 0);

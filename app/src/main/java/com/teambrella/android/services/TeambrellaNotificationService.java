@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
@@ -20,6 +19,8 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.TeambrellaUtilService;
+import com.teambrella.android.util.log.Log;
 
 import java.net.URI;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -67,6 +68,9 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     private static final int NEW_TEAMMATE = 8;
     private static final int NEW_DISCUSSION = 9;
     private static final int TOPIC_MESSAGE_NOTIFICATION = 21;
+    private static final int DEBUG_DB = 101;
+    private static final int DEBUG_UPDATE = 102;
+    private static final int DEBUG_SYNC = 103;
 
 
     public interface ITeambrellaNotificationServiceBinder extends IBinder {
@@ -250,9 +254,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     onMessage(message);
                     return START_STICKY;
                 case Intent.ACTION_BOOT_COMPLETED:
-                    if (BuildConfig.DEBUG) {
-                        Log.e(LOG_TAG, "boot complete");
-                    }
+                    Log.e(LOG_TAG, "boot complete");
             }
         }
 
@@ -263,11 +265,10 @@ public class TeambrellaNotificationService extends Service implements Teambrella
     @Override
     public void onMessage(String message) {
         try {
+            Log.reportNonFatal(LOG_TAG, "Got a message: " + message);
             processMessage(message);
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(LOG_TAG, e.toString());
-            }
+            Log.e(LOG_TAG, e.toString());
             if (!BuildConfig.DEBUG) {
                 Crashlytics.logException(e);
             }
@@ -455,7 +456,17 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                     }
                 }
             }
+            break;
 
+            case DEBUG_DB:
+                TeambrellaUtilService.scheduleDebugDB(this);
+                break;
+            case DEBUG_SYNC:
+                TeambrellaUtilService.oneoffWalletSync(this, true);
+                break;
+            case DEBUG_UPDATE:
+                TeambrellaUtilService.oneOffUpdate(this, true);
+                break;
         }
     }
 

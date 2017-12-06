@@ -52,7 +52,8 @@
 
         <activity
             android:name=".ui.chat.ChatActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name=".ui.claim.ReportClaimActivity"
@@ -80,6 +81,11 @@
             android:name=".ui.teammates.TeammatesByRiskActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.demo.NewDemoSessionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Modal" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"
@@ -101,6 +107,12 @@
         <receiver android:name=".util.BootCompletedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".util.UserPresentBroadCastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
 
