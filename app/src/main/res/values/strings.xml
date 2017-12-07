@@ -271,4 +271,5 @@
     <string name="history_withdrawals">History</string>
     <string name="invalid_ethereum_address_error">Invalid ethereum address</string>
     <string name="invalid_withdraw_amount_error">Withdrawal amount must not be greater than %.2f mETH</string>
+    <string name="vote">Vote</string>
 </resources>

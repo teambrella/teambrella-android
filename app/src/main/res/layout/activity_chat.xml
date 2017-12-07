@@ -75,7 +75,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/input"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="58dp"
         android:background="@drawable/edit_top_shadow" />
 
 
