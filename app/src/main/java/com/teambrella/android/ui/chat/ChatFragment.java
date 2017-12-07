@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -13,11 +15,14 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 /**
@@ -27,6 +32,12 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
 
     long mLastRead = Long.MAX_VALUE;
+
+
+    private View mVotingPanelView;
+    private TextView mTitleView;
+    private TextView mSubtitleView;
+    private ImageView mIcon;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -52,6 +63,11 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         setRefreshable(false);
         mList.setBackgroundColor(Color.TRANSPARENT);
         mList.setItemAnimator(null);
+
+        mVotingPanelView = view.findViewById(R.id.voting_panel);
+        mTitleView = view.findViewById(R.id.title);
+        mSubtitleView = view.findViewById(R.id.subtitle);
+        mIcon = view.findViewById(R.id.image);
     }
 
 
@@ -69,8 +85,25 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) && metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE) > 0) {
 
                 mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
-                JsonWrapper data = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_DATA).getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
-                mLastRead = data.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, Long.MAX_VALUE);
+                JsonWrapper data = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_DATA);
+                JsonWrapper discussionPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
+                mLastRead = discussionPart.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, Long.MAX_VALUE);
+
+
+                JsonWrapper basicPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                if (basicPart != null) {
+                    Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                            .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri))
+                            .map(requestCreator -> requestCreator.transform(new CropCircleTransformation()))
+                            .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                                // 8)
+                            });
+                    mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_NAME));
+                    mSubtitleView.setText(getString(R.string.object_format_string
+                            , basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL)
+                            , basicPart.getString(TeambrellaModel.ATTR_DATA_YEAR)));
+
+                }
             }
 
             if (mLastRead != -1) {
