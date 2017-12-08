@@ -19,6 +19,8 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -38,6 +40,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mTitleView;
     private TextView mSubtitleView;
     private ImageView mIcon;
+    private String mUserName;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -73,9 +76,17 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
             case TeambrellaUris.CLAIMS_CHAT:
                 mVotingPanelView.setVisibility(View.VISIBLE);
+                mVotingPanelView.setOnClickListener(v -> {
+                    ClaimActivity.start(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId());
+                    //getActivity().overridePendingTransition(0, 0);
+                });
                 break;
             case TeambrellaUris.TEAMMATE_CHAT:
                 mVotingPanelView.setVisibility(View.VISIBLE);
+                mVotingPanelView.setOnClickListener(v -> {
+                    TeammateActivity.start(getContext(), mDataHost.getTeamId(), mDataHost.getUserId(), mUserName, mDataHost.getImageUri());
+                    //getActivity().overridePendingTransition(0, 0);
+                });
                 break;
             case TeambrellaUris.CONVERSATION_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
@@ -118,7 +129,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                             .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
                                 // 8)
                             });
-                    mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_NAME));
+                    mUserName = basicPart.getString(TeambrellaModel.ATTR_DATA_NAME);
+                    mTitleView.setText(mUserName);
                     mSubtitleView.setText(getString(R.string.object_format_string
                             , basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL)
                             , basicPart.getString(TeambrellaModel.ATTR_DATA_YEAR)));

@@ -12,4 +12,14 @@ public interface IChatActivity extends IDataHost {
     int getTeamId();
 
     Uri getChatUri();
+
+    int getClaimId();
+
+    String getObjectName();
+
+    String getUserId();
+
+    String getUserName();
+
+    String getImageUri();
 }

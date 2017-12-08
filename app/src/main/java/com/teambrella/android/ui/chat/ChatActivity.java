@@ -445,6 +445,31 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     }
 
 
+    @Override
+    public int getClaimId() {
+        return getIntent().getIntExtra(EXTRA_CLAIM_ID, 0);
+    }
+
+    @Override
+    public String getObjectName() {
+        return getIntent().getStringExtra(EXTRA_OBJECT_NAME);
+    }
+
+    @Override
+    public String getUserId() {
+        return getIntent().getStringExtra(EXTRA_USER_ID);
+    }
+
+    @Override
+    public String getUserName() {
+        return getIntent().getStringExtra(EXTRA_USER_NAME);
+    }
+
+    @Override
+    public String getImageUri() {
+        return getIntent().getStringExtra(EXTRA_IMAGE_URI);
+    }
+
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
 
         private boolean mResumed;
