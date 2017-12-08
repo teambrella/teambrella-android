@@ -64,6 +64,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
+    private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
     private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
@@ -276,6 +277,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
@@ -390,6 +392,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.mute:
+                showNotificationSettings();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -468,6 +473,14 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     public String getImageUri() {
         return getIntent().getStringExtra(EXTRA_IMAGE_URI);
+    }
+
+
+    private void showNotificationSettings() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(NOTIFICATION_SETTINGS_FRAGMENT_TAG) == null) {
+            NotificationsSettingsDialogFragment.getInstance().show(fragmentManager, NOTIFICATION_SETTINGS_FRAGMENT_TAG);
+        }
     }
 
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {

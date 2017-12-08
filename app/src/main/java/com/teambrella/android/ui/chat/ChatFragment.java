@@ -36,6 +36,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     long mLastRead = Long.MAX_VALUE;
 
 
+    @SuppressWarnings("FieldCanBeLocal")
     private View mVotingPanelView;
     private TextView mTitleView;
     private TextView mSubtitleView;
