@@ -68,6 +68,26 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mTitleView = view.findViewById(R.id.title);
         mSubtitleView = view.findViewById(R.id.subtitle);
         mIcon = view.findViewById(R.id.image);
+
+
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                mVotingPanelView.setVisibility(View.VISIBLE);
+                break;
+            case TeambrellaUris.TEAMMATE_CHAT:
+                mVotingPanelView.setVisibility(View.VISIBLE);
+                break;
+            case TeambrellaUris.CONVERSATION_CHAT:
+                mVotingPanelView.setVisibility(View.GONE);
+                mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                break;
+            case TeambrellaUris.FEED_CHAT:
+                mVotingPanelView.setVisibility(View.GONE);
+                mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                break;
+
+        }
+
     }
 
 

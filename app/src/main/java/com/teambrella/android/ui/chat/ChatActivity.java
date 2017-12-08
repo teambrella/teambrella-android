@@ -202,6 +202,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
                     mMessageView.setLayoutParams(params);
                     break;
+
+                case SHOW_FEED_CHAT_ACTION:
+                    setTitle(intent.getStringExtra(EXTRA_TITLE));
+                    break;
             }
         }
 
