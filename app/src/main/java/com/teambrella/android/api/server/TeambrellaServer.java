@@ -221,7 +221,10 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.NEW_POST:
+
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
+
                 String message = uri.getQueryParameter(TeambrellaUris.KEY_TEXT);
                 if (message != null) {
                     requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, message);

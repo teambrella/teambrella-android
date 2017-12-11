@@ -45,6 +45,7 @@ import com.teambrella.android.util.ImagePicker;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -379,7 +380,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                             request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
                             break;
                         default:
-                            request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                            request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), mMessageView.getText().toString(), null));
                     }
                 }
                 mMessageView.setText(null);
@@ -414,7 +415,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case TeambrellaUris.NEW_FILE:
                     JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                             .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
-                    request(TeambrellaUris.getNewPostUri(mTopicId, null, array.toString()));
+                    request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), null, array.toString()));
                     break;
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:

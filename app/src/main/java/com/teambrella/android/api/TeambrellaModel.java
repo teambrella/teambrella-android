@@ -177,6 +177,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
     public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
+    public static final String ATTR_REQUEST_NEW_POST_ID = "NewPostId";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";
