@@ -11,12 +11,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,10 +32,12 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataHostActivity;
+import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 
@@ -44,6 +48,7 @@ import java.net.UnknownHostException;
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Claim chat
@@ -84,6 +89,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private Disposable mChatDisposable;
     private TextView mMessageView;
     private ImagePicker mImagePicker;
+    private TextView mTitle;
+    private TextView mSubtitle;
+    private ImageView mIcon;
     private ChatNotificationClient mClient;
     private TeambrellaNotificationManager mNotificationManager;
 
@@ -160,6 +168,18 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
+            if (mAction != null && mAction.equals(SHOW_CONVERSATION_CHAT)) {
+                actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
+                actionBar.setCustomView(R.layout.chat_toolbar_view);
+                View view = actionBar.getCustomView();
+                mTitle = view.findViewById(R.id.title);
+                mSubtitle = view.findViewById(R.id.subtitle);
+                mIcon = view.findViewById(R.id.icon);
+                Toolbar parent = (Toolbar) view.getParent();
+                parent.setPadding(0, 0, 0, 0);
+                parent.setContentInsetsAbsolute(0, 0);
+            }
+
         }
 
         mImagePicker = new ImagePicker(this);
@@ -202,6 +222,23 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
                     params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
                     mMessageView.setLayoutParams(params);
+                    if (mTitle != null) {
+                        mTitle.setText(R.string.private_conversation);
+                    }
+
+                    if (mSubtitle != null) {
+                        mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
+                    }
+
+                    Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
+
+                    if (mImageUri != null && mIcon != null) {
+                        TeambrellaImageLoader.getInstance(this).getPicasso().load(mImageUri)
+                                .transform(new CropCircleTransformation())
+                                .into(mIcon);
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));
+                    }
+
                     break;
 
                 case SHOW_FEED_CHAT_ACTION:
@@ -272,8 +309,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, R.id.mute, 0, null)
-                .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT))
+            menu.add(0, R.id.mute, 0, null)
+                    .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }
 
