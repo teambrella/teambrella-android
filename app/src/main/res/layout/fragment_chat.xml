@@ -18,7 +18,7 @@
         android:id="@+id/voting_panel"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@android:color/white"
+        android:background="@drawable/selectable_item_background"
         android:elevation="1dp">
 
         <android.support.v7.widget.AppCompatImageView
@@ -56,7 +56,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textAllCaps="true"
                 android:textSize="10sp"
                 tools:text="Claim Amount" />
 
@@ -66,6 +65,9 @@
             android:id="@+id/vote"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@drawable/selectable_item_background"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"

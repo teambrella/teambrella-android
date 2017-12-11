@@ -4,12 +4,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.RequestCreator;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -22,9 +24,12 @@ import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
+import java.util.Locale;
+
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
 /**
@@ -40,6 +45,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private View mVotingPanelView;
     private TextView mTitleView;
     private TextView mSubtitleView;
+    private TextView mVoteValueView;
+    private View mVoteButton;
     private ImageView mIcon;
     private String mUserName;
 
@@ -71,6 +78,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mVotingPanelView = view.findViewById(R.id.voting_panel);
         mTitleView = view.findViewById(R.id.title);
         mSubtitleView = view.findViewById(R.id.subtitle);
+        mVoteValueView = view.findViewById(R.id.vote_value);
+        mVoteButton = view.findViewById(R.id.vote);
         mIcon = view.findViewById(R.id.image);
 
 
@@ -81,10 +90,18 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     ClaimActivity.start(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId());
                     //getActivity().overridePendingTransition(0, 0);
                 });
+                mVoteButton.setOnClickListener(v -> {
+                    ClaimActivity.start(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId());
+                    //getActivity().overridePendingTransition(0, 0);
+                });
                 break;
             case TeambrellaUris.TEAMMATE_CHAT:
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(v -> {
+                    TeammateActivity.start(getContext(), mDataHost.getTeamId(), mDataHost.getUserId(), mUserName, mDataHost.getImageUri());
+                    //getActivity().overridePendingTransition(0, 0);
+                });
+                mVoteButton.setOnClickListener(v -> {
                     TeammateActivity.start(getContext(), mDataHost.getTeamId(), mDataHost.getUserId(), mUserName, mDataHost.getImageUri());
                     //getActivity().overridePendingTransition(0, 0);
                 });
@@ -123,38 +140,84 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
 
                 JsonWrapper basicPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                JsonWrapper votingPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
                 if (basicPart != null) {
-                    Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                            .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri))
-                            .map(requestCreator -> requestCreator.transform(new CropCircleTransformation()))
-                            .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
-                                // 8)
-                            });
-                    mUserName = basicPart.getString(TeambrellaModel.ATTR_DATA_NAME);
-                    mTitleView.setText(mUserName);
-                    mSubtitleView.setText(getString(R.string.object_format_string
-                            , basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL)
-                            , basicPart.getString(TeambrellaModel.ATTR_DATA_YEAR)));
 
-                }
-            }
-
-            if (mLastRead != -1) {
-                IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
-
-                int moveTo = pager.getLoadedData().size() - 1;
-                for (int i = 0; i < pager.getLoadedData().size(); i++) {
-                    JsonWrapper item = new JsonWrapper(pager.getLoadedData().get(i).getAsJsonObject());
-                    long created = item.getLong(TeambrellaModel.ATTR_DATA_CREATED, -1);
-                    if (created >= mLastRead) {
-                        moveTo = i;
+                    switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+                        case TeambrellaUris.CLAIMS_CHAT: {
+                            Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)))
+                                    .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri).resize(getResources().getDimensionPixelSize(R.dimen.image_size_42)
+                                            , getResources().getDimensionPixelSize(R.dimen.image_size_42)))
+                                    .map(RequestCreator::centerCrop)
+                                    .map(requestCreator -> requestCreator.transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)))
+                                    .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                                    });
+                            mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL));
+                            JsonWrapper teamPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
+                            mSubtitleView.setText(Html.fromHtml(getString(R.string.claim_amount_format_string, Math.round(basicPart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))
+                                    , teamPart != null ? teamPart.getString(TeambrellaModel.ATTR_DATA_CURRENCY) : "")));
+                        }
+                        break;
+                        case TeambrellaUris.TEAMMATE_CHAT: {
+                            Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                                    .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri))
+                                    .map(requestCreator -> requestCreator.transform(new CropCircleTransformation()))
+                                    .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                                        // 8)
+                                    });
+                            mUserName = basicPart.getString(TeambrellaModel.ATTR_DATA_NAME);
+                            mTitleView.setText(mUserName);
+                            mSubtitleView.setText(getString(R.string.object_format_string
+                                    , basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL)
+                                    , basicPart.getString(TeambrellaModel.ATTR_DATA_YEAR)));
+                            mSubtitleView.setAllCaps(true);
+                        }
                         break;
                     }
                 }
-                LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
-                manager.scrollToPositionWithOffset(moveTo, 0);
-                mLastRead = -1;
+
+                if (votingPart != null) {
+                    switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+                        case TeambrellaUris.CLAIMS_CHAT: {
+                            float myVote = votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
+                            if (myVote >= 0) {
+                                mVoteValueView.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (myVote * 100))));
+                            } else {
+                                mVoteValueView.setText(R.string.no_teammate_vote_value);
+                            }
+                        }
+                        break;
+                        case TeambrellaUris.TEAMMATE_CHAT: {
+                            float myVote = votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
+                            if (myVote >= 0) {
+                                mVoteValueView.setText(String.format(Locale.US, "%.2f", myVote));
+                            } else {
+                                mVoteValueView.setText(R.string.no_teammate_vote_value);
+                            }
+                        }
+                        break;
+                    }
+                } else {
+                    mVoteButton.setVisibility(View.GONE);
+                }
             }
+        }
+
+        if (mLastRead != -1) {
+            IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
+
+            int moveTo = pager.getLoadedData().size() - 1;
+            for (int i = 0; i < pager.getLoadedData().size(); i++) {
+                JsonWrapper item = new JsonWrapper(pager.getLoadedData().get(i).getAsJsonObject());
+                long created = item.getLong(TeambrellaModel.ATTR_DATA_CREATED, -1);
+                if (created >= mLastRead) {
+                    moveTo = i;
+                    break;
+                }
+            }
+            LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
+            manager.scrollToPositionWithOffset(moveTo, 0);
+            mLastRead = -1;
         }
     }
 }
