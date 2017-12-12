@@ -85,7 +85,7 @@
                 android:id="@+id/voting_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:orientation="vertical"
                 android:paddingEnd="8dp"
                 android:paddingStart="8dp"

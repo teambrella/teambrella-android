@@ -307,6 +307,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         mClient.disconnect();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT))
@@ -447,6 +448,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     throwable -> {
                     });
         }
+        getPager(DATA_FRAGMENT_TAG).loadNext(true);
     }
 
     @Override
