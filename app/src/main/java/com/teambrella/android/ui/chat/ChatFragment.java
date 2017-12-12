@@ -46,6 +46,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mTitleView;
     private TextView mSubtitleView;
     private TextView mVoteValueView;
+    private TextView mVoteTitleView;
     private View mVoteButton;
     private ImageView mIcon;
     private String mUserName;
@@ -81,6 +82,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mVoteValueView = view.findViewById(R.id.vote_value);
         mVoteButton = view.findViewById(R.id.vote);
         mIcon = view.findViewById(R.id.image);
+        mVoteTitleView = view.findViewById(R.id.your_vote_title);
 
 
         switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
@@ -171,6 +173,11 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                                     , basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL)
                                     , basicPart.getString(TeambrellaModel.ATTR_DATA_YEAR)));
                             mSubtitleView.setAllCaps(true);
+
+                            if (votingPart == null) {
+                                mVoteTitleView.setText(R.string.risk_factor);
+                                setTeammateVoteValue(basicPart.getFloat(TeambrellaModel.ATTR_DATA_RISK));
+                            }
                         }
                         break;
                     }
@@ -178,22 +185,11 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
                 if (votingPart != null) {
                     switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
-                        case TeambrellaUris.CLAIMS_CHAT: {
-                            float myVote = votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
-                            if (myVote >= 0) {
-                                mVoteValueView.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (myVote * 100))));
-                            } else {
-                                mVoteValueView.setText(R.string.no_teammate_vote_value);
-                            }
-                        }
-                        break;
+                        case TeambrellaUris.CLAIMS_CHAT:
+                            setClaimVoteValue(votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f));
+                            break;
                         case TeambrellaUris.TEAMMATE_CHAT: {
-                            float myVote = votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
-                            if (myVote >= 0) {
-                                mVoteValueView.setText(String.format(Locale.US, "%.2f", myVote));
-                            } else {
-                                mVoteValueView.setText(R.string.no_teammate_vote_value);
-                            }
+                            setTeammateVoteValue(votingPart.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f));
                         }
                         break;
                     }
@@ -218,6 +214,23 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
             LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
             manager.scrollToPositionWithOffset(moveTo, 0);
             mLastRead = -1;
+        }
+    }
+
+
+    private void setClaimVoteValue(float value) {
+        if (value >= 0) {
+            mVoteValueView.setText(Html.fromHtml(getString(R.string.vote_in_percent_format_string, (int) (value * 100))));
+        } else {
+            mVoteValueView.setText(R.string.no_teammate_vote_value);
+        }
+    }
+
+    private void setTeammateVoteValue(float value) {
+        if (value >= 0) {
+            mVoteValueView.setText(String.format(Locale.US, "%.2f", value));
+        } else {
+            mVoteValueView.setText(R.string.no_teammate_vote_value);
         }
     }
 }
