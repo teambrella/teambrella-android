@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,116 +10,122 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/paleGreyFour"
-        android:clipToPadding="false"
         android:overScrollMode="never"
-        android:paddingTop="42dp" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/voting_panel"
+
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@drawable/selectable_item_background"
-        android:elevation="1dp">
+        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/image"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/divider"
-            app:layout_constraintStart_toEndOf="@id/image"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textColor="@color/battleshipGreyTwo"
-                android:textSize="12sp"
-                tools:text="Audi A6" />
-
-            <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                android:id="@+id/subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="10sp"
-                tools:text="Claim Amount" />
-
-        </LinearLayout>
-
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/vote"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/voting_panel"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
             android:background="@drawable/selectable_item_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="@string/vote"
-            android:textColor="@color/blueWithAHintOfPurple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/image"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/voting_section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/vote"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_goneMarginEnd="8dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textColor="@color/battleshipGreyTwo"
+                    android:textSize="12sp"
+                    tools:text="Audi A6" />
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    android:id="@+id/subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="10sp"
+                    tools:text="Claim Amount" />
+
+            </LinearLayout>
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/your_vote_title"
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:id="@+id/vote"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_item_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/vote"
+                android:textColor="@color/blueWithAHintOfPurple"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
+            <LinearLayout
+                android:id="@+id/voting_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/your_vote"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/vote"
-                app:layout_constraintTop_toTopOf="@id/image" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginEnd="8dp">
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/vote_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="4dp"
-                android:text="@string/no_teammate_vote_value" />
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/your_vote_title"
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/your_vote"
+                    app:layout_constraintEnd_toStartOf="@id/vote"
+                    app:layout_constraintTop_toTopOf="@id/image" />
 
-        </LinearLayout>
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/vote_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:text="@string/no_teammate_vote_value" />
 
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="1dp"
-            android:layout_height="36dp"
-            android:background="@color/lightBlueGreyThree"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/voting_section"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-    </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+            <View
+                android:id="@+id/divider"
+                android:layout_width="1dp"
+                android:layout_height="36dp"
+                android:background="@color/lightBlueGreyThree"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/voting_section"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
