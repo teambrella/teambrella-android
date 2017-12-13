@@ -1,6 +1,7 @@
 package com.teambrella.android.ui;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
-import com.teambrella.android.util.log.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,6 +22,11 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialRequest;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
@@ -36,6 +41,7 @@ import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -56,6 +62,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     public static final String FACEBOOK_ID_EXTRA = "EXTRA_FACEBOOK_ID";
 
     public static final String CUSTOM_ACTION = "extra_custom_action";
+
+    private static final int READ_PRIVATE_KEY_REQUEST_CODE = 105;
 
     private enum State {
         INIT,
@@ -80,6 +88,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private State mState;
     private String mFacebookId;
     private TeambrellaBackupData mBackupData;
+    private GoogleApiClient mGoogleApiClient;
 
 
     @Override
@@ -107,6 +116,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mTryDemoInvite.setOnClickListener(this::onTryDemo);
 
         mFacebookId = savedInstanceState != null ? savedInstanceState.getString(FACEBOOK_ID_EXTRA, null) : null;
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(mConnectionCallbacks)
+                .enableAutoManage(this, mConnectionFailedListener)
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
 
         setState(State.INIT);
     }
@@ -197,6 +212,31 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void onFacebookLogin(View v) {
         setState(State.LOADING);
+        CredentialRequest request = new CredentialRequest.Builder()
+                .setPasswordLoginSupported(true)
+                .build();
+
+        Auth.CredentialsApi.request(mGoogleApiClient, request).setResultCallback(credentialRequestResult -> {
+            if (credentialRequestResult.getStatus().isSuccess()) {
+                Credential credential = credentialRequestResult.getCredential();
+                mUser.setPrivateKey(credential.getPassword());
+                getTeams(mUser.getPrivateKey());
+            } else {
+                if (credentialRequestResult.getStatus().getStatusCode() == CommonStatusCodes.RESOLUTION_REQUIRED) {
+                    try {
+                        credentialRequestResult.getStatus().startResolutionForResult(this, READ_PRIVATE_KEY_REQUEST_CODE);
+                    } catch (IntentSender.SendIntentException e) {
+                        loginByFacebook();
+                    }
+                } else {
+                    loginByFacebook();
+                }
+            }
+        });
+    }
+
+
+    private void loginByFacebook() {
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -317,6 +357,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallBackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == READ_PRIVATE_KEY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
+                mUser.setPrivateKey(credential.getPassword());
+                getTeams(mUser.getPrivateKey());
+            } else {
+                loginByFacebook();
+            }
+        }
     }
 
 
@@ -433,10 +482,27 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         }
     }
 
-
     private void setInvitationDescription(@StringRes int textId) {
         Spannable text = (Spannable) Html.fromHtml(getString(textId));
         mInvitationDescription.setMovementMethod(LinkMovementMethod.getInstance());
         mInvitationDescription.setText(text);
     }
+
+
+    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+    };
+
+
+    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = connectionResult -> {
+
+    };
 }

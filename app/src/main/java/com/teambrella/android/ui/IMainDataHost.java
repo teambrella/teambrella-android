@@ -44,4 +44,6 @@ public interface IMainDataHost extends IDataHost {
 
     void showWallet();
 
+    void backUpWallet();
+
 }

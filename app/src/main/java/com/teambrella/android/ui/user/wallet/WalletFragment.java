@@ -114,6 +114,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
         view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
+        view.findViewById(R.id.backup_wallet).setOnClickListener(v -> mDataHost.backUpWallet());
 
         return view;
 
@@ -172,6 +173,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
 
             mCosignersView.setOnClickListener(view -> CosignersActivity.start(getContext(), data.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS).toString()
                     , mDataHost.getTeamId()));
+
 
         }
         setContentShown(true);

@@ -2,6 +2,8 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,10 +12,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import com.teambrella.android.util.log.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -40,6 +46,7 @@ import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
+import com.teambrella.android.util.log.Log;
 
 import java.util.Stack;
 
@@ -64,6 +71,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
+    private static final int SAVE_PRIVATE_KEY_REQUEST_CODE = 103;
 
 
     private static final String USER_ID_EXTRA = "user_id_extra";
@@ -92,6 +100,8 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private int mSelectedItemId = -1;
     private String mUserId;
+    private String mUserName;
+    private Uri mUserPicture;
     private Disposable mDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
@@ -101,6 +111,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     private Stack<Integer> mBackStack = new Stack<>();
+
+
+    private GoogleApiClient mGoogleApiClient;
 
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
@@ -144,6 +157,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(mConnectionCallbacks)
+                .enableAutoManage(this, mConnectionFailedListener)
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
     }
 
 
@@ -287,6 +306,9 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                         .load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .transform(new CropCircleTransformation())
                         .into(mAvatar);
+
+                mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
+                mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             }
         });
     }
@@ -386,6 +408,12 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         getPager(CLAIMS_DATA_TAG).reload();
         load(USER_DATA);
         getPager(MY_PROXIES_DATA).reload();
+
+        if (requestCode == SAVE_PRIVATE_KEY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Wallet successfully backed up", Toast.LENGTH_SHORT).show();
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -522,6 +550,34 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     @Override
+    public void backUpWallet() {
+
+        Credential credential = new Credential.Builder(mUserId)
+                .setName(mUserName)
+                .setPassword(TeambrellaUser.get(this).getPrivateKey())
+                .setProfilePictureUri(mUserPicture)
+                .build();
+
+        Auth.CredentialsApi.save(mGoogleApiClient, credential).setResultCallback(
+                result -> {
+                    Status status = result.getStatus();
+                    if (status.isSuccess()) {
+                        Toast.makeText(this, "Wallet successfully backed up", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (status.hasResolution()) {
+                            try {
+                                status.startResolutionForResult(this, SAVE_PRIVATE_KEY_REQUEST_CODE);
+                            } catch (IntentSender.SendIntentException e) {
+                                Toast.makeText(this, "Back up failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "Back up failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    @Override
     public void launchActivity(Intent intent) {
         startActivityForResult(intent, DEFAULT_REQUEST_CODE);
     }
@@ -607,6 +663,24 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     }
+
+
+    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+    };
+
+
+    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = connectionResult -> {
+
+    };
 }
 
 
