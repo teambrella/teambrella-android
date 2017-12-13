@@ -202,6 +202,15 @@
                 android:text="@string/fund_wallet" />
 
 
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/backup_wallet"
+                style="@style/Teambrella.TextAppearence.SectionButton"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/backup_wallet" />
+
+
         </LinearLayout>
 
 
