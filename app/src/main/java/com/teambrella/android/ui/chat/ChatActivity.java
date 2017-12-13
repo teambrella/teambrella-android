@@ -31,7 +31,6 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
@@ -70,12 +69,18 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
-    private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
     private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
+
+
+    private enum MuteStatus {
+        DEFAULT,
+        MUTED,
+        UMMUTED
+    }
 
 
     private Uri mUri;
@@ -84,8 +89,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private String mUserId;
     private int mTeamId;
 
-
-    private Disposable mRequestDisposable;
     private Disposable mChatDisposable;
     private TextView mMessageView;
     private ImagePicker mImagePicker;
@@ -94,6 +97,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private ImageView mIcon;
     private ChatNotificationClient mClient;
     private TeambrellaNotificationManager mNotificationManager;
+    private MuteStatus mMuteStatus = null;
 
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
@@ -191,11 +195,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             transaction.add(R.id.container, ChatFragment.getInstance(DATA_FRAGMENT_TAG, ChatFragment.class), UI_FRAGMENT_TAG);
         }
 
-
-        if (fragmentManager.findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG) == null) {
-            transaction.add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT_TAG);
-        }
-
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
@@ -269,12 +268,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            mRequestDisposable = fragment.getObservable().subscribe(this::onRequestResult);
-            fragment.start();
-        }
-
         mChatDisposable = getPager(DATA_FRAGMENT_TAG).getObservable()
                 .subscribe(this::onDataUpdated);
     }
@@ -282,17 +275,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            fragment.stop();
-        }
-        if (mRequestDisposable != null && !mRequestDisposable.isDisposed()) {
-            mRequestDisposable.dispose();
-        }
-
-        mRequestDisposable = null;
-
-
         if (mChatDisposable != null && !mChatDisposable.isDisposed()) {
             mChatDisposable.dispose();
         }
@@ -310,9 +292,22 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT))
-            menu.add(0, R.id.mute, 0, null)
-                    .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT)) {
+            if (mMuteStatus != null) {
+                switch (mMuteStatus) {
+                    case DEFAULT:
+                    case MUTED:
+                        menu.add(0, R.id.unmute, 0, null)
+                                .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                        break;
+                    case UMMUTED:
+                        menu.add(0, R.id.mute, 0, null)
+                                .setIcon(R.drawable.ic_icon_bell_muted).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                        break;
+
+                }
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -339,21 +334,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         }
     }
 
-
-    public void request(Uri uri) {
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            fragment.request(uri);
-        }
-    }
-
-
     @Override
     public Uri getChatUri() {
         return getIntent().getParcelableExtra(EXTRA_URI);
     }
 
-    private void onRequestResult(Notification<JsonObject> response) {
+    protected void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
@@ -369,6 +355,15 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                     getPager(DATA_FRAGMENT_TAG).loadNext(true);
                     break;
+                case TeambrellaUris.MUTE:
+                    Observable.fromArray(response.getValue())
+                            .map(JsonWrapper::new)
+                            .map(jsonWrapper -> jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA, false))
+                            .doOnNext(isMuted -> {
+                                mMuteStatus = isMuted ? MuteStatus.MUTED : MuteStatus.UMMUTED;
+                                invalidateOptionsMenu();
+                            }).blockingFirst();
+                    break;
             }
         }
     }
@@ -380,7 +375,22 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             if (mTopicId != null) {
                 mNotificationManager.cancelChatNotification(mTopicId);
             }
-
+            Observable.fromArray(response.getValue())
+                    .map(JsonWrapper::new)
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
+                    .doOnNext(jsonWrapper -> {
+                        if (jsonWrapper.hasValue(TeambrellaModel.ATTR_DATA_IS_MUTED)) {
+                            if (jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA_IS_MUTED, false)) {
+                                mMuteStatus = MuteStatus.MUTED;
+                            } else {
+                                mMuteStatus = MuteStatus.UMMUTED;
+                            }
+                        } else {
+                            mMuteStatus = MuteStatus.DEFAULT;
+                        }
+                        invalidateOptionsMenu();
+                    }).blockingFirst();
         } else {
             Throwable error = response.getError();
 
@@ -432,7 +442,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 finish();
                 return true;
             case R.id.mute:
-                showNotificationSettings();
+                //showNotificationSettings();
+                request(TeambrellaUris.getSetChatMuted(mTopicId, true));
+                return true;
+            case R.id.unmute:
+                request(TeambrellaUris.getSetChatMuted(mTopicId, false));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -489,6 +503,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         super.setTitle(s);
     }
 
+    @Override
+    protected boolean isRequestable() {
+        return true;
+    }
 
     @Override
     public int getClaimId() {

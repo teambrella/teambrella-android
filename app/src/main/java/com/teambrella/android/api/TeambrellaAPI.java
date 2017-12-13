@@ -190,4 +190,8 @@ public interface TeambrellaAPI {
     @POST("wallet/newWithdraw")
     Observable<Response<JsonObject>> newWithdraw(@Body JsonElement body);
 
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/setIsMuted")
+    Observable<Response<JsonObject>> setChatMuted(@Body JsonElement body);
 }

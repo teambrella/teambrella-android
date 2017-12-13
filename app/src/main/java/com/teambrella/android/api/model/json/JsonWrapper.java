@@ -66,6 +66,11 @@ public class JsonWrapper {
         return defaultValue;
     }
 
+    public boolean hasValue(String key) {
+        JsonElement value = mObject.get(key);
+        return (value != null && !value.isJsonNull());
+    }
+
     /*
      * Get Boolean property
      */
