@@ -201,16 +201,6 @@
                 android:layout_height="42dp"
                 android:text="@string/fund_wallet" />
 
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/backup_wallet"
-                style="@style/Teambrella.TextAppearence.SectionButton"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/backup_wallet" />
-
-
         </LinearLayout>
 
 
@@ -232,7 +222,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:text="@string/cosigners"
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp" />
@@ -257,6 +247,24 @@
                 android:textSize="15sp" />
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/divder" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/backup_wallet"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/selectable_item_background"
+            android:gravity="start|center_vertical"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/backup_wallet"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="15sp" />
 
 
         <View
