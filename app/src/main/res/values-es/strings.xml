@@ -262,4 +262,14 @@
     <string name="invalid_ethereum_address_error">Dirección de Etheruem no valido</string>
     <string name="invalid_withdraw_amount_error">Cantidad para retirada no debe ser mayor que %.2f mETH</string>
 
+    <string name="vote">Votar</string>
+    <string name="notification_settings">Ajustes de notificación</string>
+    <string name="notification_option_unmuted_title">Seguir</string>
+    <string name="notification_option_unmuted_description">Recibirás notificaión de cada mensaje.</string>
+    <string name="notification_option_muted_title">Sin notificaciones</string>ó
+    <string name="notification_option_muted_description">Notificaciones se desactivarán por este chat.</string>
+    <string name="claim_amount_format_string"><![CDATA[RECLAMADO - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="mute_unmute_notification_help">Ahora recibes notificaciones de este discusión.</string>
+    <string name="message">Mensaje</string>
+
 </resources>
