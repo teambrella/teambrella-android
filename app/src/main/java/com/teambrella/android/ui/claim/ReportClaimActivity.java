@@ -42,6 +42,7 @@ import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -382,6 +383,11 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             return;
         }
 
+        if (!checkEthereumAddress(mAddressView.getText().toString())) {
+            mAddressView.setError(getString(R.string.invalid_ethereum_address_error));
+            return;
+        }
+
         request(TeambrellaUris.getNewClaimUri(mTeamId, mCalendar.getTime(),
                 mExpensesValue, mDescriptionView.getText().toString(),
                 mPhotoAdapter.getImages(),
@@ -392,6 +398,10 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG) == null) {
             new ProgressDialogFragment().show(getSupportFragmentManager(), PLEASE_WAIT_DIALOG_FRAGMENT_TAG);
         }
+    }
+
+    private boolean checkEthereumAddress(String address) {
+        return Pattern.matches("^0x[a-fA-F0-9]{40}$", address);
     }
 
 
