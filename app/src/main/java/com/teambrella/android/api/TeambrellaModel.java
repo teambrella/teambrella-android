@@ -295,6 +295,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_NEED_CRYPTO = "NeedCrypto";
     public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
     public static final String ATTR_DATA_GENDER = "Gender";
+    public static final String ATTR_DATA_REIMBURSEMENT = "Reimbursement";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";

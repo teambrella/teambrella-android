@@ -145,6 +145,11 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                         JsonWrapper teamPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
                         mSubtitleView.setText(Html.fromHtml(getString(R.string.claim_amount_format_string, Math.round(basicPart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))
                                 , teamPart != null ? teamPart.getString(TeambrellaModel.ATTR_DATA_CURRENCY) : "")));
+
+                        if (votingPart == null) {
+                            mVoteTitleView.setText(R.string.team_vote);
+                            setClaimVoteValue(basicPart.getFloat(TeambrellaModel.ATTR_DATA_REIMBURSEMENT, -1f));
+                        }
                     }
                     break;
                     case TeambrellaUris.TEAMMATE_CHAT: {
