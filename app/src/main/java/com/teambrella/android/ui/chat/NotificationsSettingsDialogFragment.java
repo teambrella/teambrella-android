@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.chat;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,8 +26,16 @@ public class NotificationsSettingsDialogFragment extends BottomSheetDialogFragme
     private static final int VIEW_TYPE_MUTE = 1;
 
 
+    private IChatActivity mChatActivity;
+
     public static NotificationsSettingsDialogFragment getInstance() {
         return new NotificationsSettingsDialogFragment();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mChatActivity = (IChatActivity) context;
     }
 
     @NonNull
@@ -48,18 +57,36 @@ public class NotificationsSettingsDialogFragment extends BottomSheetDialogFragme
         view.findViewById(R.id.close).setOnClickListener(v -> dismiss());
         LinearLayout list = view.findViewById(R.id.list);
         LayoutInflater inflater = LayoutInflater.from(getContext());
+        IChatActivity.MuteStatus muteStatus = mChatActivity != null ? mChatActivity.getMuteStatus() : IChatActivity.MuteStatus.DEFAULT;
         View unmute = inflater.inflate(R.layout.list_item_chat_notification_option, list, false);
-        initListItem(unmute, VIEW_TYPE_UNMUTE);
+        initListItem(unmute, VIEW_TYPE_UNMUTE, muteStatus == IChatActivity.MuteStatus.UMMUTED);
         list.addView(unmute);
-        View unmuted = inflater.inflate(R.layout.list_item_chat_notification_option, list, false);
-        initListItem(unmuted, VIEW_TYPE_MUTE);
-        list.addView(unmuted);
+        unmute.setOnClickListener(v -> {
+            if (mChatActivity != null) {
+                mChatActivity.setChatMuted(false);
+                dismiss();
+            }
+        });
+        View mute = inflater.inflate(R.layout.list_item_chat_notification_option, list, false);
+        initListItem(mute, VIEW_TYPE_MUTE, muteStatus == IChatActivity.MuteStatus.MUTED || muteStatus == IChatActivity.MuteStatus.DEFAULT);
+        list.addView(mute);
+        mute.setOnClickListener(v -> {
+            if (mChatActivity != null) {
+                mChatActivity.setChatMuted(true);
+                dismiss();
+            }
+        });
         dialog.setContentView(view);
         return dialog;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mChatActivity = null;
+    }
 
-    private void initListItem(View itemView, int viewType) {
+    private void initListItem(View itemView, int viewType, boolean checked) {
         ImageView icon = itemView.findViewById(R.id.icon);
         TextView title = itemView.findViewById(R.id.title);
         TextView subtitle = itemView.findViewById(R.id.subtitle);
@@ -69,13 +96,13 @@ public class NotificationsSettingsDialogFragment extends BottomSheetDialogFragme
                 icon.setImageResource(R.drawable.ic_icon_bell_green);
                 title.setText(R.string.notification_option_unmuted_title);
                 subtitle.setText(R.string.notification_option_unmuted_description);
-                isSelected.setVisibility(View.VISIBLE);
+                isSelected.setVisibility(checked ? View.VISIBLE : View.INVISIBLE);
                 break;
             case VIEW_TYPE_MUTE:
                 icon.setImageResource(R.drawable.ic_icon_bell_muted_red);
                 title.setText(R.string.notification_option_muted_title);
                 subtitle.setText(R.string.notification_option_muted_description);
-                isSelected.setVisibility(View.INVISIBLE);
+                isSelected.setVisibility(checked ? View.VISIBLE : View.INVISIBLE);
                 break;
         }
     }

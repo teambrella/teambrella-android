@@ -8,6 +8,12 @@ import com.teambrella.android.data.base.IDataHost;
  * Chat Activity
  */
 public interface IChatActivity extends IDataHost {
+    enum MuteStatus {
+        DEFAULT,
+        MUTED,
+        UMMUTED
+    }
+
 
     int getTeamId();
 
@@ -22,4 +28,8 @@ public interface IChatActivity extends IDataHost {
     String getUserName();
 
     String getImageUri();
+
+    MuteStatus getMuteStatus();
+
+    void setChatMuted(boolean muted);
 }

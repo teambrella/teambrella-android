@@ -75,14 +75,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
     private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
 
-
-    private enum MuteStatus {
-        DEFAULT,
-        MUTED,
-        UMMUTED
-    }
-
-
     private Uri mUri;
     private String mTopicId;
     private String mAction;
@@ -97,6 +89,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private ImageView mIcon;
     private ChatNotificationClient mClient;
     private TeambrellaNotificationManager mNotificationManager;
+    private View mNotificationHelpView;
     private MuteStatus mMuteStatus = null;
 
 
@@ -200,6 +193,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
         }
 
 
+        mNotificationHelpView = findViewById(R.id.notification_help);
+
         mMessageView = findViewById(R.id.text);
         findViewById(R.id.send_text).setOnClickListener(this::onClick);
         findViewById(R.id.send_image).setOnClickListener(this::onClick);
@@ -298,11 +293,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     case DEFAULT:
                     case MUTED:
                         menu.add(0, R.id.unmute, 0, null)
-                                .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                                .setIcon(R.drawable.ic_icon_bell_muted).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                         break;
                     case UMMUTED:
                         menu.add(0, R.id.mute, 0, null)
-                                .setIcon(R.drawable.ic_icon_bell_muted).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                                .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                         break;
 
                 }
@@ -384,6 +379,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                             if (jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA_IS_MUTED, false)) {
                                 mMuteStatus = MuteStatus.MUTED;
                             } else {
+                                if (mAction != null && !mAction.equals(SHOW_CONVERSATION_CHAT)) {
+                                    if (mMuteStatus == MuteStatus.DEFAULT) {
+                                        showNotificationHelp();
+                                    }
+                                }
                                 mMuteStatus = MuteStatus.UMMUTED;
                             }
                         } else {
@@ -442,11 +442,8 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 finish();
                 return true;
             case R.id.mute:
-                //showNotificationSettings();
-                request(TeambrellaUris.getSetChatMuted(mTopicId, true));
-                return true;
             case R.id.unmute:
-                request(TeambrellaUris.getSetChatMuted(mTopicId, false));
+                showNotificationSettings();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -506,6 +503,11 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     protected boolean isRequestable() {
         return true;
+    }
+
+    private void showNotificationHelp() {
+        mNotificationHelpView.setVisibility(View.VISIBLE);
+        mNotificationHelpView.postDelayed(() -> mNotificationHelpView.setVisibility(View.GONE), 5000);
     }
 
     @Override
@@ -607,6 +609,15 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             mResumed = false;
 
         }
+    }
 
+    @Override
+    public MuteStatus getMuteStatus() {
+        return mMuteStatus;
+    }
+
+    @Override
+    public void setChatMuted(boolean muted) {
+        request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
     }
 }
