@@ -48,6 +48,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_DEBUG_LOG = "debugLog";
     private static final String SEGMENT_WITHDRAWALS = "withdrawals";
     private static final String SEGMENT_NEW_WITHDRAW = "newWithdraw";
+    private static final String SEGMENT_MUTE = "mute";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -73,6 +74,7 @@ public class TeambrellaUris {
     public static final String KEY_LANGUAGE = "language";
     public static final String KEY_SORTED_BY_RISK = "sortedByRisk";
     public static final String KEY_AMOUNT = "amount";
+    public static final String KEY_MUTED = "muted";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -111,6 +113,7 @@ public class TeambrellaUris {
     public static final int DEBUG_LOG = 33;
     public static final int WITHDRAWALS = 34;
     public static final int NEW_WITHDRAW = 35;
+    public static final int MUTE = 36;
 
 
     static {
@@ -149,6 +152,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_LOG, DEBUG_LOG);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_WITHDRAWALS, WITHDRAWALS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_NEW_WITHDRAW, NEW_WITHDRAW);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_MUTE, MUTE);
     }
 
 
@@ -554,6 +558,16 @@ public class TeambrellaUris {
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_ADDRESS, address)
                 .appendQueryParameter(KEY_AMOUNT, Float.toString(amount))
+                .build();
+    }
+
+    public static Uri getSetChatMuted(String topicId, boolean muted) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_MUTE)
+                .appendQueryParameter(KEY_ID, topicId)
+                .appendQueryParameter(KEY_MUTED, Boolean.toString(muted))
                 .build();
     }
 

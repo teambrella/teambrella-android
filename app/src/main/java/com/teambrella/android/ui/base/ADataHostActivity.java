@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,7 @@ import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.demo.NewDemoSessionActivity;
 
@@ -31,8 +33,11 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class ADataHostActivity extends AppCompatActivity implements IDataHost {
 
+    private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
+
 
     private List<Disposable> mNewSessionDisposables = new LinkedList<>();
+    private Disposable mRequestDisposable;
 
 
     @Override
@@ -50,6 +55,12 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
         for (String tag : getPagerTags()) {
             if (fragmentManager.findFragmentByTag(tag) == null) {
                 transaction.add(getDataPagerFragment(tag), tag);
+            }
+        }
+
+        if (isRequestable()) {
+            if (fragmentManager.findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG) == null) {
+                transaction.add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT_TAG);
             }
         }
 
@@ -104,6 +115,14 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
                 }
             }
         }
+
+        if (isRequestable()) {
+            TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
+            if (fragment != null) {
+                mRequestDisposable = fragment.getObservable().subscribe(this::onRequestResult);
+                fragment.start();
+            }
+        }
     }
 
     private void checkDemoAuthError(Notification<JsonObject> notification) {
@@ -135,6 +154,36 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
                 iterator.remove();
             }
         }
+
+        if (isRequestable()) {
+            TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
+            if (fragment != null) {
+                fragment.stop();
+            }
+            if (mRequestDisposable != null && !mRequestDisposable.isDisposed()) {
+                mRequestDisposable.dispose();
+            }
+            mRequestDisposable = null;
+        }
+    }
+
+
+    protected void request(Uri uri) {
+        if (isRequestable()) {
+            TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
+            if (fragment != null) {
+                fragment.request(uri);
+            }
+        }
+    }
+
+    protected void request(Uri uri, String privateKey) {
+        if (isRequestable()) {
+            TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
+            if (fragment != null) {
+                fragment.request(this, privateKey, uri);
+            }
+        }
     }
 
     @Override
@@ -149,5 +198,14 @@ public abstract class ADataHostActivity extends AppCompatActivity implements IDa
     protected abstract TeambrellaDataFragment getDataFragment(String tag);
 
     protected abstract TeambrellaDataPagerFragment getDataPagerFragment(String tag);
+
+    protected boolean isRequestable() {
+        return false;
+    }
+
+
+    protected void onRequestResult(Notification<JsonObject> response) {
+
+    }
 
 }

@@ -326,6 +326,11 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AMOUNT, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_AMOUNT)));
             }
             break;
+            case TeambrellaUris.MUTE: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_IS_MUTED, Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_MUTED)));
+            }
+            break;
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_KEY:
             case TeambrellaUris.MY_TEAMS:
@@ -415,6 +420,8 @@ public class TeambrellaServer {
                 return mAPI.getWithdrawls(requestBody);
             case TeambrellaUris.NEW_WITHDRAW:
                 return mAPI.newWithdraw(requestBody);
+            case TeambrellaUris.MUTE:
+                return mAPI.setChatMuted(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
