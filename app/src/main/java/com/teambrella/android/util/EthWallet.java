@@ -30,6 +30,7 @@ import java.math.MathContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 class EthWallet {
 
@@ -389,6 +390,7 @@ class EthWallet {
 
         for (int i = 0; i < n; i++) {
             destinationAddresses[i] = destinations.get(i).address;
+            sanityAddressCheck(destinationAddresses[i]);
         }
 
         return destinationAddresses;
@@ -423,6 +425,13 @@ class EthWallet {
 
         byte[] data = com.teambrella.android.blockchain.Hex.toBytes(a0, a1, a2, a3, a4);
         return Sha3.getKeccak256Hash(data);
+    }
+
+    private static void sanityAddressCheck(String a){
+        if (null == a) throw new IllegalArgumentException("address is null");
+
+        if (!Pattern.matches("^0x[a-fA-F0-9]{40}$", a))
+            throw new IllegalArgumentException("expected ETH address of 40 hex chars, but was: " + a);
     }
 
     private static String toCreationInfoString(Multisig m) {
