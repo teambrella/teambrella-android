@@ -3,6 +3,7 @@ package com.teambrella.android.ui;
 import android.content.Intent;
 import android.support.annotation.StringRes;
 
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.data.base.IDataHost;
 
 /**
@@ -44,6 +45,11 @@ public interface IMainDataHost extends IDataHost {
 
     void showWallet();
 
-    void backUpWallet();
+
+    void addWalletBackupListener(WalletBackupManager.IWalletBackupListener listener);
+
+    void removeWalletBackupListener(WalletBackupManager.IWalletBackupListener listener);
+
+    void backUpWallet(boolean force);
 
 }

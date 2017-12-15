@@ -2,7 +2,6 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,12 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.credentials.Credential;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -27,6 +21,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
@@ -111,10 +106,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     private Stack<Integer> mBackStack = new Stack<>();
-
-
-    private GoogleApiClient mGoogleApiClient;
-
+    private WalletBackupManager mWalletBackupManager;
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
         return new Intent(context, MainActivity.class)
@@ -158,11 +150,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(mConnectionCallbacks)
-                .enableAutoManage(this, mConnectionFailedListener)
-                .addApi(Auth.CREDENTIALS_API)
-                .build();
+        mWalletBackupManager = new WalletBackupManager(this);
     }
 
 
@@ -408,12 +396,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         getPager(CLAIMS_DATA_TAG).reload();
         load(USER_DATA);
         getPager(MY_PROXIES_DATA).reload();
-
-        if (requestCode == SAVE_PRIVATE_KEY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Wallet successfully backed up", Toast.LENGTH_SHORT).show();
-            }
-        }
+        mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -548,33 +531,23 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+    @Override
+    public void backUpWallet(boolean force) {
+        mWalletBackupManager.saveWallet(mUserId,
+                mUserName,
+                mUserPicture,
+                TeambrellaUser.get(this).getPrivateKey()
+                , force);
+    }
 
     @Override
-    public void backUpWallet() {
+    public void addWalletBackupListener(WalletBackupManager.IWalletBackupListener listener) {
+        mWalletBackupManager.addBackupListener(listener);
+    }
 
-        Credential credential = new Credential.Builder(mUserId)
-                .setName(mUserName)
-                .setPassword(TeambrellaUser.get(this).getPrivateKey())
-                .setProfilePictureUri(mUserPicture)
-                .build();
-
-        Auth.CredentialsApi.save(mGoogleApiClient, credential).setResultCallback(
-                result -> {
-                    Status status = result.getStatus();
-                    if (status.isSuccess()) {
-                        Toast.makeText(this, "Wallet successfully backed up", Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (status.hasResolution()) {
-                            try {
-                                status.startResolutionForResult(this, SAVE_PRIVATE_KEY_REQUEST_CODE);
-                            } catch (IntentSender.SendIntentException e) {
-                                Toast.makeText(this, "Back up failed", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(this, "Back up failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    @Override
+    public void removeWalletBackupListener(WalletBackupManager.IWalletBackupListener listener) {
+        mWalletBackupManager.removeBackupListener(listener);
     }
 
     @Override
@@ -663,24 +636,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
 
     }
-
-
-    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-
-        }
-    };
-
-
-    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = connectionResult -> {
-
-    };
 }
 
 

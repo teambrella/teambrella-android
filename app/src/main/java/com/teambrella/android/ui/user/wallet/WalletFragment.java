@@ -14,6 +14,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.ui.CosignersActivity;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
@@ -33,7 +34,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Wallet Fragment
  */
-public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
+public class WalletFragment extends ADataProgressFragment<IMainDataHost> implements WalletBackupManager.IWalletBackupListener {
 
 
     private TextView mCryptoBalanceView;
@@ -48,6 +49,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private View mCosignersView;
     private TeambrellaAvatarsWidgets mCosignersAvatar;
     private TextView mCosignersCountView;
+    private TextView mBackupWalletButton;
 
 
     @Override
@@ -114,10 +116,38 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
         view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
-        view.findViewById(R.id.backup_wallet).setOnClickListener(v -> mDataHost.backUpWallet());
+
+        mBackupWalletButton = view.findViewById(R.id.backup_wallet);
+
+        mDataHost.addWalletBackupListener(this);
+        mDataHost.backUpWallet(false);
 
         return view;
 
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDataHost.removeWalletBackupListener(this);
+    }
+
+    @Override
+    public void onWalletSaved() {
+        mBackupWalletButton.setText(R.string.your_wallet_is_backed_up);
+    }
+
+    @Override
+    public void onWalletSaveError(int code) {
+        if (code == RESOLUTION_REQUIRED) {
+            mBackupWalletButton.setText(R.string.backup_wallet);
+            mBackupWalletButton.setOnClickListener(v -> mDataHost.backUpWallet(true));
+        }
+    }
+
+    @Override
+    public void onWalletRead(String key) {
 
     }
 

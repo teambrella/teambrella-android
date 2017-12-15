@@ -283,5 +283,5 @@
     <string name="message">Message</string>
 
     <string name="backup_wallet">Backup Wallet</string>
-
+    <string name="your_wallet_is_backed_up">Your wallet is backed up</string>
 </resources>
