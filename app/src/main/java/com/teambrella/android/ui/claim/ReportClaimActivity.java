@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +40,7 @@ import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
@@ -85,6 +89,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private float mExpensesValue = -1f;
     private int mTeamId;
     private String mCurrency;
+    private Snackbar mSnackBar;
 
 
     public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
@@ -314,16 +319,26 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             }
         } else if (response.isOnError()) {
             TeambrellaException exception = (TeambrellaException) response.getError();
-            switch (TeambrellaUris.sUriMatcher.match(exception.getUri())) {
+            final Uri uri = exception.getUri();
+            switch (TeambrellaUris.sUriMatcher.match(uri)) {
                 case TeambrellaUris.NEW_FILE:
+                    String filePath = uri.getQueryParameter(TeambrellaUris.KEY_URI);
+                    if (filePath != null) {
+                        mPhotoAdapter.removePhoto(filePath);
+                    }
                     break;
                 case TeambrellaUris.GET_COVERAGE_FOR_DATE:
+                    mIncidentDateView.setText(null);
                     break;
                 case TeambrellaUris.NEW_CLAIM:
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG)).commit();
                     break;
             }
+
+            showSnackBar(ConnectivityUtils.isNetworkAvailable(this)
+                    ? R.string.something_went_wrong_error : R.string.no_internet_connection);
+
         }
     }
 
@@ -349,6 +364,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
     private void submitClaim() {
 
+
+        hideKeyboard();
 
         if (mCoverageValue <= 0) {
             mCoverageView.requestFocus();
@@ -388,6 +405,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             return;
         }
 
+
         request(TeambrellaUris.getNewClaimUri(mTeamId, mCalendar.getTime(),
                 mExpensesValue, mDescriptionView.getText().toString(),
                 mPhotoAdapter.getImages(),
@@ -402,6 +420,36 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
 
     private boolean checkEthereumAddress(String address) {
         return Pattern.matches("^0x[a-fA-F0-9]{40}$", address);
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    private void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(mAddressView, text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+            mSnackBar.show();
+        }
     }
 
 
