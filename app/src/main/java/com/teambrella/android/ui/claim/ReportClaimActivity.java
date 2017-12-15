@@ -240,7 +240,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                 finish();
                 return true;
             case R.id.submit:
-                submitClaim();
+                item.setEnabled(!submitClaim());
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -340,6 +340,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
                     ? R.string.something_went_wrong_error : R.string.no_internet_connection);
 
         }
+        invalidateOptionsMenu();
     }
 
 
@@ -362,7 +363,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     }
 
 
-    private void submitClaim() {
+    private boolean submitClaim() {
 
 
         hideKeyboard();
@@ -370,7 +371,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         if (mCoverageValue <= 0) {
             mCoverageView.requestFocus();
             mCoverageView.setError(getString(R.string.no_coverage_for_the_date));
-            return;
+            return false;
         }
 
         if (TextUtils.isEmpty(mIncidentDateView.getText())) {
@@ -378,31 +379,31 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             mIncidentDateView.setFocusableInTouchMode(true);
             mIncidentDateView.requestFocus();
             mIncidentDateView.setError(getString(R.string.no_incident_date_error));
-            return;
+            return false;
         }
 
         if (mExpensesValue <= 0) {
             mExpensesView.setError(getString(R.string.no_expenses_provided_error));
-            return;
+            return false;
         }
 
         if (mExpensesValue > mLimitValue) {
-            return;
+            return false;
         }
 
         if (TextUtils.isEmpty(mDescriptionView.getText())) {
             mDescriptionView.setError(getString(R.string.no_description_provided_error));
-            return;
+            return false;
         }
 
         if (TextUtils.isEmpty(mAddressView.getText())) {
             mAddressView.setError(getString(R.string.no_address_provided));
-            return;
+            return false;
         }
 
         if (!checkEthereumAddress(mAddressView.getText().toString())) {
             mAddressView.setError(getString(R.string.invalid_ethereum_address_error));
-            return;
+            return false;
         }
 
 
@@ -416,6 +417,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG) == null) {
             new ProgressDialogFragment().show(getSupportFragmentManager(), PLEASE_WAIT_DIALOG_FRAGMENT_TAG);
         }
+
+        return true;
     }
 
     private boolean checkEthereumAddress(String address) {
