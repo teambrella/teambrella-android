@@ -249,4 +249,27 @@
     <string name="new_demo_session_description">Hemos creado un nuevo equipo demo para ti. Es compatible con todas nuevas funciones y actualizaciones.</string>
     <string name="back">Atrás</string>
 
+    <string name="withdraw_details">Detalles de retirada</string>
+    <string name="withdraw_information">Información de retirada</string>
+    <string name="to_address">transferir a</string>
+    <string name="withdraw_amount_title">CANTIDAD</string>
+    <string name="balance">Balance</string>
+    <string name="withdraw_info_description_reserved">Tu puedes solicitar hasta el saldo de la cantidad de retirada %1$dmETH.\n\n Tienes %2$dmETH reservado, si alguna parte de los fondos reservados está disponible, sería programado automáticamente para la retirada.</string>
+    <string name="withdraw_info_description">Tu puedes solicitar hasta el saldo de la cantidad de retirada %1$dmETH</string>
+    <string name="withdrawals_in_progress">Retiradas en progresso</string>
+    <string name="deferred_withdrawals">Retiradas aplazadas</string>
+    <string name="history_withdrawals">Archivo</string>
+    <string name="invalid_ethereum_address_error">Dirección de Etheruem no valido</string>
+    <string name="invalid_withdraw_amount_error">Cantidad para retirada no debe ser mayor que %.2f mETH</string>
+
+    <string name="vote">Votar</string>
+    <string name="notification_settings">Ajustes de notificación</string>
+    <string name="notification_option_unmuted_title">Seguir</string>
+    <string name="notification_option_unmuted_description">Recibirás notificación de cada mensaje.</string>
+    <string name="notification_option_muted_title">Sin notificaciones</string>
+    <string name="notification_option_muted_description">Notificaciones de este chat se desactivarán.</string>
+    <string name="claim_amount_format_string"><![CDATA[CANTIDAD RECLAMADA - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="mute_unmute_notification_help">Ahora recibes notificaciones de este discusión.</string>
+    <string name="message">Mensaje</string>
+
 </resources>

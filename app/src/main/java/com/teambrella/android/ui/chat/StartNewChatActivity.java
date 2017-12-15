@@ -1,9 +1,12 @@
 package com.teambrella.android.ui.chat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -14,6 +17,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -21,6 +26,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
 
@@ -41,6 +47,7 @@ public class StartNewChatActivity extends AppCompatRequestActivity implements Te
     private int mTeamId;
     private TextView mTitleView;
     private TextView mPostView;
+    private Snackbar mSnackBar;
 
 
     @Override
@@ -87,8 +94,10 @@ public class StartNewChatActivity extends AppCompatRequestActivity implements Te
                 finish();
                 return true;
             case R.id.submit:
-                request(TeambrellaUris.getNewChatUri(mTeamId, mTitleView.getText().toString(), mPostView.getText().toString()));
+                hideKeyboard();
                 showProgressDialog();
+                item.setEnabled(false);
+                request(TeambrellaUris.getNewChatUri(mTeamId, mTitleView.getText().toString(), mPostView.getText().toString()));
                 return true;
 
         }
@@ -102,8 +111,11 @@ public class StartNewChatActivity extends AppCompatRequestActivity implements Te
         if (response.isOnNext()) {
             setResult(RESULT_OK);
             finish();
+        } else {
+            showSnackBar(ConnectivityUtils.isNetworkAvailable(this) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
         }
         hideProgressDialog();
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -134,6 +146,36 @@ public class StartNewChatActivity extends AppCompatRequestActivity implements Te
         Fragment fragment = fragmentManager.findFragmentByTag(PROGRESS_DIALOG_TAG);
         if (fragment != null) {
             fragmentManager.beginTransaction().remove(fragment).commit();
+        }
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    private void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(mPostView, text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+            mSnackBar.show();
         }
     }
 }

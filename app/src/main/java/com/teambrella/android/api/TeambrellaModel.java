@@ -177,6 +177,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_MY_VOTE = "MyVote";
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
     public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
+    public static final String ATTR_REQUEST_IS_MUTED = "IsMuted";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";
@@ -294,6 +295,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_NEED_CRYPTO = "NeedCrypto";
     public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
     public static final String ATTR_DATA_GENDER = "Gender";
+    public static final String ATTR_DATA_REIMBURSEMENT = "Reimbursement";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -316,6 +318,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CREATED = "Created";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+    public static final String ATTR_DATA_SMALL_IMAGES = "SmallImages";
     public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
     public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";
     public static final String ATTR_DATA_MESSAGES = "Messages";
@@ -376,6 +379,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_SERVER_TX_STATE = "ServerTxState";
     public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
     public static final String ATTR_DATA_IS_NEW = "IsNew";
+    public static final String ATTR_DATA_IS_MUTED = "IsMuted";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

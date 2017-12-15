@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +21,7 @@ import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -39,6 +42,7 @@ public class WithdrawActivity extends TeambrellaDataHostActivity implements IWit
     private float mAvailableValue;
     private float mReservedValue;
     private Disposable mWithdrawalsDisposable;
+    private Snackbar mSnackBar;
 
     public static void start(Context context, int teamId) {
         context.startActivity(new Intent(context, WithdrawActivity.class)
@@ -161,6 +165,29 @@ public class WithdrawActivity extends TeambrellaDataHostActivity implements IWit
                         mReservedValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED);
                         mAvailableValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE) - mReservedValue;
                     }).blockingFirst();
+        } else {
+            showSnackBar(ConnectivityUtils.isNetworkAvailable(this)
+                    ? R.string.something_went_wrong_error : R.string.no_internet_connection);
+        }
+    }
+
+    private void showSnackBar(@StringRes int text) {
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(findViewById(R.id.container), text, Snackbar.LENGTH_LONG);
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onShown(Snackbar sb) {
+                    super.onShown(sb);
+                }
+
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    mSnackBar = null;
+                }
+            });
+            mSnackBar.show();
         }
     }
 }

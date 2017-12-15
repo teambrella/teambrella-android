@@ -81,6 +81,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
     }
 
+    public void removePhoto(String filePath) {
+        Observable.range(0, mPhotos.size()).filter(index -> mPhotos.get(index).filePath.equals(filePath))
+                .doOnNext(index -> mPhotos.remove(index.intValue()))
+                .doOnNext(this::notifyItemRemoved).blockingFirst(0);
+    }
+
     private void removePhoto(int position) {
         mPhotos.remove(position);
         notifyItemRemoved(position);

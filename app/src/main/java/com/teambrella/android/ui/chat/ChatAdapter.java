@@ -251,20 +251,21 @@ class ChatAdapter extends ChatDataPagerAdapter {
             super.bind(object);
             Context context = itemView.getContext();
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
-            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
-            if (text != null && images != null && images.size() > 0) {
-                for (int i = 0; i < images.size(); i++) {
+            ArrayList<String> smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            if (text != null && smallImages != null && smallImages.size() > 0) {
+                for (int i = 0; i < smallImages.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
                         JsonArray imageRatios = object.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS);
                         float ratio = imageRatios.get(i).getAsFloat();
                         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mImage.getLayoutParams();
                         params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
                         mImage.setLayoutParams(params);
-                        picasso.load(images.get(i))
+                        picasso.load(smallImages.get(i))
                                 .resize(width, 0)
                                 .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
                                 .into(mImage);
                         final int position = i;
+                        ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
                         mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
                         break;
                     }

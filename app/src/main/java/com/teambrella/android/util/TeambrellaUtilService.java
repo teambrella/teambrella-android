@@ -577,9 +577,14 @@ public class TeambrellaUtilService extends GcmTaskService {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
-                Log.d(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() detected tx to cosign. id:" + tx.id);
-                operations.addAll(cosignTransaction(tx, user.id));
-                operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
+                try{
+                    Log.d(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() detected tx to cosign. id:" + tx.id);
+                    operations.addAll(cosignTransaction(tx, user.id));
+                    operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
+                }catch (Exception e){
+                    Log.e(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() failed to cosign tx! id:" + tx.id + ". Continue with others...");
+                    Log.reportNonFatal(LOG_TAG, e);
+                }
             }
         }
         mClient.applyBatch(operations);

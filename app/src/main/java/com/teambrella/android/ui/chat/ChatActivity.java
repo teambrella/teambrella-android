@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
@@ -31,13 +31,16 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
+<<<<<<< HEAD
 import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
+=======
+import com.teambrella.android.ui.base.ADataHostActivity;
+>>>>>>> dev
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
@@ -50,7 +53,6 @@ import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claim chat
@@ -71,48 +73,29 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
-    private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
+    private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
     private static final String SHOW_FEED_CHAT_ACTION = "show_feed_chat_action";
     private static final String SHOW_CONVERSATION_CHAT = "show_conversation_chat_action";
 
-
     private Uri mUri;
     private String mTopicId;
     private String mAction;
     private String mUserId;
-    private String mUserName;
-    private Uri mImageUri;
     private int mTeamId;
-    private int mClaimId;
-    private String mObjectName;
 
-
-    private Disposable mRequestDisposable;
     private Disposable mChatDisposable;
     private TextView mMessageView;
     private ImagePicker mImagePicker;
     private TextView mTitle;
     private TextView mSubtitle;
     private ImageView mIcon;
-    private Picasso mPicasso;
     private ChatNotificationClient mClient;
     private TeambrellaNotificationManager mNotificationManager;
-
-    public static void startTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
-        context.startActivity(getTeammateChat(context, teamId, userId, userName, imageUri, topicId, accessLevel));
-    }
-
-
-    public static void startClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
-        context.startActivity(getClaimChat(context, teamId, claimId, objectName, imageUri, topicId, accessLevel));
-    }
-
-    public static void startFeedChat(Context context, String title, String topicId, int teamId, int accessLevel) {
-        context.startActivity(getFeedChat(context, title, topicId, teamId, accessLevel));
-    }
+    private View mNotificationHelpView;
+    private MuteStatus mMuteStatus = null;
 
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
@@ -175,14 +158,11 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         mTopicId = intent.getStringExtra(EXTRA_TOPIC_ID);
         mUserId = intent.getStringExtra(EXTRA_USER_ID);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
-        mUserName = intent.getStringExtra(EXTRA_USER_NAME);
-        mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
-        mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
-        mObjectName = intent.getStringExtra(EXTRA_OBJECT_NAME);
+        int mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mAction = intent.getAction();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_claim_chat);
+        setContentView(R.layout.activity_chat);
 
         mNotificationManager = new TeambrellaNotificationManager(this);
 
@@ -190,7 +170,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
-            if (mAction != null && !mAction.equals(SHOW_FEED_CHAT_ACTION)) {
+            if (mAction != null && mAction.equals(SHOW_CONVERSATION_CHAT)) {
                 actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_CUSTOM);
                 actionBar.setCustomView(R.layout.chat_toolbar_view);
                 View view = actionBar.getCustomView();
@@ -200,9 +180,8 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                 Toolbar parent = (Toolbar) view.getParent();
                 parent.setPadding(0, 0, 0, 0);
                 parent.setContentInsetsAbsolute(0, 0);
-            } else {
-                setTitle(intent.getStringExtra(EXTRA_TITLE));
             }
+
         }
 
         mImagePicker = new ImagePicker(this);
@@ -214,73 +193,34 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
             transaction.add(R.id.container, ChatFragment.getInstance(DATA_FRAGMENT_TAG, ChatFragment.class), UI_FRAGMENT_TAG);
         }
 
-
-        if (fragmentManager.findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG) == null) {
-            transaction.add(new TeambrellaRequestFragment(), DATA_REQUEST_FRAGMENT_TAG);
-        }
-
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
 
+
+        mNotificationHelpView = findViewById(R.id.notification_help);
 
         mMessageView = findViewById(R.id.text);
         findViewById(R.id.send_text).setOnClickListener(this::onClick);
         findViewById(R.id.send_image).setOnClickListener(this::onClick);
 
 
-        mPicasso = TeambrellaImageLoader.getInstance(this).getPicasso();
-
         if (mAction != null) {
             switch (mAction) {
                 case SHOW_TEAMMATE_CHAT_ACTION:
-
-                    if (mTitle != null) {
-                        mTitle.setText(R.string.application);
-                    }
-
-                    if (mSubtitle != null) {
-                        mSubtitle.setText(mUserName);
-                    }
-
-                    if (mImageUri != null && mIcon != null) {
-                        mPicasso.load(mImageUri)
-                                .transform(new CropCircleTransformation())
-                                .into(mIcon);
-
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
-                    }
-
+                    setTitle(R.string.application);
                     break;
 
                 case SHOW_CLAIM_CHAT_ACTION:
-
-                    if (mTitle != null) {
-                        mTitle.setText(getString(R.string.claim_title_format_string, mClaimId));
-                    }
-
-                    if (mSubtitle != null) {
-                        mSubtitle.setText(mObjectName);
-                    }
-
-
-                    if (mImageUri != null && mIcon != null) {
-                        mPicasso.load(mImageUri)
-                                .resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40)
-                                .centerCrop()
-                                .transform(new MaskTransformation(this, R.drawable.teammate_object_mask))
-                                .into(mIcon);
-
-                        mIcon.setOnClickListener(v -> {
-                            ClaimActivity.start(this, mClaimId, mObjectName, mTeamId);
-                            overridePendingTransition(0, 0);
-                        });
-                    }
-
+                    setTitle(getString(R.string.claim_title_format_string, mClaimId));
                     break;
 
                 case SHOW_CONVERSATION_CHAT:
-
+                    setTitle(R.string.private_conversation);
+                    findViewById(R.id.send_image).setVisibility(View.GONE);
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
+                    params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
+                    mMessageView.setLayoutParams(params);
                     if (mTitle != null) {
                         mTitle.setText(R.string.private_conversation);
                     }
@@ -289,21 +229,19 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                         mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
                     }
 
+                    Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
+
                     if (mImageUri != null && mIcon != null) {
-                        mPicasso.load(mImageUri)
+                        TeambrellaImageLoader.getInstance(this).getPicasso().load(mImageUri)
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
-
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));
                     }
 
+                    break;
 
-                    findViewById(R.id.send_image).setVisibility(View.GONE);
-
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
-                    params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
-                    mMessageView.setLayoutParams(params);
-
+                case SHOW_FEED_CHAT_ACTION:
+                    setTitle(intent.getStringExtra(EXTRA_TITLE));
                     break;
             }
         }
@@ -330,12 +268,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     @Override
     protected void onStart() {
         super.onStart();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            mRequestDisposable = fragment.getObservable().subscribe(this::onRequestResult);
-            fragment.start();
-        }
-
         mChatDisposable = getPager(DATA_FRAGMENT_TAG).getObservable()
                 .subscribe(this::onDataUpdated);
     }
@@ -343,17 +275,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     @Override
     protected void onStop() {
         super.onStop();
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            fragment.stop();
-        }
-        if (mRequestDisposable != null && !mRequestDisposable.isDisposed()) {
-            mRequestDisposable.dispose();
-        }
-
-        mRequestDisposable = null;
-
-
         if (mChatDisposable != null && !mChatDisposable.isDisposed()) {
             mChatDisposable.dispose();
         }
@@ -367,6 +288,29 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         super.onDestroy();
         mClient.disconnect();
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT)) {
+            if (mMuteStatus != null) {
+                switch (mMuteStatus) {
+                    case DEFAULT:
+                    case MUTED:
+                        menu.add(0, R.id.unmute, 0, null)
+                                .setIcon(R.drawable.ic_icon_bell_muted).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                        break;
+                    case UMMUTED:
+                        menu.add(0, R.id.mute, 0, null)
+                                .setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                        break;
+
+                }
+            }
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     private void onClick(View v) {
         switch (v.getId()) {
@@ -390,21 +334,12 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         }
     }
 
-
-    public void request(Uri uri) {
-        TeambrellaRequestFragment fragment = (TeambrellaRequestFragment) getSupportFragmentManager().findFragmentByTag(DATA_REQUEST_FRAGMENT_TAG);
-        if (fragment != null) {
-            fragment.request(uri);
-        }
-    }
-
-
     @Override
     public Uri getChatUri() {
         return getIntent().getParcelableExtra(EXTRA_URI);
     }
 
-    private void onRequestResult(Notification<JsonObject> response) {
+    protected void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
@@ -420,6 +355,15 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                     getPager(DATA_FRAGMENT_TAG).loadNext(true);
                     break;
+                case TeambrellaUris.MUTE:
+                    Observable.fromArray(response.getValue())
+                            .map(JsonWrapper::new)
+                            .map(jsonWrapper -> jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA, false))
+                            .doOnNext(isMuted -> {
+                                mMuteStatus = isMuted ? MuteStatus.MUTED : MuteStatus.UMMUTED;
+                                invalidateOptionsMenu();
+                            }).blockingFirst();
+                    break;
             }
         }
     }
@@ -428,19 +372,30 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     @SuppressWarnings("ThrowableNotThrown")
     private void onDataUpdated(Notification<JsonObject> response) {
         if (response.isOnNext()) {
-            Observable.just(response.getValue())
-                    .map(JsonWrapper::new)
-                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
-                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
-                    .map(Notification::createOnNext)
-                    .onErrorReturn(Notification::createOnError)
-                    .doOnNext(this::onBasicPartUpdated)
-                    .blockingFirst();
-
             if (mTopicId != null) {
                 mNotificationManager.cancelChatNotification(mTopicId);
             }
-
+            Observable.fromArray(response.getValue())
+                    .map(JsonWrapper::new)
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
+                    .doOnNext(jsonWrapper -> {
+                        if (jsonWrapper.hasValue(TeambrellaModel.ATTR_DATA_IS_MUTED)) {
+                            if (jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA_IS_MUTED, false)) {
+                                mMuteStatus = MuteStatus.MUTED;
+                            } else {
+                                if (mAction != null && !mAction.equals(SHOW_CONVERSATION_CHAT)) {
+                                    if (mMuteStatus == MuteStatus.DEFAULT) {
+                                        showNotificationHelp();
+                                    }
+                                }
+                                mMuteStatus = MuteStatus.UMMUTED;
+                            }
+                        } else {
+                            mMuteStatus = MuteStatus.DEFAULT;
+                        }
+                        invalidateOptionsMenu();
+                    }).blockingFirst();
         } else {
             Throwable error = response.getError();
 
@@ -468,33 +423,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         }
     }
 
-
-    private void onBasicPartUpdated(Notification<JsonWrapper> basicNotification) {
-        if (basicNotification.isOnNext()) {
-            JsonWrapper basic = basicNotification.getValue();
-            if (mAction != null) {
-                switch (mAction) {
-                    case SHOW_TEAMMATE_CHAT_ACTION:
-                        mUserName = basic.getString(TeambrellaModel.ATTR_DATA_NAME);
-                        if (mImageUri == null) {
-                            mImageUri = TeambrellaImageLoader.getImageUri(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR));
-                            if (mImageUri != null) {
-                                mPicasso.load(mImageUri)
-                                        .transform(new CropCircleTransformation())
-                                        .into(mIcon);
-                            }
-                        }
-
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, mUserName, mImageUri.toString()));
-
-                        mSubtitle.setText(mUserName);
-                        break;
-                }
-            }
-
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -518,6 +446,10 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.mute:
+            case R.id.unmute:
+                showNotificationSettings();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -532,6 +464,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                     throwable -> {
                     });
         }
+        getPager(DATA_FRAGMENT_TAG).loadNext(true);
     }
 
     @Override
@@ -572,6 +505,48 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
         super.setTitle(s);
     }
 
+    @Override
+    protected boolean isRequestable() {
+        return true;
+    }
+
+    private void showNotificationHelp() {
+        mNotificationHelpView.setVisibility(View.VISIBLE);
+        mNotificationHelpView.postDelayed(() -> mNotificationHelpView.setVisibility(View.GONE), 5000);
+    }
+
+    @Override
+    public int getClaimId() {
+        return getIntent().getIntExtra(EXTRA_CLAIM_ID, 0);
+    }
+
+    @Override
+    public String getObjectName() {
+        return getIntent().getStringExtra(EXTRA_OBJECT_NAME);
+    }
+
+    @Override
+    public String getUserId() {
+        return getIntent().getStringExtra(EXTRA_USER_ID);
+    }
+
+    @Override
+    public String getUserName() {
+        return getIntent().getStringExtra(EXTRA_USER_NAME);
+    }
+
+    @Override
+    public String getImageUri() {
+        return getIntent().getStringExtra(EXTRA_IMAGE_URI);
+    }
+
+
+    private void showNotificationSettings() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(NOTIFICATION_SETTINGS_FRAGMENT_TAG) == null) {
+            NotificationsSettingsDialogFragment.getInstance().show(fragmentManager, NOTIFICATION_SETTINGS_FRAGMENT_TAG);
+        }
+    }
 
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
 
@@ -639,6 +614,15 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
             mResumed = false;
 
         }
+    }
 
+    @Override
+    public MuteStatus getMuteStatus() {
+        return mMuteStatus;
+    }
+
+    @Override
+    public void setChatMuted(boolean muted) {
+        request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
     }
 }
