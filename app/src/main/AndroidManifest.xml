@@ -53,6 +53,7 @@
         <activity
             android:name=".ui.chat.ChatActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Chat"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity

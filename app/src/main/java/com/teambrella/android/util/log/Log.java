@@ -41,11 +41,11 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.v(tag, msg, tr);
         } else {
-            Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
+            Crashlytics.log(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
         if (sLoggerHandler != null) {
-            sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
+            sLoggerHandler.msg(msg + " " + (tr != null ? tr.toString() : ""));
         }
     }
 
@@ -68,11 +68,11 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.d(tag, msg, tr);
         } else {
-            Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
+            Crashlytics.log(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
-            sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
+            sLoggerHandler.msg(msg + " " + (tr != null ? tr.toString() : ""));
         }
     }
 
@@ -94,11 +94,11 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.i(tag, msg, tr);
         } else {
-            Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
+            Crashlytics.log(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
-            sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
+            sLoggerHandler.msg(msg + " " + (tr != null ? tr.toString() : ""));
         }
     }
 
@@ -122,7 +122,7 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.w(tag, msg, tr);
         } else {
-            Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
+            Crashlytics.log(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
@@ -135,11 +135,11 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.w(tag, tr);
         } else {
-            Crashlytics.log(tr != null ? tr.getMessage() : "");
+            Crashlytics.log(tr != null ? tr.toString() : "");
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
-            sLoggerHandler.msg(tr != null ? tr.getMessage() : "");
+            sLoggerHandler.msg(tr != null ? tr.toString() : "");
         }
 
     }
@@ -160,24 +160,24 @@ public final class Log {
         if (BuildConfig.DEBUG) {
             android.util.Log.e(tag, msg, tr);
         } else {
-            Crashlytics.log(msg + " " + (tr != null ? tr.getMessage() : ""));
+            Crashlytics.log(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
-            sLoggerHandler.msg(msg + " " + (tr != null ? tr.getMessage() : ""));
+            sLoggerHandler.msg(msg + " " + (tr != null ? tr.toString() : ""));
         }
 
     }
 
     public static void reportNonFatal(String tag, Exception e) {
         if (BuildConfig.DEBUG) {
-            android.util.Log.e(tag, "" + e.getMessage(), e);
+            android.util.Log.e(tag, "" + e.toString(), e);
         } else {
             Crashlytics.logException(e);
         }
 
         if (sLoggerHandler != null && sLoggerThread != null && sLoggerThread.isAlive()) {
-            sLoggerHandler.msg(e != null ? e.getMessage() : "");
+            sLoggerHandler.msg(e != null ? e.toString() : "");
         }
     }
 

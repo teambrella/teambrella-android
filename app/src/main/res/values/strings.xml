@@ -271,5 +271,17 @@
     <string name="history_withdrawals">History</string>
     <string name="invalid_ethereum_address_error">Invalid ethereum address</string>
     <string name="invalid_withdraw_amount_error">Withdrawal amount must not be greater than %.2f mETH</string>
+
+    <string name="vote">Vote</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="notification_option_unmuted_title">Subscribed</string>
+    <string name="notification_option_unmuted_description">You will get a notification of each message.</string>
+    <string name="notification_option_muted_title">No Notifications</string>
+    <string name="notification_option_muted_description">Notifications will be disabled for this chat.</string>
+    <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="mute_unmute_notification_help">You now receive notifications for this discussion.</string>
+    <string name="message">Message</string>
+
     <string name="backup_wallet">Backup Wallet</string>
+
 </resources>
