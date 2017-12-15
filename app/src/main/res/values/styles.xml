@@ -17,6 +17,17 @@
         <item name="titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
     </style>
 
+    <!-- Base application theme. -->
+    <style name="AppTheme.Chat">
+        <!-- Customize your theme here. -->
+        <item name="actionBarStyle">@style/AppTheme.ActionBar.NoElevation</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.NoElevation">
+        <!-- Support library compatibility -->
+        <item name="elevation">0dp</item>
+    </style>
+
     <style name="AppTheme.ActionBar.TitleTextStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">17sp</item>
     </style>
