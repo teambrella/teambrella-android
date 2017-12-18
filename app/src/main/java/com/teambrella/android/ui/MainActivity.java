@@ -66,7 +66,6 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
-    private static final int SAVE_PRIVATE_KEY_REQUEST_CODE = 103;
 
 
     private static final String USER_ID_EXTRA = "user_id_extra";

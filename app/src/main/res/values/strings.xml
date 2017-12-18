@@ -284,4 +284,5 @@
 
     <string name="backup_wallet">Backup Wallet</string>
     <string name="your_wallet_is_backed_up">Your wallet is backed up</string>
+    <string name="your_wallet_not_backed_up">Your wallet not backed up</string>
 </resources>
