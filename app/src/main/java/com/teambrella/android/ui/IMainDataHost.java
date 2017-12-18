@@ -52,4 +52,6 @@ public interface IMainDataHost extends IDataHost {
 
     void backUpWallet(boolean force);
 
+    void showWalletBackupDialog();
+
 }

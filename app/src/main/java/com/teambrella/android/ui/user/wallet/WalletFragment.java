@@ -124,6 +124,8 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mDataHost.addWalletBackupListener(this);
         mDataHost.backUpWallet(false);
 
+        view.findViewById(R.id.wallet_not_backed_up_message).setOnClickListener(v -> mDataHost.showWalletBackupDialog());
+
         return view;
 
 

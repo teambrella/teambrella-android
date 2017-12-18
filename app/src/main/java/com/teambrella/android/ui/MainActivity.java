@@ -39,6 +39,7 @@ import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
+import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
@@ -90,6 +91,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private static final String PROXIES_TAG = "proxies";
     private static final String PROFILE_TAG = "profile";
     private static final String TEAM_CHOOSER_FRAGMENT_TAG = "team_chooser";
+    private static final String WALLET_BACKUP_FRAGMENT_TAG = "wallet_backup_dialog";
 
 
     private int mSelectedItemId = -1;
@@ -518,6 +520,13 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
         }
     }
 
+    @Override
+    public void showWalletBackupDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(WALLET_BACKUP_FRAGMENT_TAG) == null) {
+            new WalletBackupInfoFragment().show(fragmentManager, WALLET_BACKUP_FRAGMENT_TAG);
+        }
+    }
 
     private EtherAccount getEtherAccountOrNull() {
         if (mEtherAccount != null) return mEtherAccount;
