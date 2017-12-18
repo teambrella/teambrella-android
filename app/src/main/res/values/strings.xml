@@ -285,4 +285,8 @@
     <string name="backup_wallet">Backup Wallet</string>
     <string name="your_wallet_is_backed_up">Your wallet is backed up</string>
     <string name="your_wallet_not_backed_up">Your wallet not backed up</string>
+    <string name="backup_your_wallet_title">Backup your wallet with Smart Lock</string>
+    <string name="backup_your_wallet_description">Who knows wallet\'s password (also known as private key) controls the wallet. Teambrella does not know it and would not be able to restore. Instead, you can backup the password securely with your Google Smart Lock. So you will be able to restore the wallet when migrate to a new phone.</string>
+    <string name="save_password">Save Password</string>
+    <string name="later">Later</string>
 </resources>
