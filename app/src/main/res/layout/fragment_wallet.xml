@@ -10,6 +10,37 @@
         android:orientation="vertical"
         android:paddingBottom="24dp">
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E6345F"
+            android:orientation="horizontal">
+
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/wallet_not_backed_up_message"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:gravity="start|center_vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/your_wallet_not_backed_up"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:srcCompat="@drawable/ic_backup" />
+
+
+        </LinearLayout>
+
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
