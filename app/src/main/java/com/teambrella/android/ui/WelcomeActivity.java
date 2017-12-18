@@ -1,7 +1,6 @@
 package com.teambrella.android.ui;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,11 +21,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.credentials.Credential;
-import com.google.android.gms.auth.api.credentials.CredentialRequest;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
@@ -36,6 +30,7 @@ import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.TeambrellaBackupData;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
@@ -63,8 +58,6 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     public static final String CUSTOM_ACTION = "extra_custom_action";
 
-    private static final int READ_PRIVATE_KEY_REQUEST_CODE = 105;
-
     private enum State {
         INIT,
         LOADING,
@@ -88,7 +81,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private State mState;
     private String mFacebookId;
     private TeambrellaBackupData mBackupData;
-    private GoogleApiClient mGoogleApiClient;
+    private WalletBackupManager mWalletBackupManager;
 
 
     @Override
@@ -117,11 +110,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mFacebookId = savedInstanceState != null ? savedInstanceState.getString(FACEBOOK_ID_EXTRA, null) : null;
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(mConnectionCallbacks)
-                .enableAutoManage(this, mConnectionFailedListener)
-                .addApi(Auth.CREDENTIALS_API)
-                .build();
+        mWalletBackupManager = new WalletBackupManager(this);
+        mWalletBackupManager.addBackupListener(mWalletBackupListener);
 
         setState(State.INIT);
     }
@@ -210,29 +200,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     }
 
 
-    private void onFacebookLogin(View v) {
+    private void onFacebookLogin(@SuppressWarnings("unused") View v) {
         setState(State.LOADING);
-        CredentialRequest request = new CredentialRequest.Builder()
-                .setPasswordLoginSupported(true)
-                .build();
-
-        Auth.CredentialsApi.request(mGoogleApiClient, request).setResultCallback(credentialRequestResult -> {
-            if (credentialRequestResult.getStatus().isSuccess()) {
-                Credential credential = credentialRequestResult.getCredential();
-                mUser.setPrivateKey(credential.getPassword());
-                getTeams(mUser.getPrivateKey());
-            } else {
-                if (credentialRequestResult.getStatus().getStatusCode() == CommonStatusCodes.RESOLUTION_REQUIRED) {
-                    try {
-                        credentialRequestResult.getStatus().startResolutionForResult(this, READ_PRIVATE_KEY_REQUEST_CODE);
-                    } catch (IntentSender.SendIntentException e) {
-                        loginByFacebook();
-                    }
-                } else {
-                    loginByFacebook();
-                }
-            }
-        });
+        mWalletBackupManager.readWallet(true);
     }
 
 
@@ -347,7 +317,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     }
 
 
-    private void onTryDemo(View v) {
+    private void onTryDemo(@SuppressWarnings("unused") View v) {
         mUser.setDemoUser();
         getDemoTeams(mUser.getPrivateKey());
         StatisticHelper.onTryDemo();
@@ -357,15 +327,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallBackManager.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == READ_PRIVATE_KEY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
-                mUser.setPrivateKey(credential.getPassword());
-                getTeams(mUser.getPrivateKey());
-            } else {
-                loginByFacebook();
-            }
-        }
+        mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -482,27 +444,39 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWalletBackupManager.removeBackupListener(mWalletBackupListener);
+    }
+
     private void setInvitationDescription(@StringRes int textId) {
         Spannable text = (Spannable) Html.fromHtml(getString(textId));
         mInvitationDescription.setMovementMethod(LinkMovementMethod.getInstance());
         mInvitationDescription.setText(text);
     }
 
-
-    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+    private WalletBackupManager.IWalletBackupListener mWalletBackupListener = new WalletBackupManager.IWalletBackupListener() {
         @Override
-        public void onConnected(@Nullable Bundle bundle) {
+        public void onWalletSaved() {
 
         }
 
         @Override
-        public void onConnectionSuspended(int i) {
+        public void onWalletSaveError(int code) {
 
         }
-    };
 
+        @Override
+        public void onWalletRead(String key) {
+            mUser.setPrivateKey(key);
+            getTeams(mUser.getPrivateKey());
+        }
 
-    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = connectionResult -> {
-
+        @Override
+        public void onWalletReadError(int code) {
+            loginByFacebook();
+        }
     };
 }

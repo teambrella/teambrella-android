@@ -147,6 +147,11 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     }
 
     @Override
+    public void onWalletReadError(int code) {
+
+    }
+
+    @Override
     public void onWalletRead(String key) {
 
     }

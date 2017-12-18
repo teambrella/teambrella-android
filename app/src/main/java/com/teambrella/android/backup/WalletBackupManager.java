@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialRequest;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 
@@ -35,6 +37,8 @@ public class WalletBackupManager {
         void onWalletSaveError(int code);
 
         void onWalletRead(String key);
+
+        void onWalletReadError(int code);
 
     }
 
@@ -103,8 +107,32 @@ public class WalletBackupManager {
                 });
     }
 
-    public void readWallet() {
+    public void readWallet(boolean force) {
 
+        CredentialRequest request = new CredentialRequest.Builder()
+                .setPasswordLoginSupported(true)
+                .build();
+
+        Auth.CredentialsApi.request(mGoogleApiClient, request).setResultCallback(credentialRequestResult -> {
+            if (credentialRequestResult.getStatus().isSuccess()) {
+                Credential credential = credentialRequestResult.getCredential();
+                notifyOnWalletRead(credential.getPassword());
+            } else {
+                if (credentialRequestResult.getStatus().getStatusCode() == CommonStatusCodes.RESOLUTION_REQUIRED) {
+                    if (force) {
+                        try {
+                            credentialRequestResult.getStatus().startResolutionForResult(mActivity, READ_WALLET_REQUEST_CODE);
+                        } catch (IntentSender.SendIntentException e) {
+                            notifyOnWalletReadError(IWalletBackupListener.FAILED);
+                        }
+                    } else {
+                        notifyOnWalletReadError(IWalletBackupListener.RESOLUTION_REQUIRED);
+                    }
+                } else {
+                    notifyOnWalletReadError(IWalletBackupListener.FAILED);
+                }
+            }
+        });
     }
 
 
@@ -114,6 +142,13 @@ public class WalletBackupManager {
                 notifyOnWalletSaved();
             } else {
                 notifyOnWalletSaveError(IWalletBackupListener.FAILED);
+            }
+        } else if (requestCode == READ_WALLET_REQUEST_CODE) {
+            if (resultCode == FragmentActivity.RESULT_OK) {
+                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
+                notifyOnWalletRead(credential.getPassword());
+            } else {
+                notifyOnWalletReadError(IWalletBackupListener.FAILED);
             }
         }
     }
@@ -128,6 +163,18 @@ public class WalletBackupManager {
     private void notifyOnWalletSaveError(int code) {
         for (IWalletBackupListener listener : mListeners) {
             listener.onWalletSaveError(code);
+        }
+    }
+
+    private void notifyOnWalletRead(String key) {
+        for (IWalletBackupListener listener : mListeners) {
+            listener.onWalletRead(key);
+        }
+    }
+
+    private void notifyOnWalletReadError(int code) {
+        for (IWalletBackupListener listener : mListeners) {
+            listener.onWalletReadError(code);
         }
     }
 
