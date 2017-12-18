@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.user.wallet;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.withdraw.WithdrawActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.QRCodeUtils;
 
 import java.util.Locale;
@@ -135,14 +137,20 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
 
     @Override
     public void onWalletSaved() {
+        mBackupWalletButton.setVisibility(View.VISIBLE);
+        mBackupWalletButton.setTextColor(Color.GRAY);
         mBackupWalletButton.setText(R.string.your_wallet_is_backed_up);
     }
 
     @Override
     public void onWalletSaveError(int code) {
         if (code == RESOLUTION_REQUIRED) {
+            mBackupWalletButton.setVisibility(View.VISIBLE);
             mBackupWalletButton.setText(R.string.backup_wallet);
             mBackupWalletButton.setOnClickListener(v -> mDataHost.backUpWallet(true));
+        } else {
+            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
+                    : R.string.no_internet_connection);
         }
     }
 
