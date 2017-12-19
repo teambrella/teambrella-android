@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.user.wallet;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.ui.CosignersActivity;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.withdraw.WithdrawActivity;
@@ -53,6 +53,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     private TextView mCosignersCountView;
     private View mBackupWalletButton;
     private View mBackupWalletMessage;
+    private boolean mShowBackupInfoOnShow;
 
 
     @Override
@@ -150,6 +151,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         if (code == RESOLUTION_REQUIRED) {
             mBackupWalletMessage.setVisibility(View.VISIBLE);
             mBackupWalletMessage.setOnClickListener(v -> mDataHost.backUpWallet(true));
+            showWalletBackupInfo();
         } else {
 
             if (force && code != WalletBackupManager.IWalletBackupListener.CANCELED) {
@@ -160,6 +162,15 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
             if (!force) {
                 mBackupWalletMessage.setVisibility(View.GONE);
             }
+        }
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && mShowBackupInfoOnShow) {
+            showWalletBackupInfo();
         }
     }
 
@@ -236,5 +247,17 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
 
         }
         setContentShown(true);
+    }
+
+
+    private void showWalletBackupInfo() {
+        if (getUserVisibleHint()) {
+            if (!TeambrellaUser.get(getContext()).isBackupInfoDialogShown()) {
+                mDataHost.showWalletBackupDialog();
+            }
+            mShowBackupInfoOnShow = false;
+        } else {
+            mShowBackupInfoOnShow = true;
+        }
     }
 }
