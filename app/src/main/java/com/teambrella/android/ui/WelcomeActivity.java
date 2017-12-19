@@ -459,23 +459,23 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private WalletBackupManager.IWalletBackupListener mWalletBackupListener = new WalletBackupManager.IWalletBackupListener() {
         @Override
-        public void onWalletSaved() {
+        public void onWalletSaved(boolean force) {
 
         }
 
         @Override
-        public void onWalletSaveError(int code) {
+        public void onWalletSaveError(int code, boolean force) {
 
         }
 
         @Override
-        public void onWalletRead(String key) {
+        public void onWalletRead(String key, boolean force) {
             mUser.setPrivateKey(key);
             getTeams(mUser.getPrivateKey());
         }
 
         @Override
-        public void onWalletReadError(int code) {
+        public void onWalletReadError(int code, boolean force) {
             loginByFacebook();
         }
     };

@@ -43,7 +43,7 @@
         style="@style/Teambrella.TextAppearence.MessageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
@@ -58,18 +58,19 @@
         style="@style/Teambrella.TextAppearence.MessageText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:ellipsize="end"
         android:gravity="center"
-        android:paddingEnd="24dp"
-        android:paddingStart="24dp"
+        android:lineSpacingExtra="4dp"
+        android:paddingEnd="32dp"
+        android:paddingStart="32dp"
         android:text="@string/backup_your_wallet_description"
         android:textColor="#000224"
         android:textSize="12sp" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-        android:id="@+id/try_demo"
+        android:id="@+id/save_password"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginEnd="32dp"

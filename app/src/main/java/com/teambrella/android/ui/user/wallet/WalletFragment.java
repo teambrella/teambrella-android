@@ -51,7 +51,8 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     private View mCosignersView;
     private TeambrellaAvatarsWidgets mCosignersAvatar;
     private TextView mCosignersCountView;
-    private TextView mBackupWalletButton;
+    private View mBackupWalletButton;
+    private View mBackupWalletMessage;
 
 
     @Override
@@ -71,6 +72,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mCosignersView = view.findViewById(R.id.cosigners);
         mCosignersAvatar = view.findViewById(R.id.cosigners_avatar);
         mCosignersCountView = view.findViewById(R.id.cosigners_count);
+        mBackupWalletMessage = view.findViewById(R.id.wallet_not_backed_up_message);
 
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -138,31 +140,43 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     }
 
     @Override
-    public void onWalletSaved() {
+    public void onWalletSaved(boolean force) {
         mBackupWalletButton.setVisibility(View.VISIBLE);
-        mBackupWalletButton.setTextColor(Color.GRAY);
-        mBackupWalletButton.setText(R.string.your_wallet_is_backed_up);
+        mBackupWalletMessage.setVisibility(View.GONE);
     }
 
     @Override
-    public void onWalletSaveError(int code) {
+    public void onWalletSaveError(int code, boolean force) {
         if (code == RESOLUTION_REQUIRED) {
-            mBackupWalletButton.setVisibility(View.VISIBLE);
-            mBackupWalletButton.setText(R.string.backup_wallet);
-            mBackupWalletButton.setOnClickListener(v -> mDataHost.backUpWallet(true));
+            mBackupWalletMessage.setVisibility(View.VISIBLE);
+            mBackupWalletMessage.setOnClickListener(v -> mDataHost.backUpWallet(true));
         } else {
-            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
-                    : R.string.no_internet_connection);
+
+            if (force && code != WalletBackupManager.IWalletBackupListener.CANCELED) {
+                mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
+                        : R.string.no_internet_connection);
+            }
+
+            if (!force) {
+                mBackupWalletMessage.setVisibility(View.GONE);
+            }
         }
     }
 
     @Override
-    public void onWalletReadError(int code) {
+    protected void onReload() {
+        super.onReload();
+        mDataHost.load(mTags[0]);
+        mDataHost.backUpWallet(false);
+    }
+
+    @Override
+    public void onWalletReadError(int code, boolean force) {
 
     }
 
     @Override
-    public void onWalletRead(String key) {
+    public void onWalletRead(String key, boolean force) {
 
     }
 
