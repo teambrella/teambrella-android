@@ -79,6 +79,10 @@ public class WalletBackupManager {
     }
 
     public void saveWallet(String id, String name, Uri picture, String password, final boolean force) {
+
+        if (!mGoogleApiClient.isConnected()) {
+            return;
+        }
         Credential credential = new Credential.Builder(id)
                 .setName(name)
                 .setPassword(password)
@@ -109,6 +113,10 @@ public class WalletBackupManager {
     }
 
     public void readWallet(boolean force) {
+
+        if (!mGoogleApiClient.isConnected()) {
+            return;
+        }
 
         CredentialRequest request = new CredentialRequest.Builder()
                 .setPasswordLoginSupported(true)

@@ -298,7 +298,8 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingEnd="16dp"
-                android:paddingStart="16dp">
+                android:paddingStart="16dp"
+                android:visibility="gone">
 
                 <com.teambrella.android.ui.widget.AkkuratRegularTextView
                     android:layout_width="0dp"
