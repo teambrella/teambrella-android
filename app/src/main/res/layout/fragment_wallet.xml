@@ -15,7 +15,7 @@
             android:id="@+id/wallet_not_backed_up_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#728CA0"
+            android:background="@drawable/backup_wallet_button_background"
             android:orientation="vertical"
             android:padding="8dp"
             android:visibility="gone">
