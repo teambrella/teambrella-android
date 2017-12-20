@@ -112,8 +112,6 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mWalletBackupManager = new WalletBackupManager(this);
         mWalletBackupManager.addBackupListener(mWalletBackupListener);
-
-        setState(State.INIT);
     }
 
     @Override
@@ -125,12 +123,23 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             } else {
                 getTeams(mUser.getPrivateKey());
             }
-        } else if (BuildConfig.DEBUG) {
-            Intent intent = getIntent();
-            Uri uri = intent.getData();
-            if (uri != null) {
-                mUser.setPrivateKey(uri.getQueryParameter("key"));
-                getTeams(mUser.getPrivateKey());
+        } else {
+
+            if (BuildConfig.DEBUG) {
+                Intent intent = getIntent();
+                Uri uri = intent.getData();
+                if (uri != null) {
+                    mUser.setPrivateKey(uri.getQueryParameter("key"));
+                    getTeams(mUser.getPrivateKey());
+                    return;
+                }
+            }
+            
+            if (savedInstanceState == null) {
+                mWalletBackupManager.readOnConnected(false);
+                setState(State.LOADING);
+            } else {
+                setState(State.INIT);
             }
         }
     }
@@ -476,7 +485,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         @Override
         public void onWalletReadError(int code, boolean force) {
-            loginByFacebook();
+            if (force) {
+                loginByFacebook();
+            } else {
+                setState(State.INIT);
+            }
         }
     };
 }

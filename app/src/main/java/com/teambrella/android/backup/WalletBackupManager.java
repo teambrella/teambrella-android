@@ -54,6 +54,8 @@ public class WalletBackupManager {
 
     private final FragmentActivity mActivity;
 
+    private Boolean mForceReadOnConnected = null;
+
     /**
      * Constructor
      *
@@ -76,6 +78,11 @@ public class WalletBackupManager {
 
     public void removeBackupListener(IWalletBackupListener listener) {
         mListeners.remove(listener);
+    }
+
+
+    public void readOnConnected(boolean force) {
+        mForceReadOnConnected = force;
     }
 
     public void saveWallet(String id, String name, Uri picture, String password, final boolean force) {
@@ -193,7 +200,10 @@ public class WalletBackupManager {
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-
+            if (mForceReadOnConnected != null) {
+                readWallet(mForceReadOnConnected);
+                mForceReadOnConnected = null;
+            }
         }
 
         @Override

@@ -110,7 +110,11 @@ public class TeambrellaUser {
     }
 
     public boolean isBackupInfoDialogShown() {
-        return false;
+        return mPreferences.getBoolean(PREFERENCE_WALLET_BACKUP_SHOWN, false);
+    }
+
+    public void setBackupInfodialogShown(boolean shown) {
+        mPreferences.edit().putBoolean(PREFERENCE_WALLET_BACKUP_SHOWN, shown).apply();
     }
 
 }

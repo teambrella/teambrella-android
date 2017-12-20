@@ -252,8 +252,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
 
     private void showWalletBackupInfo() {
         if (getUserVisibleHint()) {
-            if (!TeambrellaUser.get(getContext()).isBackupInfoDialogShown()) {
+            TeambrellaUser user = TeambrellaUser.get(getContext());
+            if (!user.isBackupInfoDialogShown()) {
                 mDataHost.showWalletBackupDialog();
+                user.setBackupInfodialogShown(true);
             }
             mShowBackupInfoOnShow = false;
         } else {
