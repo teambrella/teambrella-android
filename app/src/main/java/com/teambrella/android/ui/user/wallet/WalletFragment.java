@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.user.wallet;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -55,6 +56,14 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     private View mBackupWalletMessage;
     private boolean mShowBackupInfoOnShow;
 
+    private TeambrellaUser mUser;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mUser = TeambrellaUser.get(context);
+    }
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -125,7 +134,6 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mBackupWalletButton = view.findViewById(R.id.backup_wallet);
 
         mDataHost.addWalletBackupListener(this);
-        mDataHost.backUpWallet(false);
 
         view.findViewById(R.id.wallet_not_backed_up_message).setOnClickListener(v -> mDataHost.showWalletBackupDialog());
 
@@ -178,7 +186,9 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     protected void onReload() {
         super.onReload();
         mDataHost.load(mTags[0]);
-        mDataHost.backUpWallet(false);
+        if (!mUser.isDemoUser()) {
+            mDataHost.backUpWallet(false);
+        }
     }
 
     @Override
@@ -245,21 +255,26 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
                     , mDataHost.getTeamId()));
 
 
+            if (!mUser.isDemoUser()) {
+                mDataHost.backUpWallet(false);
+            }
+
         }
         setContentShown(true);
     }
 
 
     private void showWalletBackupInfo() {
-        if (getUserVisibleHint()) {
-            TeambrellaUser user = TeambrellaUser.get(getContext());
-            if (!user.isBackupInfoDialogShown()) {
-                mDataHost.showWalletBackupDialog();
-                user.setBackupInfodialogShown(true);
+        if (!mUser.isDemoUser()) {
+            if (getUserVisibleHint()) {
+                if (!mUser.isBackupInfoDialogShown()) {
+                    mDataHost.showWalletBackupDialog();
+                    mUser.setBackupInfodialogShown(true);
+                }
+                mShowBackupInfoOnShow = false;
+            } else {
+                mShowBackupInfoOnShow = true;
             }
-            mShowBackupInfoOnShow = false;
-        } else {
-            mShowBackupInfoOnShow = true;
         }
     }
 }

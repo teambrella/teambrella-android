@@ -81,7 +81,7 @@ public class WalletBackupManager {
     }
 
 
-    public void readOnConnected(boolean force) {
+    public void readOnConnected(@SuppressWarnings("SameParameterValue") boolean force) {
         mForceReadOnConnected = force;
     }
 
@@ -90,7 +90,7 @@ public class WalletBackupManager {
         if (!mGoogleApiClient.isConnected()) {
             return;
         }
-        Credential credential = new Credential.Builder(id)
+        Credential credential = new Credential.Builder(String.format("fb.com/%s", id))
                 .setName(name)
                 .setPassword(password)
                 .setProfilePictureUri(picture)

@@ -97,6 +97,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
     private int mSelectedItemId = -1;
     private String mUserId;
     private String mUserName;
+    private String mFBName;
     private Uri mUserPicture;
     private Disposable mDisposable;
     private ImageView mAvatar;
@@ -297,6 +298,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
                         .into(mAvatar);
 
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
+                mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
                 mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             }
         });
@@ -541,7 +543,7 @@ public class MainActivity extends ADataHostActivity implements IMainDataHost, IT
 
     @Override
     public void backUpWallet(boolean force) {
-        mWalletBackupManager.saveWallet(mUserId,
+        mWalletBackupManager.saveWallet(mFBName,
                 mUserName,
                 mUserPicture,
                 TeambrellaUser.get(this).getPrivateKey()
