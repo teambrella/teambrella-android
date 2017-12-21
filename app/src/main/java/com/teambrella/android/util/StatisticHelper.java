@@ -26,6 +26,7 @@ public class StatisticHelper {
     private static final String NEW_DISCUSSION = "New Discussion";
     private static final String BACK_UP = "Back Up";
     private static final String RESTORE = "Restore";
+    private static final String GSL_BACKUP = "GSL Back Up";
 
 
     private static final String TEAM_ID = "TeamId";
@@ -40,6 +41,7 @@ public class StatisticHelper {
 
     private static final String CATEGORY_WALLET = "Wallet";
     private static final String ACTION_SYNC = "Sync";
+    private static final String ACTION_SAVE = "Save";
 
     public static void onTryDemo() {
         if (!BuildConfig.DEBUG) {
@@ -136,12 +138,25 @@ public class StatisticHelper {
         }
     }
 
-    public static void onWalletSync(Context context, String tag) {
+    static void onWalletSync(Context context, String tag) {
         Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory(CATEGORY_WALLET)
                 .setAction(ACTION_SYNC)
                 .setLabel(tag)
                 .build());
+    }
+
+    public static void onWalletSaved(Context context, String userId) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_WALLET)
+                .setAction(ACTION_SAVE)
+                .setLabel(userId)
+                .build());
+
+        if (!BuildConfig.DEBUG) {
+            Answers.getInstance().logCustom(new CustomEvent(GSL_BACKUP).putCustomAttribute(USER_ID, userId));
+        }
     }
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -26,6 +27,7 @@ import com.teambrella.android.ui.withdraw.WithdrawActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.QRCodeUtils;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.util.Locale;
 
@@ -152,6 +154,10 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     public void onWalletSaved(boolean force) {
         mBackupWalletButton.setVisibility(View.VISIBLE);
         mBackupWalletMessage.setVisibility(View.GONE);
+        if (force) {
+            Toast.makeText(getContext(), R.string.your_wallet_is_backed_up, Toast.LENGTH_SHORT).show();
+            StatisticHelper.onWalletSaved(getContext(), mUser.getUserId());
+        }
     }
 
     @Override

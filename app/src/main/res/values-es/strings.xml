@@ -276,7 +276,7 @@
     <string name="your_wallet_is_backed_up">Tu monedero está respaldado</string>
     <string name="your_wallet_not_backed_up">Tu monedero no está respaldado</string>
     <string name="backup_your_wallet_title">Hacer una copia de respaldo de tu monedero</string>
-    <string name="backup_your_wallet_description">Para restablecer el acceso a tu monedero, nesesitarás una clave privada. Es muy recomendable hacer una copia de seguridad ahora con Google Smart Lock.</string>
+    <string name="backup_your_wallet_description">Para restablecer el acceso a tu monedero, necesitarás una clave privada. Es muy recomendable hacer una copia de respaldo ahora con Google Smart Lock.</string>
     <string name="tap_to_backup_wallet">Toca para hacer una copia de respaldo de tu monedero con Google Smart Lock</string>
     <string name="save_password">Guardar la contraseña</string>
     <string name="later">Más tarde</string>
