@@ -76,6 +76,7 @@ public class NotificationsSettingsDialogFragment extends BottomSheetDialogFragme
                 dismiss();
             }
         });
+        dialog.setCanceledOnTouchOutside(true);
         dialog.setContentView(view);
         return dialog;
     }
