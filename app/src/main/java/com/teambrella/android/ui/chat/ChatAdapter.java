@@ -130,9 +130,11 @@ class ChatAdapter extends ChatDataPagerAdapter {
     }
 
     private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDateFormat mDateFormat = new SimpleDateFormat("HH:mm d LLLL", Locale.ENGLISH);
+        private SimpleDateFormat mTimeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        private SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
+        TextView mDate;
         Picasso picasso;
 
         ClaimChatViewHolder(View itemView) {
@@ -141,6 +143,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
                     .getPicasso();
             mUserPicture = itemView.findViewById(R.id.user_picture);
             mTime = itemView.findViewById(R.id.time);
+            mDate = itemView.findViewById(R.id.date);
         }
 
         void bind(JsonWrapper object) {
@@ -168,7 +171,9 @@ class ChatAdapter extends ChatDataPagerAdapter {
                 });
             }
 
-            mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            mTime.setText(mTimeFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            mDate.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            mDate.setVisibility(object.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, false) ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -387,6 +387,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_HE_COVERS_ME_IF499 = "HeCoversMeIf499";
     public static final String ATTR_DATA_MY_RISK = "MyRisk";
     public static final String ATTR_DATA_CITY = "City";
+    public static final String ATTR_DATA_IS_NEXT_DAY = "isNextDay";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

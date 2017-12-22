@@ -30,7 +30,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
     private Uri mUri;
     private long mSince = -1;
 
-    private JsonArray mArray = new JsonArray();
+    protected JsonArray mArray = new JsonArray();
 
 
     private boolean mHasNextError = false;

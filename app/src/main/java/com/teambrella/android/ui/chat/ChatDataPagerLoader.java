@@ -11,7 +11,10 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.TeambrellaChatDataPagerLoader;
+import com.teambrella.android.util.TimeUtils;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +29,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
     private static final String LOG_TAG = ChatDataPagerLoader.class.getSimpleName();
 
-    public ChatDataPagerLoader(Context context, Uri uri) {
+    ChatDataPagerLoader(Context context, Uri uri) {
         super(context, uri);
     }
 
@@ -53,11 +56,17 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
         Iterator<JsonElement> it = messages.iterator();
         //noinspection WhileLoopReplaceableByForEach
+        Calendar lastTime = getLastDate();
         while (it.hasNext()) {
             JsonObject srcObject = it.next().getAsJsonObject();
             JsonWrapper message = new JsonWrapper(srcObject);
             String text = message.getString(TeambrellaModel.ATTR_DATA_TEXT);
             JsonArray images = message.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+
+            Calendar time = getDate(message);
+            srcObject.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, isNextDay(lastTime, time));
+            lastTime = time;
+
             Gson gson = new Gson();
             if (text != null && images != null && images.size() > 0) {
                 text = text.replaceAll("<p>", "");
@@ -67,6 +76,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                     JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, slice);
                     newMessages.add(newObject);
+                    srcObject.remove(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY);
                 }
             } else if (!TextUtils.isEmpty(text)) {
                 text = text.replaceAll("<p>", "");
@@ -85,6 +95,33 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
 
         return super.postProcess(object);
+    }
+
+    private Calendar getLastDate() {
+        Calendar calendar = Calendar.getInstance();
+        JsonElement lastElement = mArray.size() > 0 ? mArray.get(mArray.size() - 1) : null;
+        JsonWrapper lastItem = lastElement != null ? new JsonWrapper(lastElement.getAsJsonObject()) : null;
+        calendar.setTime(lastItem != null ? TimeUtils.getDateFromTicks(lastItem.getLong(TeambrellaModel.ATTR_DATA_DATE_CREATED, 0)) : new Date(0));
+        calendar.get(Calendar.YEAR);
+        calendar.get(Calendar.DAY_OF_YEAR);
+        return calendar;
+    }
+
+    private Calendar getDate(JsonWrapper item) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(TimeUtils.getDateFromTicks(item.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0)));
+        calendar.get(Calendar.YEAR);
+        calendar.get(Calendar.DAY_OF_YEAR);
+        return calendar;
+    }
+
+
+    private boolean isNextDay(Calendar older, Calendar newer) {
+        int oldYer = older.get(Calendar.YEAR);
+        int newYear = newer.get(Calendar.YEAR);
+        int oldDayOfYear = older.get(Calendar.DAY_OF_YEAR);
+        int newDayOfYear = newer.get(Calendar.DAY_OF_YEAR);
+        return newYear > oldYer || newYear == oldYer && newDayOfYear > oldDayOfYear;
     }
 
 
