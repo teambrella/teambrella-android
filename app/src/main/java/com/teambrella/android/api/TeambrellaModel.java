@@ -57,6 +57,12 @@ public class TeambrellaModel {
         public static final String ITEM_PROCESSED = "processed";
     }
 
+    public static final class PostStatus {
+        public static final String POST_PENDING = "post_pending";
+        public static final String POST_SYNCED = "post_synced";
+        public static final String POST_ERROR = "post_error";
+    }
+
 
     public static final class WithdrawlsItemType {
         public static final String ITEM_QUEUED_HEADER = "queued_header";

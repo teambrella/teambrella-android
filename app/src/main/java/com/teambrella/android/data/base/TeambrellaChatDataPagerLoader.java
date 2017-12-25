@@ -197,12 +197,29 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         mPublisher.onNext(Notification.createOnNext(data));
     }
 
+    public void addAsNext(JsonObject item) {
+        JsonObject response = new JsonObject();
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_RELOAD, true);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_FORCE, true);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_DIRECTION, TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_SIZE, 1);
+        response.add(TeambrellaModel.ATTR_METADATA_, metadata);
+        addPageableData(response, item);
+        mArray.add(item);
+        mPublisher.onNext(Notification.createOnNext(response));
+    }
+
     protected JsonArray getPageableData(JsonObject src) {
         return null;
     }
 
     protected JsonObject postProcess(JsonObject object) {
         return object;
+    }
+
+    protected void addPageableData(JsonObject src, JsonObject item) {
+
     }
 
 

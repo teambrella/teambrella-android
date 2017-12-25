@@ -41,6 +41,27 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
     }
 
     @Override
+    protected void addPageableData(JsonObject src, JsonObject item) {
+        super.addPageableData(src, item);
+        JsonElement data = src.get(TeambrellaModel.ATTR_DATA);
+        if (data == null) {
+            data = new JsonObject();
+            src.add(TeambrellaModel.ATTR_DATA, data);
+        }
+        JsonElement discussion = data.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
+        if (discussion == null) {
+            discussion = new JsonObject();
+            data.getAsJsonObject().add(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION, discussion);
+        }
+        JsonElement chat = discussion.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_CHAT);
+        if (chat == null) {
+            chat = new JsonArray();
+            discussion.getAsJsonObject().add(TeambrellaModel.ATTR_DATA_CHAT, chat);
+        }
+        chat.getAsJsonArray().add(item);
+    }
+
+    @Override
     protected JsonObject postProcess(JsonObject object) {
         JsonArray messages = getPageableData(object);
         JsonObject metadata = new JsonObject();

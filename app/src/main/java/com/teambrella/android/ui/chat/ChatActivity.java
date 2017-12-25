@@ -311,7 +311,6 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-
                 String text = mMessageView.getText().toString().trim();
                 if (!TextUtils.isEmpty(text)) {
                     switch (mAction) {
@@ -319,7 +318,10 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                             request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
                             break;
                         default:
-                            request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), mMessageView.getText().toString(), null));
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                            fragment.addPendingMessage(UUID.randomUUID().toString(), mMessageView.getText().toString());
+                            //request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), mMessageView.getText().toString(), null));
                     }
                 }
                 mMessageView.setText(null);
@@ -337,6 +339,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
 
     protected void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
+
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
                     .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
