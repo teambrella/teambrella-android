@@ -38,7 +38,8 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         if (notification.isOnNext()) {
             JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
             if (metadata != null) {
-                if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)
+                if (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, false)
+                        || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)
                         || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
                         && TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION.equals(metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION))) {
                     notifyDataSetChanged();

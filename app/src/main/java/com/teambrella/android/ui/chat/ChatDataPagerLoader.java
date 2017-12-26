@@ -96,6 +96,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                 for (String slice : slices) {
                     JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, slice);
+                    newObject.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_SYNCED);
                     newMessages.add(newObject);
                     srcObject.remove(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY);
                 }
@@ -105,7 +106,19 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                 if (!TextUtils.isEmpty(text)) {
                     JsonObject newObject = gson.fromJson(srcObject, JsonObject.class);
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, text);
+                    newObject.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_SYNCED);
                     newMessages.add(newObject);
+                }
+            }
+
+            String id = message.getString(TeambrellaModel.ATTR_DATA_ID);
+            Iterator<JsonElement> presentIterator = mArray.iterator();
+            while (presentIterator.hasNext()) {
+                JsonWrapper item = new JsonWrapper(presentIterator.next().getAsJsonObject());
+                if (item.getString(TeambrellaModel.ATTR_DATA_ID) != null
+                        && item.getString(TeambrellaModel.ATTR_DATA_ID).equals(id)) {
+                    presentIterator.remove();
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, true);
                 }
             }
         }
@@ -114,7 +127,6 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                 .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
                 .add(TeambrellaModel.ATTR_DATA_CHAT, newMessages);
 
-
         return super.postProcess(object);
     }
 
@@ -122,17 +134,29 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
         Calendar calendar = Calendar.getInstance();
         JsonElement lastElement = mArray.size() > 0 ? mArray.get(mArray.size() - 1) : null;
         JsonWrapper lastItem = lastElement != null ? new JsonWrapper(lastElement.getAsJsonObject()) : null;
-        calendar.setTime(lastItem != null ? TimeUtils.getDateFromTicks(lastItem.getLong(TeambrellaModel.ATTR_DATA_DATE_CREATED, 0)) : new Date(0));
-        calendar.get(Calendar.YEAR);
-        calendar.get(Calendar.DAY_OF_YEAR);
+        long created = lastItem != null ? lastItem.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0) : 0;
+        if (created > 0) {
+            calendar.setTime(TimeUtils.getDateFromTicks(created));
+        } else {
+            long added = lastItem != null ? lastItem.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0) : 0;
+            if (added > 0) {
+                calendar.setTime(new Date(added));
+            }
+        }
         return calendar;
     }
 
     private Calendar getDate(JsonWrapper item) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(TimeUtils.getDateFromTicks(item.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0)));
-        calendar.get(Calendar.YEAR);
-        calendar.get(Calendar.DAY_OF_YEAR);
+        long created = item.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0);
+        if (created > 0) {
+            calendar.setTime(TimeUtils.getDateFromTicks(created));
+        } else {
+            long added = item.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0);
+            if (added > 0) {
+                calendar.setTime(new Date(added));
+            }
+        }
         return calendar;
     }
 

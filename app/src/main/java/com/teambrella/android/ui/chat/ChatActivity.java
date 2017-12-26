@@ -92,6 +92,7 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     private TeambrellaNotificationManager mNotificationManager;
     private View mNotificationHelpView;
     private MuteStatus mMuteStatus = null;
+    private float mVote = -1;
 
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
@@ -315,13 +316,15 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 if (!TextUtils.isEmpty(text)) {
                     switch (mAction) {
                         case SHOW_CONVERSATION_CHAT:
-                            request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, text));
                             break;
-                        default:
+                        default: {
+                            String uuid = UUID.randomUUID().toString();
                             FragmentManager fragmentManager = getSupportFragmentManager();
                             ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
-                            fragment.addPendingMessage(UUID.randomUUID().toString(), mMessageView.getText().toString());
-                            //request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), mMessageView.getText().toString(), null));
+                            fragment.addPendingMessage(uuid, text, mVote);
+                            request(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
+                        }
                     }
                 }
                 mMessageView.setText(null);
@@ -377,6 +380,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
             Observable.fromArray(response.getValue())
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
+                    .doOnNext(data -> {
+                        JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+                        if (voting != null) {
+                            mVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, mVote);
+                        }
+                    })
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
                     .doOnNext(jsonWrapper -> {
                         if (jsonWrapper.hasValue(TeambrellaModel.ATTR_DATA_IS_MUTED)) {
@@ -391,7 +400,9 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                                 mMuteStatus = MuteStatus.UMMUTED;
                             }
                         } else {
-                            mMuteStatus = MuteStatus.DEFAULT;
+                            if (mMuteStatus == null) {
+                                mMuteStatus = MuteStatus.DEFAULT;
+                            }
                         }
                         invalidateOptionsMenu();
                     }).blockingFirst();

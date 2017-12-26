@@ -197,6 +197,7 @@ public class TeambrellaModel {
     public static final String ATTR_METADATA_DIRECTION = "direction";
     public static final String ATTR_METADATA_FORCE = "force";
     public static final String ATTR_METADATA_RELOAD = "reload";
+    public static final String ATTR_METADATA_ITEMS_UPDATED = "ItemsUpdated";
     public static final String ATTR_METADATA_NEXT_DIRECTION = "next";
     public static final String ATTR_METADATA_PREVIOUS_DIRECTION = "previous";
     public static final String ATTR_METADATA_SIZE = "size";
@@ -323,6 +324,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEXT = "Text";
     public static final String ATTR_DATA_TEAMMATE_PART = "TeammatePart";
     public static final String ATTR_DATA_CREATED = "Created";
+    public static final String ATTR_DATA_ADDED = "Added";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
     public static final String ATTR_DATA_SMALL_IMAGES = "SmallImages";
@@ -387,6 +389,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
     public static final String ATTR_DATA_IS_NEW = "IsNew";
     public static final String ATTR_DATA_IS_MUTED = "IsMuted";
+    public static final String ATTR_DATA_MESSAGE_STATUS = "MesageStatus";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

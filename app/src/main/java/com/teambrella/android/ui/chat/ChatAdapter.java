@@ -136,6 +136,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         TextView mTime;
         TextView mDate;
         Picasso picasso;
+        View mStatus;
 
         ClaimChatViewHolder(View itemView) {
             super(itemView);
@@ -144,6 +145,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
             mUserPicture = itemView.findViewById(R.id.user_picture);
             mTime = itemView.findViewById(R.id.time);
             mDate = itemView.findViewById(R.id.date);
+            mStatus = itemView.findViewById(R.id.status);
         }
 
         void bind(JsonWrapper object) {
@@ -174,6 +176,12 @@ class ChatAdapter extends ChatDataPagerAdapter {
             mTime.setText(mTimeFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
             mDate.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
             mDate.setVisibility(object.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, false) ? View.VISIBLE : View.GONE);
+
+            if (mStatus != null) {
+                mStatus.setVisibility(TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))
+                        ? View.VISIBLE : View.GONE);
+            }
+            mTime.setVisibility(mStatus == null || mStatus.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -183,6 +191,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         TextView mTeammateName;
         TextView mVote;
         View mHeader;
+        View mStatus;
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
