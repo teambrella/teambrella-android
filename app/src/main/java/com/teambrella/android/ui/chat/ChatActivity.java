@@ -40,7 +40,6 @@ import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 
-import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.UUID;
@@ -347,11 +346,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
                     .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
                     .blockingFirst(null);
-            switch (TeambrellaUris.sUriMatcher.match(Uri.parse(requestUriString))) {
+            Uri uri = Uri.parse(requestUriString);
+            switch (TeambrellaUris.sUriMatcher.match(uri)) {
                 case TeambrellaUris.NEW_FILE:
                     JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                             .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
-                    request(TeambrellaUris.getNewPostUri(mTopicId, UUID.randomUUID().toString(), null, array.toString()));
+                    request(TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString()));
                     break;
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
@@ -468,11 +468,17 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Observable<File> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
+        Observable<ImagePicker.ImageDescriptor> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
         if (result != null) {
-            result.subscribe(file -> request(TeambrellaUris.getNewFileUri(file.getAbsolutePath())),
-                    throwable -> {
-                    });
+            result.subscribe(descriptor -> {
+                String uuid = UUID.randomUUID().toString();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                fragment.addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
+                request(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid));
+            }, throwable -> {
+
+            });
         }
         getPager(DATA_FRAGMENT_TAG).loadNext(true);
     }

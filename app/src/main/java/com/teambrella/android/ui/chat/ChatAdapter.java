@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -66,7 +67,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         if (viewType == VIEW_TYPE_REGULAR) {
             JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject());
             boolean isItMine = mUserId.equals(item.getString(TeambrellaModel.ATTR_DATA_USER_ID));
-            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
             String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
@@ -191,7 +192,6 @@ class ChatAdapter extends ChatDataPagerAdapter {
         TextView mTeammateName;
         TextView mVote;
         View mHeader;
-        View mStatus;
 
         ClaimChatMessageViewHolder(View itemView) {
             super(itemView);
@@ -265,7 +265,18 @@ class ChatAdapter extends ChatDataPagerAdapter {
             super.bind(object);
             Context context = itemView.getContext();
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
-            ArrayList<String> smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            ArrayList<String> smallImages;
+            if (TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+                smallImages = new ArrayList<>();
+                JsonElement element = object.getObject().get(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+                if (element != null && element.isJsonArray()) {
+                    for (JsonElement item : element.getAsJsonArray()) {
+                        smallImages.add("file:" + item.getAsString());
+                    }
+                }
+            } else {
+                smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            }
             if (text != null && smallImages != null && smallImages.size() > 0) {
                 for (int i = 0; i < smallImages.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
@@ -275,12 +286,16 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
                         mImage.setLayoutParams(params);
                         picasso.load(smallImages.get(i))
+                                .noFade()
                                 .resize(width, 0)
                                 .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
                                 .into(mImage);
+
                         final int position = i;
-                        ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
-                        mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
+                        if (!TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+                            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
+                            mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
+                        }
                         break;
                     }
                 }

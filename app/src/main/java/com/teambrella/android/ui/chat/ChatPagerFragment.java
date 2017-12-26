@@ -36,4 +36,22 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         }
         loader.addAsNext(post);
     }
+
+    public void addPendingImage(String postId, String fileUri, float ratio) {
+        ChatDataPagerLoader loader = (ChatDataPagerLoader) getPager();
+        JsonObject post = new JsonObject();
+        post.addProperty(TeambrellaModel.ATTR_DATA_USER_ID, TeambrellaUser.get(getContext()).getUserId());
+        post.addProperty(TeambrellaModel.ATTR_DATA_TEXT, "<img src=\"0\">");
+        post.addProperty(TeambrellaModel.ATTR_DATA_ID, postId);
+        post.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_PENDING);
+        post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, Calendar.getInstance().getTime().getTime());
+        JsonArray images = new JsonArray();
+        images.add(fileUri);
+        post.add(TeambrellaModel.ATTR_DATA_SMALL_IMAGES, images);
+        JsonArray ratios = new JsonArray();
+        ratios.add(ratio);
+        post.add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios);
+        loader.addAsNext(post);
+
+    }
 }

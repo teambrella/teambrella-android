@@ -12,8 +12,9 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
-import com.teambrella.android.util.log.Log;
 import android.webkit.MimeTypeMap;
+
+import com.teambrella.android.util.log.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,6 +48,12 @@ public class ImagePicker {
     private Uri mCameraFileUri;
 
 
+    public static class ImageDescriptor {
+        public File file;
+        public float ratio;
+    }
+
+
     public ImagePicker(AppCompatActivity context) {
         mContext = context;
     }
@@ -58,14 +65,15 @@ public class ImagePicker {
     }
 
 
-    public Observable<File> onActivityResult(int requestCode, int resultCode, Intent data) {
-        Observable<File> result = null;
+    public Observable<ImageDescriptor> onActivityResult(int requestCode, int resultCode, Intent data) {
+        Observable<File> fileObservable;
+        Observable<ImageDescriptor> result = null;
         switch (requestCode) {
             case IMAGE_PICKER_REQUEST_CODE:
                 File cameraFile = mCameraFileUri != null ? new File(mCameraFileUri.getPath()) : null;
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     Uri uri = data != null ? data.getData() : null;
-                    result = cameraFile != null && uri == null ?
+                    fileObservable = cameraFile != null && uri == null ?
                             Observable.just(cameraFile)
                             : uri != null ? Observable.just(uri).map(this::createFile)
                             : null;
@@ -77,8 +85,8 @@ public class ImagePicker {
                         }
                     }
 
-                    if (result != null) {
-                        result = result.map(this::scaleImageIfNeeded);
+                    if (fileObservable != null) {
+                        result = fileObservable.map(this::scaleImageIfNeeded);
                     }
 
                     if (result != null) {
@@ -185,7 +193,7 @@ public class ImagePicker {
     }
 
 
-    private File scaleImageIfNeeded(File srcFile) throws IOException {
+    private ImageDescriptor scaleImageIfNeeded(File srcFile) throws IOException {
 
         int maxDimen = 1200;
 
@@ -202,7 +210,11 @@ public class ImagePicker {
         File newFile = compress(newBitmap);
         //noinspection ResultOfMethodCallIgnored
         srcFile.delete();
-        return newFile;
+        ImageDescriptor imageDescriptor = new ImageDescriptor();
+        imageDescriptor.file = newFile;
+        imageDescriptor.ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+        bitmap.recycle();
+        return imageDescriptor;
     }
 
     private File compress(Bitmap bitmap) throws IOException {

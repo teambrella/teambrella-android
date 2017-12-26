@@ -208,6 +208,15 @@ public class TeambrellaUris {
                 .build();
     }
 
+    public static Uri getNewFileUri(String path, String uuid) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendPath(SEGMENT_NEW_FILE)
+                .appendQueryParameter(KEY_URI, path)
+                .appendQueryParameter(KEY_ID, uuid)
+                .build();
+    }
+
     public static Uri getDebugDbUri(String path) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
