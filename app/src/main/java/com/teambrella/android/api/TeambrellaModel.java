@@ -172,6 +172,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_SORTED_BY_RISK = "OrderByRisk";
     public static final String ATTR_REQUEST_TO_ADDRESS = "ToAddress";
     public static final String ATTR_REQUEST_AMOUNT = "Amount";
+    public static final String ATTR_REQUEST_NEW_MESSAGE_ID = "NewMessageId";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";

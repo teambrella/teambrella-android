@@ -314,9 +314,14 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                 String text = mMessageView.getText().toString().trim();
                 if (!TextUtils.isEmpty(text)) {
                     switch (mAction) {
-                        case SHOW_CONVERSATION_CHAT:
-                            request(TeambrellaUris.getNewConversationMessage(mUserId, text));
-                            break;
+                        case SHOW_CONVERSATION_CHAT: {
+                            String uuid = UUID.randomUUID().toString();
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                            fragment.addPendingMessage(uuid, text, -1f);
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
+                        }
+                        break;
                         default: {
                             String uuid = UUID.randomUUID().toString();
                             FragmentManager fragmentManager = getSupportFragmentManager();

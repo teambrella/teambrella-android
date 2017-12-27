@@ -299,6 +299,7 @@ public class TeambrellaServer {
             case TeambrellaUris.NEW_PRIVATE_MESSAGE:
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_MESSAGE_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
                 break;
             case TeambrellaUris.APPLICATION_VOTES:
                 String teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);

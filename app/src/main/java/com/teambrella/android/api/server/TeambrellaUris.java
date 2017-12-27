@@ -513,12 +513,13 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getNewConversationMessage(String userId, String text) {
+    public static Uri getNewConversationMessage(String userId, String messageId, String text) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
                 .appendEncodedPath(SEGMENT_NEW_POST)
                 .appendQueryParameter(KEY_ID, userId)
+                .appendQueryParameter(KEY_POST_ID, messageId)
                 .appendQueryParameter(KEY_MESSAGE, text)
                 .build();
     }
