@@ -328,6 +328,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ADDED = "Added";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+    public static final String ATTR_DATA_LOCAL_IMAGES = "LocalImages";
     public static final String ATTR_DATA_SMALL_IMAGES = "SmallImages";
     public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
     public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";

@@ -47,7 +47,7 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, Calendar.getInstance().getTime().getTime());
         JsonArray images = new JsonArray();
         images.add(fileUri);
-        post.add(TeambrellaModel.ATTR_DATA_SMALL_IMAGES, images);
+        post.add(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES, images);
         JsonArray ratios = new JsonArray();
         ratios.add(ratio);
         post.add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios);

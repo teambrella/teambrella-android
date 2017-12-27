@@ -67,7 +67,10 @@ class ChatAdapter extends ChatDataPagerAdapter {
         if (viewType == VIEW_TYPE_REGULAR) {
             JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject());
             boolean isItMine = mUserId.equals(item.getString(TeambrellaModel.ATTR_DATA_USER_ID));
-            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES);
+            if (images == null) {
+                images = item.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            }
             String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
@@ -263,20 +266,21 @@ class ChatAdapter extends ChatDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
+
             Context context = itemView.getContext();
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
+
             ArrayList<String> smallImages;
-            if (TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+            JsonArray localImages = object.getJsonArray(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES);
+            if (localImages != null && localImages.size() > 0) {
                 smallImages = new ArrayList<>();
-                JsonElement element = object.getObject().get(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
-                if (element != null && element.isJsonArray()) {
-                    for (JsonElement item : element.getAsJsonArray()) {
-                        smallImages.add("file:" + item.getAsString());
-                    }
+                for (JsonElement item : localImages) {
+                    smallImages.add("file:" + item.getAsString());
                 }
             } else {
                 smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
             }
+            
             if (text != null && smallImages != null && smallImages.size() > 0) {
                 for (int i = 0; i < smallImages.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {

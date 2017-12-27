@@ -84,6 +84,21 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
             String text = message.getString(TeambrellaModel.ATTR_DATA_TEXT);
             JsonArray images = message.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
 
+
+            String id = message.getString(TeambrellaModel.ATTR_DATA_ID);
+            Iterator<JsonElement> presentIterator = mArray.iterator();
+            while (presentIterator.hasNext()) {
+                JsonWrapper item = new JsonWrapper(presentIterator.next().getAsJsonObject());
+                if (item.getString(TeambrellaModel.ATTR_DATA_ID) != null
+                        && item.getString(TeambrellaModel.ATTR_DATA_ID).equals(id)) {
+                    if (item.hasValue(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES)) {
+                        srcObject.add(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES, item.getJsonArray(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES));
+                    }
+                    presentIterator.remove();
+                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, true);
+                }
+            }
+
             Calendar time = getDate(message);
             srcObject.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, isNextDay(lastTime, time));
             lastTime = time;
@@ -108,17 +123,6 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_TEXT, text);
                     newObject.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_SYNCED);
                     newMessages.add(newObject);
-                }
-            }
-
-            String id = message.getString(TeambrellaModel.ATTR_DATA_ID);
-            Iterator<JsonElement> presentIterator = mArray.iterator();
-            while (presentIterator.hasNext()) {
-                JsonWrapper item = new JsonWrapper(presentIterator.next().getAsJsonObject());
-                if (item.getString(TeambrellaModel.ATTR_DATA_ID) != null
-                        && item.getString(TeambrellaModel.ATTR_DATA_ID).equals(id)) {
-                    presentIterator.remove();
-                    metadata.addProperty(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, true);
                 }
             }
         }

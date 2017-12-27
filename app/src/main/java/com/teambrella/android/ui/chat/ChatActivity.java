@@ -226,14 +226,12 @@ public class ChatActivity extends ADataHostActivity implements IChatActivity {
                     }
 
                     Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
-
                     if (mImageUri != null && mIcon != null) {
                         TeambrellaImageLoader.getInstance(this).getPicasso().load(mImageUri)
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));
                     }
-
                     break;
 
                 case SHOW_FEED_CHAT_ACTION:
