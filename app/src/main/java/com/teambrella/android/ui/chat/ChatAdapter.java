@@ -27,6 +27,7 @@ import com.teambrella.android.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.Observable;
@@ -178,7 +179,12 @@ class ChatAdapter extends ChatDataPagerAdapter {
             }
 
             mTime.setText(mTimeFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
-            mDate.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            if (TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+                mDate.setText(mDateFormat.format(new Date(object.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0))));
+            } else {
+                mDate.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            }
+
             mDate.setVisibility(object.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, false) ? View.VISIBLE : View.GONE);
 
             if (mStatus != null) {
@@ -280,7 +286,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
             } else {
                 smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
             }
-            
+
             if (text != null && smallImages != null && smallImages.size() > 0) {
                 for (int i = 0; i < smallImages.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {

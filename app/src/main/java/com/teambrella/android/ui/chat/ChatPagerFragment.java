@@ -28,12 +28,15 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         post.addProperty(TeambrellaModel.ATTR_DATA_TEXT, message);
         post.addProperty(TeambrellaModel.ATTR_DATA_ID, postId);
         post.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_PENDING);
-        post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, Calendar.getInstance().getTime().getTime());
+        Calendar currentDate = Calendar.getInstance();
+        post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, currentDate.getTime().getTime());
         if (vote >= 0) {
             JsonObject teammate = new JsonObject();
             teammate.addProperty(TeambrellaModel.ATTR_DATA_VOTE, vote);
             post.add(TeambrellaModel.ATTR_DATA_ONE_TRAMMATE, teammate);
         }
+        Calendar lastDate = loader.getLastDate();
+        post.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, ChatDataPagerLoader.isNextDay(lastDate, currentDate));
         loader.addAsNext(post);
     }
 
@@ -44,13 +47,17 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         post.addProperty(TeambrellaModel.ATTR_DATA_TEXT, "<img src=\"0\">");
         post.addProperty(TeambrellaModel.ATTR_DATA_ID, postId);
         post.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, TeambrellaModel.PostStatus.POST_PENDING);
-        post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, Calendar.getInstance().getTime().getTime());
+        Calendar currentDate = Calendar.getInstance();
+        post.addProperty(TeambrellaModel.ATTR_DATA_ADDED, currentDate.getTime().getTime());
+
         JsonArray images = new JsonArray();
         images.add(fileUri);
         post.add(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES, images);
         JsonArray ratios = new JsonArray();
         ratios.add(ratio);
         post.add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios);
+        Calendar lastDate = loader.getLastDate();
+        post.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, ChatDataPagerLoader.isNextDay(lastDate, currentDate));
         loader.addAsNext(post);
 
     }

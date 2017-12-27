@@ -77,7 +77,8 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
         Iterator<JsonElement> it = messages.iterator();
         //noinspection WhileLoopReplaceableByForEach
-        Calendar lastTime = getLastDate();
+        Calendar lastTime = null;
+
         while (it.hasNext()) {
             JsonObject srcObject = it.next().getAsJsonObject();
             JsonWrapper message = new JsonWrapper(srcObject);
@@ -100,6 +101,9 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
             }
 
             Calendar time = getDate(message);
+            if (lastTime == null) {
+                lastTime = getLastDate();
+            }
             srcObject.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, isNextDay(lastTime, time));
             lastTime = time;
 
@@ -134,7 +138,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
         return super.postProcess(object);
     }
 
-    private Calendar getLastDate() {
+    public Calendar getLastDate() {
         Calendar calendar = Calendar.getInstance();
         JsonElement lastElement = mArray.size() > 0 ? mArray.get(mArray.size() - 1) : null;
         JsonWrapper lastItem = lastElement != null ? new JsonWrapper(lastElement.getAsJsonObject()) : null;
@@ -145,6 +149,8 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
             long added = lastItem != null ? lastItem.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0) : 0;
             if (added > 0) {
                 calendar.setTime(new Date(added));
+            } else {
+                calendar.setTime(new Date(0));
             }
         }
         return calendar;
@@ -165,7 +171,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
     }
 
 
-    private boolean isNextDay(Calendar older, Calendar newer) {
+    public static boolean isNextDay(Calendar older, Calendar newer) {
         int oldYer = older.get(Calendar.YEAR);
         int newYear = newer.get(Calendar.YEAR);
         int oldDayOfYear = older.get(Calendar.DAY_OF_YEAR);
