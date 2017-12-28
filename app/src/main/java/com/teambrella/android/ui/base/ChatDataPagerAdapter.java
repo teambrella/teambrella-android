@@ -56,6 +56,7 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
                             case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
                                 notifyItemRangeInserted(0, addedSize - 1);
+                                notifyItemChanged(addedSize);
                                 break;
                         }
                     } else {

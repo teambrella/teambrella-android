@@ -61,7 +61,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
             }
 
             mServer.requestObservable(uri, null)
-                    .map(this::postProcess)
+                    .map(jsonObject -> postProcess(jsonObject, true))
                     .map(jsonObject -> {
                         JsonObject metadata = jsonObject.has(TeambrellaModel.ATTR_METADATA_)
                                 ? jsonObject.get(TeambrellaModel.ATTR_METADATA_).getAsJsonObject()
@@ -125,7 +125,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
                 uri = TeambrellaUris.appendChatSince(uri, mSince);
             }
             mServer.requestObservable(uri, null)
-                    .map(this::postProcess)
+                    .map(jsonObject -> postProcess(jsonObject, false))
                     .map(jsonObject -> {
                         JsonObject metadata = jsonObject.has(TeambrellaModel.ATTR_METADATA_)
                                 ? jsonObject.get(TeambrellaModel.ATTR_METADATA_).getAsJsonObject()
@@ -214,7 +214,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         return null;
     }
 
-    protected JsonObject postProcess(JsonObject object) {
+    protected JsonObject postProcess(JsonObject object, boolean next) {
         return object;
     }
 

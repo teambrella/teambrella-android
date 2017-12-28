@@ -62,7 +62,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
     }
 
     @Override
-    protected JsonObject postProcess(JsonObject object) {
+    protected JsonObject postProcess(JsonObject object, boolean next) {
         JsonArray messages = getPageableData(object);
         JsonObject metadata = new JsonObject();
         metadata.addProperty(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, messages.size());
@@ -102,7 +102,7 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
 
             Calendar time = getDate(message);
             if (lastTime == null) {
-                lastTime = getLastDate();
+                lastTime = getLastDate(next);
             }
             srcObject.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, isNextDay(lastTime, time));
             lastTime = time;
@@ -131,19 +131,26 @@ public class ChatDataPagerLoader extends TeambrellaChatDataPagerLoader {
             }
         }
 
+        if (!next && mArray != null && mArray.size() > 0 && lastTime != null) {
+            JsonObject first = mArray.get(0).getAsJsonObject();
+            first.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, isNextDay(lastTime, getDate(new JsonWrapper(first))));
+        }
+
         object.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
                 .get(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION).getAsJsonObject()
                 .add(TeambrellaModel.ATTR_DATA_CHAT, newMessages);
 
-        return super.postProcess(object);
+        return super.postProcess(object, next);
     }
 
-    public Calendar getLastDate() {
+    public Calendar getLastDate(boolean next) {
         Calendar calendar = Calendar.getInstance();
         JsonElement lastElement = mArray.size() > 0 ? mArray.get(mArray.size() - 1) : null;
         JsonWrapper lastItem = lastElement != null ? new JsonWrapper(lastElement.getAsJsonObject()) : null;
         long created = lastItem != null ? lastItem.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0) : 0;
-        if (created > 0) {
+        if (!next) {
+            calendar.setTime(new Date(0));
+        } else if (created > 0) {
             calendar.setTime(TimeUtils.getDateFromTicks(created));
         } else {
             long added = lastItem != null ? lastItem.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0) : 0;

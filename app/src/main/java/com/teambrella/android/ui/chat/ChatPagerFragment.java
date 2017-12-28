@@ -35,7 +35,7 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
             teammate.addProperty(TeambrellaModel.ATTR_DATA_VOTE, vote);
             post.add(TeambrellaModel.ATTR_DATA_ONE_TRAMMATE, teammate);
         }
-        Calendar lastDate = loader.getLastDate();
+        Calendar lastDate = loader.getLastDate(true);
         post.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, ChatDataPagerLoader.isNextDay(lastDate, currentDate));
         loader.addAsNext(post);
     }
@@ -56,7 +56,7 @@ public class ChatPagerFragment extends TeambrellaDataPagerFragment {
         JsonArray ratios = new JsonArray();
         ratios.add(ratio);
         post.add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios);
-        Calendar lastDate = loader.getLastDate();
+        Calendar lastDate = loader.getLastDate(true);
         post.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, ChatDataPagerLoader.isNextDay(lastDate, currentDate));
         loader.addAsNext(post);
 
