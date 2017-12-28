@@ -2,6 +2,7 @@ package com.teambrella.android.ui.chat.inbox;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
             }
 
             mUserName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mMessage.setText(item.getString(TeambrellaModel.ATTR_DATA_TEXT));
+            mMessage.setText(Html.fromHtml(item.getString(TeambrellaModel.ATTR_DATA_TEXT)));
             mUnreadCount.setText(item.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
             mUnreadCount.setVisibility(item.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE);
             mWhen.setText(TeambrellaDateUtils.getRelativeTime(-item.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES, 0)));
