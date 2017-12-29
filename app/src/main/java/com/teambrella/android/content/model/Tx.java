@@ -75,4 +75,7 @@ public class Tx {
                 this.teammate.getCurrentAddress();
     }
 
-}
+    public Multisig getToMultisig() {
+        return this.kind == TeambrellaModel.TX_KIND_SAVE_FROM_PREV_WALLLET ? this.teammate.getCurrentAddress() :
+                this.teammate.getNextAddress();
+    }}
