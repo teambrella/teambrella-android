@@ -39,6 +39,7 @@ class EthWallet {
     private static final String METHOD_ID_M_COSIGNERS = "22c5ec0f";
     private static final String METHOD_ID_M_OPNUM = "df98ba00";
     private static final String METHOD_ID_TRANSFER = "91f34dbd";
+    private static final String METHOD_ID_CHANGEALLCOSIGNERS = "a0175b96";
     private static final String TX_PREFIX = "5452";
     private static final String NS_PREFIX = "4E53";
 
@@ -189,7 +190,16 @@ class EthWallet {
     }
 
 
-    byte[] cosign(Tx tx, TxInput payFrom) throws CryptoException {
+    byte[] cosign(Tx tx, TxInput payOrMoveFrom) throws CryptoException {
+        switch (tx.kind) {
+            case TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET:
+                return cosignMove(tx, payOrMoveFrom);
+            default:
+                return cosignPay(tx, payOrMoveFrom);
+        }
+    }
+
+    byte[] cosignPay(Tx tx, TxInput payFrom) throws CryptoException {
 
         int opNum = payFrom.previousTxIndex + 1;
 
@@ -199,7 +209,24 @@ class EthWallet {
         String[] payToAddresses = toAddresses(tx.txOutputs);
         String[] payToValues = toValues(tx.txOutputs);
 
-        byte[] h = getHash(teamId, opNum, payToAddresses, payToValues);
+        byte[] h = getHashForPaySignature(teamId, opNum, payToAddresses, payToValues);
+        Log.v(LOG_TAG, "Hash created for Tx transfer(s): " + Hex.fromBytes(h));
+
+        byte[] sig = mEtherAcc.signHashAndCalculateV(h);
+        Log.v(LOG_TAG, "Hash signed.");
+
+        return sig;
+    }
+
+    byte[] cosignMove(Tx tx, TxInput moveFrom) throws CryptoException {
+
+        int opNum = moveFrom.previousTxIndex + 1;
+
+        Multisig sourceMultisig = tx.getFromMultisig();
+        long teamId = sourceMultisig.teamId;
+
+        String[] nextCosignerAddresses = toCosignerAddresses(tx.getToMultisig());
+        byte[] h = getHashForMoveSignature(teamId, opNum, nextCosignerAddresses);
         Log.v(LOG_TAG, "Hash created for Tx transfer(s): " + Hex.fromBytes(h));
 
         byte[] sig = mEtherAcc.signHashAndCalculateV(h);
@@ -209,6 +236,15 @@ class EthWallet {
     }
 
     public String publish(Tx tx) throws CryptoException, RemoteException {
+        switch (tx.kind) {
+            case TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET:
+                return publishMove(tx);
+            default:
+                return publishPay(tx);
+        }
+    }
+
+    private String publishPay(Tx tx) throws CryptoException, RemoteException {
 
         List<TxInput> inputs = tx.txInputs;
         if (inputs.size() != 1) {
@@ -251,6 +287,11 @@ class EthWallet {
 
             index++;
         }
+        if (j < txSignatures.size()){
+            Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
+                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
+            return null;
+        }
 
         Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
         if (cryptoTx == null){
@@ -259,13 +300,79 @@ class EthWallet {
         }
 
         try {
-            Log.v(LOG_TAG, "tx cratated: " + cryptoTx.encodeJSON());
+            Log.v(LOG_TAG, "tx created: " + cryptoTx.encodeJSON());
         } catch (Exception e) {
             Log.e(LOG_TAG, "could not encode JSON to log tx: " + e.getMessage(), e);
         }
 
         cryptoTx = mEtherAcc.signTx(cryptoTx, mIsTestNet);
         Log.v(LOG_TAG, "tx signed.");
+
+        return publish(cryptoTx);
+    }
+
+    private String publishMove(Tx tx) throws CryptoException, RemoteException {
+
+        List<TxInput> inputs = tx.txInputs;
+        if (inputs.size() != 1) {
+            String msg = "Unexpected count of move tx inputs of ETH tx. Expected: 1, was: " + inputs.size() + ". (tx ID: " + tx.id + ")";
+            Log.e(LOG_TAG, msg);
+            if (!BuildConfig.DEBUG) {
+                Crashlytics.log(msg);
+            }
+
+            return null;
+        }
+
+        Multisig myMultisig = tx.getFromMultisig();
+        long myNonce = getMyNonce();
+        long gasLimit = 200_000L;
+        long gasPrice = getGasPrice();
+        String multisigAddress = myMultisig.address;
+        String methodId = METHOD_ID_CHANGEALLCOSIGNERS;
+
+        TxInput moveFrom = tx.txInputs.get(0);
+        int opNum = moveFrom.previousTxIndex + 1;
+        String[] nextCosignerAddresses = toCosignerAddresses(tx.getToMultisig());
+
+        int[] pos = new int[3];
+        byte[][] sig = new byte[3][];
+        sig[0] = sig[1] = sig[2] = new byte[0];
+        Map<Long, TXSignature> txSignatures = moveFrom.signatures;
+        int index = 0, j = 0;
+        for (Cosigner cos : tx.cosigners) {
+            if (txSignatures.containsKey(cos.teammateId)) {
+                TXSignature s = txSignatures.get(cos.teammateId);
+                pos[j] = index;
+                sig[j] = s.bSignature;
+
+                if (++j >= 3) {
+                    break;
+                }
+            }
+
+            index++;
+        }
+        if (j < txSignatures.size()){
+            Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
+                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
+            return null;
+        }
+
+        Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, nextCosignerAddresses, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
+        if (cryptoTx == null){
+            Log.w(LOG_TAG, "move tx was skipped. Seek details in the log above. Tx.id: " + tx.id);
+            return null;
+        }
+
+        try {
+            Log.v(LOG_TAG, "move tx created: " + cryptoTx.encodeJSON());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "could not encode JSON to log move tx: " + e.getMessage(), e);
+        }
+
+        cryptoTx = mEtherAcc.signTx(cryptoTx, mIsTestNet);
+        Log.v(LOG_TAG, "move tx signed.");
 
         return publish(cryptoTx);
     }
@@ -396,6 +503,22 @@ class EthWallet {
         return destinationAddresses;
     }
 
+    private String[] toCosignerAddresses(Multisig nextMultisig) {
+
+        if (nextMultisig == null) throw new IllegalArgumentException("nextMultisig is null");
+
+        List<Cosigner> cosigners = nextMultisig.cosigners;
+        int n = cosigners.size();
+        String[] cosignerAddresses = new String[n];
+
+        for (int i = 0; i < n; i++) {
+            cosignerAddresses[i] = cosigners.get(i).publicKeyAddress;
+            sanityAddressCheck(cosignerAddresses[i]);
+        }
+
+        return cosignerAddresses;
+    }
+
     private String[] toValues(List<TxOutput> destinations) {
 
         int n = destinations.size();
@@ -408,9 +531,9 @@ class EthWallet {
         return destinationValues;
     }
 
-    private byte[] getHash(long teamId, int opNum, String[] addresses, String[] values) {
+    private byte[] getHashForPaySignature(long teamId, int opNum, String[] addresses, String[] values) {
 
-        String a0 = TX_PREFIX; // Arraay (offset where the array data starts.
+        String a0 = TX_PREFIX; // prefix, that is used in the contract to indicate a signature for transfer tx
         String a1 = String.format("%064x", teamId);
         String a2 = String.format("%064x", opNum);
         int n = addresses.length;
@@ -424,6 +547,21 @@ class EthWallet {
         }
 
         byte[] data = com.teambrella.android.blockchain.Hex.toBytes(a0, a1, a2, a3, a4);
+        return Sha3.getKeccak256Hash(data);
+    }
+
+    private byte[] getHashForMoveSignature(long teamId, int opNum, String[] addresses) {
+
+        String a0 = NS_PREFIX; // prefix, that is used in the contract to indicate a signature for move tx.
+        String a1 = String.format("%064x", teamId);
+        String a2 = String.format("%064x", opNum);
+        int n = addresses.length;
+        String[] a3 = new String[n];
+        for (int i = 0; i < n; i++) {
+            a3[i] = Hex.remove0xPrefix(addresses[i]);
+        }
+
+        byte[] data = com.teambrella.android.blockchain.Hex.toBytes(a0, a1, a2, a3);
         return Sha3.getKeccak256Hash(data);
     }
 

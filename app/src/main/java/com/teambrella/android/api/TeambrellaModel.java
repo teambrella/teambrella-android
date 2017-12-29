@@ -148,8 +148,8 @@ public class TeambrellaModel {
     /* User multisig (address) status*/
     public static final int USER_MULTISIG_STATUS_PREVIOUS = 0;
     public static final int USER_MULTISIG_STATUS_CURRENT = 1;
-    public static final int USER_MULTISIG_STATUS_NEXT = 3;
-    public static final int USER_MULTISIG_STATUS_ARCHIVE = 4;
+    public static final int USER_MULTISIG_STATUS_NEXT = 2;
+    public static final int USER_MULTISIG_STATUS_ARCHIVE = 3;
 
     public static final int USER_MULTISIG_STATUS_CREATION_FAILED = -400;
 

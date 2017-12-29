@@ -509,7 +509,7 @@ public class TeambrellaContentProviderClient {
     }
 
 
-    public List<Tx> getCosinableTx() throws RemoteException {
+    public List<Tx> getCosinableTx(String publicKey) throws RemoteException {
         List<Tx> list = queryList(TeambrellaRepository.Tx.CONTENT_URI, TeambrellaRepository.Tx.RESOLUTION + "=? AND "
                 + TeambrellaRepository.Tx.STATE + "=?", new String[]{Integer.toString(TeambrellaModel.TX_CLIENT_RESOLUTION_APPROVED),
                 Integer.toString(TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING)}, Tx.class);
@@ -531,7 +531,7 @@ public class TeambrellaContentProviderClient {
                                 , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
                     }
 
-                    com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
+                    Multisig currentMultisig = tx.getFromMultisig();
                     if (currentMultisig == null) {
                         setNeedsFullCleintUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
 
@@ -539,11 +539,20 @@ public class TeambrellaContentProviderClient {
                     } else {
 
                         tx.cosigners = getCosigners(currentMultisig);
-                        Collections.sort(tx.cosigners);
+                        if (getIndexByPublicKey(publicKey, tx.cosigners) < 0) {
+                            setNeedsFullCleintUpdate("Could not cosign Tx " + tx.id + ". I am not a cosigner for this multisig id: " + currentMultisig.id);
+                            iterator.remove();
+                        } else {
 
-                        tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
-                                TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
-                        Collections.sort(tx.txOutputs);
+                            Multisig nextMultisig = tx.getToMultisig();
+                            if (nextMultisig != null) {
+                                nextMultisig.cosigners = getCosigners(nextMultisig);
+                            }
+
+                            tx.txOutputs = queryList(TeambrellaRepository.TXOutput.CONTENT_URI,
+                                    TeambrellaRepository.TXOutput.TX_ID + "=?", new String[]{tx.id.toString()}, TxOutput.class);
+                            Collections.sort(tx.txOutputs);
+                        }
                     }
                 }
             }
@@ -551,6 +560,14 @@ public class TeambrellaContentProviderClient {
         return list;
     }
 
+    private int getIndexByPublicKey(String publicKey, List<Cosigner> cosigners) {
+        for (int i = 0, n = cosigners.size(); i < n; i++) {
+            if (Objects.equals(cosigners.get(i).publicKey, publicKey)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static List<ContentProviderOperation> clearNeedUpdateServerFlag() {
         List<ContentProviderOperation> operations = new LinkedList<>();
@@ -756,7 +773,7 @@ public class TeambrellaContentProviderClient {
                 tx.teammate.multisigs = queryList(TeambrellaRepository.Multisig.CONTENT_URI, TeambrellaRepository.Multisig.TEAMMATE_ID + "=?"
                         , new String[]{Long.toString(tx.teammate.id)}, com.teambrella.android.content.model.Multisig.class);
 
-                com.teambrella.android.content.model.Multisig currentMultisig = tx.getFromMultisig();
+                Multisig currentMultisig = tx.getFromMultisig();
                 if (currentMultisig == null) {
                     setNeedsFullCleintUpdate("Could not publish Tx " + tx.id + ". No current Multisig for my teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
 
@@ -764,6 +781,10 @@ public class TeambrellaContentProviderClient {
                     continue;
                 }
 
+                Multisig nextMultisig = tx.getToMultisig();
+                if (nextMultisig != null){
+                    nextMultisig.cosigners = getCosigners(nextMultisig);
+                }
                 tx.cosigners = getCosigners(tx.getFromMultisig());
                 for (TxInput txInput : tx.txInputs) {
                     List<TXSignature> signatures = queryList(TeambrellaRepository.TXSignature.CONTENT_URI, TeambrellaRepository.TXSignature.TX_INPUT_ID + "=?",
@@ -840,12 +861,12 @@ public class TeambrellaContentProviderClient {
 
     public List<ContentProviderOperation> applyUpdates(ServerUpdates serverUpdates) throws RemoteException {
         List<ContentProviderOperation> operations = new LinkedList<>();
-        if (serverUpdates.teammates != null) {
-            operations.addAll(insertTeammates(serverUpdates.teammates));
-        }
-
         if (serverUpdates.teams != null) {
             operations.addAll(insertTeams(serverUpdates.teams));
+        }
+
+        if (serverUpdates.teammates != null) {
+            operations.addAll(insertTeammates(serverUpdates.teammates));
         }
 
         if (serverUpdates.payTos != null) {
