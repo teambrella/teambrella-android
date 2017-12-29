@@ -287,7 +287,7 @@ class EthWallet {
 
             index++;
         }
-        if (j < txSignatures.size()){
+        if (j < txSignatures.size() && j < 3){
             Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
                     ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
             return null;
@@ -353,7 +353,7 @@ class EthWallet {
 
             index++;
         }
-        if (j < txSignatures.size()){
+        if (j < txSignatures.size() && j < 3){
             Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
                     ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
             return null;
