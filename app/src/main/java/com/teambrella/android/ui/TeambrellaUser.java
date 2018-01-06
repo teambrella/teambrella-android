@@ -22,6 +22,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
     private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
+    private static final String PREFERENCE_WALLET_BACKUP_SHOWN = "wallet_backup_shown";
 
 
     private static TeambrellaUser sUser;
@@ -106,6 +107,14 @@ public class TeambrellaUser {
     private String generatePrivateKey() {
         return new Wallet(MainNetParams.get())
                 .getActiveKeyChain().getKey(KeyChain.KeyPurpose.AUTHENTICATION).getPrivateKeyAsWiF(MainNetParams.get());
+    }
+
+    public boolean isBackupInfoDialogShown() {
+        return mPreferences.getBoolean(PREFERENCE_WALLET_BACKUP_SHOWN, false);
+    }
+
+    public void setBackupInfodialogShown(boolean shown) {
+        mPreferences.edit().putBoolean(PREFERENCE_WALLET_BACKUP_SHOWN, shown).apply();
     }
 
 }

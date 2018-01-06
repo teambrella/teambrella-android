@@ -31,7 +31,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
     private Uri mUri;
     private long mSince = -1;
 
-    private JsonArray mArray = new JsonArray();
+    protected JsonArray mArray = new JsonArray();
 
 
     private boolean mHasNextError = false;
@@ -66,7 +66,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
             }
 
             mServer.requestObservable(uri, null)
-                    .map(this::postProcess)
+                    .map(jsonObject -> postProcess(jsonObject, true))
                     .map(jsonObject -> {
                         JsonObject metadata = jsonObject.has(TeambrellaModel.ATTR_METADATA_)
                                 ? jsonObject.get(TeambrellaModel.ATTR_METADATA_).getAsJsonObject()
@@ -130,7 +130,7 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
                 uri = TeambrellaUris.appendChatSince(uri, mSince);
             }
             mServer.requestObservable(uri, null)
-                    .map(this::postProcess)
+                    .map(jsonObject -> postProcess(jsonObject, false))
                     .map(jsonObject -> {
                         JsonObject metadata = jsonObject.has(TeambrellaModel.ATTR_METADATA_)
                                 ? jsonObject.get(TeambrellaModel.ATTR_METADATA_).getAsJsonObject()
@@ -202,12 +202,29 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         mPublisher.onNext(Notification.createOnNext(data));
     }
 
+    public void addAsNext(JsonObject item) {
+        JsonObject response = new JsonObject();
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_RELOAD, true);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_FORCE, true);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_DIRECTION, TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION);
+        metadata.addProperty(TeambrellaModel.ATTR_METADATA_SIZE, 1);
+        response.add(TeambrellaModel.ATTR_METADATA_, metadata);
+        addPageableData(response, item);
+        mArray.add(item);
+        mPublisher.onNext(Notification.createOnNext(response));
+    }
+
     protected JsonArray getPageableData(JsonObject src) {
         return null;
     }
 
-    protected JsonObject postProcess(JsonObject object) {
+    protected JsonObject postProcess(JsonObject object, boolean next) {
         return object;
+    }
+
+    protected void addPageableData(JsonObject src, JsonObject item) {
+
     }
 
 

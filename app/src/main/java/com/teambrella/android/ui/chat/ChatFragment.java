@@ -107,6 +107,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
         }
 
+        mList.setItemAnimator(null);
+
     }
 
 
@@ -125,7 +127,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) && metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE) > 0) {
                 mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
                 JsonWrapper discussionPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
-                mLastRead = discussionPart.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, Long.MAX_VALUE);
+                mLastRead = discussionPart.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, mLastRead);
             }
 
             JsonWrapper basicPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);

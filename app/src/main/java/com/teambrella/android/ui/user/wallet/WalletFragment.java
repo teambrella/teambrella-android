@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.user.wallet;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,20 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.ui.CosignersActivity;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.withdraw.WithdrawActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.QRCodeUtils;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.util.Locale;
 
@@ -33,7 +39,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Wallet Fragment
  */
-public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
+public class WalletFragment extends ADataProgressFragment<IMainDataHost> implements WalletBackupManager.IWalletBackupListener {
 
 
     private TextView mCryptoBalanceView;
@@ -48,7 +54,18 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
     private View mCosignersView;
     private TeambrellaAvatarsWidgets mCosignersAvatar;
     private TextView mCosignersCountView;
+    private View mBackupWalletButton;
+    private View mBackupWalletMessage;
+    private boolean mShowBackupInfoOnShow;
 
+    private TeambrellaUser mUser;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mUser = TeambrellaUser.get(context);
+    }
 
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,6 +84,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
         mCosignersView = view.findViewById(R.id.cosigners);
         mCosignersAvatar = view.findViewById(R.id.cosigners_avatar);
         mCosignersCountView = view.findViewById(R.id.cosigners_count);
+        mBackupWalletMessage = view.findViewById(R.id.wallet_not_backed_up_message);
 
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -115,8 +133,77 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
 
         view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
 
+        mBackupWalletButton = view.findViewById(R.id.backup_wallet);
+
+        mDataHost.addWalletBackupListener(this);
+
+        view.findViewById(R.id.wallet_not_backed_up_message).setOnClickListener(v -> mDataHost.showWalletBackupDialog());
+
         return view;
 
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDataHost.removeWalletBackupListener(this);
+    }
+
+    @Override
+    public void onWalletSaved(boolean force) {
+        mBackupWalletButton.setVisibility(View.VISIBLE);
+        mBackupWalletMessage.setVisibility(View.GONE);
+        if (force) {
+            Toast.makeText(getContext(), R.string.your_wallet_is_backed_up, Toast.LENGTH_SHORT).show();
+            StatisticHelper.onWalletSaved(getContext(), mUser.getUserId());
+        }
+    }
+
+    @Override
+    public void onWalletSaveError(int code, boolean force) {
+        if (code == RESOLUTION_REQUIRED) {
+            mBackupWalletMessage.setVisibility(View.VISIBLE);
+            mBackupWalletMessage.setOnClickListener(v -> mDataHost.backUpWallet(true));
+            showWalletBackupInfo();
+        } else {
+
+            if (force && code != WalletBackupManager.IWalletBackupListener.CANCELED) {
+                mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
+                        : R.string.no_internet_connection);
+            }
+
+            if (!force) {
+                mBackupWalletMessage.setVisibility(View.GONE);
+            }
+        }
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && mShowBackupInfoOnShow) {
+            showWalletBackupInfo();
+        }
+    }
+
+    @Override
+    protected void onReload() {
+        super.onReload();
+        mDataHost.load(mTags[0]);
+        if (!mUser.isDemoUser()) {
+            mDataHost.backUpWallet(false);
+        }
+    }
+
+    @Override
+    public void onWalletReadError(int code, boolean force) {
+
+    }
+
+    @Override
+    public void onWalletRead(String key, boolean force) {
 
     }
 
@@ -173,7 +260,27 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> {
             mCosignersView.setOnClickListener(view -> CosignersActivity.start(getContext(), data.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS).toString()
                     , mDataHost.getTeamId()));
 
+
+            if (!mUser.isDemoUser()) {
+                mDataHost.backUpWallet(false);
+            }
+
         }
         setContentShown(true);
+    }
+
+
+    private void showWalletBackupInfo() {
+        if (!mUser.isDemoUser()) {
+            if (getUserVisibleHint()) {
+                if (!mUser.isBackupInfoDialogShown()) {
+                    mDataHost.showWalletBackupDialog();
+                    mUser.setBackupInfodialogShown(true);
+                }
+                mShowBackupInfoOnShow = false;
+            } else {
+                mShowBackupInfoOnShow = true;
+            }
+        }
     }
 }

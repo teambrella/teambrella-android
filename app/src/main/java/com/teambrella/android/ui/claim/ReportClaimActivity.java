@@ -44,7 +44,6 @@ import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -263,14 +262,14 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Observable<File> observable = mImagePicker.onActivityResult(requestCode, resultCode, data);
+        Observable<ImagePicker.ImageDescriptor> observable = mImagePicker.onActivityResult(requestCode, resultCode, data);
         if (observable != null) {
             observable.subscribe(this::onImagePickerResult, this::onImagePickerError);
         }
     }
 
-    private void onImagePickerResult(File file) {
-        String path = file.getAbsolutePath();
+    private void onImagePickerResult(ImagePicker.ImageDescriptor descriptor) {
+        String path = descriptor.file.getAbsolutePath();
         mPhotoAdapter.addPhoto(path);
         request(TeambrellaUris.getNewFileUri(path));
     }

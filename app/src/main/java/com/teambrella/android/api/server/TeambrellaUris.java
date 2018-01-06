@@ -75,6 +75,7 @@ public class TeambrellaUris {
     public static final String KEY_SORTED_BY_RISK = "sortedByRisk";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_MUTED = "muted";
+    public static final String KEY_POST_ID = "postId";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -207,6 +208,15 @@ public class TeambrellaUris {
                 .build();
     }
 
+    public static Uri getNewFileUri(String path, String uuid) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendPath(SEGMENT_NEW_FILE)
+                .appendQueryParameter(KEY_URI, path)
+                .appendQueryParameter(KEY_ID, uuid)
+                .build();
+    }
+
     public static Uri getDebugDbUri(String path) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
@@ -226,12 +236,13 @@ public class TeambrellaUris {
     }
 
 
-    public static Uri getNewPostUri(String topicId, String text, String images) {
+    public static Uri getNewPostUri(String topicId, String postId, String text, String images) {
         Uri.Builder builder = new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_CHAT)
                 .appendEncodedPath(SEGMENT_NEW_POST)
-                .appendQueryParameter(KEY_ID, topicId);
+                .appendQueryParameter(KEY_ID, topicId)
+                .appendQueryParameter(KEY_POST_ID, postId);
 
         if (text != null) {
             builder.appendQueryParameter(KEY_TEXT, text);
@@ -502,12 +513,13 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getNewConversationMessage(String userId, String text) {
+    public static Uri getNewConversationMessage(String userId, String messageId, String text) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
                 .appendEncodedPath(SEGMENT_NEW_POST)
                 .appendQueryParameter(KEY_ID, userId)
+                .appendQueryParameter(KEY_POST_ID, messageId)
                 .appendQueryParameter(KEY_MESSAGE, text)
                 .build();
     }

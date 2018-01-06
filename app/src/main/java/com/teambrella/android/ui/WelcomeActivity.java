@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
-import com.teambrella.android.util.log.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,11 +30,13 @@ import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.TeambrellaBackupData;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -80,6 +81,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private State mState;
     private String mFacebookId;
     private TeambrellaBackupData mBackupData;
+    private WalletBackupManager mWalletBackupManager;
 
 
     @Override
@@ -108,7 +110,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mFacebookId = savedInstanceState != null ? savedInstanceState.getString(FACEBOOK_ID_EXTRA, null) : null;
 
-        setState(State.INIT);
+        mWalletBackupManager = new WalletBackupManager(this);
+        mWalletBackupManager.addBackupListener(mWalletBackupListener);
     }
 
     @Override
@@ -120,12 +123,23 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             } else {
                 getTeams(mUser.getPrivateKey());
             }
-        } else if (BuildConfig.DEBUG) {
-            Intent intent = getIntent();
-            Uri uri = intent.getData();
-            if (uri != null) {
-                mUser.setPrivateKey(uri.getQueryParameter("key"));
-                getTeams(mUser.getPrivateKey());
+        } else {
+
+            if (BuildConfig.DEBUG) {
+                Intent intent = getIntent();
+                Uri uri = intent.getData();
+                if (uri != null) {
+                    mUser.setPrivateKey(uri.getQueryParameter("key"));
+                    getTeams(mUser.getPrivateKey());
+                    return;
+                }
+            }
+            
+            if (savedInstanceState == null) {
+                mWalletBackupManager.readOnConnected(false);
+                setState(State.LOADING);
+            } else {
+                setState(State.INIT);
             }
         }
     }
@@ -195,8 +209,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     }
 
 
-    private void onFacebookLogin(View v) {
+    private void onFacebookLogin(@SuppressWarnings("unused") View v) {
         setState(State.LOADING);
+        mWalletBackupManager.readWallet(true);
+    }
+
+
+    private void loginByFacebook() {
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(mCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -307,7 +326,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     }
 
 
-    private void onTryDemo(View v) {
+    private void onTryDemo(@SuppressWarnings("unused") View v) {
         mUser.setDemoUser();
         getDemoTeams(mUser.getPrivateKey());
         StatisticHelper.onTryDemo();
@@ -317,6 +336,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallBackManager.onActivityResult(requestCode, resultCode, data);
+        mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -434,9 +454,42 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWalletBackupManager.removeBackupListener(mWalletBackupListener);
+    }
+
     private void setInvitationDescription(@StringRes int textId) {
         Spannable text = (Spannable) Html.fromHtml(getString(textId));
         mInvitationDescription.setMovementMethod(LinkMovementMethod.getInstance());
         mInvitationDescription.setText(text);
     }
+
+    private WalletBackupManager.IWalletBackupListener mWalletBackupListener = new WalletBackupManager.IWalletBackupListener() {
+        @Override
+        public void onWalletSaved(boolean force) {
+
+        }
+
+        @Override
+        public void onWalletSaveError(int code, boolean force) {
+
+        }
+
+        @Override
+        public void onWalletRead(String key, boolean force) {
+            mUser.setPrivateKey(key);
+            getTeams(mUser.getPrivateKey());
+        }
+
+        @Override
+        public void onWalletReadError(int code, boolean force) {
+            if (force) {
+                loginByFacebook();
+            } else {
+                setState(State.INIT);
+            }
+        }
+    };
 }

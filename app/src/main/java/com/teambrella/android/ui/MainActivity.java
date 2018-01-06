@@ -2,6 +2,7 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.dagger.Dependencies;
@@ -38,6 +40,7 @@ import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
+import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
@@ -92,10 +95,14 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
     private static final String PROXIES_TAG = "proxies";
     private static final String PROFILE_TAG = "profile";
     private static final String TEAM_CHOOSER_FRAGMENT_TAG = "team_chooser";
+    private static final String WALLET_BACKUP_FRAGMENT_TAG = "wallet_backup_dialog";
 
 
     private int mSelectedItemId = -1;
     private String mUserId;
+    private String mUserName;
+    private String mFBName;
+    private Uri mUserPicture;
     private Disposable mDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
@@ -109,7 +116,7 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
     TeambrellaUser mUser;
 
     private Stack<Integer> mBackStack = new Stack<>();
-
+    private WalletBackupManager mWalletBackupManager;
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
         return new Intent(context, MainActivity.class)
@@ -153,6 +160,7 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
         getComponent().inject(this);
+        mWalletBackupManager = new WalletBackupManager(this);
     }
 
 
@@ -296,6 +304,10 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
                         .load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .transform(new CropCircleTransformation())
                         .into(mAvatar);
+
+                mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
+                mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
+                mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             }
         });
     }
@@ -395,6 +407,7 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
         getPager(CLAIMS_DATA_TAG).reload();
         load(USER_DATA);
         getPager(MY_PROXIES_DATA).reload();
+        mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -517,6 +530,13 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
         }
     }
 
+    @Override
+    public void showWalletBackupDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(WALLET_BACKUP_FRAGMENT_TAG) == null) {
+            new WalletBackupInfoFragment().show(fragmentManager, WALLET_BACKUP_FRAGMENT_TAG);
+        }
+    }
 
     private EtherAccount getEtherAccountOrNull() {
         if (mEtherAccount != null) return mEtherAccount;
@@ -529,6 +549,24 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
         }
     }
 
+    @Override
+    public void backUpWallet(boolean force) {
+        mWalletBackupManager.saveWallet(mFBName,
+                mUserName,
+                mUserPicture,
+                TeambrellaUser.get(this).getPrivateKey()
+                , force);
+    }
+
+    @Override
+    public void addWalletBackupListener(WalletBackupManager.IWalletBackupListener listener) {
+        mWalletBackupManager.addBackupListener(listener);
+    }
+
+    @Override
+    public void removeWalletBackupListener(WalletBackupManager.IWalletBackupListener listener) {
+        mWalletBackupManager.removeBackupListener(listener);
+    }
 
     @Override
     public void launchActivity(Intent intent) {

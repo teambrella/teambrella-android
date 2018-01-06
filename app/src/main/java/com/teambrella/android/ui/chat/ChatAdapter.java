@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -26,6 +27,7 @@ import com.teambrella.android.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.Observable;
@@ -66,7 +68,10 @@ class ChatAdapter extends ChatDataPagerAdapter {
         if (viewType == VIEW_TYPE_REGULAR) {
             JsonWrapper item = new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject());
             boolean isItMine = mUserId.equals(item.getString(TeambrellaModel.ATTR_DATA_USER_ID));
-            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_IMAGES);
+            JsonArray images = item.getJsonArray(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES);
+            if (images == null) {
+                images = item.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            }
             String text = item.getString(TeambrellaModel.ATTR_DATA_TEXT);
             if (text != null && images != null && images.size() > 0) {
                 for (int i = 0; i < images.size(); i++) {
@@ -130,10 +135,13 @@ class ChatAdapter extends ChatDataPagerAdapter {
     }
 
     private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDateFormat mDateFormat = new SimpleDateFormat("HH:mm d LLLL", Locale.ENGLISH);
+        private SimpleDateFormat mTimeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        private SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
+        TextView mDate;
         Picasso picasso;
+        View mStatus;
 
         ClaimChatViewHolder(View itemView) {
             super(itemView);
@@ -141,6 +149,8 @@ class ChatAdapter extends ChatDataPagerAdapter {
                     .getPicasso();
             mUserPicture = itemView.findViewById(R.id.user_picture);
             mTime = itemView.findViewById(R.id.time);
+            mDate = itemView.findViewById(R.id.date);
+            mStatus = itemView.findViewById(R.id.status);
         }
 
         void bind(JsonWrapper object) {
@@ -168,7 +178,20 @@ class ChatAdapter extends ChatDataPagerAdapter {
                 });
             }
 
-            mTime.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            mTime.setText(mTimeFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            if (TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+                mDate.setText(mDateFormat.format(new Date(object.getLong(TeambrellaModel.ATTR_DATA_ADDED, 0))));
+            } else {
+                mDate.setText(mDateFormat.format(TimeUtils.getDateFromTicks(object.getLong(TeambrellaModel.ATTR_DATA_CREATED, 0))));
+            }
+
+            mDate.setVisibility(object.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, false) ? View.VISIBLE : View.GONE);
+
+            if (mStatus != null) {
+                mStatus.setVisibility(TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))
+                        ? View.VISIBLE : View.GONE);
+            }
+            mTime.setVisibility(mStatus == null || mStatus.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -249,9 +272,21 @@ class ChatAdapter extends ChatDataPagerAdapter {
         @Override
         void bind(JsonWrapper object) {
             super.bind(object);
+
             Context context = itemView.getContext();
             String text = object.getString(TeambrellaModel.ATTR_DATA_TEXT);
-            ArrayList<String> smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+
+            ArrayList<String> smallImages;
+            JsonArray localImages = object.getJsonArray(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES);
+            if (localImages != null && localImages.size() > 0) {
+                smallImages = new ArrayList<>();
+                for (JsonElement item : localImages) {
+                    smallImages.add("file:" + item.getAsString());
+                }
+            } else {
+                smallImages = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_SMALL_IMAGES);
+            }
+
             if (text != null && smallImages != null && smallImages.size() > 0) {
                 for (int i = 0; i < smallImages.size(); i++) {
                     if (text.equals(String.format(Locale.US, FORMAT_STRING, i))) {
@@ -261,12 +296,16 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
                         mImage.setLayoutParams(params);
                         picasso.load(smallImages.get(i))
+                                .noFade()
                                 .resize(width, 0)
                                 .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
                                 .into(mImage);
+
                         final int position = i;
-                        ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
-                        mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
+                        if (!TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
+                            ArrayList<String> images = TeambrellaModel.getImages(TeambrellaServer.BASE_URL, object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);
+                            mImage.setOnClickListener(v -> context.startActivity(ImageViewerActivity.getLaunchIntent(context, images, position)));
+                        }
                         break;
                     }
                 }

@@ -538,6 +538,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         switch (tx.kind) {
             case TeambrellaModel.TX_KIND_PAYOUT:
             case TeambrellaModel.TX_KIND_WITHDRAW:
+            case TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET:
                 Multisig multisig = tx.getFromMultisig();
                 if (multisig != null) {
 
@@ -572,8 +573,9 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean cosignApprovedTransactions() throws RemoteException, OperationApplicationException, CryptoException {
         Log.d(LOG_TAG, "---> SYNC -> cosignApprovedTransactions() started...");
 
-        List<Tx> list = mTeambrellaClient.getCosinableTx();
-        Teammate user = mTeambrellaClient.getTeammate(mKey.getPublicKeyAsHex());
+        String publicKey = mKey.getPublicKeyAsHex();
+        List<Tx> list = mTeambrellaClient.getCosinableTx(publicKey);
+        Teammate user = mTeambrellaClient.getTeammate(publicKey);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
@@ -630,6 +632,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tx.kind) {
                 case TeambrellaModel.TX_KIND_PAYOUT:
                 case TeambrellaModel.TX_KIND_WITHDRAW:
+                case TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET:
                     String cryptoTxHash = mWallet.publish(tx);
                     Log.d(LOG_TAG, " ---- SYNC -- publishApprovedAndCosignedTxs() published. tx hash:" + cryptoTxHash);
                     if (cryptoTxHash != null) {

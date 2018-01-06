@@ -35,19 +35,14 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
-<<<<<<< HEAD
 import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
-import com.teambrella.android.ui.claim.ClaimActivity;
-=======
-import com.teambrella.android.ui.base.ADataHostActivity;
->>>>>>> dev
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 
-import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -96,6 +91,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     private TeambrellaNotificationManager mNotificationManager;
     private View mNotificationHelpView;
     private MuteStatus mMuteStatus = null;
+    private float mVote = -1;
 
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
@@ -230,14 +226,12 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                     }
 
                     Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
-
                     if (mImageUri != null && mIcon != null) {
                         TeambrellaImageLoader.getInstance(this).getPicasso().load(mImageUri)
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));
                     }
-
                     break;
 
                 case SHOW_FEED_CHAT_ACTION:
@@ -315,15 +309,24 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_text:
-
                 String text = mMessageView.getText().toString().trim();
                 if (!TextUtils.isEmpty(text)) {
                     switch (mAction) {
-                        case SHOW_CONVERSATION_CHAT:
-                            request(TeambrellaUris.getNewConversationMessage(mUserId, mMessageView.getText().toString()));
-                            break;
-                        default:
-                            request(TeambrellaUris.getNewPostUri(mTopicId, mMessageView.getText().toString(), null));
+                        case SHOW_CONVERSATION_CHAT: {
+                            String uuid = UUID.randomUUID().toString();
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                            fragment.addPendingMessage(uuid, text, -1f);
+                            request(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
+                        }
+                        break;
+                        default: {
+                            String uuid = UUID.randomUUID().toString();
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                            fragment.addPendingMessage(uuid, text, mVote);
+                            request(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
+                        }
                     }
                 }
                 mMessageView.setText(null);
@@ -341,15 +344,17 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
     protected void onRequestResult(Notification<JsonObject> response) {
         if (response.isOnNext()) {
+
             String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
                     .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
                     .blockingFirst(null);
-            switch (TeambrellaUris.sUriMatcher.match(Uri.parse(requestUriString))) {
+            Uri uri = Uri.parse(requestUriString);
+            switch (TeambrellaUris.sUriMatcher.match(uri)) {
                 case TeambrellaUris.NEW_FILE:
                     JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                             .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
-                    request(TeambrellaUris.getNewPostUri(mTopicId, null, array.toString()));
+                    request(TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString()));
                     break;
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
@@ -378,6 +383,12 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
             Observable.fromArray(response.getValue())
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
+                    .doOnNext(data -> {
+                        JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+                        if (voting != null) {
+                            mVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, mVote);
+                        }
+                    })
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
                     .doOnNext(jsonWrapper -> {
                         if (jsonWrapper.hasValue(TeambrellaModel.ATTR_DATA_IS_MUTED)) {
@@ -392,7 +403,9 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
                                 mMuteStatus = MuteStatus.UMMUTED;
                             }
                         } else {
-                            mMuteStatus = MuteStatus.DEFAULT;
+                            if (mMuteStatus == null) {
+                                mMuteStatus = MuteStatus.DEFAULT;
+                            }
                         }
                         invalidateOptionsMenu();
                     }).blockingFirst();
@@ -458,11 +471,17 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Observable<File> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
+        Observable<ImagePicker.ImageDescriptor> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
         if (result != null) {
-            result.subscribe(file -> request(TeambrellaUris.getNewFileUri(file.getAbsolutePath())),
-                    throwable -> {
-                    });
+            result.subscribe(descriptor -> {
+                String uuid = UUID.randomUUID().toString();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
+                fragment.addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
+                request(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid));
+            }, throwable -> {
+
+            });
         }
         getPager(DATA_FRAGMENT_TAG).loadNext(true);
     }

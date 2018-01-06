@@ -57,6 +57,12 @@ public class TeambrellaModel {
         public static final String ITEM_PROCESSED = "processed";
     }
 
+    public static final class PostStatus {
+        public static final String POST_PENDING = "post_pending";
+        public static final String POST_SYNCED = "post_synced";
+        public static final String POST_ERROR = "post_error";
+    }
+
 
     public static final class WithdrawlsItemType {
         public static final String ITEM_QUEUED_HEADER = "queued_header";
@@ -142,8 +148,8 @@ public class TeambrellaModel {
     /* User multisig (address) status*/
     public static final int USER_MULTISIG_STATUS_PREVIOUS = 0;
     public static final int USER_MULTISIG_STATUS_CURRENT = 1;
-    public static final int USER_MULTISIG_STATUS_NEXT = 3;
-    public static final int USER_MULTISIG_STATUS_ARCHIVE = 4;
+    public static final int USER_MULTISIG_STATUS_NEXT = 2;
+    public static final int USER_MULTISIG_STATUS_ARCHIVE = 3;
 
     public static final int USER_MULTISIG_STATUS_CREATION_FAILED = -400;
 
@@ -166,6 +172,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_SORTED_BY_RISK = "OrderByRisk";
     public static final String ATTR_REQUEST_TO_ADDRESS = "ToAddress";
     public static final String ATTR_REQUEST_AMOUNT = "Amount";
+    public static final String ATTR_REQUEST_NEW_MESSAGE_ID = "NewMessageId";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
@@ -178,6 +185,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TEAMMATE_ID = "TeammateId";
     public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
     public static final String ATTR_REQUEST_IS_MUTED = "IsMuted";
+    public static final String ATTR_REQUEST_NEW_POST_ID = "NewPostId";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";
@@ -190,6 +198,7 @@ public class TeambrellaModel {
     public static final String ATTR_METADATA_DIRECTION = "direction";
     public static final String ATTR_METADATA_FORCE = "force";
     public static final String ATTR_METADATA_RELOAD = "reload";
+    public static final String ATTR_METADATA_ITEMS_UPDATED = "ItemsUpdated";
     public static final String ATTR_METADATA_NEXT_DIRECTION = "next";
     public static final String ATTR_METADATA_PREVIOUS_DIRECTION = "previous";
     public static final String ATTR_METADATA_SIZE = "size";
@@ -316,8 +325,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TEXT = "Text";
     public static final String ATTR_DATA_TEAMMATE_PART = "TeammatePart";
     public static final String ATTR_DATA_CREATED = "Created";
+    public static final String ATTR_DATA_ADDED = "Added";
     public static final String ATTR_DATA_LAST_READ = "LastRead";
     public static final String ATTR_DATA_IMAGES = "Images";
+    public static final String ATTR_DATA_LOCAL_IMAGES = "LocalImages";
     public static final String ATTR_DATA_SMALL_IMAGES = "SmallImages";
     public static final String ATTR_DATA_IMAGE_RATIOS = "ImageRatios";
     public static final String ATTR_DATA_DIMENSION_RATIO = "DimensionRatio";
@@ -380,6 +391,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_WITHDRAWAL_DATE = "WithdrawalDate";
     public static final String ATTR_DATA_IS_NEW = "IsNew";
     public static final String ATTR_DATA_IS_MUTED = "IsMuted";
+    public static final String ATTR_DATA_MESSAGE_STATUS = "MesageStatus";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";
@@ -387,6 +399,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_HE_COVERS_ME_IF499 = "HeCoversMeIf499";
     public static final String ATTR_DATA_MY_RISK = "MyRisk";
     public static final String ATTR_DATA_CITY = "City";
+    public static final String ATTR_DATA_IS_NEXT_DAY = "isNextDay";
 
 
     public static final int FEED_ITEM_TEAMMATE = 0;

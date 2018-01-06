@@ -60,7 +60,7 @@ public class ProxiesFragment extends AMainLandingFragment {
                     case 1:
                         return getTitle(getString(R.string.proxy_for));
                     case 2:
-                        return getTitle(getString(R.string.user_index));
+                        return getTitle(getString(R.string.rating));
                     default:
                         throw new RuntimeException();
                 }
