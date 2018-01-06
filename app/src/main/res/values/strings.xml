@@ -281,4 +281,15 @@
     <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">You now receive notifications for this discussion.</string>
     <string name="message">Message</string>
+
+    <string name="backup_wallet">Backup Wallet</string>
+    <string name="your_wallet_is_backed_up">Your wallet is backed up</string>
+    <string name="your_wallet_not_backed_up">Your wallet is not backed up</string>
+    <string name="backup_your_wallet_title">Backup your wallet</string>
+    <string name="backup_your_wallet_description">To restore access to your wallet you\'ll need a private key. It is highly recommended to back up it securely now with Google Smart Lock.</string>
+    <string name="tap_to_backup_wallet">Tap to backup your Wallet with Google Smart Lock</string>
+    <string name="save_password">Save Password</string>
+    <string name="later">Later</string>
+
+    <string name="rating">Rating</string>
 </resources>

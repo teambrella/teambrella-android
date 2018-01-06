@@ -38,8 +38,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 89
-        versionName "and-0.1.4.89"
+        versionCode 94
+        versionName "and-0.1.5.94"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -150,7 +150,7 @@ dependencies {
 
     compile 'com.google.android.gms:play-services-gcm:11.6.2'
     compile 'com.google.android.gms:play-services-analytics:11.6.2'
-
+    compile 'com.google.android.gms:play-services-auth:11.6.2'
 
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
