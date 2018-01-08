@@ -11,9 +11,11 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.MimeTypeMap;
 
+import com.teambrella.android.R;
 import com.teambrella.android.util.log.Log;
 
 import java.io.File;
@@ -115,14 +117,15 @@ public class ImagePicker {
         List<Intent> intentList = new ArrayList<>();
 
         // Gallery intent
-        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-        addIntentToList(intentList, pickIntent);
+//        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        pickIntent.setType("image/*");
+//        addIntentToList(intentList, pickIntent);
 
         // Camera intent
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePhotoIntent.putExtra("return-data", true);
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraFile);
+        takePhotoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         addIntentToList(intentList, takePhotoIntent);
 
         if (intentList.size() > 0) {
@@ -130,7 +133,7 @@ public class ImagePicker {
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 
-        return chooserIntent;
+        return takePhotoIntent;
     }
 
     private void addIntentToList(List<Intent> list, Intent intent) {
@@ -156,7 +159,7 @@ public class ImagePicker {
         File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         try {
             File image = File.createTempFile(imageFileName, EXTENSION, storageDir);
-            return Uri.fromFile(image);
+            return FileProvider.getUriForFile(mContext, mContext.getString(R.string.file_provider_authorities), image);
         } catch (IOException ex) {
             Log.e(LOG_TAG, ex.toString());
             return null;

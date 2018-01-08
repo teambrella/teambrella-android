@@ -4,4 +4,5 @@
     <string name="facebook_app_id" translatable="false">1826256607597448</string>
     <string name="content_provider_authority" translatable="false">com.teambrella.android.provider</string>
     <string name="com_google_android_backup_api_key">AEdPqrEAAAAIF2eIAXRwE98E965_4frLl-kSlQR4hi6A_-0ieg</string>
+    <string name="file_provider_authorities">com.teambrella.android.file.provider</string>
 </resources>
