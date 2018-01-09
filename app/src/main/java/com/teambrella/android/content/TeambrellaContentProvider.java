@@ -13,12 +13,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.teambrella.android.util.log.Log;
+
 import java.util.ArrayList;
 
 /**
  * Teambrella Content Provider
  */
 public class TeambrellaContentProvider extends ContentProvider {
+
+    private static final String LOG_TAG = TeambrellaContentProvider.class.getSimpleName();
 
     /**
      * DB Helper
@@ -90,30 +94,37 @@ public class TeambrellaContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        long rowId;
-        switch (TeambrellaRepository.sUriMatcher.match(uri)) {
-            case TeambrellaRepository.TEAMMATE:
-                rowId = db.insertOrThrow(TeambrellaRepository.TEAMMATE_TABLE, null, values);
-                break;
-            case TeambrellaRepository.MULTISIG:
-                rowId = db.insertOrThrow(TeambrellaRepository.MULTISIG_TABLE, null, values);
-                break;
-            case TeambrellaRepository.TX_INPUT:
-                rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
-                break;
-            case TeambrellaRepository.TX_SIGNATURE:
-                rowId = db.insertOrThrow(TeambrellaRepository.TX_SIGNATURE_TABLE, null, values);
-                break;
-            case TeambrellaRepository.UNCONFIRMED:
-                rowId = db.insertOrThrow(TeambrellaRepository.UNCONFIRMED_TABLE, null, values);
-                break;
+        Log.d(LOG_TAG, " insert to " + uri.toString() + " " + (values != null ? values.toString() : ""));
 
-            default:
-                rowId = db.insertOrThrow(getTableName(uri), null, values);
-                break;
+        try {
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            long rowId;
+            switch (TeambrellaRepository.sUriMatcher.match(uri)) {
+                case TeambrellaRepository.TEAMMATE:
+                    rowId = db.insertOrThrow(TeambrellaRepository.TEAMMATE_TABLE, null, values);
+                    break;
+                case TeambrellaRepository.MULTISIG:
+                    rowId = db.insertOrThrow(TeambrellaRepository.MULTISIG_TABLE, null, values);
+                    break;
+                case TeambrellaRepository.TX_INPUT:
+                    rowId = db.insertOrThrow(TeambrellaRepository.TX_INPUT_TABLE, null, values);
+                    break;
+                case TeambrellaRepository.TX_SIGNATURE:
+                    rowId = db.insertOrThrow(TeambrellaRepository.TX_SIGNATURE_TABLE, null, values);
+                    break;
+                case TeambrellaRepository.UNCONFIRMED:
+                    rowId = db.insertOrThrow(TeambrellaRepository.UNCONFIRMED_TABLE, null, values);
+                    break;
+
+                default:
+                    rowId = db.insertOrThrow(getTableName(uri), null, values);
+                    break;
+            }
+            return Uri.withAppendedPath(uri, Long.toString(rowId));
+        } catch (Throwable e) {
+            Log.reportNonFatal(LOG_TAG, "error " + uri.toString() + " " + (values != null ? values.toString() : ""));
+            throw e;
         }
-        return Uri.withAppendedPath(uri, Long.toString(rowId));
     }
 
     @Override
@@ -124,8 +135,14 @@ public class TeambrellaContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        return db.updateWithOnConflict(getTableName(uri), values, selection, selectionArgs, SQLiteDatabase.CONFLICT_FAIL);
+        Log.d(LOG_TAG, " update to " + uri.toString() + " " + (values != null ? values.toString() : ""));
+        try {
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            return db.updateWithOnConflict(getTableName(uri), values, selection, selectionArgs, SQLiteDatabase.CONFLICT_FAIL);
+        } catch (Throwable e) {
+            Log.reportNonFatal(LOG_TAG, "error " + uri.toString() + " " + (values != null ? values.toString() : ""));
+            throw e;
+        }
     }
 
 
@@ -330,7 +347,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 205
-                    ){
+                    ) {
                 db.execSQL("CREATE TABLE Unconfirmed (" +
                         "Id INTEGER PRIMARY KEY UNIQUE NOT NULL, " +
                         "MultisigId INTEGER NOT NULL, " +
@@ -347,7 +364,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             // now the table scheme is 205 level or higher:
 
             // temp hot fix for lost contract:
-            if (oldVersion == 205){
+            if (oldVersion == 205) {
                 db.execSQL("UPDATE Multisig SET Address=NULL WHERE Address='0x4225d04ea2e2235e6dd15062d004a0cc769b6ad0'");
             }
 
