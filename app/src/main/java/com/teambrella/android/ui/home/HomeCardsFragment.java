@@ -25,12 +25,18 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.base.ITeambrellaComponent;
+import com.teambrella.android.ui.base.dagger.IDaggerActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Notification;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -58,6 +64,14 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof IDaggerActivity) {
+            //noinspection unchecked
+            ((IDaggerActivity<ITeambrellaComponent>) context).getComponent().inject(this);
+        }
+    }
 
     @Override
     public void onDestroyView() {
@@ -146,8 +160,11 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         private JsonWrapper mCard;
         private int mTeamId;
-        private String mCurrency;
         private int mTeamAccessLevel;
+
+        @Inject
+        @Named(Dependencies.PICASSO)
+        Picasso mPicasso;
 
         public static CardsFragment getInstance(String data, int teamId, String currency, int teamAccessLevel) {
             CardsFragment fragment = new CardsFragment();
@@ -161,20 +178,24 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         }
 
         @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            //noinspection unchecked
+            ((IDaggerActivity<ITeambrellaComponent>) context).getComponent().inject(this);
+        }
+
+        @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             Gson gson = new GsonBuilder().create();
             mCard = new JsonWrapper(gson.fromJson(getArguments().getString(EXTRA_DATA), JsonObject.class));
             mTeamId = getArguments().getInt(EXTRA_TEAM_ID);
-            mCurrency = getArguments().getString(EXTRA_CURRENCY);
             mTeamAccessLevel = getArguments().getInt(EXTRA_TEAM_ACCESS_LEVEL);
         }
 
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
-
             View view = inflater.inflate(R.layout.home_card_claim, container, false);
 
             ImageView icon = view.findViewById(R.id.icon);
@@ -193,7 +214,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+            RequestCreator requestCreator = mPicasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {

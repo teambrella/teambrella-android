@@ -33,9 +33,9 @@ public class TeambrellaImageLoader {
     }
 
 
-    public Picasso getPicasso() {
-        return mPicasso;
-    }
+//    public Picasso getPicasso() {
+//        return mPicasso;
+//    }
 
 
     public static Uri.Builder getUriBuilder() {

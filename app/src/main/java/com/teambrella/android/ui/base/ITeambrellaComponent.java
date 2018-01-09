@@ -8,6 +8,7 @@ import com.teambrella.android.data.base.TeambrellaDataLoader;
 import com.teambrella.android.data.base.TeambrellaDataPagerLoader;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatDataPagerLoader;
+import com.teambrella.android.ui.home.HomeCardsFragment;
 
 import javax.inject.Singleton;
 
@@ -26,4 +27,10 @@ public interface ITeambrellaComponent {
     void inject(TeambrellaDataPagerLoader loader);
 
     void inject(ChatDataPagerLoader loader);
+
+    void inject(TeambrellaDataPagerAdapter adapter);
+
+    void inject(ADataFragment fragment);
+
+    void inject(HomeCardsFragment.CardsFragment fragment);
 }

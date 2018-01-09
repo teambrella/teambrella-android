@@ -6,7 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
+import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.IDataHost;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
@@ -23,6 +28,11 @@ public abstract class ADataFragment<T extends IDataHost> extends Fragment {
     private Disposable[] mDisposals;
 
     protected String[] mTags;
+
+
+    @Inject
+    @Named(Dependencies.PICASSO)
+    Picasso mPicasso;
 
 
     public static <T extends ADataFragment> T getInstance(String tag, Class<T> clazz) {
