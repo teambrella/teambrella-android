@@ -405,7 +405,7 @@ class EthWallet {
             Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
             return 1_000_000_001L;  // 1 Gwei or more is required since Dec, 2017 (1 Gwei = 10^9 wei)
         }else if (price > 4_000_000_001L) {
-            Log.reportNonFatal(LOG_TAG, "With the current version gas price for a clime is liminted. This higher price will be supported l: " + price);
+            Log.reportNonFatal(LOG_TAG, "With the current version gas price for a clime is limited. This high price will be supported later (when off-chain payments are implemented) : " + price);
             // The server is kidding with us
             return 4_000_000_001L;
         }
