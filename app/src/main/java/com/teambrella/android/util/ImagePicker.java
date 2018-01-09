@@ -62,8 +62,7 @@ public class ImagePicker {
 
 
     public void startPicking() {
-        mCameraFileUri = getTempFileUri();
-        mContext.startActivityForResult(getImagePickerIntent(mCameraFileUri), IMAGE_PICKER_REQUEST_CODE);
+        mContext.startActivityForResult(getImagePickerIntent(getTempFileUri()), IMAGE_PICKER_REQUEST_CODE);
     }
 
 
@@ -117,9 +116,9 @@ public class ImagePicker {
         List<Intent> intentList = new ArrayList<>();
 
         // Gallery intent
-//        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        pickIntent.setType("image/*");
-//        addIntentToList(intentList, pickIntent);
+        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+        addIntentToList(intentList, pickIntent);
 
         // Camera intent
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -133,7 +132,7 @@ public class ImagePicker {
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 
-        return takePhotoIntent;
+        return chooserIntent;
     }
 
     private void addIntentToList(List<Intent> list, Intent intent) {
@@ -159,6 +158,7 @@ public class ImagePicker {
         File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         try {
             File image = File.createTempFile(imageFileName, EXTENSION, storageDir);
+            mCameraFileUri = Uri.fromFile(image);
             return FileProvider.getUriForFile(mContext, mContext.getString(R.string.file_provider_authorities), image);
         } catch (IOException ex) {
             Log.e(LOG_TAG, ex.toString());
