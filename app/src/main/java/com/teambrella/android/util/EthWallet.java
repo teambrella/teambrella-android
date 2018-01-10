@@ -53,8 +53,10 @@ class EthWallet {
     private long mNonce = -1;                                                       // cashed nonce to minimise Blockchain Node traffic during multiple sync loops.
 
     private long mGasPrice = -1;
+    private long mClaimGasPrice = -1;
     private long mContractGasPrice = -1;
     private long mTestGasPrice = -1;
+    private long mTestClaimGasPrice = -1;
     private long mTestContractGasPrice = -1;
 
     EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
@@ -260,9 +262,9 @@ class EthWallet {
         Multisig myMultisig = tx.getFromMultisig();
         long myNonce = getMyNonce();
         long gasLimit = 500_000L;
-        long gasPrice = getGasPrice();
+        long gasPrice = getGasPriceForClaim();
         String multisigAddress = myMultisig.address;
-        String methodId = METHOD_ID_TRANSFER;   // TODO:
+        String methodId = METHOD_ID_TRANSFER;
 
         TxInput payFrom = tx.txInputs.get(0);
         int opNum = payFrom.previousTxIndex + 1;
@@ -383,10 +385,10 @@ class EthWallet {
         if (price < 0) {
             Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
             return 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
-        }else if (price > 4_000_000_001L) {
+        }else if (price > 50_000_000_001L) {
             Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the gas price: " + price);
             // The server is kidding with us
-            return 4_000_000_001L;
+            return 50_000_000_001L;
         }
 
         if (mIsTestNet) {
@@ -394,6 +396,25 @@ class EthWallet {
         }
 
         return mGasPrice = price;
+    }
+
+    long refreshClaimGasPrice() {
+        EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
+        long price = gasStation.checkGasPrice();
+        if (price < 0) {
+            Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
+            return 1_000_000_001L;  // 1 Gwei or more is required since Dec, 2017 (1 Gwei = 10^9 wei)
+        }else if (price > 4_000_000_001L) {
+            Log.reportNonFatal(LOG_TAG, "With the current version gas price for a clime is limited. This high price will be supported later (when off-chain payments are implemented) : " + price);
+            // The server is kidding with us
+            return 4_000_000_001L;
+        }
+
+        if (mIsTestNet) {
+            return mTestClaimGasPrice = price;
+        }
+
+        return mClaimGasPrice = price;
     }
 
     private long refreshContractCreateGasPrice() {
@@ -421,6 +442,13 @@ class EthWallet {
             return mTestGasPrice < 0 ? refreshGasPrice() : mTestGasPrice;
         }
         return mGasPrice < 0 ? refreshGasPrice() : mGasPrice;
+    }
+
+    private long getGasPriceForClaim() {
+        if (mIsTestNet){
+            return mTestClaimGasPrice < 0 ? refreshClaimGasPrice() : mTestClaimGasPrice;
+        }
+        return mClaimGasPrice < 0 ? refreshClaimGasPrice() : mClaimGasPrice;
     }
 
     long getGasPriceForContractCreation() {
