@@ -11,7 +11,6 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +28,6 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
     private int mAvatarBorderColor;
     private int mAvatarCount;
     private int mAvatarShift;
-    private Picasso mPicasso;
-
 
     public TeambrellaAvatarsWidgets(@NonNull Context context) {
         super(context);
@@ -66,18 +63,17 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             params.leftMargin = i * (mAvatarSize - mAvatarShift);
             addView(circleImageView, params);
         }
-        mPicasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
     }
 
 
-    public void setAvatars(List<String> uris) {
+    public void setAvatars(Picasso picasso, List<String> uris) {
 
         Iterator<String> it = uris.iterator();
         for (int i = 0; i < mAvatarCount; i++) {
             ImageView imageview = (ImageView) getChildAt(i);
             String uri = it.hasNext() ? it.next() : null;
             if (uri != null) {
-                mPicasso.load(uri).into(imageview);
+                picasso.load(uri).into(imageview);
             }
             imageview.setVisibility(uri != null ? VISIBLE : GONE);
         }

@@ -137,7 +137,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
                     case TeambrellaUris.CLAIMS_CHAT: {
                         Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)))
-                                .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri).resize(getResources().getDimensionPixelSize(R.dimen.image_size_42)
+                                .map(uri -> getPicasso().load(uri).resize(getResources().getDimensionPixelSize(R.dimen.image_size_42)
                                         , getResources().getDimensionPixelSize(R.dimen.image_size_42)))
                                 .map(RequestCreator::centerCrop)
                                 .map(requestCreator -> requestCreator.transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)))
@@ -156,7 +156,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     break;
                     case TeambrellaUris.TEAMMATE_CHAT: {
                         Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                                .map(uri -> TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(uri))
+                                .map(uri -> getPicasso().load(uri))
                                 .map(requestCreator -> requestCreator.transform(new CropCircleTransformation()))
                                 .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
                                     // 8)

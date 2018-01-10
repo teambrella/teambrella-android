@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 
@@ -35,7 +34,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
         ImageView teamLogo = view.findViewById(R.id.team_logo);
 
 
-        TeambrellaImageLoader.getInstance(getContext()).getPicasso().load(mDataHost.getTeamLogoUri())
+        getPicasso().load(mDataHost.getTeamLogoUri())
                 .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
                 .into(teamLogo);
 

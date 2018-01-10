@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.ATeambrellaDialogFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.util.StatisticHelper;
 
@@ -35,7 +35,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Team selection dialog fragment
  */
-public class TeamSelectionFragment extends DialogFragment {
+public class TeamSelectionFragment extends ATeambrellaDialogFragment {
 
 
     private ProgressBar mProggres;
@@ -172,8 +172,7 @@ public class TeamSelectionFragment extends DialogFragment {
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME));
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME));
             mCoverage.setText(String.format(Locale.US, "%d%%", Math.round(100 * item.getFloat(TeambrellaModel.ATTR_DATA_OBJECT_COVERAGE))));
-            TeambrellaImageLoader.getInstance(getContext()).getPicasso()
-                    .load(TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)))
+            getPicasso().load(TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)))
                     .into(mIcon);
 
             mCurrentTeamMark.setVisibility(mDataHost.getTeamId() != item.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) ? View.INVISIBLE : View.VISIBLE);

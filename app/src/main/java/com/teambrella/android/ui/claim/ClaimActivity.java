@@ -22,10 +22,9 @@ import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.StatisticHelper;
 
@@ -36,7 +35,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Claim Activity
  */
-public class ClaimActivity extends TeambrellaDataHostActivity implements IClaimActivity {
+public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity {
 
     private static final String CLAIM_DATA_TAG = "claim_data_tag";
     private static final String VOTE_DATA_TAG = "vote_data_tag";
@@ -107,6 +106,7 @@ public class ClaimActivity extends TeambrellaDataHostActivity implements IClaimA
             parent.setContentInsetsAbsolute(0, 0);
         }
         setTitle(getIntent().getStringExtra(EXTRA_MODEL));
+        getComponent().inject(this);
     }
 
 
@@ -257,8 +257,7 @@ public class ClaimActivity extends TeambrellaDataHostActivity implements IClaimA
             if (basic != null) {
                 String pictureUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
-                    TeambrellaImageLoader.getInstance(this).getPicasso()
-                            .load(pictureUri).transform(new CropCircleTransformation()).into(mIcon);
+                    getPicasso().load(pictureUri).transform(new CropCircleTransformation()).into(mIcon);
                     mIcon.setOnClickListener(v ->
                             TeammateActivity.start(ClaimActivity.this
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)

@@ -6,9 +6,10 @@ import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
 import com.teambrella.android.data.base.TeambrellaDataLoader;
 import com.teambrella.android.data.base.TeambrellaDataPagerLoader;
-import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatDataPagerLoader;
+import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.ui.home.HomeCardsFragment;
+import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
 import javax.inject.Singleton;
 
@@ -20,7 +21,10 @@ import dagger.Component;
 @Singleton
 @Component(modules = {ContextModule.class, TeambrellaUserModule.class, TeambrellaServerModule.class, PicassoModule.class})
 public interface ITeambrellaComponent {
-    void inject(MainActivity activity);
+
+    void inject(ATeambrellaActivity activity);
+
+    void inject(ATeambrellaDialogFragment fragment);
 
     void inject(TeambrellaDataLoader loader);
 
@@ -30,7 +34,13 @@ public interface ITeambrellaComponent {
 
     void inject(TeambrellaDataPagerAdapter adapter);
 
-    void inject(ADataFragment fragment);
+    void inject(TeambrellaFragment fragment);
 
     void inject(HomeCardsFragment.CardsFragment fragment);
+
+    void inject(ATeambrellaAdapter adapter);
+
+    void inject(TeambrellaAvatarsWidgets widgets);
+
+    void inject(ReportClaimActivity activity);
 }

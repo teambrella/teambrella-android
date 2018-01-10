@@ -252,7 +252,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                     .toList()
                     .subscribe((uris) -> {
-                        mCosignersAvatar.setAvatars(uris);
+                        mCosignersAvatar.setAvatars(getPicasso(), uris);
                         mCosignersCountView.setText(Integer.toString(uris.size()));
                     }, e -> {
                     });

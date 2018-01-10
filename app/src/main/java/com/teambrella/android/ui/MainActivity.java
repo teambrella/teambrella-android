@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -25,14 +24,13 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
-import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 import com.teambrella.android.ui.home.HomeFragment;
@@ -48,9 +46,6 @@ import com.teambrella.android.util.log.Log;
 
 import java.util.Stack;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import io.reactivex.disposables.Disposable;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -58,7 +53,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Main Activity
  */
-public class MainActivity extends TeambrellaDataHostActivity implements IMainDataHost, ITeammateActivity {
+public class MainActivity extends ATeambrellaActivity implements IMainDataHost, ITeammateActivity {
 
     /**
      * Action to show feed
@@ -110,14 +105,6 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
     private Snackbar mSnackBar;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
-
-
-    @Inject
-    @Named(Dependencies.TEAMBRELLA_USER)
-    TeambrellaUser mUser;
-    @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
 
     private Stack<Integer> mBackStack = new Stack<>();
     private WalletBackupManager mWalletBackupManager;
@@ -304,7 +291,7 @@ public class MainActivity extends TeambrellaDataHostActivity implements IMainDat
             if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-                mPicasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                getPicasso().load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
                         .transform(new CropCircleTransformation())
                         .into(mAvatar);
 

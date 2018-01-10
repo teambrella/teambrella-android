@@ -12,9 +12,8 @@ import android.widget.ProgressBar;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.ATeambrellaAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Photo Adapter
  */
-public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PhotoAdapter extends ATeambrellaAdapter {
 
 
     private static class Photo {
@@ -41,11 +40,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     private ArrayList<Photo> mPhotos = new ArrayList<>();
-    private Picasso mPicasso;
     private LayoutInflater mLayoutInflater;
 
     public PhotoAdapter(Context context) {
-        mPicasso = TeambrellaImageLoader.getInstance(context).getPicasso();
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -119,7 +116,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onBind(Photo photo) {
             Context context = itemView.getContext();
             Resources resources = context.getResources();
-            mPicasso.load(Uri.fromFile(new File(photo.filePath)))
+            getPicasso().load(Uri.fromFile(new File(photo.filePath)))
                     .resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
                     .centerCrop()
                     .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))

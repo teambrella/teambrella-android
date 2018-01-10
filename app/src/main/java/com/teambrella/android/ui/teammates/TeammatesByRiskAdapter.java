@@ -103,7 +103,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
 
         void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
+                    .map(uri -> getPicasso().load(uri))
                     .subscribe(requestCreator -> requestCreator.resize(200, 0).transform(new CropCircleTransformation()).into(mIconView), throwable -> {
                         // 8)
                     });

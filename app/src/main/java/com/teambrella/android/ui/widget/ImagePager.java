@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.TeambrellaFragment;
 import com.teambrella.android.ui.image.ImageViewerActivity;
 
 import java.util.ArrayList;
@@ -51,8 +51,8 @@ public class ImagePager extends FrameLayout {
 
     private void init() {
         inflate(getContext(), R.layout.widget_image_pager, this);
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mIndicator = (LinearLayout) findViewById(R.id.indicator);
+        mPager = findViewById(R.id.pager);
+        mIndicator = findViewById(R.id.indicator);
     }
 
 
@@ -126,7 +126,7 @@ public class ImagePager extends FrameLayout {
     }
 
 
-    public static final class ImageFragment extends Fragment {
+    public static final class ImageFragment extends TeambrellaFragment {
 
         private static final String EXTRA_URI = "uri";
         private static final String EXTRA_URIS = "uris";
@@ -143,11 +143,11 @@ public class ImagePager extends FrameLayout {
         }
 
 
-        @Nullable
+        @NonNull
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image, container, false);
-            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
+            getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
             imageView.setOnClickListener(v -> v.getContext()
                     .startActivity(ImageViewerActivity.getLaunchIntent(v.getContext()
                             , getArguments().getStringArrayList(EXTRA_URIS)

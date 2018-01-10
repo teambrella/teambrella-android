@@ -30,6 +30,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ITeambrellaComponent;
+import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.dagger.IDaggerActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
@@ -68,8 +69,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof IDaggerActivity) {
-            //noinspection unchecked
-            ((IDaggerActivity<ITeambrellaComponent>) context).getComponent().inject(this);
+            ((ITeambrellaDaggerActivity) context).getComponent().inject(this);
         }
     }
 

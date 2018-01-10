@@ -145,8 +145,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
         ClaimChatViewHolder(View itemView) {
             super(itemView);
-            picasso = TeambrellaImageLoader.getInstance(itemView.getContext())
-                    .getPicasso();
+            picasso = getPicasso();
             mUserPicture = itemView.findViewById(R.id.user_picture);
             mTime = itemView.findViewById(R.id.time);
             mDate = itemView.findViewById(R.id.date);

@@ -15,7 +15,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
@@ -58,7 +57,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+            Picasso picasso = getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);

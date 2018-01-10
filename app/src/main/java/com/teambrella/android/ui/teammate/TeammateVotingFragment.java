@@ -15,7 +15,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.teammates.RiskRange;
 import com.teambrella.android.ui.teammates.TeammatesByRiskActivity;
@@ -105,7 +104,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
         try {
             if (notification.isOnNext()) {
-                Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+                Picasso picasso = getPicasso();
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
@@ -180,7 +179,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                             fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
                             .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                             .toList()
-                            .subscribe(mAvatarWidgets::setAvatars);
+                            .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
 
                     setVoting(false);
                 }
@@ -255,7 +254,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
         mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
 
-        Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+        Picasso picasso = getPicasso();
         for (JsonWrapper interval : mRanges) {
             float left = interval.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
             float right = interval.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE);

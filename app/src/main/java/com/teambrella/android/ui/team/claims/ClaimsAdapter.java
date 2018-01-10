@@ -222,7 +222,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             final Uri objectPictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
             final Uri teammatePictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             final Uri proxyAvatarUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
-            Picasso picasso = TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso();
+            Picasso picasso = getPicasso();
 
             if (mIcon != null) {
                 picasso.load(objectPictureUri).
@@ -323,7 +323,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         public void onBind() {
 
             Context context = itemView.getContext();
-            Picasso picasso = TeambrellaImageLoader.getInstance(context).getPicasso();
+            Picasso picasso = getPicasso();
             mObjectNameView.setText(mObjectName);
 
             if (mObjectImageUri != null) {

@@ -4,11 +4,12 @@ import com.teambrella.android.dagger.ContextModule;
 import com.teambrella.android.dagger.PicassoModule;
 import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
+import com.teambrella.android.ui.base.dagger.ADaggerActivity;
 
 /**
- * Teambrella Data Host Activity.
+ * Teambrella Dagger Activity
  */
-public abstract class TeambrellaDataHostActivity extends ADataHostActivity<ITeambrellaComponent> implements ITeambrellaDaggerActivity {
+public abstract class TeambrellaDaggerActivity extends ADaggerActivity<ITeambrellaComponent> implements ITeambrellaDaggerActivity {
 
     @Override
     protected ITeambrellaComponent createComponent() {

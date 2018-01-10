@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.teambrella.android.R;
-import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
+import com.teambrella.android.ui.base.TeambrellaFragment;
 
 import java.util.ArrayList;
 
 /**
  *
  */
-public class ImageViewerActivity extends AppCompatActivity {
+public class ImageViewerActivity extends TeambrellaDaggerActivity {
 
     private static final String EXTRA_URIS = "uris";
     private static final String EXTRA_POSITION = "position";
@@ -91,7 +91,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     }
 
 
-    public static class ImageFragment extends Fragment {
+    public static class ImageFragment extends TeambrellaFragment {
 
         public static final String EXTRA_URI = "uri";
 
@@ -107,7 +107,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            TeambrellaImageLoader.getInstance(getActivity()).getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
+            getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
             return imageView;
         }
     }

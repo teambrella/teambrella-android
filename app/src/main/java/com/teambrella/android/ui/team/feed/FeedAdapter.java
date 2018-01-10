@@ -129,7 +129,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             mTitle = itemView.findViewById(R.id.title);
             mWhen = itemView.findViewById(R.id.when);
             mMessage = itemView.findViewById(R.id.message);
-            picasso = TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso();
+            picasso = getPicasso();
             mAvatarWidgets = itemView.findViewById(R.id.avatars);
             mUnread = itemView.findViewById(R.id.unread);
             mType = itemView.findViewById(R.id.type);
@@ -199,7 +199,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                     fromIterable(item.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                     .toList()
-                    .subscribe(mAvatarWidgets::setAvatars);
+                    .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
 
 
             itemView.setOnClickListener(v -> {

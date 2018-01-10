@@ -10,7 +10,6 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,13 +28,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
-import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
+import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
 import com.teambrella.android.ui.photos.PhotoAdapter;
@@ -47,6 +49,9 @@ import com.teambrella.android.util.TeambrellaDateUtils;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -56,7 +61,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 /**
  * Activity to report a claim
  */
-public class ReportClaimActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class ReportClaimActivity extends TeambrellaDaggerActivity implements DatePickerDialog.OnDateSetListener, ITeambrellaDaggerActivity {
 
     private static final String EXTRA_IMAGE_URI = "image_uri";
     private static final String EXTRA_NAME = "object_name";
@@ -90,6 +95,10 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
     private String mCurrency;
     private Snackbar mSnackBar;
 
+    @Inject
+    @Named(Dependencies.PICASSO)
+    Picasso mPicasso;
+
 
     public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
         context.startActivity(getLaunchIntent(context, objectImageUri, objectName, teamId, currency));
@@ -114,6 +123,8 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        getComponent().inject(this);
+
 
         mImagePicker = new ImagePicker(this);
 
@@ -130,6 +141,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         RecyclerView mPhotos = findViewById(R.id.photos);
         mExpensesView = findViewById(R.id.expenses);
         mPhotoAdapter = new PhotoAdapter(this);
+        getComponent().inject(mPhotoAdapter);
         mPhotos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mPhotos.setAdapter(mPhotoAdapter);
 
@@ -140,7 +152,7 @@ public class ReportClaimActivity extends AppCompatActivity implements DatePicker
         mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         ((TextView) findViewById(R.id.object_title)).setText(intent.getStringExtra(EXTRA_NAME));
-        TeambrellaImageLoader.getInstance(this).getPicasso().load(intent.getStringExtra(EXTRA_IMAGE_URI))
+        mPicasso.load(intent.getStringExtra(EXTRA_IMAGE_URI))
                 .resize(getResources().getDimensionPixelSize(R.dimen.image_size_40), getResources().getDimensionPixelSize(R.dimen.image_size_40)).centerCrop()
                 .transform(new MaskTransformation(this, R.drawable.teammate_object_mask)).into((ImageView) findViewById(R.id.object_icon));
 

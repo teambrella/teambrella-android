@@ -24,7 +24,6 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -163,7 +162,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     .blockingFirst();
 
 
-            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+            Picasso picasso = getPicasso();
 
 
             Observable<JsonWrapper> dataObservable =
@@ -250,7 +249,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             discussionsObservable.flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                     .toList()
-                    .subscribe(mAvatars::setAvatars, e -> {
+                    .subscribe(uris -> mAvatars.setAvatars(getPicasso(), uris), e -> {
                     });
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);

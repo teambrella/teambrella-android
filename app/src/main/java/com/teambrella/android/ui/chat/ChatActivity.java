@@ -31,11 +31,10 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
@@ -52,7 +51,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 /**
  * Claim chat
  */
-public class ChatActivity extends TeambrellaDataHostActivity implements IChatActivity {
+public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";
@@ -92,7 +91,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     private View mNotificationHelpView;
     private MuteStatus mMuteStatus = null;
     private float mVote = -1;
-
 
     public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
         context.startActivity(getConversationChat(context, userId, userName, imageUri));
@@ -147,7 +145,6 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
 
-
         getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
 
         mUri = intent.getParcelableExtra(EXTRA_URI);
@@ -159,6 +156,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        getComponent().inject(this);
 
         mNotificationManager = new TeambrellaNotificationManager(this);
 
@@ -227,7 +225,7 @@ public class ChatActivity extends TeambrellaDataHostActivity implements IChatAct
 
                     Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
                     if (mImageUri != null && mIcon != null) {
-                        TeambrellaImageLoader.getInstance(this).getPicasso().load(mImageUri)
+                        getPicasso().load(mImageUri)
                                 .transform(new CropCircleTransformation())
                                 .into(mIcon);
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));

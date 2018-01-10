@@ -76,7 +76,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
             Uri userPictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             if (userPictureUri != null) {
-                TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(userPictureUri)
+                getPicasso().load(userPictureUri)
                         .transform(new CropCircleTransformation()).into(mUserPicture);
             }
 

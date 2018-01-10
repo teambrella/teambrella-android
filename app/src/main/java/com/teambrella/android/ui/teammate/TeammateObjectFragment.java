@@ -15,7 +15,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.image.ImageViewerActivity;
@@ -119,8 +118,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             if (photos != null && photos.size() > 0) {
                 Context context = getContext();
                 Resources resources = context.getResources();
-                TeambrellaImageLoader.getInstance(context).getPicasso()
-                        .load(photos.get(0))
+                getPicasso().load(photos.get(0))
                         .resize(resources.getDimensionPixelSize(R.dimen.teammate_object_picture_width)
                                 , resources.getDimensionPixelSize(R.dimen.teammate_object_picture_height))
                         .centerCrop()

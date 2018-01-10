@@ -81,6 +81,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
             }
         });
         mAdapter = getAdapter();
+        ((ITeambrellaDaggerActivity) (getContext())).getComponent().inject(mAdapter);
         mList.setAdapter(mAdapter);
         return view;
     }

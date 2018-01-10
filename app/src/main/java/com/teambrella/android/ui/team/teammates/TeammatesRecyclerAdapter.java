@@ -118,7 +118,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         void onBind(JsonWrapper item) {
 
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> TeambrellaImageLoader.getInstance(itemView.getContext()).getPicasso().load(uri))
+                    .map(uri -> getPicasso().load(uri))
                     .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
                         // 8)
                     });

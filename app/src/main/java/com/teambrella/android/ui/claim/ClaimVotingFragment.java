@@ -16,7 +16,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
@@ -78,13 +77,16 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             mRestVoteButton.setAlpha(0.3f);
         });
 
+
+        getComponent().inject(mAvatarWidgets);
+
         return view;
     }
 
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            Picasso picasso = TeambrellaImageLoader.getInstance(getContext()).getPicasso();
+            Picasso picasso = getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
@@ -139,7 +141,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
                         .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                         .toList()
-                        .subscribe(mAvatarWidgets::setAvatars);
+                        .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
 
                 if (proxyName != null && proxyAvatar != null) {
                     mProxyName.setText(proxyName);

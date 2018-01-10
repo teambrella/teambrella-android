@@ -13,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Base Teambrella Data Pager Adapter
  */
-public abstract class ATeambrellaDataPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
     public interface OnStartActivityListener {
         void onStartActivity(Intent intent);
