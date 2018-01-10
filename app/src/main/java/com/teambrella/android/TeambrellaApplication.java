@@ -28,6 +28,7 @@ public class TeambrellaApplication extends MultiDexApplication {
 
         sAnalytics = GoogleAnalytics.getInstance(this);
         sAnalytics.setDryRun(BuildConfig.DEBUG);
+        new HelloKotlin().hello();
 
     }
 
