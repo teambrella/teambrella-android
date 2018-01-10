@@ -14,17 +14,12 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.teammate.TeammateActivity;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -45,11 +40,6 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     public static final int VIEW_TYPE_EMPTY = 4;
 
     public static final int VIEW_TYPE_REGULAR = 5;
-
-
-    @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
         super(pager);
@@ -222,7 +212,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
         public void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> mPicasso.load(uri))
+                    .map(uri -> getPicasso().load(uri))
                     .subscribe(requestCreator -> requestCreator.resize(200, 0).transform(new CropCircleTransformation()).into(mIcon), throwable -> {
                         // 8)
                     });
