@@ -26,7 +26,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.util.StatisticHelper;
@@ -38,7 +38,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Teammate screen.
  */
-public class TeammateActivity extends TeambrellaDataHostActivity implements ITeammateActivity {
+public class TeammateActivity extends ATeambrellaActivity implements ITeammateActivity {
 
     private static final String TEAMMATE_URI = "teammate_uri";
     private static final String TEAMMATE_NAME = "teammate_name";

@@ -243,6 +243,15 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNotificationClient != null) {
+            mNotificationClient.disconnect();
+        }
+    }
+
     @Override
     public void launchActivity(Intent intent) {
         startActivityForResult(intent, DEFAULT_REQUEST_CODE);

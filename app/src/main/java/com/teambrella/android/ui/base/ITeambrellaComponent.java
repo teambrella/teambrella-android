@@ -24,6 +24,8 @@ public interface ITeambrellaComponent {
 
     void inject(ATeambrellaActivity activity);
 
+    void inject(TeambrellaDaggerActivity activity);
+
     void inject(ATeambrellaDialogFragment fragment);
 
     void inject(TeambrellaDataLoader loader);

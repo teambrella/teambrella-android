@@ -20,7 +20,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.util.ConnectivityUtils;
 
 import io.reactivex.Notification;
@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Withdraw Activity
  */
-public class WithdrawActivity extends TeambrellaDataHostActivity implements IWithdrawActivity {
+public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawActivity {
 
     public static final String WITHDRAWALS_DATA_TAG = "withdrawals_data";
     public static final String WITHDRAWALS_UI_TAG = "withdrawals_ui";

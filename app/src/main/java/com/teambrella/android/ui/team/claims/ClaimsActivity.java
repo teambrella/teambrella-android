@@ -12,13 +12,13 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 
 /**
  * Claims Activity
  */
-public class ClaimsActivity extends TeambrellaDataHostActivity {
+public class ClaimsActivity extends ATeambrellaActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TEAM_ID = "teamId";
