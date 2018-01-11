@@ -7,13 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
-import com.teambrella.android.util.log.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +23,10 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
+import com.teambrella.android.util.log.Log;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -34,7 +34,7 @@ import io.reactivex.Observable;
 /**
  * Cosigners
  */
-public class CosignersActivity extends AppCompatActivity {
+public class CosignersActivity extends TeambrellaDaggerActivity {
 
     private static final String EXTRA_COSIGNERS = "cosigners";
     private static final String EXTRA_TEAM_ID = "team_id";
@@ -69,8 +69,10 @@ public class CosignersActivity extends AppCompatActivity {
             }
         });
 
-        list.setAdapter(new CosignersAdapter(new CosignersDataPager(new Gson().fromJson(getIntent().getStringExtra(EXTRA_COSIGNERS), JsonArray.class))
-                , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)));
+        CosignersAdapter adapter = new CosignersAdapter(new CosignersDataPager(new Gson().fromJson(getIntent().getStringExtra(EXTRA_COSIGNERS), JsonArray.class))
+                , getIntent().getIntExtra(EXTRA_TEAM_ID, 0));
+        getComponent().inject(adapter);
+        list.setAdapter(adapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
                 LinearLayoutManager.VERTICAL) {

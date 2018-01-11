@@ -30,6 +30,12 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint"
+    }
+}
+
 android {
 
     Properties keyProperties = new Properties()
@@ -102,7 +108,6 @@ android {
         }
     }
 
-
 //    lintOptions {
 //        abortOnError false
 //    }
@@ -157,6 +162,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.google.android.gms:play-services-auth:11.8.0'
 
+
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
 
@@ -178,4 +184,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }
