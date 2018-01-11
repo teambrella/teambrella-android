@@ -135,7 +135,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_STATS_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_statistics_container, ADataFragment.getInstance(mTags, TeammateVotingStatsFragment.class), VOTING_STATS_FRAGMENT_TAG);
+            transaction.add(R.id.voting_statistics_container, com.teambrella.android.ui.teammate.KTeammate.getFragmentInstance(mTags), VOTING_STATS_FRAGMENT_TAG);
         }
 
 

@@ -15,7 +15,7 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class ADataFragment<T extends IDataHost> extends TeambrellaFragment {
 
-    protected static final String EXTRA_DATA_FRAGMENT_TAG = "data_fragment_tag";
+    public static final String EXTRA_DATA_FRAGMENT_TAG = "data_fragment_tag";
 
     protected T mDataHost;
 
