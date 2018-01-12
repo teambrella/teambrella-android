@@ -26,6 +26,8 @@ public class TeambrellaRepository {
     static final String TX_SIGNATURE_TABLE = "TxSignature";
     public static final String UNCONFIRMED_TABLE = "Unconfirmed";
 
+    public static final String LOST_TEAMMATE_TABLE = "LostTeammate";
+
 
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -42,6 +44,8 @@ public class TeambrellaRepository {
     static final int TX_SIGNATURE = 10;
     static final int UNCONFIRMED = 11;
 
+    static final int LOST_TEAMMATE = 1005;
+
 
     static {
         sUriMatcher.addURI(AUTHORITY, MULTISIG_TABLE, MULTISIG);
@@ -55,6 +59,8 @@ public class TeambrellaRepository {
         sUriMatcher.addURI(AUTHORITY, TX_OUTPUT_TABLE, TX_OUTPUT);
         sUriMatcher.addURI(AUTHORITY, TX_SIGNATURE_TABLE, TX_SIGNATURE);
         sUriMatcher.addURI(AUTHORITY, UNCONFIRMED_TABLE, UNCONFIRMED);
+
+        sUriMatcher.addURI(AUTHORITY, LOST_TEAMMATE_TABLE, LOST_TEAMMATE);
 
     }
 
@@ -102,6 +108,8 @@ public class TeambrellaRepository {
     public static class Teammate {
         public static Uri CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
                 .encodedPath(TEAMMATE_TABLE).build();
+        public static Uri LOST_CONTENT_URI = new Uri.Builder().encodedAuthority(AUTHORITY)
+                .encodedPath(LOST_TEAMMATE_TABLE).build();
         public static final String ID = "Id";
         public static final String TEAM_ID = "TeamId";
         public static final String NAME = "Name";

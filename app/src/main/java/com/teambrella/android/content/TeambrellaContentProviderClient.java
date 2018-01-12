@@ -3,6 +3,7 @@ package com.teambrella.android.content;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
@@ -34,6 +35,7 @@ import org.chalup.microorm.TypeAdapter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1048,4 +1050,27 @@ public class TeambrellaContentProviderClient {
         Log.reportNonFatal(LOG_TAG, "Full client update to be executed: " + msg);
         needFullClientUpdate = true;
     }
+
+    public void removeLostRecords() throws RemoteException, OperationApplicationException {
+        Log.w(LOG_TAG, "Deleting lost teammate records...");
+        Cursor cursor = mClient.query(TeambrellaRepository.Teammate.LOST_CONTENT_URI, null, null, null, null);
+
+        if (cursor != null){
+            ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.Teammate.ID));
+                operations.add(ContentProviderOperation.newDelete(TeambrellaRepository.Teammate.CONTENT_URI).withSelection(TeambrellaRepository.Teammate.ID + "=" + id, null).build());
+            }
+
+            if (!operations.isEmpty()) {
+                Log.w(LOG_TAG, "   ... " + operations.size() + " lost record(s) found.");
+                mClient.applyBatch(operations);
+            }
+
+            cursor.close();
+        }
+
+        Log.w(LOG_TAG, "Deleting lost teammate records... done!");
+    }
+
 }

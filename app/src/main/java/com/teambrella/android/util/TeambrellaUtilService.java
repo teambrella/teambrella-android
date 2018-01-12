@@ -228,10 +228,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                             sync();
                         }
                     } catch (Exception e) {
-                        Log.e(LOG_TAG, "sync attempt failed:");
-                        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
-                        Log.e(LOG_TAG, "sync error call stack was: ", e);
-                        Log.reportNonFatal(LOG_TAG, e);
+                        onSyncException(e);
                     } finally {
                         if (isDebugLogging(taskParams)) {
                             String path = Log.stopDebugging();
@@ -284,6 +281,22 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         return GcmNetworkManager.RESULT_SUCCESS;
+    }
+
+    private void onSyncException(Exception e){
+        Log.e(LOG_TAG, "sync attempt failed:");
+        Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
+        Log.e(LOG_TAG, "sync error call stack was: ", e);
+        Log.reportNonFatal(LOG_TAG, e);
+
+        Log.e(LOG_TAG, " --- SYNC -> onRunTask() Resetting server data...");
+        try{
+            mTeambrellaClient.setLastUpdatedTimestamp(0L);
+            mTeambrellaClient.removeLostRecords();
+        }catch (Exception e2) {
+            Log.e(LOG_TAG, " --- SYNC -> onRunTask() failed to reset server data.");
+            Log.reportNonFatal(LOG_TAG, e2);
+        }
     }
 
     private void processIntent(Intent intent) throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
@@ -664,7 +677,6 @@ public class TeambrellaUtilService extends GcmTaskService {
             cosignApprovedTransactions();
             masterSign();
             publishApprovedAndCosignedTxs();
-
 
             hasNews = update();
         }

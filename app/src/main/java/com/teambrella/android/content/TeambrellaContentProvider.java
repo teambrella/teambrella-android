@@ -80,6 +80,8 @@ public class TeambrellaContentProvider extends ContentProvider {
                         + TeambrellaRepository.Team.PAY_TO_ADDRESS_OK_AGE
                         + " FROM " + TeambrellaRepository.TEAMMATE_TABLE + " INNER JOIN " + TeambrellaRepository.TEAM_TABLE +
                         " ON " + TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.TEAM_ID + "=" + TeambrellaRepository.TEAM_TABLE + "." + TeambrellaRepository.Team.ID + (selection != null ? (" WHERE " + selection) : ""), selectionArgs);
+            case TeambrellaRepository.LOST_TEAMMATE:
+                return db.rawQuery("SELECT Teammate.Id FROM Teammate LEFT JOIN Team ON (Teammate.TeamId=Team.Id) WHERE Team.Id IS NULL", null);
             default:
                 return db.query(getTableName(uri), projection, selection, selectionArgs, null, null, sortOrder);
         }
@@ -200,6 +202,11 @@ public class TeambrellaContentProvider extends ContentProvider {
         public TeambrellaSQLiteOpenHelper(Context context) {
             super(context, NAME, null, VERSION);
         }
+//
+//        @Override
+//        public void onConfigure(SQLiteDatabase db){
+//            db.setForeignKeyConstraintsEnabled(true);
+//        }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
