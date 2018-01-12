@@ -154,6 +154,9 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'jp.wasabeef:picasso-transformations:2.1.2'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    implementation("com.github.bumptech.glide:glide:4.5.0") {
+        exclude group: "com.android.support"
+    }
 
     /* *Facebook SDK*/
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'

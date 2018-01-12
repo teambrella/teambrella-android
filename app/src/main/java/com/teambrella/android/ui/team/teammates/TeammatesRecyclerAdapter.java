@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -118,9 +119,9 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         void onBind(JsonWrapper item) {
 
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
-                        // 8)
+                    .map(uri -> Glide.with(itemView).load(uri))
+                    .subscribe(drawableRequestBuilder -> {
+                    }, throwable -> {
                     });
 
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))

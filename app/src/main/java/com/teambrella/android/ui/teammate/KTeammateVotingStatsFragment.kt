@@ -52,14 +52,14 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
     private var discussion: Float = -1f
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_teammate_voting_stats, container, false)
     }
 
     /**
      *
      */
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view?.findViewById<View>(R.id.add_to_proxies)?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
         view?.findViewById<View>(R.id.add_to_proxies)?.tag = true
