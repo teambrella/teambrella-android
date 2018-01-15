@@ -76,7 +76,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
             String userPictureUri = item.getString(TeambrellaModel.ATTR_DATA_AVATAR);
             if (userPictureUri != null) {
-                Glide.with(itemView).load(userPictureUri)
+                Glide.with(itemView).load(getImageLoader().getImageUrl(userPictureUri))
                         .apply(new RequestOptions().transform(new CircleCrop()))
                         .into(mUserPicture);
             }

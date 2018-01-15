@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.load.DecodeFormat;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -27,7 +28,7 @@ public class TeambrellaApplication extends MultiDexApplication {
         super.onCreate();
 
 
-        Glide.init(this, new GlideBuilder().setLogLevel(Log.VERBOSE));
+        Glide.init(this, new GlideBuilder().setLogLevel(Log.VERBOSE).setDecodeFormat(DecodeFormat.PREFER_ARGB_8888));
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
