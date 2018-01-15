@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="rounded_corners_2dp">2dp</dimen>
+    <dimen name="rounded_corners_4dp">4dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="teammate_object_picture_width">96dp</dimen>
     <dimen name="teammate_object_picture_height">80dp</dimen>
