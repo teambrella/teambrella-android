@@ -2,7 +2,6 @@ package com.teambrella.android.ui.team.claims;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -20,7 +22,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
@@ -201,6 +202,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         View mViewToVote;
         TextView mResultView;
 
+        private final RequestOptions imageOptions;
+
         ClaimViewHolder(View itemView) {
             super(itemView);
             mIcon = itemView.findViewById(R.id.icon);
@@ -214,31 +217,31 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mPaymentProgress = itemView.findViewById(R.id.payment_progress);
             mViewToVote = itemView.findViewById(R.id.view_to_vote);
             mResultView = itemView.findViewById(R.id.result);
+            imageOptions = new RequestOptions().transforms(new CenterCrop()
+                    , new RoundedCorners(itemView.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)));
         }
 
 
         void onBind(JsonWrapper item) {
             final Context context = itemView.getContext();
-            final Uri objectPictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
-            final Uri teammatePictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
-            final Uri proxyAvatarUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
+            final GlideUrl objectPictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
+            final GlideUrl teammatePictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            final GlideUrl proxyAvatarUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
 
             RequestManager manager = Glide.with(itemView);
             if (mIcon != null) {
                 manager.load(objectPictureUri)
-                        //resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40)
-                        //.centerCrop()
-                        //.transform(new MaskTransformation(itemView.getContext(), R.drawable.teammate_object_mask))
+                        .apply(imageOptions)
                         .into(mIcon);
             }
 
             if (teammatePictureUri != null) {
-                //picasso.load(teammatePictureUri).into(mTeammateIcon);
+                manager.load(teammatePictureUri).into(mTeammateIcon);
             }
 
             if (mProxyAvatar != null) {
                 if (proxyAvatarUri != null) {
-                    //picasso.load(proxyAvatarUri).into(mProxyAvatar);
+                    manager.load(proxyAvatarUri).into(mProxyAvatar);
                 } else {
                     mProxyAvatar.setImageBitmap(null);
                 }
@@ -310,7 +313,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         private TextView mObjectNameView;
         private TextView mLocationView;
         private View mSubmitClaimView;
-
+        private final RequestOptions imageOptions;
 
         SubmitClaimViewHolder(View itemView) {
             super(itemView);
@@ -318,6 +321,8 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mObjectNameView = itemView.findViewById(R.id.title);
             mLocationView = itemView.findViewById(R.id.subtitle);
             mSubmitClaimView = itemView.findViewById(R.id.submit_claim);
+            imageOptions = new RequestOptions().transforms(new CenterCrop()
+                    , new RoundedCorners(itemView.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)));
         }
 
         public void onBind() {
@@ -327,7 +332,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             if (mObjectImageUri != null) {
                 Glide.with(itemView.getContext()).load(getImageLoader().getImageUrl(mObjectImageUri))
-                        .apply(RequestOptions.centerCropTransform())
+                        .apply(imageOptions)
                         .into(mObjectIconView);
             }
 

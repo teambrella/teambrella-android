@@ -33,7 +33,7 @@ public class TeambrellaImageLoader {
 
     public GlideUrl getImageUrl(String path) {
         Uri uri = getImageUri(path);
-        return new TeambrellaGlideUrl(uri.toString(), mServer.getHeaders());
+        return uri != null ? new TeambrellaGlideUrl(uri.toString(), mServer.getHeaders()) : null;
     }
 
     private static class TeambrellaGlideUrl extends GlideUrl {

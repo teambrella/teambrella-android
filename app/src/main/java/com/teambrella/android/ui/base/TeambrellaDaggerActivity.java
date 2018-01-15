@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.teambrella.android.dagger.ContextModule;
 import com.teambrella.android.dagger.Dependencies;
-import com.teambrella.android.dagger.PicassoModule;
+import com.teambrella.android.dagger.TeambrellaImageLoaderModule;
 import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
 import com.teambrella.android.image.TeambrellaImageLoader;
@@ -30,7 +30,7 @@ public abstract class TeambrellaDaggerActivity extends ADaggerActivity<ITeambrel
                 .contextModule(new ContextModule(this))
                 .teambrellaUserModule(new TeambrellaUserModule())
                 .teambrellaServerModule(new TeambrellaServerModule())
-                .picassoModule(new PicassoModule())
+                .teambrellaImageLoaderModule(new TeambrellaImageLoaderModule())
                 .build();
     }
 

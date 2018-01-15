@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -144,8 +146,8 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
                 requestCreator = requestCreator.apply(new RequestOptions().transform(new CircleCrop()));
             } else {
-//                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
-//                        .centerCrop().transform(new MaskTransformation(context, R.drawable.teammate_object_mask));
+                requestCreator = requestCreator.apply(new RequestOptions().transforms(new CenterCrop()
+                        , new RoundedCorners(context.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_2dp))));
             }
 
             requestCreator.into(mIcon);

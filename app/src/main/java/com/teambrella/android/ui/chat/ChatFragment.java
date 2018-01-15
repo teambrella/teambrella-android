@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -135,7 +138,10 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     case TeambrellaUris.CLAIMS_CHAT: {
                         Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO))
                                 .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
-                                .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                                .subscribe(requestCreator -> requestCreator
+                                        .apply(new RequestOptions().transforms(new CenterCrop()
+                                                , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
+                                        .into(mIcon), throwable -> {
                                 });
                         mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL));
                         JsonWrapper teamPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM);
@@ -151,7 +157,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     case TeambrellaUris.TEAMMATE_CHAT: {
                         Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                                 .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
-                                .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
+                                .subscribe(requestCreator -> requestCreator.apply(RequestOptions.circleCropTransform())
+                                        .into(mIcon), throwable -> {
                                     // 8)
                                 });
                         mUserName = basicPart.getString(TeambrellaModel.ATTR_DATA_NAME);

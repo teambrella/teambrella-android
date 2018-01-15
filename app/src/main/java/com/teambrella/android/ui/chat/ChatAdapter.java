@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -295,7 +296,9 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mImage.getLayoutParams();
                         params.dimensionRatio = "" + Math.round(width * ratio) + ":" + width;
                         mImage.setLayoutParams(params);
-                        Glide.with(itemView).load(getImageLoader().getImageUrl(smallImages.get(i))).into(mImage);
+                        Glide.with(itemView).load(getImageLoader().getImageUrl(smallImages.get(i)))
+                                .apply(new RequestOptions().transform(new RoundedCorners(itemView.getResources()
+                                        .getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))).into(mImage);
                         final int position = i;
                         if (!TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
                             ArrayList<String> images = TeambrellaModel.getImages("", object.getObject(), TeambrellaModel.ATTR_DATA_IMAGES);

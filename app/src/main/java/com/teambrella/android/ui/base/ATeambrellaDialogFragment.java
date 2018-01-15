@@ -3,8 +3,8 @@ package com.teambrella.android.ui.base;
 import android.content.Context;
 import android.support.v4.app.DialogFragment;
 
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.dagger.Dependencies;
+import com.teambrella.android.image.TeambrellaImageLoader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,8 +14,8 @@ import javax.inject.Named;
  */
 public class ATeambrellaDialogFragment extends DialogFragment {
     @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
+    @Named(Dependencies.IMAGE_LOADER)
+    TeambrellaImageLoader mTeambrellaImageLoader;
 
 
     @Override
@@ -24,14 +24,7 @@ public class ATeambrellaDialogFragment extends DialogFragment {
         ((ITeambrellaDaggerActivity) context).getComponent().inject(this);
     }
 
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mPicasso = null;
-    }
-
-    protected Picasso getPicasso() {
-        return mPicasso;
+    protected TeambrellaImageLoader getTeambrellaImageLoader() {
+        return mTeambrellaImageLoader;
     }
 }

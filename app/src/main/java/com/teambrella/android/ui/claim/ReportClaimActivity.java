@@ -27,14 +27,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
@@ -49,13 +51,9 @@ import com.teambrella.android.util.TeambrellaDateUtils;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
 /**
@@ -94,11 +92,6 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private int mTeamId;
     private String mCurrency;
     private Snackbar mSnackBar;
-
-    @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
-
 
     public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
         context.startActivity(getLaunchIntent(context, objectImageUri, objectName, teamId, currency));
@@ -152,9 +145,9 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         ((TextView) findViewById(R.id.object_title)).setText(intent.getStringExtra(EXTRA_NAME));
-        mPicasso.load(intent.getStringExtra(EXTRA_IMAGE_URI))
-                .resize(getResources().getDimensionPixelSize(R.dimen.image_size_40), getResources().getDimensionPixelSize(R.dimen.image_size_40)).centerCrop()
-                .transform(new MaskTransformation(this, R.drawable.teammate_object_mask)).into((ImageView) findViewById(R.id.object_icon));
+        Glide.with(this).load(getImageLoader().getImageUrl(intent.getStringExtra(EXTRA_IMAGE_URI)))
+                .apply(new RequestOptions().transforms(new CenterCrop()
+                        , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))).into((ImageView) findViewById(R.id.object_icon));
 
         mCalendar = Calendar.getInstance();
 

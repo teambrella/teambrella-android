@@ -15,33 +15,30 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ITeambrellaComponent;
 import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
+import com.teambrella.android.ui.base.TeambrellaFragment;
 import com.teambrella.android.ui.base.dagger.IDaggerActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import io.reactivex.Notification;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Home Cards Fragment.
@@ -151,7 +148,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
     }
 
 
-    public static final class CardsFragment extends Fragment {
+    public static final class CardsFragment extends TeambrellaFragment {
 
         private static final String EXTRA_DATA = "data";
         private static final String EXTRA_CURRENCY = "currency";
@@ -161,10 +158,6 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         private JsonWrapper mCard;
         private int mTeamId;
         private int mTeamAccessLevel;
-
-        @Inject
-        @Named(Dependencies.PICASSO)
-        Picasso mPicasso;
 
         public static CardsFragment getInstance(String data, int teamId, String currency, int teamAccessLevel) {
             CardsFragment fragment = new CardsFragment();
@@ -214,15 +207,15 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            RequestCreator requestCreator = mPicasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, mCard.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+            RequestBuilder requestCreator = Glide.with(this).load(getImageLoader().getImageUrl(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
-                requestCreator.transform(new CropCircleTransformation());
+                requestCreator = requestCreator.apply(RequestOptions.circleCropTransform());
             } else {
                 Resources resources = getContext().getResources();
-                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
-                        .centerCrop().transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask));
+                requestCreator = requestCreator.apply(new RequestOptions()
+                        .transforms(new CenterCrop(), new RoundedCorners(resources.getDimensionPixelOffset(R.dimen.rounded_corners_2dp))));
             }
 
             requestCreator.into(icon);

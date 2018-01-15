@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -140,7 +143,10 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
                 String objectPhoto = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
                 if (objectPhoto != null) {
-                    Glide.with(this).load(getImageLoader().getImageUrl(objectPhoto)).into(mOriginalObjectPicture);
+                    Glide.with(this).load(getImageLoader().getImageUrl(objectPhoto))
+                            .apply(new RequestOptions().transforms(new CenterCrop()
+                                    , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
+                            .into(mOriginalObjectPicture);
                 }
 
                 long now = System.currentTimeMillis();

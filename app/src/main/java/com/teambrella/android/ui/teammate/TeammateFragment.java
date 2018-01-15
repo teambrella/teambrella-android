@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -189,12 +190,17 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     }, () -> {
                     });
             RequestManager manager = Glide.with(this);
-            JsonWrapper basic = basicObservable.blockingFirst();
-            GlideUrl url = getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR));
-            manager.load(url).into(mUserPicture);
-            manager.load(url).into(mTeammateIcon);
-            manager.load(url).into(mSmallImagePicture);
-            
+            JsonWrapper basic = basicObservable.onErrorReturn(throwable ->
+                    new JsonWrapper(new JsonObject())).blockingFirst();
+            if (basic != null) {
+                GlideUrl url = getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+                if (url != null) {
+                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mUserPicture);
+                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mTeammateIcon);
+                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mSmallImagePicture);
+                }
+            }
+
             dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING))
                     .doOnNext(voting -> {
                         View view = getView();
