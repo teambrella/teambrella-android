@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -120,6 +121,8 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
 
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                     .map(uri -> Glide.with(itemView).load(uri))
+                    .map(drawableRequestBuilder -> drawableRequestBuilder.apply(RequestOptions.circleCropTransform()))
+                    .map(drawableRequestBuilder -> drawableRequestBuilder.into(mIcon))
                     .subscribe(drawableRequestBuilder -> {
                     }, throwable -> {
                     });
