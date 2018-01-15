@@ -9,19 +9,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 
 import io.reactivex.Notification;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Coverage and Wallet fragment.
@@ -57,14 +58,14 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            Picasso picasso = getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
             mObjectModel.setText(objectName);
-            final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            picasso.load(objectImageUri).centerCrop().resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40).transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).
-                    into(mObjectPicture);
+            final String objectImageUri = data.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
+            Glide.with(this).load(getImageLoader().getImageUrl(objectImageUri))
+                    .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(26)))
+                    .into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)) * 100))));
             mSubmitClaim.setVisibility(mDataHost.getTeamAccessLevel() == TeambrellaModel.TeamAccessLevel.FULL_ACCESS
                     ? View.VISIBLE : View.INVISIBLE);

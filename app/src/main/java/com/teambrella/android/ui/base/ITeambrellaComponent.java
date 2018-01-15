@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import com.teambrella.android.dagger.ContextModule;
+import com.teambrella.android.dagger.TeambrellaImageLoaderModule;
 import com.teambrella.android.dagger.PicassoModule;
 import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
@@ -19,7 +20,7 @@ import dagger.Component;
  * ITeambrella Component
  */
 @Singleton
-@Component(modules = {ContextModule.class, TeambrellaUserModule.class, TeambrellaServerModule.class, PicassoModule.class})
+@Component(modules = {ContextModule.class, TeambrellaUserModule.class, TeambrellaServerModule.class, PicassoModule.class, TeambrellaImageLoaderModule.class})
 public interface ITeambrellaComponent {
 
     void inject(ATeambrellaActivity activity);

@@ -14,12 +14,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
@@ -47,7 +50,6 @@ import com.teambrella.android.util.log.Log;
 import java.util.Stack;
 
 import io.reactivex.disposables.Disposable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 /**
@@ -291,10 +293,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-                getPicasso().load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
-                        .transform(new CropCircleTransformation())
-                        .into(mAvatar);
-
+                Glide.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                        .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mAvatar);
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
                 mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
                 mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
@@ -360,7 +360,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public String getTeamLogoUri() {
-        return TeambrellaServer.BASE_URL + mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO);
+        return mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO);
     }
 
     @Override

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.TeambrellaFragment;
@@ -107,7 +109,9 @@ public class ImageViewerActivity extends TeambrellaDaggerActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            getPicasso().load(getArguments().getString(EXTRA_URI)).into(imageView);
+            Glide.with(this).load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI)))
+                    .apply(RequestOptions.overrideOf(1024)).into(imageView);
+
             return imageView;
         }
     }

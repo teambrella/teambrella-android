@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.photos;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.teambrella.android.R;
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Photo Adapter
@@ -114,15 +115,9 @@ public class PhotoAdapter extends ATeambrellaAdapter {
         }
 
         void onBind(Photo photo) {
-            Context context = itemView.getContext();
-            Resources resources = context.getResources();
-            getPicasso().load(Uri.fromFile(new File(photo.filePath)))
-                    .resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
-                    .centerCrop()
-                    .transform(new MaskTransformation(context, R.drawable.teammate_object_mask))
+            Glide.with(itemView).load(Uri.fromFile(new File(photo.filePath)))
+                    .apply(new RequestOptions().transform(new CenterCrop()))
                     .into(mIcon);
-
-
             mProgressBar.setVisibility(photo.uri != null ? View.GONE : View.VISIBLE);
 
             mClose.setOnClickListener(v -> removePhoto(getAdapterPosition()));

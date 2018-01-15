@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
@@ -86,7 +86,6 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
-            Picasso picasso = getPicasso();
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
@@ -139,13 +138,13 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
-                        .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                        .map(JsonElement::getAsString)
                         .toList()
-                        .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
+                        .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
 
                 if (proxyName != null && proxyAvatar != null) {
                     mProxyName.setText(proxyName);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
+                    Glide.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
                             .into(mProxyAvatar);
                     mProxyName.setVisibility(View.VISIBLE);
                     mProxyAvatar.setVisibility(View.VISIBLE);

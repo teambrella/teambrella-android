@@ -11,9 +11,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -23,8 +25,6 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
-
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claims Adapter
@@ -222,23 +222,23 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             final Uri objectPictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
             final Uri teammatePictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             final Uri proxyAvatarUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
-            Picasso picasso = getPicasso();
 
+            RequestManager manager = Glide.with(itemView);
             if (mIcon != null) {
-                picasso.load(objectPictureUri).
-                        resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40)
-                        .centerCrop()
-                        .transform(new MaskTransformation(itemView.getContext(), R.drawable.teammate_object_mask))
+                manager.load(objectPictureUri)
+                        //resizeDimen(R.dimen.image_size_40, R.dimen.image_size_40)
+                        //.centerCrop()
+                        //.transform(new MaskTransformation(itemView.getContext(), R.drawable.teammate_object_mask))
                         .into(mIcon);
             }
 
             if (teammatePictureUri != null) {
-                picasso.load(teammatePictureUri).into(mTeammateIcon);
+                //picasso.load(teammatePictureUri).into(mTeammateIcon);
             }
 
             if (mProxyAvatar != null) {
                 if (proxyAvatarUri != null) {
-                    picasso.load(proxyAvatarUri).into(mProxyAvatar);
+                    //picasso.load(proxyAvatarUri).into(mProxyAvatar);
                 } else {
                     mProxyAvatar.setImageBitmap(null);
                 }
@@ -323,14 +323,12 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         public void onBind() {
 
             Context context = itemView.getContext();
-            Picasso picasso = getPicasso();
             mObjectNameView.setText(mObjectName);
 
             if (mObjectImageUri != null) {
-                picasso.load(mObjectImageUri).resizeDimen(R.dimen.image_size_96, R.dimen.image_size_96)
-                        .centerCrop().
-                        transform(new MaskTransformation(context, R.drawable.teammate_object_mask)).
-                        into(mObjectIconView);
+                Glide.with(itemView.getContext()).load(getImageLoader().getImageUrl(mObjectImageUri))
+                        .apply(RequestOptions.centerCropTransform())
+                        .into(mObjectIconView);
             }
 
             mLocationView.setText(mLocation);

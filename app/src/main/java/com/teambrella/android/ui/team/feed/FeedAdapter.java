@@ -11,13 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
+import com.google.gson.JsonElement;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.IMainDataHost;
@@ -32,8 +34,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Feed Adapter
@@ -114,7 +114,6 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
     class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
-        private Picasso picasso;
         private ImageView mIcon;
         private TextView mTitle;
         private TextView mWhen;
@@ -129,7 +128,6 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             mTitle = itemView.findViewById(R.id.title);
             mWhen = itemView.findViewById(R.id.when);
             mMessage = itemView.findViewById(R.id.message);
-            picasso = getPicasso();
             mAvatarWidgets = itemView.findViewById(R.id.avatars);
             mUnread = itemView.findViewById(R.id.unread);
             mType = itemView.findViewById(R.id.type);
@@ -139,15 +137,15 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
             Context context = itemView.getContext();
             Resources resources = context.getResources();
-            RequestCreator requestCreator = picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR));
+            RequestBuilder requestCreator = Glide.with(itemView).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
 
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
-                requestCreator.transform(new CropCircleTransformation());
+                requestCreator = requestCreator.apply(new RequestOptions().transform(new CircleCrop()));
             } else {
-                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
-                        .centerCrop().transform(new MaskTransformation(context, R.drawable.teammate_object_mask));
+//                requestCreator.resize(resources.getDimensionPixelSize(R.dimen.image_size_48), resources.getDimensionPixelSize(R.dimen.image_size_48))
+//                        .centerCrop().transform(new MaskTransformation(context, R.drawable.teammate_object_mask));
             }
 
             requestCreator.into(mIcon);
@@ -197,9 +195,9 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
             Observable.
                     fromIterable(item.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS))
-                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                    .map(JsonElement::getAsString)
                     .toList()
-                    .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
+                    .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
 
 
             itemView.setOnClickListener(v -> {

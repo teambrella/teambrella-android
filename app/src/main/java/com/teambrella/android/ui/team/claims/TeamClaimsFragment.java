@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
@@ -115,7 +114,7 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
-            final String objectImageUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, data.getObject(), TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
+            final String objectImageUri = data.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
             ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, null);
         }
     }

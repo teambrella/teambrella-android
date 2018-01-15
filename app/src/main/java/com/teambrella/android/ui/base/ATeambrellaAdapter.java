@@ -2,8 +2,8 @@ package com.teambrella.android.ui.base;
 
 import android.support.v7.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.dagger.Dependencies;
+import com.teambrella.android.image.TeambrellaImageLoader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,11 +14,10 @@ import javax.inject.Named;
  */
 public abstract class ATeambrellaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
+    @Named(Dependencies.IMAGE_LOADER)
+    TeambrellaImageLoader mImageLoader;
 
-
-    protected Picasso getPicasso() {
-        return mPicasso;
+    protected TeambrellaImageLoader getImageLoader() {
+        return mImageLoader;
     }
 }

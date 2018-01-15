@@ -14,11 +14,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
@@ -30,7 +33,6 @@ import com.teambrella.android.util.StatisticHelper;
 
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Claim Activity
@@ -264,9 +266,10 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             JsonWrapper discussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
             if (basic != null) {
-                String pictureUri = TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR);
+                String pictureUri = basic.getString(TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
-                    getPicasso().load(pictureUri).transform(new CropCircleTransformation()).into(mIcon);
+                    Glide.with(this).load(getImageLoader().getImageUrl(pictureUri))
+                            .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mIcon);
                     mIcon.setOnClickListener(v ->
                             TeammateActivity.start(ClaimActivity.this
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)

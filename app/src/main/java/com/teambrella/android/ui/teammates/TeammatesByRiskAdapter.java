@@ -8,18 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teammates Adapter.
@@ -102,9 +103,9 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void onBind(JsonWrapper item) {
-            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.resize(200, 0).transform(new CropCircleTransformation()).into(mIconView), throwable -> {
+            Observable.fromArray(item).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .map(uri -> getImageLoader().getImageUrl(uri))
+                    .subscribe(glideUrl -> Glide.with(itemView).load(glideUrl).apply(new RequestOptions().transform(new CircleCrop())).into(mIconView), throwable -> {
                         // 8)
                     });
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))

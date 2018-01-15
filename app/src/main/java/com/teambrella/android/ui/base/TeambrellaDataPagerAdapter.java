@@ -12,18 +12,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teambrella Data Pager Adapter
@@ -211,9 +215,13 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         }
 
         public void onBind(JsonWrapper item) {
-            Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> getPicasso().load(uri))
-                    .subscribe(requestCreator -> requestCreator.resize(200, 0).transform(new CropCircleTransformation()).into(mIcon), throwable -> {
+            Observable.fromArray(item).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .map(uri -> getImageLoader().getImageUrl(uri))
+                    .subscribe(glideUrl -> Glide.with(itemView.getContext()).load(glideUrl)
+                            .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                            .apply(new RequestOptions().transforms(new CenterCrop()
+                                    , new CircleCrop())).into(mIcon), throwable -> {
                         // 8)
                     });
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))

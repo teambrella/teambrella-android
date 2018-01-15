@@ -17,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -35,7 +37,6 @@ import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 /**
  * Teammate fragment.
@@ -161,10 +162,6 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     .map(TeambrellaUris.sUriMatcher::match)
                     .blockingFirst();
 
-
-            Picasso picasso = getPicasso();
-
-
             Observable<JsonWrapper> dataObservable =
                     responseObservable.map(item -> item.getObject(TeambrellaModel.ATTR_DATA));
 
@@ -191,15 +188,13 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     }, throwable -> {
                     }, () -> {
                     });
-
-
-            basicObservable.map(basic -> TeambrellaServer.BASE_URL + basic.getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                    .doOnNext(uri -> picasso.load(uri).into(mUserPicture))
-                    .doOnNext(uri -> picasso.load(uri).transform(new CropCircleTransformation()).into(mTeammateIcon))
-                    .doOnNext(uri -> picasso.load(uri).into(mSmallImagePicture))
-                    .onErrorReturnItem("").blockingFirst();
-
-
+            RequestManager manager = Glide.with(this);
+            JsonWrapper basic = basicObservable.blockingFirst();
+            GlideUrl url = getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            manager.load(url).into(mUserPicture);
+            manager.load(url).into(mTeammateIcon);
+            manager.load(url).into(mSmallImagePicture);
+            
             dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING))
                     .doOnNext(voting -> {
                         View view = getView();
@@ -249,7 +244,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             discussionsObservable.flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
                     .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                     .toList()
-                    .subscribe(uris -> mAvatars.setAvatars(getPicasso(), uris), e -> {
+                    .subscribe(uris -> mAvatars.setAvatars(getImageLoader(), uris), e -> {
                     });
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);

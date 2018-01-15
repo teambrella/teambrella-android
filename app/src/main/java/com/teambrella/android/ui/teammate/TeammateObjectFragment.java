@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.image.ImageViewerActivity;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Teammate Object Fragment
@@ -111,18 +110,13 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
             ArrayList<String> photos = objectObservable.flatMap(objectData -> Observable.fromIterable(objectData.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS)))
-                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                    .map(JsonElement::getAsString)
                     .toList(ArrayList::new)
                     .onErrorReturn(throwable -> new ArrayList<>()).blockingGet();
 
             if (photos != null && photos.size() > 0) {
                 Context context = getContext();
-                Resources resources = context.getResources();
-                getPicasso().load(photos.get(0))
-                        .resize(resources.getDimensionPixelSize(R.dimen.teammate_object_picture_width)
-                                , resources.getDimensionPixelSize(R.dimen.teammate_object_picture_height))
-                        .centerCrop()
-                        .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask))
+                Glide.with(this).load(getImageLoader().getImageUrl(photos.get(0)))
                         .into(mObjectPicture);
                 mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)));
             }

@@ -9,15 +9,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.RequestCreator;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
@@ -28,8 +27,6 @@ import java.util.Locale;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 
 /**
@@ -136,11 +133,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
                 switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
                     case TeambrellaUris.CLAIMS_CHAT: {
-                        Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)))
-                                .map(uri -> getPicasso().load(uri).resize(getResources().getDimensionPixelSize(R.dimen.image_size_42)
-                                        , getResources().getDimensionPixelSize(R.dimen.image_size_42)))
-                                .map(RequestCreator::centerCrop)
-                                .map(requestCreator -> requestCreator.transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)))
+                        Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO))
+                                .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
                                 .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
                                 });
                         mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL));
@@ -155,9 +149,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     }
                     break;
                     case TeambrellaUris.TEAMMATE_CHAT: {
-                        Observable.fromArray(basicPart).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                                .map(uri -> getPicasso().load(uri))
-                                .map(requestCreator -> requestCreator.transform(new CropCircleTransformation()))
+                        Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                                .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
                                 .subscribe(requestCreator -> requestCreator.into(mIcon), throwable -> {
                                     // 8)
                                 });

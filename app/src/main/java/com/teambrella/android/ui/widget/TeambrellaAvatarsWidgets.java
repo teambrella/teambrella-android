@@ -9,8 +9,12 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.teambrella.android.R;
+import com.teambrella.android.image.TeambrellaImageLoader;
 
 import java.util.Iterator;
 import java.util.List;
@@ -66,14 +70,16 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
     }
 
 
-    public void setAvatars(Picasso picasso, List<String> uris) {
-
+    public void setAvatars(TeambrellaImageLoader loader, List<String> uris) {
         Iterator<String> it = uris.iterator();
         for (int i = 0; i < mAvatarCount; i++) {
             ImageView imageview = (ImageView) getChildAt(i);
             String uri = it.hasNext() ? it.next() : null;
             if (uri != null) {
-                picasso.load(uri).into(imageview);
+                Glide.with(this).load(loader.getImageUrl(uri))
+                        .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                        .into(imageview);
             }
             imageview.setVisibility(uri != null ? VISIBLE : GONE);
         }

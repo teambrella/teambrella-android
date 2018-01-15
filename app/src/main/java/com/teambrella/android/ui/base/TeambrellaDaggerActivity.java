@@ -3,12 +3,12 @@ package com.teambrella.android.ui.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.dagger.ContextModule;
 import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.dagger.PicassoModule;
 import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
+import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.dagger.ADaggerActivity;
 
 import javax.inject.Inject;
@@ -20,8 +20,8 @@ import javax.inject.Named;
 public abstract class TeambrellaDaggerActivity extends ADaggerActivity<ITeambrellaComponent> implements ITeambrellaDaggerActivity {
 
     @Inject
-    @Named(Dependencies.PICASSO)
-    Picasso mPicasso;
+    @Named(Dependencies.IMAGE_LOADER)
+    TeambrellaImageLoader mImageLoader;
 
 
     @Override
@@ -40,11 +40,8 @@ public abstract class TeambrellaDaggerActivity extends ADaggerActivity<ITeambrel
         getComponent().inject(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mPicasso != null) {
-            mPicasso.shutdown();
-        }
+
+    protected TeambrellaImageLoader getImageLoader() {
+        return mImageLoader;
     }
 }

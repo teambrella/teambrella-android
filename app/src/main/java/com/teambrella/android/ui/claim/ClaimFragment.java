@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.claim;
 
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
@@ -28,7 +27,6 @@ import com.teambrella.android.util.ConnectivityUtils;
 import java.util.ArrayList;
 
 import io.reactivex.Notification;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Claim fragment
@@ -113,7 +111,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             final String smallPhoto;
 
             if (claimBasic != null) {
-                ArrayList<String> photos = TeambrellaModel.getImages(TeambrellaServer.BASE_URL,
+                ArrayList<String> photos = TeambrellaModel.getImages("",
                         claimBasic.getObject(), TeambrellaModel.ATTR_DATA_BIG_PHOTOS);
                 if (photos != null && photos.size() > 0) {
                     mClaimPictures.init(getChildFragmentManager(), photos);
@@ -142,12 +140,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
                 String objectPhoto = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
                 if (objectPhoto != null) {
-                    Resources resources = getResources();
-                    getPicasso()
-                            .load(TeambrellaServer.BASE_URL + objectPhoto).resize(resources.getDimensionPixelSize(R.dimen.claim_object_picture_with), resources.getDimensionPixelSize(R.dimen.claim_object_picture_height)).centerCrop()
-                            .transform(new MaskTransformation(getContext(), R.drawable.teammate_object_mask)).into(mOriginalObjectPicture);
+                    Glide.with(this).load(getImageLoader().getImageUrl(objectPhoto)).into(mOriginalObjectPicture);
                 }
-
 
                 long now = System.currentTimeMillis();
                 long when = now - 60000 * claimDiscussion.getInt(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES);

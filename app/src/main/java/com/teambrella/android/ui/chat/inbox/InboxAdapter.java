@@ -1,6 +1,5 @@
 package com.teambrella.android.ui.chat.inbox;
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -9,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -18,8 +20,6 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.TeambrellaDateUtils;
-
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 /**
@@ -74,10 +74,12 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
         void onBind(JsonWrapper item) {
 
-            Uri userPictureUri = TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            String userPictureUri = item.getString(TeambrellaModel.ATTR_DATA_AVATAR);
+
             if (userPictureUri != null) {
-                getPicasso().load(userPictureUri)
-                        .transform(new CropCircleTransformation()).into(mUserPicture);
+                Glide.with(itemView).load(userPictureUri)
+                        .apply(new RequestOptions().transform(new CircleCrop()))
+                        .into(mUserPicture);
             }
 
             mUserName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));

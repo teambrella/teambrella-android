@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -104,7 +104,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
         try {
             if (notification.isOnNext()) {
-                Picasso picasso = getPicasso();
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
@@ -159,7 +158,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                     if (proxyName != null && proxyAvatar != null) {
                         mProxyName.setText(proxyName);
-                        picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, voting.getObject(), TeambrellaModel.ATTR_DATA_PROXY_AVATAR))
+                        Glide.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
                                 .into(mProxyAvatar);
                         mProxyName.setVisibility(View.VISIBLE);
                         mProxyAvatar.setVisibility(View.VISIBLE);
@@ -179,7 +178,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                             fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
                             .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
                             .toList()
-                            .subscribe(uris -> mAvatarWidgets.setAvatars(getPicasso(), uris));
+                            .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
 
                     setVoting(false);
                 }
@@ -188,7 +187,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
                 if (basic != null) {
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, basic.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                    Glide.with(this).load(getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mNewTeammateIcon);
                 }
 
@@ -254,7 +253,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
         mNewTeammateRisk.setText(String.format(Locale.US, "%.2f", value));
 
-        Picasso picasso = getPicasso();
         for (JsonWrapper interval : mRanges) {
             float left = interval.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE);
             float right = interval.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE);
@@ -265,7 +263,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mLeftTeammateIcon.setVisibility(View.VISIBLE);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                    Glide.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mLeftTeammateIcon);
                     mLeftTeammateRisk.setVisibility(View.VISIBLE);
                     mLeftTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
@@ -277,7 +275,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mRightTeammateIcon.setVisibility(View.VISIBLE);
-                    picasso.load(TeambrellaModel.getImage(TeambrellaServer.BASE_URL, item.getObject(), TeambrellaModel.ATTR_DATA_AVATAR))
+                    Glide.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mRightTeammateIcon);
                     mRightTeammateRisk.setVisibility(View.VISIBLE);
                     mRightTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));

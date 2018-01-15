@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Pair;
 
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -152,6 +153,18 @@ public class TeambrellaServer {
         }
 
         return builder.build();
+    }
+
+
+    public LazyHeaders getHeaders() {
+        Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
+        String publicKey = mKey.getPublicKeyAsHex();
+        return new LazyHeaders.Builder()
+                .addHeader("t", Long.toString(timestamp))
+                .addHeader("key", publicKey)
+                .addHeader("sig", () -> mKey.signMessage(Long.toString(timestamp)))
+                .addHeader("clientVersion", BuildConfig.VERSION_NAME)
+                .build();
     }
 
 
