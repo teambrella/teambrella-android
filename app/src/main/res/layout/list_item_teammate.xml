@@ -5,7 +5,7 @@
     android:clipToPadding="false">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/icon"
         style="@style/Teambrella.ListItem.Icon"
         android:layout_alignParentStart="true"
