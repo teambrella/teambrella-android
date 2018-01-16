@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -35,6 +34,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
@@ -228,7 +228,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
                     Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
                     if (mImageUri != null && mIcon != null) {
-                        Glide.with(this).load(mImageUri)
+                        GlideApp.with(this).load(mImageUri)
                                 .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop()))
                                 .into(mIcon);
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));

@@ -28,6 +28,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ITeambrellaComponent;
@@ -207,7 +208,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            RequestBuilder requestCreator = Glide.with(this).load(getImageLoader().getImageUrl(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
+            RequestBuilder requestCreator = GlideApp.with(this).load(getImageLoader().getImageUrl(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {

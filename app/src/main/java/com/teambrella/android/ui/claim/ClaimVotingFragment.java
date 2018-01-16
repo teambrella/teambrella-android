@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
@@ -144,7 +145,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
                 if (proxyName != null && proxyAvatar != null) {
                     mProxyName.setText(proxyName);
-                    Glide.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
                             .into(mProxyAvatar);
                     mProxyName.setVisibility(View.VISIBLE);
                     mProxyAvatar.setVisibility(View.VISIBLE);

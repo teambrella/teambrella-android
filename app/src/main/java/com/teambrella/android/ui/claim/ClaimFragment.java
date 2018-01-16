@@ -21,6 +21,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -143,7 +144,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
                 String objectPhoto = claimDiscussion.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
                 if (objectPhoto != null) {
-                    Glide.with(this).load(getImageLoader().getImageUrl(objectPhoto))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(objectPhoto))
                             .apply(new RequestOptions().transforms(new CenterCrop()
                                     , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
                             .into(mOriginalObjectPicture);

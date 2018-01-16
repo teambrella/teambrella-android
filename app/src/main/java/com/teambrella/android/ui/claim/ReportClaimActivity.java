@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -38,6 +37,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
@@ -145,7 +145,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         mCurrency = intent.getStringExtra(EXTRA_CURRENCY);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
         ((TextView) findViewById(R.id.object_title)).setText(intent.getStringExtra(EXTRA_NAME));
-        Glide.with(this).load(getImageLoader().getImageUrl(intent.getStringExtra(EXTRA_IMAGE_URI)))
+        GlideApp.with(this).load(getImageLoader().getImageUrl(intent.getStringExtra(EXTRA_IMAGE_URI)))
                 .apply(new RequestOptions().transforms(new CenterCrop()
                         , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))).into((ImageView) findViewById(R.id.object_icon));
 

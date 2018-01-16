@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.teambrella.android.R;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ATeambrellaAdapter;
 
 import java.io.File;
@@ -115,7 +116,7 @@ public class PhotoAdapter extends ATeambrellaAdapter {
         }
 
         void onBind(Photo photo) {
-            Glide.with(itemView).load(Uri.fromFile(new File(photo.filePath)))
+            GlideApp.with(itemView).load(Uri.fromFile(new File(photo.filePath)))
                     .apply(new RequestOptions().transform(new CenterCrop()))
                     .into(mIcon);
             mProgressBar.setVisibility(photo.uri != null ? View.GONE : View.VISIBLE);

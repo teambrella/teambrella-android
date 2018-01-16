@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
@@ -16,6 +15,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
@@ -40,6 +40,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
     TeammatesByRiskAdapter(IDataPager<JsonArray> pager, int teamId) {
         super(pager);
         mTeamId = teamId;
+        setHasStableIds(true);
     }
 
 
@@ -76,6 +77,11 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof TeammateViewHolder) {
@@ -105,7 +111,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
         void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .map(uri -> getImageLoader().getImageUrl(uri))
-                    .subscribe(glideUrl -> Glide.with(itemView).load(glideUrl).apply(new RequestOptions().transform(new CircleCrop())).into(mIconView), throwable -> {
+                    .subscribe(glideUrl -> GlideApp.with(itemView).load(glideUrl).apply(new RequestOptions().transform(new CircleCrop())).into(mIconView), throwable -> {
                         // 8)
                     });
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))

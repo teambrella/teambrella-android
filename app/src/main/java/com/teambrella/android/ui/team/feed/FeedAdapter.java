@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -24,6 +23,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -144,7 +144,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
             Context context = itemView.getContext();
             Resources resources = context.getResources();
-            RequestBuilder requestCreator = Glide.with(itemView).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
+            RequestBuilder requestCreator = GlideApp.with(itemView).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
 
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE

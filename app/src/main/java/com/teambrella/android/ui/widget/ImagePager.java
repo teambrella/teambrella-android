@@ -17,8 +17,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.teambrella.android.R;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaFragment;
 import com.teambrella.android.ui.image.ImageViewerActivity;
 
@@ -148,7 +148,7 @@ public class ImagePager extends FrameLayout {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image, container, false);
-            Glide.with(this).load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI))).into(imageView);
+            GlideApp.with(this).load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI))).into(imageView);
             imageView.setOnClickListener(v -> v.getContext()
                     .startActivity(ImageViewerActivity.getLaunchIntent(v.getContext()
                             , getArguments().getStringArrayList(EXTRA_URIS)

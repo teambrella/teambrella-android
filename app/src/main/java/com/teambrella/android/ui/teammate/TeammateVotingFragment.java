@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.teammates.RiskRange;
 import com.teambrella.android.ui.teammates.TeammatesByRiskActivity;
@@ -158,7 +158,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                     if (proxyName != null && proxyAvatar != null) {
                         mProxyName.setText(proxyName);
-                        Glide.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
+                        GlideApp.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
                                 .into(mProxyAvatar);
                         mProxyName.setVisibility(View.VISIBLE);
                         mProxyAvatar.setVisibility(View.VISIBLE);
@@ -187,7 +187,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
 
                 if (basic != null) {
-                    Glide.with(this).load(getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mNewTeammateIcon);
                 }
 
@@ -263,7 +263,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mLeftTeammateIcon.setVisibility(View.VISIBLE);
-                    Glide.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mLeftTeammateIcon);
                     mLeftTeammateRisk.setVisibility(View.VISIBLE);
                     mLeftTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
@@ -275,7 +275,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 if (it.hasNext()) {
                     JsonWrapper item = it.next();
                     mRightTeammateIcon.setVisibility(View.VISIBLE);
-                    Glide.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                             .into(mRightTeammateIcon);
                     mRightTeammateRisk.setVisibility(View.VISIBLE);
                     mRightTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));

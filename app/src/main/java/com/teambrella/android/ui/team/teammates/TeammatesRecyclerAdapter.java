@@ -17,6 +17,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
@@ -120,7 +121,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         void onBind(JsonWrapper item) {
 
             Observable.fromArray(item).map(json -> TeambrellaImageLoader.getImageUri(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                    .map(uri -> Glide.with(itemView).load(uri))
+                    .map(uri -> GlideApp.with(itemView).load(uri))
                     .map(drawableRequestBuilder -> drawableRequestBuilder.apply(RequestOptions.circleCropTransform()))
                     .map(drawableRequestBuilder -> drawableRequestBuilder.into(mIcon))
                     .subscribe(drawableRequestBuilder -> {

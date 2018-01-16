@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -17,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
@@ -63,7 +63,7 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
             final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
             mObjectModel.setText(objectName);
             final String objectImageUri = data.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            Glide.with(this).load(getImageLoader().getImageUrl(objectImageUri))
+            GlideApp.with(this).load(getImageLoader().getImageUrl(objectImageUri))
                     .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getContext()
                             .getResources().getDimensionPixelOffset(R.dimen.rounded_corners_2dp))))
                     .into(mObjectPicture);

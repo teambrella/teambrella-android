@@ -30,6 +30,7 @@ import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -293,7 +294,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-                Glide.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                GlideApp.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
                         .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mAvatar);
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
                 mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);

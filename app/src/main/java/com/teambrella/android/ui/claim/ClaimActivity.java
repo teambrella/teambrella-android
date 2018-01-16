@@ -25,6 +25,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
@@ -268,7 +269,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
             if (basic != null) {
                 String pictureUri = basic.getString(TeambrellaModel.ATTR_DATA_AVATAR);
                 if (pictureUri != null) {
-                    Glide.with(this).load(getImageLoader().getImageUrl(pictureUri))
+                    GlideApp.with(this).load(getImageLoader().getImageUrl(pictureUri))
                             .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mIcon);
                     mIcon.setOnClickListener(v ->
                             TeammateActivity.start(ClaimActivity.this

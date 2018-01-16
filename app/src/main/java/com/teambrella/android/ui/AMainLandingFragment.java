@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 
@@ -34,7 +35,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
         ImageView teamLogo = view.findViewById(R.id.team_logo);
 
 
-        Glide.with(this).load(getImageLoader().getImageUrl(mDataHost.getTeamLogoUri()))
+        GlideApp.with(this).load(getImageLoader().getImageUrl(mDataHost.getTeamLogoUri()))
                 .into(teamLogo);
 
         teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());

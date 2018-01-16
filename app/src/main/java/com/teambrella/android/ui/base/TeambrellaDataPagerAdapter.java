@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -24,6 +23,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import io.reactivex.Notification;
@@ -223,7 +223,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         public void onBind(JsonWrapper item) {
             Observable.fromArray(item).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .map(uri -> getImageLoader().getImageUrl(uri))
-                    .subscribe(glideUrl -> Glide.with(itemView.getContext()).load(glideUrl)
+                    .subscribe(glideUrl -> GlideApp.with(itemView.getContext()).load(glideUrl)
                             .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                             .apply(new RequestOptions().transforms(new CenterCrop()

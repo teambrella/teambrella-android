@@ -47,13 +47,9 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
     private val votingView: PercentageWidget?
         get() = view?.findViewById(R.id.voting_stats)
 
-    private var voting: Float = -1f
-    private var decision: Float = -1f
-    private var discussion: Float = -1f
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_teammate_voting_stats, container, false)
+        return inflater.inflate(R.layout.fragment_teammate_voting_stats, container, false)
     }
 
     /**
@@ -61,8 +57,8 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.findViewById<View>(R.id.add_to_proxies)?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
-        view?.findViewById<View>(R.id.add_to_proxies)?.tag = true
+        view.findViewById<View>(R.id.add_to_proxies)?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
+        view.findViewById<View>(R.id.add_to_proxies)?.tag = true
     }
 
     /**
@@ -82,30 +78,45 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
                         this.setProxy?.tag = add
                     }
                     else -> {
-
                         val stats = value.data?.stats
-                        this.voting = (stats?.votingFreq) ?: this.voting
-                        this.decision = (stats?.decisionFreq) ?: this.decision
-                        this.discussion = (stats?.discussionFreq) ?: this.discussion
-                        this.weight?.text = getString(R.string.risk_format_string, stats?.weight)
-                        this.proxyRank?.text = getString(R.string.risk_format_string, stats?.proxyRank)
+                        stats?.let {
+                            
+                            val votingFreq = stats.votingFreq
+                            votingFreq?.let {
+                                this.votingView?.setPercentage(votingFreq)
+                                this.votingView?.setDescription(getString(getVotingStatsString(votingFreq)))
+                            }
 
+                            val decisionFreq = stats.decisionFreq
+                            decisionFreq?.let {
+                                this.decisionView?.setPercentage(decisionFreq)
+                                this.decisionView?.setDescription(getString(getDecisionStatsString(decisionFreq)))
+                            }
 
+                            val discussionFreq = stats.discussionFreq
+                            discussionFreq?.let {
+                                this.discussionView?.setPercentage(discussionFreq)
+                                this.discussionView?.setDescription(getString(getDiscussionStatsString(discussionFreq)))
+                            }
+
+                            val weightValue = stats.weight
+                            weightValue.let {
+                                this.weight?.text = getString(R.string.risk_format_string, weightValue)
+                            }
+
+                            val proxyRankValue = stats.proxyRank
+                            proxyRankValue?.let {
+                                this.proxyRank?.text = getString(R.string.risk_format_string, proxyRankValue)
+                            }
+                        }
                         val basic = value.data?.basic
-                        val isMyProxy = (basic?.isMyProxy) ?: false
-                        this.setProxy?.text = getString(if (isMyProxy) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
-                        this.setProxy?.tag = isMyProxy
-
+                        basic?.isMyProxy?.let {
+                            val isMyProxy = (basic.isMyProxy) ?: false
+                            this.setProxy?.text = getString(if (isMyProxy) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
+                            this.setProxy?.tag = isMyProxy
+                        }
                     }
                 }
-
-                this.votingView?.setPercentage(this.voting)
-                this.votingView?.setDescription(getString(getVotingStatsString(this.voting)))
-                this.decisionView?.setPercentage(this.decision)
-                this.decisionView?.setDescription(getString(getDecisionStatsString(this.decision)))
-                this.discussionView?.setPercentage(this.discussion)
-                this.discussionView?.setDescription(getString(getDiscussionStatsString(this.discussion)))
-
             }
         }
     }

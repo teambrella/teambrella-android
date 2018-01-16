@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -22,6 +21,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
@@ -234,7 +234,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             final GlideUrl teammatePictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
             final GlideUrl proxyAvatarUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
 
-            RequestManager manager = Glide.with(itemView);
+            RequestManager manager = GlideApp.with(itemView);
             if (mIcon != null) {
                 manager.load(objectPictureUri)
                         .apply(imageOptions)
@@ -337,7 +337,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mObjectNameView.setText(mObjectName);
 
             if (mObjectImageUri != null) {
-                Glide.with(itemView.getContext()).load(getImageLoader().getImageUrl(mObjectImageUri))
+                GlideApp.with(itemView.getContext()).load(getImageLoader().getImageUrl(mObjectImageUri))
                         .apply(imageOptions)
                         .into(mObjectIconView);
             }

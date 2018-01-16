@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,6 +19,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
@@ -137,7 +137,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
                     case TeambrellaUris.CLAIMS_CHAT: {
                         Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO))
-                                .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
+                                .map(uri -> GlideApp.with(this).load(getImageLoader().getImageUrl(uri)))
                                 .subscribe(requestCreator -> requestCreator
                                         .apply(new RequestOptions().transforms(new CenterCrop()
                                                 , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
@@ -156,7 +156,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     break;
                     case TeambrellaUris.TEAMMATE_CHAT: {
                         Observable.fromArray(basicPart).map(json -> json.getString(TeambrellaModel.ATTR_DATA_AVATAR))
-                                .map(uri -> Glide.with(this).load(getImageLoader().getImageUrl(uri)))
+                                .map(uri -> GlideApp.with(this).load(getImageLoader().getImageUrl(uri)))
                                 .subscribe(requestCreator -> requestCreator.apply(RequestOptions.circleCropTransform())
                                         .into(mIcon), throwable -> {
                                     // 8)

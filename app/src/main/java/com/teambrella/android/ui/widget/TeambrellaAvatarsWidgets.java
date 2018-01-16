@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.teambrella.android.R;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +77,7 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             ImageView imageview = (ImageView) getChildAt(i);
             String uri = it.hasNext() ? it.next() : null;
             if (uri != null) {
-                Glide.with(this).load(loader.getImageUrl(uri))
+                GlideApp.with(this).load(loader.getImageUrl(uri))
                         .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
                         .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                         .into(imageview);

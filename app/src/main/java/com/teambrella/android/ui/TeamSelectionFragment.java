@@ -23,6 +23,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ATeambrellaDialogFragment;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.util.StatisticHelper;
@@ -172,7 +173,7 @@ public class TeamSelectionFragment extends ATeambrellaDialogFragment {
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME));
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME));
             mCoverage.setText(String.format(Locale.US, "%d%%", Math.round(100 * item.getFloat(TeambrellaModel.ATTR_DATA_OBJECT_COVERAGE))));
-            Glide.with(itemView).load(getTeambrellaImageLoader().getImageUrl((item.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO))))
+            GlideApp.with(itemView).load(getTeambrellaImageLoader().getImageUrl((item.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO))))
                     .into(mIcon);
 
             mCurrentTeamMark.setVisibility(mDataHost.getTeamId() != item.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) ? View.INVISIBLE : View.VISIBLE);

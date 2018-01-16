@@ -41,6 +41,7 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
         super(pager);
         mTeamId = teamId;
         mMode = mode;
+        setHasStableIds(true);
     }
 
     public void setMyVote(JsonWrapper vote) {
@@ -67,6 +68,11 @@ public class AllVotesAdapter extends TeambrellaDataPagerAdapter {
         return holder;
     }
 
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
@@ -17,6 +16,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -76,7 +76,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
             String userPictureUri = item.getString(TeambrellaModel.ATTR_DATA_AVATAR);
             if (userPictureUri != null) {
-                Glide.with(itemView).load(getImageLoader().getImageUrl(userPictureUri))
+                GlideApp.with(itemView).load(getImageLoader().getImageUrl(userPictureUri))
                         .apply(new RequestOptions().transform(new CircleCrop()))
                         .into(mUserPicture);
             }

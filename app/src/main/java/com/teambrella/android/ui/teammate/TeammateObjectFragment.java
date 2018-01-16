@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -18,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.image.ImageViewerActivity;
@@ -119,7 +119,7 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
 
             if (photos != null && photos.size() > 0) {
                 Context context = getContext();
-                Glide.with(this).load(getImageLoader().getImageUrl(photos.get(0)))
+                GlideApp.with(this).load(getImageLoader().getImageUrl(photos.get(0)))
                         .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
                         .into(mObjectPicture);
                 mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)));

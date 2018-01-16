@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
@@ -27,6 +26,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -189,7 +189,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     }, throwable -> {
                     }, () -> {
                     });
-            RequestManager manager = Glide.with(this);
+            RequestManager manager = GlideApp.with(this);
             JsonWrapper basic = basicObservable.onErrorReturn(throwable ->
                     new JsonWrapper(new JsonObject())).blockingFirst();
             if (basic != null) {
