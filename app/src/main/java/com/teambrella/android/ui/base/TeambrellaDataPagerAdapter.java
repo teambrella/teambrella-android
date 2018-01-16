@@ -51,6 +51,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager, OnStartActivityListener listener) {
         super(pager, listener);
+        setHasStableIds(true);
     }
 
     @Override
@@ -116,6 +117,11 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         }
     }
 
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
     protected int getHeadersCount() {
         return 0;

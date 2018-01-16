@@ -57,6 +57,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         super(pager, listener);
         mTeamId = teamId;
         mDataHost = dataHost;
+        setHasStableIds(true);
     }
 
 
@@ -100,6 +101,10 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         return viewHolder;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
     @Override
     protected int getHeadersCount() {

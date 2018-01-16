@@ -26,14 +26,13 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
 
 
     private final int mTeamId;
-    private final String mCurrency;
     private final IMainDataHost mDataHost;
 
     UserRatingAdapter(IMainDataHost dataHost, IDataPager<JsonArray> pager, int teamId, String currency) {
         super(pager);
         mTeamId = teamId;
-        mCurrency = currency;
         mDataHost = dataHost;
+        setHasStableIds(true);
     }
 
 
@@ -84,6 +83,10 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
     private final class UserViewHolder extends AMemberViewHolder {
 

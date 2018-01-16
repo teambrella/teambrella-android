@@ -26,6 +26,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
     MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, OnStartActivityListener listener) {
         super(pager, listener);
         mTeamId = teamId;
+        setHasStableIds(false);
     }
 
     @Override

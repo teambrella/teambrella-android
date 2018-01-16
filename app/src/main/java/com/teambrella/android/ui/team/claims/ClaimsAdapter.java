@@ -65,6 +65,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
         mTeamId = teamId;
         mSubmitClaim = submitClaim;
         mCurrency = currency;
+        setHasStableIds(true);
     }
 
     void setObjectDetails(String objectImageUri, String objectName, String location) {
@@ -128,6 +129,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             }
         }
         return viewType;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
