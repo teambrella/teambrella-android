@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -37,6 +36,7 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
     public static final int VIEW_TYPE_NEW_MEMBER = VIEW_TYPE_REGULAR + 1;
     public static final int VIEW_TYPE_HEADER_TEAMMATES = VIEW_TYPE_REGULAR + 2;
     public static final int VIEW_TYPE_HEADER_NEW_MEMBERS = VIEW_TYPE_REGULAR + 3;
+    public static final int VIEW_TYPE_INVITE_FRIENDS = VIEW_TYPE_REGULAR + 4;
 
     private final int mTeamId;
     private final String mCurrency;
@@ -103,6 +103,11 @@ public class TeammatesRecyclerAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+
+    @Override
+    protected int getHeadersCount() {
+        return 1;
+    }
 
     abstract class ATeammateViewHolder extends RecyclerView.ViewHolder {
 

@@ -45,23 +45,38 @@ class DataModelObject(private val jsonObject: JsonObject?) {
     val isMyProxy: Boolean?
         get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY)
 
+    val avatar: String?
+        get() = getString(TeambrellaModel.ATTR_DATA_AVATAR)
 
-    private fun getFloat(key: String, defaultValue: Float): Float {
-        val value = getFloat(key)
-        return value ?: defaultValue
-    }
+    val name: String?
+        get() = getString(TeambrellaModel.ATTR_DATA_NAME)
+
+    val model: String?
+        get() = getString(TeambrellaModel.ATTR_DATA_MODEL)
+
+    val year: String?
+        get() = getString(TeambrellaModel.ATTR_DATA_YEAR)
+
+    val userId: String?
+        get() = getString(TeambrellaModel.ATTR_DATA_USER_ID)
+
+    val totallyPaid: Double?
+        get() = getDouble(TeambrellaModel.ATTR_DATA_TOTALLY_PAID)
+
+    val risk: Float?
+        get() = getFloat(TeambrellaModel.ATTR_DATA_RISK)
+
 
     private fun getFloat(key: String): Float? {
         return jsonObject?.get(key)?.asFloat
     }
 
-    private fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        val value = jsonObject?.get(key)?.asBoolean
-        return value ?: defaultValue
-    }
-
     private fun getBoolean(key: String): Boolean? {
         return jsonObject?.get(key)?.asBoolean
+    }
+
+    private fun getDouble(key: String): Double? {
+        return jsonObject?.get(key)?.asDouble
     }
 
     private fun getString(key: String): String? = jsonObject?.get(key)?.asString
