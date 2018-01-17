@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.OneoffTask;
@@ -84,16 +87,18 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     public static void scheduleWalletSync(Context context) {
-        PeriodicTask task = new PeriodicTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(TeambrellaUtilService.SYNC_WALLET_TASK_TAG)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setPersisted(true)
-                .setPeriod(30 * 60)     // 30 minutes period
-                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
-                .setRequiresCharging(false)
-                .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        if (checkGooglePlayServices(context)) {
+            PeriodicTask task = new PeriodicTask.Builder()
+                    .setService(TeambrellaUtilService.class)
+                    .setTag(TeambrellaUtilService.SYNC_WALLET_TASK_TAG)
+                    .setUpdateCurrent(true) // kill tasks with the same tag if any
+                    .setPersisted(true)
+                    .setPeriod(30 * 60)     // 30 minutes period
+                    .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                    .setRequiresCharging(false)
+                    .build();
+            GcmNetworkManager.getInstance(context).schedule(task);
+        }
     }
 
     public static void oneoffWalletSync(Context context) {
@@ -102,45 +107,51 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     public static void oneoffWalletSync(Context context, boolean debug) {
-        Bundle extra = new Bundle();
-        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-        OneoffTask task = new OneoffTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(SYNC_WALLET_ONCE_TAG)
-                .setExecutionWindow(0L, 1L)
-                .setRequiresCharging(false)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setExtras(extra)
-                .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        if (checkGooglePlayServices(context)) {
+            Bundle extra = new Bundle();
+            extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+            OneoffTask task = new OneoffTask.Builder()
+                    .setService(TeambrellaUtilService.class)
+                    .setTag(SYNC_WALLET_ONCE_TAG)
+                    .setExecutionWindow(0L, 1L)
+                    .setRequiresCharging(false)
+                    .setUpdateCurrent(true) // kill tasks with the same tag if any
+                    .setExtras(extra)
+                    .build();
+            GcmNetworkManager.getInstance(context).schedule(task);
+        }
     }
 
     public static void oneOffUpdate(Context context, boolean debug) {
-        Bundle extra = new Bundle();
-        extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-        OneoffTask task = new OneoffTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(DEBUG_UPDATE_TAG)
-                .setExecutionWindow(0L, 1L)
-                .setRequiresCharging(false)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setExtras(extra)
-                .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        if (checkGooglePlayServices(context)) {
+            Bundle extra = new Bundle();
+            extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+            OneoffTask task = new OneoffTask.Builder()
+                    .setService(TeambrellaUtilService.class)
+                    .setTag(DEBUG_UPDATE_TAG)
+                    .setExecutionWindow(0L, 1L)
+                    .setRequiresCharging(false)
+                    .setUpdateCurrent(true) // kill tasks with the same tag if any
+                    .setExtras(extra)
+                    .build();
+            GcmNetworkManager.getInstance(context).schedule(task);
+        }
     }
 
     public static void scheduleCheckingSocket(Context context) {
-        PeriodicTask task = new PeriodicTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(TeambrellaUtilService.CHECK_SOCKET)
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setPersisted(true)
-                .setPeriod(60)     // 30 minutes period
-                .setFlex(30)       // +/- 10 minutes
-                .setUpdateCurrent(true) // kill tasks with the same tag if any
-                .setRequiredNetwork(NETWORK_STATE_CONNECTED)
-                .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        if (checkGooglePlayServices(context)) {
+            PeriodicTask task = new PeriodicTask.Builder()
+                    .setService(TeambrellaUtilService.class)
+                    .setTag(TeambrellaUtilService.CHECK_SOCKET)
+                    .setUpdateCurrent(true) // kill tasks with the same tag if any
+                    .setPersisted(true)
+                    .setPeriod(60)     // 30 minutes period
+                    .setFlex(30)       // +/- 10 minutes
+                    .setUpdateCurrent(true) // kill tasks with the same tag if any
+                    .setRequiredNetwork(NETWORK_STATE_CONNECTED)
+                    .build();
+            GcmNetworkManager.getInstance(context).schedule(task);
+        }
     }
 
     public static void scheduleDebugDB(Context context) {
@@ -151,6 +162,48 @@ public class TeambrellaUtilService extends GcmTaskService {
                 .setRequiresCharging(false)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
+    }
+
+    public static boolean checkGooglePlayServices(Context context) {
+
+        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        boolean result;
+        switch (code) {
+            case ConnectionResult.SUCCESS:
+                result = true;
+                break;
+            case ConnectionResult.SERVICE_MISSING:
+                Log.e(LOG_TAG, "google play service missing");
+                result = false;
+                break;
+            case ConnectionResult.SERVICE_UPDATING:
+                Log.e(LOG_TAG, "google play service updating");
+                result = false;
+                break;
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                Log.e(LOG_TAG, "google play service update required");
+                result = false;
+                break;
+            case ConnectionResult.SERVICE_DISABLED:
+                Log.e(LOG_TAG, "google play service disabled");
+                result = false;
+                break;
+            case ConnectionResult.SERVICE_INVALID:
+                Log.e(LOG_TAG, "google play service invalid");
+                result = false;
+                break;
+            default:
+                result = false;
+        }
+
+        if (!result) {
+            GoogleApiAvailability.getInstance().showErrorNotification(context, code);
+            if (!BuildConfig.DEBUG) {
+                Crashlytics.logException(new Exception("google play service error"));
+            }
+        }
+
+        return result;
     }
 
 
@@ -283,17 +336,17 @@ public class TeambrellaUtilService extends GcmTaskService {
         return GcmNetworkManager.RESULT_SUCCESS;
     }
 
-    private void onSyncException(Exception e){
+    private void onSyncException(Exception e) {
         Log.e(LOG_TAG, "sync attempt failed:");
         Log.e(LOG_TAG, "sync error message was: " + e.getMessage());
         Log.e(LOG_TAG, "sync error call stack was: ", e);
         Log.reportNonFatal(LOG_TAG, e);
 
         Log.e(LOG_TAG, " --- SYNC -> onRunTask() Resetting server data...");
-        try{
+        try {
             mTeambrellaClient.setLastUpdatedTimestamp(0L);
             mTeambrellaClient.removeLostRecords();
-        }catch (Exception e2) {
+        } catch (Exception e2) {
             Log.e(LOG_TAG, " --- SYNC -> onRunTask() failed to reset server data.");
             Log.reportNonFatal(LOG_TAG, e2);
         }
@@ -592,11 +645,11 @@ public class TeambrellaUtilService extends GcmTaskService {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (list != null) {
             for (Tx tx : list) {
-                try{
+                try {
                     Log.d(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() detected tx to cosign. id:" + tx.id);
                     operations.addAll(cosignTransaction(tx, user.id));
                     operations.add(TeambrellaContentProviderClient.setTxSigned(tx));
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e(LOG_TAG, " ---- SYNC -- cosignApprovedTransactions() failed to cosign tx! id:" + tx.id + ". Continue with others...");
                     Log.reportNonFatal(LOG_TAG, e);
                 }
