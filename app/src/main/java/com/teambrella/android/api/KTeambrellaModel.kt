@@ -66,6 +66,9 @@ class DataModelObject(private val jsonObject: JsonObject?) {
     val risk: Float?
         get() = getFloat(TeambrellaModel.ATTR_DATA_RISK)
 
+    val votingEndsIn: Long?
+        get() = getLong(TeambrellaModel.ATTR_DATA_VOTING_ENDS_IN)
+
 
     private fun getFloat(key: String): Float? {
         return jsonObject?.get(key)?.asFloat
@@ -77,6 +80,14 @@ class DataModelObject(private val jsonObject: JsonObject?) {
 
     private fun getDouble(key: String): Double? {
         return jsonObject?.get(key)?.asDouble
+    }
+
+    private fun getLong(key: String): Long? {
+        return jsonObject?.get(key)?.asLong
+    }
+
+    private fun getInt(key: String): Int? {
+        return jsonObject?.get(key)?.asInt
     }
 
     private fun getString(key: String): String? = jsonObject?.get(key)?.asString
