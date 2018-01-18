@@ -11,6 +11,7 @@ import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.widget.DividerItemDecoration;
 
 import io.reactivex.Notification;
 
@@ -32,8 +33,8 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        com.teambrella.android.ui.widget.DividerItemDecoration dividerItemDecoration =
-                new com.teambrella.android.ui.widget.DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
                     @Override
                     protected boolean canDrawChild(View view, RecyclerView parent) {
                         int position = parent.getChildAdapterPosition(view);

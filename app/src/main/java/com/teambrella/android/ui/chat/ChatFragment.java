@@ -74,7 +74,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         super.onViewCreated(view, savedInstanceState);
         setRefreshable(false);
         mList.setBackgroundColor(Color.TRANSPARENT);
-        mList.setItemAnimator(null);
+        ((LinearLayoutManager) mList.getLayoutManager()).setStackFromEnd(true);
 
         mVotingPanelView = view.findViewById(R.id.voting_panel);
         mTitleView = view.findViewById(R.id.title);
@@ -106,9 +106,6 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 break;
 
         }
-
-        mList.setItemAnimator(null);
-
     }
 
 

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -15,6 +14,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.DataModelObject
 import com.teambrella.android.api.TeambrellaModel
 import com.teambrella.android.data.base.IDataPager
+import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.teammate.TeammateActivity
 import com.teambrella.android.util.AmountCurrencyUtil
@@ -82,7 +82,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             val data = DataModelObject(item)
             data.avatar?.let {
                 icon?.let {
-                    Glide.with(itemView).load(imageLoader.getImageUrl(data.avatar))
+                    GlideApp.with(itemView).load(imageLoader.getImageUrl(data.avatar))
                             .apply(RequestOptions().circleCrop()).into(icon)
                 }
             }
