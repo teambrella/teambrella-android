@@ -12,7 +12,7 @@
         android:background="@color/paleGreyFour"
         android:clipToPadding="false"
         android:overScrollMode="never"
-        android:paddingBottom="52dp"
+        android:paddingBottom="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:background="@drawable/selectable_item_background"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/image"
