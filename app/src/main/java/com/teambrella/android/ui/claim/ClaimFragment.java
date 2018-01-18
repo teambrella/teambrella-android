@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -62,14 +61,9 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         mUnreadCount = view.findViewById(R.id.unread);
         mDiscussion = view.findViewById(R.id.discussion);
         mWhen = view.findViewById(R.id.when);
-
-
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
-
-        if (savedInstanceState == null) {
-            mDataHost.load(mTags[0]);
-            setContentShown(false);
-        }
+        mDataHost.load(mTags[0]);
+        setContentShown(false);
         return view;
     }
 
