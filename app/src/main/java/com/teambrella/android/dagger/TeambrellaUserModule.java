@@ -18,6 +18,6 @@ public class TeambrellaUserModule {
     @Provides
     @Named(Dependencies.TEAMBRELLA_USER)
     TeambrellaUser getTeambrellaUser(@Named(Dependencies.CONTEXT) Context context) {
-        return new TeambrellaUser(context.getApplicationContext());
+        return TeambrellaUser.get(context.getApplicationContext());
     }
 }

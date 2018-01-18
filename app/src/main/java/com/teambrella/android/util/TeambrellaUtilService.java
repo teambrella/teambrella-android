@@ -15,7 +15,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
-import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
@@ -56,6 +55,11 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
  */
 public class TeambrellaUtilService extends GcmTaskService {
 
+    private static final long MIN_SYNC_DELAY = 1000 * 60 * 30;
+    private static final String ACTION_LOCAL_SYNC = "com.teambrella.android.util.ACTION_SYNC";
+    private static final String EXTRA_TAG = "extra_tag";
+    private static final String TASK_EXTRAS = "tag_extras";
+
     public static final String SYNC_WALLET_TASK_TAG = "TEAMBRELLA-SYNC-WALLET";
     public static final String SYNC_WALLET_ONCE_TAG = "TEAMBRELLA-SYNC-WALLET-ONCE";
     public static final String CHECK_SOCKET = "TEAMBRELLA_CHECK_SOCKET";
@@ -63,20 +67,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     public static final String DEBUG_UPDATE_TAG = "TEAMBRELLA_DEBUG_UPDATE";
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
-    private static final String EXTRA_URI = "uri";
     private static final String EXTRA_DEBUG_LOGGING = "debug_logging";
-
-
-    private final static String ACTION_UPDATE = "update";
-    private final static String ACTION_CREATE = "create";
-    private final static String ACTION_VERIFY = "verify";
-    private final static String ACTION_DEPOSIT = "deposit";
-    private final static String ACTION_APPROVE = "approve";
-    private final static String ACTION_COSING = "cosign";
-    private final static String ACTION_PUBLISH = "publish";
-    private final static String ACTION_MASTER_SIGNATURE = "master_signature";
-    private final static String SHOW = "show";
-    private final static String ACTION_SYNC = "sync";
 
     private TeambrellaServer mServer;
     private ContentProviderClient mClient;
@@ -107,34 +98,28 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     public static void oneoffWalletSync(Context context, boolean debug) {
-        if (checkGooglePlayServices(context)) {
-            Bundle extra = new Bundle();
-            extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            OneoffTask task = new OneoffTask.Builder()
-                    .setService(TeambrellaUtilService.class)
-                    .setTag(SYNC_WALLET_ONCE_TAG)
-                    .setExecutionWindow(0L, 1L)
-                    .setRequiresCharging(false)
-                    .setUpdateCurrent(true) // kill tasks with the same tag if any
-                    .setExtras(extra)
-                    .build();
-            GcmNetworkManager.getInstance(context).schedule(task);
+        try {
+            Bundle args = new Bundle();
+            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+            context.startService(new Intent(context, TeambrellaUtilService.class)
+                    .setAction(ACTION_LOCAL_SYNC)
+                    .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
+                    .putExtra(TASK_EXTRAS, args));
+        } catch (Throwable throwable) {
+            Log.e(LOG_TAG, throwable.toString());
         }
     }
 
     public static void oneOffUpdate(Context context, boolean debug) {
-        if (checkGooglePlayServices(context)) {
-            Bundle extra = new Bundle();
-            extra.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            OneoffTask task = new OneoffTask.Builder()
-                    .setService(TeambrellaUtilService.class)
-                    .setTag(DEBUG_UPDATE_TAG)
-                    .setExecutionWindow(0L, 1L)
-                    .setRequiresCharging(false)
-                    .setUpdateCurrent(true) // kill tasks with the same tag if any
-                    .setExtras(extra)
-                    .build();
-            GcmNetworkManager.getInstance(context).schedule(task);
+        try {
+            Bundle args = new Bundle();
+            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+            context.startService(new Intent(context, TeambrellaUtilService.class)
+                    .setAction(ACTION_LOCAL_SYNC)
+                    .putExtra(EXTRA_TAG, DEBUG_UPDATE_TAG)
+                    .putExtra(TASK_EXTRAS, args));
+        } catch (Throwable throwable) {
+            Log.e(LOG_TAG, throwable.toString());
         }
     }
 
@@ -155,17 +140,16 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void scheduleDebugDB(Context context) {
-        OneoffTask task = new OneoffTask.Builder()
-                .setService(TeambrellaUtilService.class)
-                .setTag(DEBUG_DB_TASK_TAG)
-                .setExecutionWindow(0L, 1L)
-                .setRequiresCharging(false)
-                .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        try {
+            context.startService(new Intent(context, TeambrellaUtilService.class)
+                    .setAction(ACTION_LOCAL_SYNC)
+                    .putExtra(EXTRA_TAG, DEBUG_DB_TASK_TAG));
+        } catch (Throwable throwable) {
+            Log.e(LOG_TAG, throwable.toString());
+        }
     }
 
     public static boolean checkGooglePlayServices(Context context) {
-
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         boolean result;
         switch (code) {
@@ -207,12 +191,6 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
 
-    @Override
-    public void onCreate() {
-        //Log.v(LOG_TAG, "Periodic task created");
-        super.onCreate();
-    }
-
     private boolean tryInit() throws CryptoException {
         Log.d(LOG_TAG, "---> SYNC -> tryInit() started...");
         if (mKey != null) return true;
@@ -242,55 +220,47 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     @Override
     public int onStartCommand(Intent intent, int i, int i1) {
-        //Log.v(LOG_TAG, "Periodic task started a command" + intent.toString());
-
-//        if(BuildConfig.DEBUG){
-//            new android.os.AsyncTask<Void, Void, Void>() {
-//                @Override
-//                protected Void doInBackground(Void... voids) {
-//                    try {
-//                          processIntent(intent);
-//                    } catch (Exception e) {
-//                        Log.e(LOG_TAG, "" + e.getMessage(), e);
-//                    }
-//                    return null;
-//                }
-//            }.execute();
-//
-//            Log.e(LOG_TAG, "INTENT STARTED" + intent.toString());
-//            return START_NOT_STICKY;
-//        }else
-
-        return super.onStartCommand(intent, i, i1);
+        String action = intent != null ? intent.getAction() : null;
+        if (ACTION_LOCAL_SYNC.equals(action)) {
+            TaskParams taskParams = new TaskParams(intent.getStringExtra(EXTRA_TAG));
+            new Thread(() -> onRunTask(taskParams)).start();
+            return START_STICKY;
+        } else {
+            return super.onStartCommand(intent, i, i1);
+        }
     }
 
     @Override
-    public int onRunTask(TaskParams taskParams) {
+    public synchronized int onRunTask(TaskParams taskParams) {
         String tag = taskParams.getTag();
         if (tag != null) {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
-                case SYNC_WALLET_ONCE_TAG:
-                    StatisticHelper.onWalletSync(this, tag);
-                    if (isDebugLogging(taskParams)) {
-                        Log.startDebugging(this);
-                    }
-                    Log.d(LOG_TAG, "---> SYNC -> onRunTask() started... tag:" + tag);
-                    try {
-                        if (tryInit()) {
-                            sync();
-                        }
-                    } catch (Exception e) {
-                        onSyncException(e);
-                    } finally {
+                case SYNC_WALLET_ONCE_TAG: {
+                    if (canSyncByTime(System.currentTimeMillis())) {
+                        StatisticHelper.onWalletSync(this, tag);
                         if (isDebugLogging(taskParams)) {
-                            String path = Log.stopDebugging();
-                            if (path != null) {
-                                debugLog(this, path);
+                            Log.startDebugging(this);
+                        }
+                        Log.d(LOG_TAG, "---> SYNC -> onRunTask() started... tag:" + tag);
+                        try {
+                            if (tryInit()) {
+                                sync();
+                            }
+                        } catch (Exception e) {
+                            onSyncException(e);
+                        } finally {
+                            if (isDebugLogging(taskParams)) {
+                                String path = Log.stopDebugging();
+                                if (path != null) {
+                                    debugLog(this, path);
+                                }
                             }
                         }
+                        TeambrellaUser.get(this).setLastSyncTime(System.currentTimeMillis());
                     }
-                    break;
+                }
+                break;
 
                 case DEBUG_UPDATE_TAG: {
                     if (isDebugLogging(taskParams)) {
@@ -349,56 +319,6 @@ public class TeambrellaUtilService extends GcmTaskService {
         } catch (Exception e2) {
             Log.e(LOG_TAG, " --- SYNC -> onRunTask() failed to reset server data.");
             Log.reportNonFatal(LOG_TAG, e2);
-        }
-    }
-
-    private void processIntent(Intent intent) throws CryptoException, RemoteException, OperationApplicationException, TeambrellaException {
-        String action = intent != null ? intent.getAction() : null;
-        if (action != null) {
-            tryInit();
-            switch (action) {
-                case ACTION_UPDATE:
-                    update();
-                    break;
-                case ACTION_CREATE:
-                    createWallets(1_500_000);
-                    break;
-                case ACTION_VERIFY:
-                    verifyIfWalletIsCreated(1_500_000);
-                    break;
-                case ACTION_DEPOSIT:
-                    depositWallet();
-                    break;
-                case ACTION_APPROVE:
-                    autoApproveTxs();
-                    break;
-                case ACTION_COSING:
-                    cosignApprovedTransactions();
-                    break;
-                case SHOW:
-                    show(Uri.parse(intent.getStringExtra(EXTRA_URI)));
-                    break;
-                case ACTION_PUBLISH:
-                    publishApprovedAndCosignedTxs();
-                    break;
-                case ACTION_MASTER_SIGNATURE:
-                    masterSign();
-                    break;
-                case ACTION_SYNC:
-                    sync();
-                    break;
-                case "test":
-                    if (BuildConfig.DEBUG) {
-                        Log.e(LOG_TAG, "Test message is OK!");
-                    }
-                    break;
-                default:
-                    if (BuildConfig.DEBUG) {
-                        Log.e(LOG_TAG, "unknown action " + action);
-                    }
-            }
-        } else {
-            Log.e(LOG_TAG, "action is null");
         }
     }
 
@@ -768,6 +688,11 @@ public class TeambrellaUtilService extends GcmTaskService {
         } catch (Exception e) {
             Log.e(LOG_TAG, "", e);
         }
+    }
+
+
+    private boolean canSyncByTime(long time) {
+        return Math.abs(time - TeambrellaUser.get(this).getLastSyncTime()) > MIN_SYNC_DELAY;
     }
 
 

@@ -23,6 +23,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
     private static final String PREFERENCE_WALLET_BACKUP_SHOWN = "wallet_backup_shown";
+    private static final String PREFERENCE_KEY_LAST_SYNC_TIME = "last_sync_time";
 
 
     private static TeambrellaUser sUser;
@@ -115,6 +116,14 @@ public class TeambrellaUser {
 
     public void setBackupInfodialogShown(boolean shown) {
         mPreferences.edit().putBoolean(PREFERENCE_WALLET_BACKUP_SHOWN, shown).apply();
+    }
+
+    public long getLastSyncTime() {
+        return mPreferences.getLong(PREFERENCE_KEY_LAST_SYNC_TIME, 0);
+    }
+
+    public void setLastSyncTime(long time) {
+        mPreferences.edit().putLong(PREFERENCE_KEY_LAST_SYNC_TIME, time).apply();
     }
 
 }
