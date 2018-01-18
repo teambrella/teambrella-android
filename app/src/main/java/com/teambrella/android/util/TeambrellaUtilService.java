@@ -247,6 +247,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                             if (tryInit()) {
                                 sync();
                             }
+                            TeambrellaUser.get(this).setLastSyncTime(System.currentTimeMillis());
                         } catch (Exception e) {
                             onSyncException(e);
                         } finally {
@@ -257,7 +258,6 @@ public class TeambrellaUtilService extends GcmTaskService {
                                 }
                             }
                         }
-                        TeambrellaUser.get(this).setLastSyncTime(System.currentTimeMillis());
                     }
                 }
                 break;
