@@ -24,8 +24,7 @@
             android:id="@+id/voting_panel"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:background="@drawable/selectable_item_background"
-            app:layout_scrollFlags="scroll|enterAlways">
+            android:background="@drawable/selectable_item_background">
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/image"
