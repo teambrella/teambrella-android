@@ -3,6 +3,7 @@ package com.teambrella.android.ui.home;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,13 +16,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -31,9 +29,7 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.base.ITeambrellaComponent;
 import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
-import com.teambrella.android.ui.base.TeambrellaFragment;
 import com.teambrella.android.ui.base.dagger.IDaggerActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
@@ -129,7 +125,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         @Override
         public Fragment getItem(int position) {
-            return CardsFragment.getInstance(mCards.get(position).toString(), mDataHost.getTeamId(), mDataHost.getCurrency(), mDataHost.getTeamAccessLevel());
+            return CardsFragment.getInstance(position, mTags);
         }
 
         @Override
@@ -144,71 +140,68 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         @Override
         public int getItemPosition(Object object) {
-            return POSITION_NONE;
+            return POSITION_UNCHANGED;
         }
     }
 
 
-    public static final class CardsFragment extends TeambrellaFragment {
+    public static final class CardsFragment extends ADataFragment<IMainDataHost> {
 
-        private static final String EXTRA_DATA = "data";
-        private static final String EXTRA_CURRENCY = "currency";
-        private static final String EXTRA_TEAM_ID = "team_id";
-        private static final String EXTRA_TEAM_ACCESS_LEVEL = "team_access_level";
+        private static final String EXTRA_POSITION = "position";
+        ImageView icon;
+        TextView message;
+        TextView unread;
+        TextView amountWidget;
+        TextView teamVote;
+        TextView title;
+        TextView subtitle;
+        TextView leftTitle;
+        int mPosition;
 
-        private JsonWrapper mCard;
-        private int mTeamId;
-        private int mTeamAccessLevel;
-
-        public static CardsFragment getInstance(String data, int teamId, String currency, int teamAccessLevel) {
+        public static CardsFragment getInstance(int position, String[] tags) {
             CardsFragment fragment = new CardsFragment();
             Bundle args = new Bundle();
-            args.putString(EXTRA_DATA, data);
-            args.putString(EXTRA_CURRENCY, currency);
-            args.putInt(EXTRA_TEAM_ID, teamId);
-            args.putInt(EXTRA_TEAM_ACCESS_LEVEL, teamAccessLevel);
+            args.putInt(EXTRA_POSITION, position);
+            args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, tags);
             fragment.setArguments(args);
             return fragment;
         }
 
         @Override
-        public void onAttach(Context context) {
-            super.onAttach(context);
-            //noinspection unchecked
-            ((IDaggerActivity<ITeambrellaComponent>) context).getComponent().inject(this);
-        }
-
-        @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            Gson gson = new GsonBuilder().create();
-            mCard = new JsonWrapper(gson.fromJson(getArguments().getString(EXTRA_DATA), JsonObject.class));
-            mTeamId = getArguments().getInt(EXTRA_TEAM_ID);
-            mTeamAccessLevel = getArguments().getInt(EXTRA_TEAM_ACCESS_LEVEL);
+            mPosition = getArguments().getInt(EXTRA_POSITION);
         }
 
-        @Nullable
+        @NonNull
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.home_card_claim, container, false);
+            icon = view.findViewById(R.id.icon);
+            message = view.findViewById(R.id.message_text);
+            unread = view.findViewById(R.id.unread);
+            amountWidget = view.findViewById(R.id.amount_widget);
+            teamVote = view.findViewById(R.id.team_vote);
+            title = view.findViewById(R.id.title);
+            subtitle = view.findViewById(R.id.subtitle);
+            leftTitle = view.findViewById(R.id.left_title);
+            return view;
+        }
 
-            ImageView icon = view.findViewById(R.id.icon);
-            TextView message = view.findViewById(R.id.message_text);
-            TextView unread = view.findViewById(R.id.unread);
-            TextView amountWidget = view.findViewById(R.id.amount_widget);
-            TextView teamVote = view.findViewById(R.id.team_vote);
-            TextView title = view.findViewById(R.id.title);
-            TextView subtitle = view.findViewById(R.id.subtitle);
-            TextView leftTitle = view.findViewById(R.id.left_title);
+        @Override
+        protected void onDataUpdated(Notification<JsonObject> notification) {
 
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
+            JsonWrapper card = new JsonWrapper(cards.get(mPosition).getAsJsonObject());
 
-            int itemType = mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
-
+            int itemType = card.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
 
             leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
 
 
-            RequestBuilder requestCreator = GlideApp.with(this).load(getImageLoader().getImageUrl(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
+            RequestBuilder requestCreator = GlideApp.with(this).load(getImageLoader().getImageUrl(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
@@ -221,27 +214,27 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             requestCreator.into(icon);
 
-            message.setText(Html.fromHtml(mCard.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
+            message.setText(Html.fromHtml(card.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
 
-            int unreadCount = mCard.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
+            int unreadCount = card.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
 
             unread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.GONE);
-            unread.setText(mCard.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
+            unread.setText(card.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
 
-            AmountCurrencyUtil.setAmount(amountWidget, mCard.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT), getArguments().getString(EXTRA_CURRENCY));
+            AmountCurrencyUtil.setAmount(amountWidget, card.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT), mDataHost.getCurrency());
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE) {
-                teamVote.setText(getString(R.string.risk_format_string, mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)));
+                teamVote.setText(getString(R.string.risk_format_string, card.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)));
             } else {
-                teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(mCard.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
+                teamVote.setText(Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round(card.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE) * 100))));
             }
 
 
             switch (itemType) {
                 case TeambrellaModel.FEED_ITEM_CLAIM:
-                    title.setText(getString(R.string.claim_title_format_string, mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+                    title.setText(getString(R.string.claim_title_format_string, card.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
-                    title.setText(mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
+                    title.setText(card.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAMMATE:
                     title.setText(R.string.application);
@@ -250,41 +243,41 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
                     , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
-                    , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
+                    , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
 
-            view.setOnClickListener(v -> {
-                Context context = getContext();
-                IMainDataHost dataHost = (IMainDataHost) getContext();
-                switch (itemType) {
-                    case TeambrellaModel.FEED_ITEM_CLAIM:
-                        dataHost.launchActivity(ChatActivity.getClaimChat(context
-                                , mTeamId
-                                , mCard.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
-                                , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mTeamAccessLevel));
-                        break;
-                    case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
-                        dataHost.launchActivity(ChatActivity.getFeedChat(context
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , dataHost.getTeamId()
-                                , mTeamAccessLevel));
-                        break;
-                    default:
-                        dataHost.launchActivity(ChatActivity.getTeammateChat(context, mTeamId
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
-                                , null
-                                , TeambrellaImageLoader.getImageUri(mCard.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
-                                , mCard.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mTeamAccessLevel));
-                        break;
-                }
-            });
-
-            return view;
-
+            View view = getView();
+            if (view != null) {
+                view.setOnClickListener(v -> {
+                    Context context = getContext();
+                    IMainDataHost dataHost = (IMainDataHost) getContext();
+                    switch (itemType) {
+                        case TeambrellaModel.FEED_ITEM_CLAIM:
+                            dataHost.launchActivity(ChatActivity.getClaimChat(context
+                                    , mDataHost.getTeamId()
+                                    , card.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
+                                    , card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                                    , TeambrellaImageLoader.getImageUri(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                    , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                    , mDataHost.getTeamAccessLevel()));
+                            break;
+                        case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
+                            dataHost.launchActivity(ChatActivity.getFeedChat(context
+                                    , card.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
+                                    , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                    , dataHost.getTeamId()
+                                    , mDataHost.getTeamAccessLevel()));
+                            break;
+                        default:
+                            dataHost.launchActivity(ChatActivity.getTeammateChat(context, mDataHost.getTeamId()
+                                    , card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
+                                    , null
+                                    , TeambrellaImageLoader.getImageUri(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                    , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+                                    , mDataHost.getTeamAccessLevel()));
+                            break;
+                    }
+                });
+            }
         }
     }
 
