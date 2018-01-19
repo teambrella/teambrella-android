@@ -38,9 +38,9 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
     override fun getItemViewType(position: Int): Int {
         var type = super.getItemViewType(position)
         if (type == TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR) {
-            type = if (position == 0) VIEW_TYPE_INVITES_FRIENDS
+            type = if (position == 0 && headersCount > 0) VIEW_TYPE_INVITES_FRIENDS
             else {
-                val jsonObject = mPager.loadedData.get(position - 1).asJsonObject
+                val jsonObject = mPager.loadedData.get(position - headersCount).asJsonObject
                 when (jsonObject.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).asInt) {
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS -> VIEW_TYPE_HEADER_NEW_MEMBERS
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES -> VIEW_TYPE_HEADER_TEAMMATES
@@ -71,7 +71,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         return viewHolder
     }
 
-    override fun getHeadersCount(): Int = 1
+    override fun getHeadersCount(): Int = 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         super.onBindViewHolder(holder, position)
