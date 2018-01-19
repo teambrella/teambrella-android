@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -24,6 +25,7 @@ const val VIEW_TYPE_TEAMMATE = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR
 const val VIEW_TYPE_NEW_MEMBER = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 1
 const val VIEW_TYPE_HEADER_TEAMMATES = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 2
 const val VIEW_TYPE_HEADER_NEW_MEMBERS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 3
+const val VIEW_TYPE_INVITES_FRIENDS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 4
 
 class KTeammateAdapter(pager: IDataPager<JsonArray>
                        , teamId: Int
@@ -36,15 +38,18 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
     override fun getItemViewType(position: Int): Int {
         var type = super.getItemViewType(position)
         if (type == TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR) {
-            val jsonObject = mPager.loadedData.get(position).asJsonObject
-            type = when (jsonObject.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).asInt) {
-                TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS -> VIEW_TYPE_HEADER_NEW_MEMBERS
-                TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES -> VIEW_TYPE_HEADER_TEAMMATES
-                TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE -> {
-                    if (jsonObject.get(TeambrellaModel.ATTR_DATA_IS_VOTING).asBoolean) VIEW_TYPE_NEW_MEMBER
-                    else VIEW_TYPE_TEAMMATE
+            type = if (position == 0) VIEW_TYPE_INVITES_FRIENDS
+            else {
+                val jsonObject = mPager.loadedData.get(position - 1).asJsonObject
+                when (jsonObject.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).asInt) {
+                    TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS -> VIEW_TYPE_HEADER_NEW_MEMBERS
+                    TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES -> VIEW_TYPE_HEADER_TEAMMATES
+                    TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE -> {
+                        if (jsonObject.get(TeambrellaModel.ATTR_DATA_IS_VOTING).asBoolean) VIEW_TYPE_NEW_MEMBER
+                        else VIEW_TYPE_TEAMMATE
+                    }
+                    else -> VIEW_TYPE_TEAMMATE
                 }
-                else -> VIEW_TYPE_TEAMMATE
             }
         }
         return type
@@ -55,6 +60,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         val inflater = LayoutInflater.from(parent?.context)
         if (viewHolder == null)
             viewHolder = when (viewType) {
+                VIEW_TYPE_INVITES_FRIENDS -> InviteFriendsViewHolder(inflater.inflate(R.layout.list_item_invite_friends, parent, false))
                 VIEW_TYPE_TEAMMATE -> TeammateViewHolder(inflater.inflate(R.layout.list_item_teammate, parent, false))
                 VIEW_TYPE_HEADER_TEAMMATES -> Header(parent, R.string.teammates, R.string.net, R.drawable.list_item_header_background_middle)
                 VIEW_TYPE_HEADER_NEW_MEMBERS -> Header(parent, R.string.new_teammates, R.string.voting_ends_title, R.drawable.list_item_header_background_middle)
@@ -65,10 +71,12 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         return viewHolder
     }
 
+    override fun getHeadersCount(): Int = 1
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         super.onBindViewHolder(holder, position)
         if (holder is ATeammateViewHolder) {
-            holder.onBind(mPager.loadedData.get(position).asJsonObject)
+            holder.onBind(mPager.loadedData.get(position - headersCount).asJsonObject)
         }
     }
 
@@ -139,6 +147,16 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             endsInValue?.let {
                 endsIn?.text = TeambrellaDateUtils.getRelativeTimeLocalized(itemView.context, endsInValue)
             }
+        }
+    }
+
+    inner class InviteFriendsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val inviteButton: View? = view.findViewById(R.id.invite_friends)
+
+        init {
+            inviteButton?.setOnClickListener({
+                Toast.makeText(inviteButton.context, "Not implemented yet", Toast.LENGTH_SHORT).show()
+            })
         }
     }
 
