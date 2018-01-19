@@ -15,7 +15,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.ui.CosignersActivity;
 import com.teambrella.android.ui.IMainDataHost;
@@ -249,7 +248,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
                     , Math.round(forUninterruptedCoverage * data.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE))));
 
             Observable.just(data).flatMap(jsonWrapper -> Observable.fromIterable(jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA_COSIGNERS)))
-                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
+                    .map(jsonElement -> jsonElement.getAsJsonObject().get(TeambrellaModel.ATTR_DATA_AVATAR).getAsString())
                     .toList()
                     .subscribe((uris) -> {
                         mCosignersAvatar.setAvatars(getImageLoader(), uris);
