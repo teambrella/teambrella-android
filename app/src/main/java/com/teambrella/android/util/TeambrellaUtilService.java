@@ -222,7 +222,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     public int onStartCommand(Intent intent, int i, int i1) {
         String action = intent != null ? intent.getAction() : null;
         if (ACTION_LOCAL_SYNC.equals(action)) {
-            TaskParams taskParams = new TaskParams(intent.getStringExtra(EXTRA_TAG));
+            TaskParams taskParams = new TaskParams(intent.getStringExtra(EXTRA_TAG)
+                    , intent.getBundleExtra(TASK_EXTRAS));
             new Thread(() -> onRunTask(taskParams)).start();
             return START_STICKY;
         } else {
@@ -692,9 +693,10 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     private boolean canSyncByTime(long time) {
-        return Math.abs(time - TeambrellaUser.get(this).getLastSyncTime()) > MIN_SYNC_DELAY;
+        long delay = time - TeambrellaUser.get(this).getLastSyncTime();
+        Log.d(LOG_TAG, "" + (delay / (1000 * 60)) + " minutes since last sync");
+        return Math.abs(delay) > MIN_SYNC_DELAY;
     }
-
 
     private void backUpPrivateKey() throws CryptoException, RemoteException, OperationApplicationException {
         TeambrellaBackupData backupData = new TeambrellaBackupData(this);
