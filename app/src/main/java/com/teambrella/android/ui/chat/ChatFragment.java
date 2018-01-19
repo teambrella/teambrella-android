@@ -106,6 +106,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 break;
 
         }
+        mList.setItemAnimator(null);
     }
 
 

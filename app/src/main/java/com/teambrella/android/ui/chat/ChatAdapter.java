@@ -59,6 +59,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
         mTeamId = teamId;
         mMode = mode;
         mUserId = userId;
+        setHasStableIds(true);
     }
 
 
@@ -120,6 +121,11 @@ class ChatAdapter extends ChatDataPagerAdapter {
         if (holder instanceof ClaimChatViewHolder) {
             ((ClaimChatViewHolder) holder).bind(new JsonWrapper(mPager.getLoadedData().get((hasHeader() ? -1 : 0) + position).getAsJsonObject()));
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
