@@ -289,6 +289,17 @@
 
             </LinearLayout>
 
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/selectable_item_background"
+                android:gravity="start|center_vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/transactions"
+                android:textColor="@color/charcoalGrey"
+                android:textSize="15sp" />
+
 
             <LinearLayout
                 android:id="@+id/backup_wallet"
@@ -320,6 +331,7 @@
 
 
         </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
