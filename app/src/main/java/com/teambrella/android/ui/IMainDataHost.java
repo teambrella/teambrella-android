@@ -54,4 +54,6 @@ public interface IMainDataHost extends IDataHost {
 
     void showWalletBackupDialog();
 
+    String getInviteFriendsText();
+
 }

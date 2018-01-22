@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.team.teammates
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
@@ -7,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -30,9 +30,11 @@ const val VIEW_TYPE_INVITES_FRIENDS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGUL
 class KTeammateAdapter(pager: IDataPager<JsonArray>
                        , teamId: Int
                        , currency: String
+                       , inviteText: String?
                        , listener: OnStartActivityListener) : TeambrellaDataPagerAdapter(pager, listener) {
     val mTeamId = teamId
     val mCurrency = currency
+    val mInviteText = inviteText
 
 
     override fun getItemViewType(position: Int): Int {
@@ -71,7 +73,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         return viewHolder
     }
 
-    override fun getHeadersCount(): Int = 0
+    override fun getHeadersCount(): Int = if (mInviteText != null) 1 else 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -155,7 +157,8 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
 
         init {
             inviteButton?.setOnClickListener({
-                Toast.makeText(inviteButton.context, "Not implemented yet", Toast.LENGTH_SHORT).show()
+                startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, mInviteText)
+                        .setType("text/plain"), itemView.context.getString(R.string.invite_friends)))
             })
         }
     }
