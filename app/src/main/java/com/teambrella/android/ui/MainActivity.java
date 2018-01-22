@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -367,6 +366,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @Override
     public int getTeammateId() {
         return mTeam.getInt(TeambrellaModel.ATTR_DATA_MY_TEAMMATE_ID);
+    }
+
+    @Override
+    public String getInviteFriendsText() {
+        return mTeam.getString(TeambrellaModel.ATTR_DATA_INVITE_FRIENDS_TEXT);
     }
 
     @Override
