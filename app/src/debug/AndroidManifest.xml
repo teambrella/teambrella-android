@@ -22,8 +22,8 @@
 
                 <data
                     android:host="surilla.com"
-                    android:path="/user"
-                    android:scheme="http" />
+                    android:path="/newuser"
+                    android:scheme="app" />
             </intent-filter>
         </activity>
 

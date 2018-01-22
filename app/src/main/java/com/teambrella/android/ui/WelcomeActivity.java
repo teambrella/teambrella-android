@@ -125,16 +125,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             }
         } else {
 
-            if (BuildConfig.DEBUG) {
-                Intent intent = getIntent();
-                Uri uri = intent.getData();
-                if (uri != null) {
-                    mUser.setPrivateKey(uri.getQueryParameter("key"));
-                    getTeams(mUser.getPrivateKey());
-                    return;
-                }
+            Intent intent = getIntent();
+            Uri uri = intent.getData();
+            if (uri != null) {
+                mUser.setPrivateKey(uri.getQueryParameter("key"));
+                getTeams(mUser.getPrivateKey());
+                return;
             }
-            
+
             if (savedInstanceState == null) {
                 mWalletBackupManager.readOnConnected(false);
                 setState(State.LOADING);

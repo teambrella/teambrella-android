@@ -23,14 +23,24 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Welcome">
+            android:theme="@style/AppTheme.NoActionBar.Welcome"
+            tools:node="replace">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="teambrella.com"
+                    android:path="/newuser"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask"
