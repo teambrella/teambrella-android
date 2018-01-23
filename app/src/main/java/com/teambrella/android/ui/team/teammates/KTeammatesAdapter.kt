@@ -12,8 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
-import com.teambrella.android.api.DataModelObject
-import com.teambrella.android.api.TeambrellaModel
+import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
@@ -89,19 +88,19 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         val `object`: TextView? = view.findViewById(R.id.`object`)
 
         open fun onBind(item: JsonObject?) {
-            val data = DataModelObject(item)
-            data.avatar?.let {
+            item.avatar?.let {
                 icon?.let {
-                    GlideApp.with(itemView).load(imageLoader.getImageUrl(data.avatar))
+                    GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar))
                             .apply(RequestOptions().circleCrop()).into(icon)
                 }
             }
 
-            title?.text = data.name
-            `object`?.text = getObjectString(data.model, data.year)
+            title?.text = item.name
+            `object`?.text = getObjectString(item.model, item.year)
 
             itemView.setOnClickListener({
-                startActivity(TeammateActivity.getIntent(itemView.context, mTeamId, data.userId, data.name, data.avatar))
+                startActivity(TeammateActivity.getIntent(itemView.context, mTeamId, item.userId,
+                        item.name, item.avatar))
             })
         }
 
@@ -118,16 +117,15 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
 
         override fun onBind(item: JsonObject?) {
             super.onBind(item)
-            val data = DataModelObject(item)
-            data.totallyPaid?.let {
-                val net = Math.round(data.totallyPaid as Double)
+            item.totallyPaid?.let {
+                val net = Math.round(item.totallyPaid as Double)
                 when {
                     net > 0 -> this.net?.text = Html.fromHtml(getPositiveNetString(net))
                     net < 0 -> this.net?.text = Html.fromHtml(getNegativeNetString(net))
                     else -> this.net?.text = itemView.context.getString(R.string.teammate_net_format_string_zero, currencySign)
                 }
             }
-            this.risk?.text = itemView.context.getString(R.string.risk_format_string, data.risk)
+            this.risk?.text = itemView.context.getString(R.string.risk_format_string, item.risk)
         }
 
         private fun getPositiveNetString(net: Long): String {
@@ -144,8 +142,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         private val endsIn: TextView? = view.findViewById(R.id.ends_in)
         override fun onBind(item: JsonObject?) {
             super.onBind(item)
-            val data = DataModelObject(item)
-            val endsInValue = data.votingEndsIn
+            val endsInValue = item.votingEndsIn
             endsInValue?.let {
                 endsIn?.text = TeambrellaDateUtils.getRelativeTimeLocalized(itemView.context, endsInValue)
             }

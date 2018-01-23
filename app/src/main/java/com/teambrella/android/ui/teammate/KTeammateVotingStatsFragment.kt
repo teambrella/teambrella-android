@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.google.gson.JsonObject
 import com.teambrella.android.R
-import com.teambrella.android.api.DataModelObject
+import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.widget.PercentageWidget
@@ -68,7 +68,7 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
         if (notification != null) {
             if (notification.isOnNext) {
                 this.setProxy?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
-                val value = DataModelObject(notification.value)
+                val value = notification.value
                 val uri = Uri.parse(value.status?.uri)
                 val matchId = TeambrellaUris.sUriMatcher.match(uri)
                 when (matchId) {
@@ -80,7 +80,7 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
                     else -> {
                         val stats = value.data?.stats
                         stats?.let {
-                            
+
                             val votingFreq = stats.votingFreq
                             votingFreq?.let {
                                 this.votingView?.setPercentage(votingFreq)
