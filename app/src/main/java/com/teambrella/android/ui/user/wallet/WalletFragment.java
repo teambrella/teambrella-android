@@ -51,6 +51,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
     private TextView mMaxCoverageCurrencyValue;
     private TextView mUninterruptedCoverageCurrencyValue;
     private View mCosignersView;
+    private View mTransactionsView;
     private TeambrellaAvatarsWidgets mCosignersAvatar;
     private TextView mCosignersCountView;
     private View mBackupWalletButton;
@@ -84,6 +85,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mCosignersAvatar = view.findViewById(R.id.cosigners_avatar);
         mCosignersCountView = view.findViewById(R.id.cosigners_count);
         mBackupWalletMessage = view.findViewById(R.id.wallet_not_backed_up_message);
+        mTransactionsView = view.findViewById(R.id.transactions);
 
         if (savedInstanceState == null) {
             mDataHost.load(mTags[0]);
@@ -131,6 +133,7 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
         view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
+        view.findViewById(R.id.transactions).setOnClickListener(v -> startActivity(WalletTransactionsActivityKt.getLaunchIntent(getContext(), mDataHost.getTeamId())));
 
         mBackupWalletButton = view.findViewById(R.id.backup_wallet);
 
