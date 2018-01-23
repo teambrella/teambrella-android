@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:padding="16dp">
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -17,6 +18,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/to" />
 
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/amount"
+        style="@style/Teambrella.TextAppearence.ListItem.Title"
+        android:text="-123.34"
+        android:textColor="#dc2459"
+        app:layout_constraintBaseline_toBaselineOf="@id/to"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/status"
+        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        android:text="Pending"
+        app:layout_constraintBaseline_toBaselineOf="@id/type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/amount" />
 
 
 </android.support.constraint.ConstraintLayout>
