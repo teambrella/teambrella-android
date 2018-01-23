@@ -2,7 +2,13 @@
 
 package com.teambrella.android.api
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+
+
+private const val TO = "To"
+private const val USER_NAME = "UserName"
 
 /**
  * Teambrella Kotlin Model
@@ -68,29 +74,43 @@ val JsonObject?.votingEndsIn: Long?
 val JsonObject?.claimId: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_CLAIM_ID)
 
+val JsonObject?.To: JsonArray?
+    get() = this?.get(TO)?.asJsonArray
+
+val JsonObject?.userName: String?
+    get() = getString(USER_NAME)
+
 
 private fun JsonObject?.getFloat(key: String): Float? {
-    return this?.get(key)?.asFloat
+    return this?.getJsonElement(key)?.asFloat
 }
 
 private fun JsonObject?.getBoolean(key: String): Boolean? {
-    return this?.get(key)?.asBoolean
+    return this?.getJsonElement(key)?.asBoolean
 }
 
 private fun JsonObject?.getDouble(key: String): Double? {
-    return this?.get(key)?.asDouble
+    return this?.getJsonElement(key)?.asDouble
 }
 
 private fun JsonObject?.getLong(key: String): Long? {
-    return this?.get(key)?.asLong
+    return this?.getJsonElement(key)?.asLong
 }
 
 private fun JsonObject?.getInt(key: String): Int? {
-    return this?.get(key)?.asInt
+    return this?.getJsonElement(key)?.asInt
 }
 
-private fun JsonObject?.getString(key: String): String? = this?.get(key)?.asString
+private fun JsonObject?.getJsonElement(key: String): JsonElement? {
+    var element = this?.get(key)
+    if (element == null || element.isJsonNull) {
+        element = null
+    }
+    return element
+}
 
-private fun JsonObject?.getObject(key: String): JsonObject? = this?.get(key)?.asJsonObject
+private fun JsonObject?.getString(key: String): String? = this?.getJsonElement(key)?.asString
+
+private fun JsonObject?.getObject(key: String): JsonObject? = this?.getJsonElement(key)?.asJsonObject
 
 

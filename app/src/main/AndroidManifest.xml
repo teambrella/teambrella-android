@@ -105,7 +105,7 @@
             android:name=".ui.withdraw.WithdrawActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.user.wallet.WalletTransactionsActivity"
+            android:name=".ui.wallet.WalletTransactionsActivity"
             android:screenOrientation="portrait" />
 
         <provider

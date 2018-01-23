@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.user.wallet
+package com.teambrella.android.ui.wallet
 
 import com.teambrella.android.data.base.IDataHost
 import com.teambrella.android.ui.base.ADataPagerProgressFragment

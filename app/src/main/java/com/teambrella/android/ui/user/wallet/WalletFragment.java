@@ -21,6 +21,7 @@ import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.QRCodeActivity;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.wallet.WalletTransactionsActivityKt;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.withdraw.WithdrawActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;

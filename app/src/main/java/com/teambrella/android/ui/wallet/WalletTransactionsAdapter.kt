@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.user.wallet
+package com.teambrella.android.ui.wallet
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,7 +8,9 @@ import android.widget.TextView
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
+import com.teambrella.android.api.To
 import com.teambrella.android.api.claimId
+import com.teambrella.android.api.userName
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 
@@ -37,13 +39,19 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
 
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val to: TextView? = view.findViewById(R.id.to)
+        val type: TextView? = view.findViewById(R.id.type)
+
 
         fun onBind(item: JsonObject) {
             val claimId = item.claimId
-            claimId?.let {
-                this.to?.text = Integer.toString(claimId)
+            val to = item.To
+            to?.let {
+                this.to?.text = to.get(0).asJsonObject?.userName
             }
 
+            claimId?.let {
+                this.type?.text = itemView.resources.getString(R.string.claim_title_format_string, claimId)
+            }
         }
     }
 }

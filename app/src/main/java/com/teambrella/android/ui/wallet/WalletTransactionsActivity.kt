@@ -1,4 +1,4 @@
-package com.teambrella.android.ui.user.wallet
+package com.teambrella.android.ui.wallet
 
 import android.content.Context
 import android.content.Intent
