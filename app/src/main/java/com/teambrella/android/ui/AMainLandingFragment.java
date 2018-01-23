@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -39,6 +38,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
                 .into(teamLogo);
 
         teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
+        view.findViewById(R.id.arrow_down).setOnClickListener(v -> mDataHost.showTeamChooser());
 
         mTitle = view.findViewById(R.id.title);
         mUnreadCount = view.findViewById(R.id.unread_count);

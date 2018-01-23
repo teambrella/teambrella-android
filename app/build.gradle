@@ -47,8 +47,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 98
-        versionName "and-0.1.6.98"
+        versionCode 99
+        versionName "and-0.1.6.99"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -121,7 +121,7 @@ dependencies {
     })
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.20"
 
     /* Support */
     //noinspection GradleCompatible
