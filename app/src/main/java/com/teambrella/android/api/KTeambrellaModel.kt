@@ -80,6 +80,8 @@ val JsonObject?.To: JsonArray?
 val JsonObject?.userName: String?
     get() = getString(USER_NAME)
 
+val JsonObject?.amount: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
