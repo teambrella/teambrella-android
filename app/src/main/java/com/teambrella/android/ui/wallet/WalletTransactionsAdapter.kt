@@ -72,9 +72,10 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
                 this.to?.text = to.get(0).asJsonObject?.userName
                 val amount = to.get(0).asJsonObject?.amount
                 amount?.let {
-                    this.amount?.text = itemView.resources.getString(R.string.eth_amount_short_format_string, -it * 1000)
+                    this.amount?.text = itemView.resources.getString(R.string.eth_amount_short_format_string, it * 1000)
                 }
-                this.status?.text = "Pending"
+                this.status?.text = "Failed"
+                this.status?.setTextColor(itemView.resources.getColor(R.color.lipstick))
             }
 
             claimId?.let {

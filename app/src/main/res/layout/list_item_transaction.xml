@@ -20,19 +20,16 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/amount"
-        style="@style/Teambrella.TextAppearence.ListItem.Title"
-        android:text="-123.34"
-        android:textColor="#dc2459"
+        style="@style/Teambrella.TextAppearence.ListItem.Value"
         app:layout_constraintBaseline_toBaselineOf="@id/to"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/status"
         style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
-        android:text="Pending"
         app:layout_constraintBaseline_toBaselineOf="@id/type"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
