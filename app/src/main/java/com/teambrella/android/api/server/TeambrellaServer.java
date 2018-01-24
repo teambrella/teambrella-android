@@ -21,6 +21,7 @@ import com.teambrella.android.api.TeambrellaServerException;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Utils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
@@ -158,7 +159,7 @@ public class TeambrellaServer {
 
     public LazyHeaders getHeaders() {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
-        String publicKey = mKey.getPublicKeyAsHex();
+        String publicKey = Utils.HEX.encode(ECKey.compressPoint(mKey.getPubKeyPoint()).getEncoded());
         return new LazyHeaders.Builder()
                 .addHeader("t", Long.toString(timestamp))
                 .addHeader("key", publicKey)
@@ -490,7 +491,7 @@ public class TeambrellaServer {
         @Override
         public okhttp3.Response intercept(Chain chain) throws IOException {
             Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
-            String publicKey = mKey.getPublicKeyAsHex();
+            String publicKey = Utils.HEX.encode(ECKey.compressPoint(mKey.getPubKeyPoint()).getEncoded());
             String signature = mKey.signMessage(Long.toString(timestamp));
             Request newRequest = chain.request().newBuilder()
                     .addHeader("t", Long.toString(timestamp))
@@ -505,7 +506,7 @@ public class TeambrellaServer {
 
     public TeambrellaSocketClient createSocketClient(URI uri, SocketClientListener listener, long lastNotificationTimeStamp) {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
-        String publicKey = mKey.getPublicKeyAsHex();
+        String publicKey = Utils.HEX.encode(ECKey.compressPoint(mKey.getPubKeyPoint()).getEncoded());
         String signature = mKey.signMessage(Long.toString(timestamp));
         HashMap<String, String> headers = new HashMap<>();
         headers.put("t", Long.toString(timestamp));
