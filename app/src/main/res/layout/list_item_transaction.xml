@@ -21,15 +21,17 @@
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/amount"
         style="@style/Teambrella.TextAppearence.ListItem.Value"
-        app:layout_constraintBaseline_toBaselineOf="@id/to"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/status"
         style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
         app:layout_constraintBaseline_toBaselineOf="@id/type"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/amount" />
 
 
 </android.support.constraint.ConstraintLayout>

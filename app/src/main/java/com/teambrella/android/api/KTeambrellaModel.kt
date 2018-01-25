@@ -1,5 +1,3 @@
-@file:JvmName("KTeambrellaModel")
-
 package com.teambrella.android.api
 
 import com.google.gson.JsonArray
@@ -7,8 +5,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 
-private const val TO = "To"
-private const val USER_NAME = "UserName"
+const val TO = "To"
+const val USER_NAME = "UserName"
 
 /**
  * Teambrella Kotlin Model
@@ -16,6 +14,7 @@ private const val USER_NAME = "UserName"
 
 val JsonObject?.data: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA)
+
 
 val JsonObject?.status: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_STATUS)
@@ -59,8 +58,11 @@ val JsonObject?.model: String?
 val JsonObject?.year: String?
     get() = getString(TeambrellaModel.ATTR_DATA_YEAR)
 
-val JsonObject?.userId: String?
+var JsonObject?.userId: String?
     get() = getString(TeambrellaModel.ATTR_DATA_USER_ID)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_USER_ID, value)
+    }
 
 val JsonObject?.totallyPaid: Double?
     get() = getDouble(TeambrellaModel.ATTR_DATA_TOTALLY_PAID)
@@ -77,11 +79,26 @@ val JsonObject?.claimId: Int?
 val JsonObject?.To: JsonArray?
     get() = this?.get(TO)?.asJsonArray
 
-val JsonObject?.userName: String?
+var JsonObject?.userName: String?
     get() = getString(USER_NAME)
+    set(value) {
+        this?.addProperty(USER_NAME, value)
+    }
 
-val JsonObject?.amount: Float?
+var JsonObject?.amount: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_AMOUNT, value)
+    }
+
+var JsonObject?.kind: Int?
+    get() = this.getInt(TeambrellaModel.ATTR_DATA_KIND)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_KIND, value)
+    }
+
+val JsonObject?.serverTxState: Int?
+    get() = this.getInt(TeambrellaModel.ATTR_DATA_SERVER_TX_STATE)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

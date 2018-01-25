@@ -82,7 +82,7 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity() {
         return when (tag) {
             Tags.DATA_TAG -> TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0))
                     , null
-                    , TeambrellaDataPagerFragment::class.java)
+                    , WalletTransactionsDataPagerFragment::class.java)
             else -> null
         }
     }

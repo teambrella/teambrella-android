@@ -8,10 +8,7 @@ import android.widget.TextView
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
-import com.teambrella.android.api.To
-import com.teambrella.android.api.amount
-import com.teambrella.android.api.claimId
-import com.teambrella.android.api.userName
+import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 
@@ -67,15 +64,15 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
 
         fun onBind(item: JsonObject) {
             val claimId = item.claimId
-            val to = item.To
-            to?.let {
-                this.to?.text = to.get(0).asJsonObject?.userName
-                val amount = to.get(0).asJsonObject?.amount
-                amount?.let {
-                    this.amount?.text = itemView.resources.getString(R.string.eth_amount_short_format_string, it * 1000)
-                }
-                this.status?.text = "Failed"
-                this.status?.setTextColor(itemView.resources.getColor(R.color.lipstick))
+            this.to?.text = item.userName
+            val amount = item.amount
+            amount?.let {
+                this.amount?.text = itemView.resources.getString(R.string.eth_amount_short_format_string, it * 1000)
+            }
+
+            val state = item.serverTxState
+            state?.let {
+                setStatus(state)
             }
 
             claimId?.let {
@@ -83,7 +80,40 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
             }
 
             if (claimId == null) {
-                this.type?.text = "Withdrawal"
+                this.type?.text = itemView.resources.getString(R.string.withdrawal)
+            }
+        }
+
+        private fun setStatus(state: Int) {
+            when (state) {
+                TeambrellaModel.TX_STATE_CREATED,
+                TeambrellaModel.TX_STATE_APPREOVED_ALL,
+                TeambrellaModel.TX_STATE_APPROVED_COSIGNERS,
+                TeambrellaModel.TX_STATE_BEING_COSIGNED,
+                TeambrellaModel.TX_STATE_SELECTED_FOR_COSIGNING,
+                TeambrellaModel.TX_STATE_COSIGNED,
+                TeambrellaModel.TX_STATE_PUBLISHED,
+                TeambrellaModel.TX_STATE_APPROVED_MASTER -> {
+                    this.status?.text = itemView.resources.getText(R.string.transaction_pending)
+                    this.status?.setTextColor(itemView.resources.getColor(R.color.bluishGrey))
+                    this.status?.visibility = View.VISIBLE
+                }
+                TeambrellaModel.TX_STATE_BLOCKED_COSIGNERS,
+                TeambrellaModel.TX_STATE_ERROR_COSIGNERS_TIMEOUT,
+                TeambrellaModel.TX_STATE_ERROR_BAD_REQUEST,
+                TeambrellaModel.TX_STATE_ERROR_OUT_OF_FOUNDS,
+                TeambrellaModel.TX_STATE_ERROR_SUBMIT_TO_BLOCKCHAIN,
+                TeambrellaModel.TX_STATE_ERROR_TOO_MANY_UTXOS,
+                TeambrellaModel.TX_STATE_BLOCKED_MASTER -> {
+                    this.status?.text = itemView.resources.getText(R.string.transaction_failed)
+                    this.status?.setTextColor(itemView.resources.getColor(R.color.lipstick))
+                    this.status?.visibility = View.VISIBLE
+                }
+                TeambrellaModel.TX_STATE_CONFIRMED -> {
+                    this.status?.text = null
+                    this.status?.visibility = View.GONE
+                    //this.status?.setTextColor(itemView.resources.getColor(R.color.tealish))
+                }
             }
         }
     }
