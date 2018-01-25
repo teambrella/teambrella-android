@@ -11,12 +11,14 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
+import com.teambrella.android.ui.claim.ClaimActivity
+import com.teambrella.android.ui.withdraw.WithdrawActivity
 
 
 /**
  * Wallet Transaction Adapter
  */
-class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: OnStartActivityListener?)
+class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: Int, val listener: OnStartActivityListener?)
     : TeambrellaDataPagerAdapter(pager, listener) {
 
     object ViewType {
@@ -77,10 +79,16 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
 
             claimId?.let {
                 this.type?.text = itemView.resources.getString(R.string.claim_title_format_string, claimId)
+                itemView.setOnClickListener({
+                    startActivity(ClaimActivity.getLaunchIntent(itemView.context, claimId, null, teamId))
+                })
             }
 
             if (claimId == null) {
                 this.type?.text = itemView.resources.getString(R.string.withdrawal)
+                itemView.setOnClickListener({
+                    startActivity(WithdrawActivity.getIntent(itemView.context, teamId))
+                })
             }
         }
 

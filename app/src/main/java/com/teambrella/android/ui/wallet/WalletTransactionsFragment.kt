@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.teambrella.android.R
-import com.teambrella.android.data.base.IDataHost
 import com.teambrella.android.ui.base.ADataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
@@ -13,10 +12,12 @@ import com.teambrella.android.ui.widget.DividerItemDecoration
 /**
  * Wallet Transactions Fragment
  */
-class WalletTransactionsFragment : ADataPagerProgressFragment<IDataHost>() {
+class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransactionActivity>() {
 
     override fun getAdapter(): ATeambrellaDataPagerAdapter {
-        return WalletTransactionsAdapter(mDataHost.getPager(mTag), null)
+        return WalletTransactionsAdapter(mDataHost.getPager(mTag), mDataHost.teamId, ATeambrellaDataPagerAdapter.OnStartActivityListener {
+            startActivity(it)
+        })
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

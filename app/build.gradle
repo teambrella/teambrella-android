@@ -121,7 +121,7 @@ dependencies {
     })
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.21"
 
     /* Support */
     //noinspection GradleCompatible

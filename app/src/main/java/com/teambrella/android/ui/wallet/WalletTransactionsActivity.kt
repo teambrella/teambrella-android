@@ -24,7 +24,7 @@ fun getLaunchIntent(context: Context, teamId: Int): Intent {
 /**
  * Wallet Transactions Activity
  */
-class WalletTransactionsActivity : TeambrellaDataHostActivity() {
+class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransactionActivity {
 
     private object Tags {
         const val DATA_TAG: String = "data_tag"
@@ -85,5 +85,9 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity() {
                     , WalletTransactionsDataPagerFragment::class.java)
             else -> null
         }
+    }
+
+    override fun getTeamId(): Int {
+        return intent?.getIntExtra(TEAM_ID_EXTRA, -1) ?: -1
     }
 }

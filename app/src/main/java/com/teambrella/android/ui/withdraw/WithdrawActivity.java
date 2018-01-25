@@ -45,8 +45,12 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     private Snackbar mSnackBar;
 
     public static void start(Context context, int teamId) {
-        context.startActivity(new Intent(context, WithdrawActivity.class)
-                .putExtra(EXTRA_TEAM_ID, teamId));
+        context.startActivity(getIntent(context, teamId));
+    }
+
+    public static Intent getIntent(Context context, int teamId) {
+        return new Intent(context, WithdrawActivity.class)
+                .putExtra(EXTRA_TEAM_ID, teamId);
     }
 
     @Override
