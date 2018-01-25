@@ -95,7 +95,6 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
                 TeambrellaModel.TX_STATE_PUBLISHED,
                 TeambrellaModel.TX_STATE_APPROVED_MASTER -> {
                     this.status?.text = itemView.resources.getText(R.string.transaction_pending)
-                    this.status?.setTextColor(itemView.resources.getColor(R.color.bluishGrey))
                     this.status?.visibility = View.VISIBLE
                 }
                 TeambrellaModel.TX_STATE_BLOCKED_COSIGNERS,
@@ -105,14 +104,12 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val listener: 
                 TeambrellaModel.TX_STATE_ERROR_SUBMIT_TO_BLOCKCHAIN,
                 TeambrellaModel.TX_STATE_ERROR_TOO_MANY_UTXOS,
                 TeambrellaModel.TX_STATE_BLOCKED_MASTER -> {
-                    this.status?.text = itemView.resources.getText(R.string.transaction_failed)
-                    this.status?.setTextColor(itemView.resources.getColor(R.color.lipstick))
+                    this.status?.text = itemView.resources.getText(R.string.transaction_cancelled)
                     this.status?.visibility = View.VISIBLE
                 }
                 TeambrellaModel.TX_STATE_CONFIRMED -> {
                     this.status?.text = null
                     this.status?.visibility = View.GONE
-                    //this.status?.setTextColor(itemView.resources.getColor(R.color.tealish))
                 }
             }
         }
