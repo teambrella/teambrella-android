@@ -6,23 +6,43 @@
     android:background="@drawable/selectable_item_background"
     android:padding="16dp">
 
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/to"
         style="@style/Teambrella.TextAppearence.ListItem.Title"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:lines="1"
+        app:layout_constraintBottom_toTopOf="@+id/type"
+        app:layout_constraintEnd_toStartOf="@+id/amount"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="@+id/icon" />
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/type"
         style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/icon"
+        app:layout_constraintStart_toStartOf="@id/to"
         app:layout_constraintTop_toBottomOf="@id/to" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/amount"
         style="@style/Teambrella.TextAppearence.ListItem.Value"
+        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toTopOf="@+id/status"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/to"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -31,7 +51,8 @@
         app:layout_constraintBaseline_toBaselineOf="@id/type"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount" />
+        app:layout_constraintTop_toBottomOf="@id/amount"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
 </android.support.constraint.ConstraintLayout>
