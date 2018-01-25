@@ -24,6 +24,7 @@ class WalletTransactionsDataPagerLoader(uri: Uri?) : TeambrellaDataPagerLoader(u
                     newItem.userName = tosItem.userName
                     newItem.amount = tosItem.amount
                     newItem.kind = tosItem.kind
+                    newItem.avatar = tosItem.avatar
                     items.add(newItem)
                 }
             }

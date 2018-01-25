@@ -4,15 +4,19 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
+import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.claim.ClaimActivity
 import com.teambrella.android.ui.withdraw.WithdrawActivity
+import kotlinx.android.synthetic.main.list_item_transaction.view.*
 
 
 /**
@@ -58,6 +62,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
 
 
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val icon: ImageView? = view.findViewById(R.id.icon)
         val to: TextView? = view.findViewById(R.id.to)
         val type: TextView? = view.findViewById(R.id.type)
         val amount: TextView? = view.findViewById(R.id.amount)
@@ -90,6 +95,9 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
                     startActivity(WithdrawActivity.getIntent(itemView.context, teamId))
                 })
             }
+
+            GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar)).apply(RequestOptions().circleCrop())
+                    .into(itemView.icon)
         }
 
         private fun setStatus(state: Int) {

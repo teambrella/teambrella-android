@@ -46,8 +46,11 @@ val JsonObject?.votingFreq: Float?
 val JsonObject?.isMyProxy: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY)
 
-val JsonObject?.avatar: String?
+var JsonObject?.avatar: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AVATAR)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_AVATAR, value)
+    }
 
 val JsonObject?.name: String?
     get() = getString(TeambrellaModel.ATTR_DATA_NAME)
