@@ -280,5 +280,6 @@
     <string name="tap_to_backup_wallet">Toca para hacer una copia de respaldo de tu monedero con Google Smart Lock</string>
     <string name="save_password">Guardar la contraseña</string>
     <string name="later">Más tarde</string>
-
+    <string name="rating">Rango</string>
+    <string name="invite_friends">Invitar a Amigos</string>
 </resources>
