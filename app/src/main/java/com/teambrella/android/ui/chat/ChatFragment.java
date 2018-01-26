@@ -38,7 +38,7 @@ import io.reactivex.Observable;
 public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
 
-    long mLastRead = Long.MAX_VALUE;
+    Long mLastRead = null;
 
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -124,9 +124,13 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
             if (metadata != null && (metadata.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE, false)
                     || metadata.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD, false)) && metadata.getInt(TeambrellaModel.ATTR_METADATA_SIZE) > 0) {
                 mList.getLayoutManager().scrollToPosition(mAdapter.getItemCount() - 1);
-                JsonWrapper discussionPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
-                mLastRead = discussionPart.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, mLastRead);
             }
+
+            if (mLastRead == null) {
+                JsonWrapper discussionPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
+                mLastRead = discussionPart.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, -1L);
+            }
+
 
             JsonWrapper basicPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
             JsonWrapper votingPart = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
@@ -190,7 +194,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
             }
         }
 
-        if (mLastRead != -1) {
+        if (mLastRead != null && mLastRead >= 0) {
             IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
 
             int moveTo = pager.getLoadedData().size() - 1;
@@ -204,7 +208,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
             }
             LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
             manager.scrollToPositionWithOffset(moveTo, 0);
-            mLastRead = -1;
+            mLastRead = -1L;
         }
     }
 

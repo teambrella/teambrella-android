@@ -177,11 +177,11 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
             JsonWrapper dataObject = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper discussionObject = dataObject != null ? dataObject.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION) : null;
             mSince = discussionObject != null ? discussionObject.getLong(TeambrellaModel.ATTR_DATA_LAST_READ, 0) : 0;
-            if (newData.size() == 0) {
-                mHasNext = false;
-                loadPrevious(true);
-                return;
-            }
+            mArray.addAll(newData);
+            mHasNext = size == LIMIT;
+            mNextIndex += size;
+            loadPrevious(true);
+            return;
         }
         mArray.addAll(newData);
         mHasNext = size == LIMIT;
