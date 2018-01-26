@@ -55,10 +55,9 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         if (position == 0) {
             viewType = VIEW_TYPE_SUBMIT_WITHDRAWAL;
         } else {
-            position--;
             viewType = super.getItemViewType(position);
             if (viewType == VIEW_TYPE_REGULAR) {
-                JsonObject item = mPager.getLoadedData().get(position).getAsJsonObject();
+                JsonObject item = mPager.getLoadedData().get(position - getHeadersCount()).getAsJsonObject();
                 switch (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).getAsString()) {
                     case TeambrellaModel.WithdrawlsItemType.ITEM_QUEUED_HEADER:
                         viewType = VIEW_TYPE_QUEUED_HEADER;
@@ -107,8 +106,8 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             ((SubmitWithdrawViewHolder) holder).setAddress(mDefaultWithdrawAddress);
             ((SubmitWithdrawViewHolder) holder).setAvailableValue(mAvailableValue);
         } else if (holder instanceof WithdrawalViewHolder) {
-            ((WithdrawalViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - 1).getAsJsonObject()));
-        } else if (holder instanceof Header && getItemCount() > 2) {
+            ((WithdrawalViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - getHeadersCount()).getAsJsonObject()));
+        } else if (holder instanceof Header && getItemCount() > 2 && getItemViewType(position) != VIEW_TYPE_BOTTOM) {
             ((Header) holder).setBackgroundDrawable(position == 1 ? R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
             TextView subtitleView = holder.itemView.findViewById(R.id.status_subtitle);
             subtitleView.setAllCaps(false);
@@ -122,8 +121,8 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
     }
 
     @Override
-    public int getItemCount() {
-        return super.getItemCount() + 1;
+    protected int getHeadersCount() {
+        return 1;
     }
 
     class SubmitWithdrawViewHolder extends RecyclerView.ViewHolder {
