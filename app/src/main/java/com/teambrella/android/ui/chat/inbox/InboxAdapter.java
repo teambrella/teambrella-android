@@ -15,7 +15,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -89,7 +88,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
             itemView.setOnClickListener(v -> startActivity(ChatActivity.getConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                     , item.getString(TeambrellaModel.ATTR_DATA_NAME)
-                    , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))));
+                    , item.getString(TeambrellaModel.ATTR_DATA_AVATAR))));
         }
     }
 }

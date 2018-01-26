@@ -25,7 +25,6 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -256,7 +255,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                     , mDataHost.getTeamId()
                                     , card.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
                                     , card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
-                                    , TeambrellaImageLoader.getImageUri(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                    , card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                     , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
                                     , mDataHost.getTeamAccessLevel()));
                             break;
@@ -271,7 +270,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                             dataHost.launchActivity(ChatActivity.getTeammateChat(context, mDataHost.getTeamId()
                                     , card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
                                     , null
-                                    , TeambrellaImageLoader.getImageUri(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                    , card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                     , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
                                     , mDataHost.getTeamAccessLevel()));
                             break;

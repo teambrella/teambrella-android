@@ -20,11 +20,11 @@ import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
@@ -246,7 +246,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
 
 
             discussionsObservable.flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
-                    .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                    .map(JsonElement::getAsString)
                     .toList()
                     .subscribe(uris -> mAvatars.setAvatars(getImageLoader(), uris), e -> {
                     });

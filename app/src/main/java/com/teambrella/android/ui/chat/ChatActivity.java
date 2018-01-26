@@ -95,11 +95,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
     private MuteStatus mMuteStatus = null;
     private float mVote = -1;
 
-    public static void startConversationChat(Context context, String userId, String userName, Uri imageUri) {
+    public static void startConversationChat(Context context, String userId, String userName, String imageUri) {
         context.startActivity(getConversationChat(context, userId, userName, imageUri));
     }
 
-    public static Intent getConversationChat(Context context, String userId, String userName, Uri imageUri) {
+    public static Intent getConversationChat(Context context, String userId, String userName, String imageUri) {
         return new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_USER_ID, userId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
@@ -108,7 +108,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                 .setAction(SHOW_CONVERSATION_CHAT);
     }
 
-    public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, Uri imageUri, String topicId, int accessLevel) {
+    public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, String imageUri, String topicId, int accessLevel) {
         return new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
@@ -120,7 +120,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                 .setAction(SHOW_CLAIM_CHAT_ACTION);
     }
 
-    public static Intent getTeammateChat(Context context, int teamId, String userId, String userName, Uri imageUri, String topicId, int accessLevel) {
+    public static Intent getTeammateChat(Context context, int teamId, String userId, String userName, String imageUri, String topicId, int accessLevel) {
         return new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_USER_ID, userId)
@@ -226,12 +226,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                         mSubtitle.setText(intent.getStringExtra(EXTRA_USER_NAME));
                     }
 
-                    Uri mImageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
+                    String mImageUri = intent.getStringExtra(EXTRA_IMAGE_URI);
                     if (mImageUri != null && mIcon != null) {
-                        GlideApp.with(this).load(mImageUri)
+                        GlideApp.with(this).load(getImageLoader().getImageUrl(mImageUri))
                                 .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop()))
                                 .into(mIcon);
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri.toString()));
+                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
                     }
                     break;
 

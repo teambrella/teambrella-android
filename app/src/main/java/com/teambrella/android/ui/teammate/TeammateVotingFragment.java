@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
-import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.teammates.RiskRange;
@@ -176,7 +176,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                     Observable.
                             fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
-                            .map(jsonElement -> TeambrellaServer.BASE_URL + jsonElement.getAsString())
+                            .map(JsonElement::getAsString)
                             .toList()
                             .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
 

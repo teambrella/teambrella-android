@@ -15,7 +15,6 @@ import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.StatisticHelper;
@@ -423,7 +422,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                             , messageWrapper.getInt(TEAM_ID)
                                             , teammate.getString(USER_ID)
                                             , teammate.getString(USER_NAME)
-                                            , TeambrellaImageLoader.getImageUri(teammate.getString(USER_IMAGE))
+                                            , teammate.getString(USER_IMAGE)
                                             , messageWrapper.getString(TOPIC_ID)
                                             , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
                         } else if (claim != null) {
@@ -437,7 +436,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                             , messageWrapper.getInt(TEAM_ID)
                                             , claim.getInt(CLAIM_ID)
                                             , claim.getString(OBJECT_NAME)
-                                            , TeambrellaImageLoader.getImageUri(claim.getString(CLAIM_PHOTO))
+                                            , claim.getString(CLAIM_PHOTO)
                                             , messageWrapper.getString(TOPIC_ID)
                                             , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
                         } else if (discussion != null) {

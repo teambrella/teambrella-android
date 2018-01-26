@@ -2,7 +2,6 @@ package com.teambrella.android.ui.teammate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -22,7 +21,6 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
@@ -62,7 +60,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
     private String mUserName = null;
     private int mTeamId;
     private String mTopicId;
-    private Uri mAvatar = null;
+    private String mAvatar = null;
     private String mCurrency;
     private Snackbar mSnackBar;
     private TextView mTitleView;
@@ -297,7 +295,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
                     .map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
                     .doOnNext(node -> mUserId = node.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                     .doOnNext(node -> mUserName = node.getString(TeambrellaModel.ATTR_DATA_NAME))
-                    .doOnNext(node -> mAvatar = TeambrellaImageLoader.getImageUri(node.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .doOnNext(node -> node.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
 

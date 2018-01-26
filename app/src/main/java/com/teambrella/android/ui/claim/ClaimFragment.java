@@ -160,7 +160,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             , mDataHost.getTeamId()
                             , claimId
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null
-                            , smallPhoto != null ? Uri.parse(smallPhoto) : null
+                            , smallPhoto
                             , topicId
                             , mTeamAccessLevel)));
                 }

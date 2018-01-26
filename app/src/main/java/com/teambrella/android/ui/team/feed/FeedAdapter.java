@@ -22,7 +22,6 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
@@ -214,7 +213,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , mTeamId
                                 , item.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
                                 , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
-                                , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
                                 , mDataHost.getTeamAccessLevel()));
                         break;
@@ -229,7 +228,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                         startActivity(ChatActivity.getTeammateChat(context, mTeamId
                                 , item.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
                                 , null
-                                , TeambrellaImageLoader.getImageUri(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR))
+                                , item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
                                 , mDataHost.getTeamAccessLevel()));
                         break;

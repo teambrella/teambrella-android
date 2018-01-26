@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
-import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
@@ -182,7 +181,7 @@ public class TeambrellaNotificationManager {
         return PendingIntent.getActivities(mContext, 1, new Intent[]
                 {new Intent(mContext, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         , new Intent(mContext, InboxActivity.class)
-                        , ChatActivity.getConversationChat(mContext, userId, userName, TeambrellaImageLoader.getImageUri(avatar))
+                        , ChatActivity.getConversationChat(mContext, userId, userName, avatar)
                 }, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
