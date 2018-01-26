@@ -297,4 +297,5 @@
     <string name="withdrawal">Withdrawal</string>
     <string name="transaction_pending">Pending</string>
     <string name="transaction_cancelled">Cancelled</string>
+    <string name="no_transactions_yet">No transactions yet.</string>
 </resources>

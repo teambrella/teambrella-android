@@ -61,6 +61,10 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
     override fun getHeadersCount(): Int = 1
 
 
+    override fun createEmptyViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
+        return DefaultEmptyViewHolder(parent?.context, parent, R.string.no_transactions_yet)
+    }
+
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView? = view.findViewById(R.id.icon)
         val to: TextView? = view.findViewById(R.id.to)
