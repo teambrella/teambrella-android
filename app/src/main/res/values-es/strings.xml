@@ -282,4 +282,9 @@
     <string name="later">Más tarde</string>
     <string name="rating">Rango</string>
     <string name="invite_friends">Invitar a Amigos</string>
+    <string name="transactions">Transacciones</string>
+    <string name="withdrawal">Retirada</string>
+    <string name="transaction_pending">Pendiente</string>
+    <string name="transaction_cancelled">Cancelado</string>
+    <string name="no_transactions_yet">No hay transacciones.</string>
 </resources>
