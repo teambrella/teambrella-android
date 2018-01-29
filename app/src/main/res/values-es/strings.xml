@@ -270,6 +270,7 @@
     <string name="notification_option_muted_description">Notificaciones de este chat se desactivarán.</string>
     <string name="claim_amount_format_string"><![CDATA[CANTIDAD RECLAMADA - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">Ahora recibes notificaciones de este discusión.</string>
+    <string name="notification_chat_picture_format_string">%1$s ha enviado una imagen</string>
     <string name="message">Mensaje</string>
 
     <string name="backup_wallet">Copia de respaldo de tu monedero</string>

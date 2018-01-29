@@ -24,6 +24,10 @@ import java.util.UUID;
 @SuppressWarnings("WeakerAccess")
 public class TeambrellaNotificationManager {
 
+
+    private static final String PICTURE_PREFIX = "/ImageHandler.ashx";
+
+
     public enum ChatType {
         APPLICATION,
         CLAIM,
@@ -133,9 +137,11 @@ public class TeambrellaNotificationManager {
 
 
     public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, boolean userTopic, String topicId, Intent intent) {
+        String notificationText = text != null && text.startsWith(PICTURE_PREFIX) ? mContext.getString(R.string.notification_chat_picture_format_string, sender)
+                : mContext.getString(R.string.notification_chat_text_format_string, sender, text);
         NotificationCompat.Builder builder = getBuilder().setStyle(new NotificationCompat.BigTextStyle()
-                .bigText(mContext.getString(R.string.notification_chat_text_format_string, sender, text)))
-                .setContentText(mContext.getString(R.string.notification_chat_text_format_string, sender, text))
+                .bigText(notificationText))
+                .setContentText(notificationText)
                 .setContentIntent(PendingIntent.getActivity(mContext
                         , 0
                         , intent
