@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.proxies.proxyfor;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.util.AmountCurrencyUtil;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 /**
  * Proxy For Adapter
@@ -32,6 +34,7 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         super(pager);
         mTeamId = teamId;
         mCurrency = currency;
+        setHasStableIds(true);
     }
 
 
@@ -40,6 +43,11 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         notifyItemChanged(0);
     }
 
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -130,8 +138,22 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         @Override
         public void onBind(JsonWrapper item) {
             super.onBind(item);
-            mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, "never"));
-            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
+            try {
+                String timeString = item.getString(TeambrellaModel.ATTR_DATA_LAST_VOTED);
+                if (timeString != null) {
+                    long time = TeambrellaDateUtils.getServerTime(timeString);
+                    long now = System.currentTimeMillis();
+                    mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string
+                            , DateUtils.getRelativeTimeSpanString(time, now, DateUtils.HOUR_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)));
+                } else {
+                    mSubtitle.setText(R.string.voting_never);
+                }
+                mSubtitle.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                mSubtitle.setVisibility(View.INVISIBLE);
+            }
+            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency)
+                    , item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
 
         }
 
