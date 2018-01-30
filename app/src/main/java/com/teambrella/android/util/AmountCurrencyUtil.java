@@ -118,7 +118,7 @@ public class AmountCurrencyUtil {
             ds.setTextSize(ds.getTextSize() * DEFAULT_PROPORTION);
             ds.getTextBounds(mText, 0, mText.length(), bounds);
             shift += bounds.bottom - bounds.top;
-            ds.baselineShift += (shift + 3);
+            ds.baselineShift += (shift + 2);
         }
     }
 
