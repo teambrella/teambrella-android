@@ -120,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/header_view"
-                android:background="@drawable/discussion_background_top"
+                android:background="@drawable/block_discussion_top"
                 android:paddingBottom="24dp"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
@@ -208,6 +208,16 @@
 
             </android.support.constraint.ConstraintLayout>
 
+            <View
+                android:id="@+id/discussion_foreground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@id/discussion"
+                android:layout_alignTop="@id/discussion"
+                android:layout_marginBottom="11dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
 
             <FrameLayout
                 android:id="@+id/voting_container"
