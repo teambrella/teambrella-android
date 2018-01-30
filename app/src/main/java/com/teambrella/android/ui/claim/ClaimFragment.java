@@ -46,6 +46,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
     private TextView mUnreadCount;
     private TextView mWhen;
     private View mDiscussion;
+    private View mDiscussionForeground;
 
     private boolean mIsShown;
 
@@ -61,6 +62,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         mUnreadCount = view.findViewById(R.id.unread);
         mDiscussion = view.findViewById(R.id.discussion);
         mWhen = view.findViewById(R.id.when);
+        mDiscussionForeground = view.findViewById(R.id.discussion_foreground);
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
         mDataHost.load(mTags[0]);
         setContentShown(false);
@@ -156,7 +158,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 mTeamAccessLevel = team != null ? team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, mTeamAccessLevel) : mTeamAccessLevel;
 
                 if (uri != null) {
-                    mDiscussion.setOnClickListener(v -> mDataHost.launchActivity(ChatActivity.getClaimChat(getContext()
+                    mDiscussionForeground.setOnClickListener(v -> mDataHost.launchActivity(ChatActivity.getClaimChat(getContext()
                             , mDataHost.getTeamId()
                             , claimId
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null

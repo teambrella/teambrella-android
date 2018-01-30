@@ -119,7 +119,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         mCityView = view.findViewById(R.id.city);
         mDataHost.load(mTags[0]);
         setContentShown(false);
-        view.findViewById(R.id.discussion).setOnClickListener(v ->
+        view.findViewById(R.id.discussion_foreground).setOnClickListener(v ->
                 mDataHost.launchActivity(ChatActivity.getTeammateChat(getContext(), mTeamId, mUserId, null, null, mTopicId, mTeamAccessLevel)));
         return view;
     }
