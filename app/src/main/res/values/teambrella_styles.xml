@@ -28,7 +28,8 @@
 
     <style name="Teambrella.ListItem">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@drawable/selectable_item_background</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:foreground">@drawable/selectable_item_foreground</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">16dp</item>
     </style>
