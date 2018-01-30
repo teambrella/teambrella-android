@@ -277,7 +277,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     public void onVoteChanged(float vote, boolean fromUser) {
         Rect scrollBounds = new Rect();
         mScrollView.getHitRect(scrollBounds);
-        if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.GONE
+        if (!mUserPicture.getLocalVisibleRect(scrollBounds) && mWouldCoverPanel.getVisibility() == View.INVISIBLE
                 && fromUser && !mDataHost.isItMe()) {
             ObjectAnimator animator = ObjectAnimator.ofFloat(mWouldCoverPanel, "translationY", -(float) mWouldCoverPanel.getHeight(), 0f).setDuration(300);
             animator.addListener(new AnimatorListenerAdapter() {
@@ -328,7 +328,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                mWouldCoverPanel.setVisibility(View.GONE);
+                mWouldCoverPanel.setVisibility(View.INVISIBLE);
             }
         });
 

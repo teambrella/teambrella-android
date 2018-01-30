@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -35,7 +38,9 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
 
 
         GlideApp.with(this).load(getImageLoader().getImageUrl(mDataHost.getTeamLogoUri()))
+                .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
                 .into(teamLogo);
+
 
         teamLogo.setOnClickListener(v -> mDataHost.showTeamChooser());
         view.findViewById(R.id.arrow_down).setOnClickListener(v -> mDataHost.showTeamChooser());
