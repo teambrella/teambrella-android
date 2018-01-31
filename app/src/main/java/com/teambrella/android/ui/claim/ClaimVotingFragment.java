@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -137,11 +136,13 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
                 mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(getContext(), voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
 
+                int otherCount = voting.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT);
+
                 Observable.
                         fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
                         .map(JsonElement::getAsString)
                         .toList()
-                        .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
+                        .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris, otherCount));
 
                 if (proxyName != null && proxyAvatar != null) {
                     mProxyName.setText(proxyName);

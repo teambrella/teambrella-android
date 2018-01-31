@@ -174,11 +174,13 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                             , voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
 
 
+                    int otherCount = voting.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT);
+
                     Observable.
                             fromIterable(voting.getJsonArray(TeambrellaModel.ATTR_DATA_OTHER_AVATARS))
                             .map(JsonElement::getAsString)
                             .toList()
-                            .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
+                            .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris, otherCount));
 
                     setVoting(false);
                 }

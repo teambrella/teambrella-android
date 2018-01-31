@@ -6,10 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -68,10 +68,16 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             params.leftMargin = i * (mAvatarSize - mAvatarShift);
             addView(circleImageView, params);
         }
+
+        AkkuratBoldTextView countView = (AkkuratBoldTextView) LayoutInflater.from(getContext())
+                .inflate(R.layout.avatar_more_count_view, this, false);
+        FrameLayout.LayoutParams params = new LayoutParams(mAvatarSize, mAvatarSize);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        addView(countView, params);
     }
 
 
-    public void setAvatars(TeambrellaImageLoader loader, List<String> uris) {
+    public void setAvatars(TeambrellaImageLoader loader, List<String> uris, int posterCount) {
         Iterator<String> it = uris.iterator();
         for (int i = 0; i < mAvatarCount; i++) {
             ImageView imageview = (ImageView) getChildAt(i);
@@ -85,6 +91,17 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
             imageview.setVisibility(uri != null ? VISIBLE : GONE);
         }
 
+        AkkuratBoldTextView countView = findViewById(R.id.more_count);
+        int count = posterCount - uris.size();
+        if (count > 0) {
+            FrameLayout.LayoutParams params = (LayoutParams) countView.getLayoutParams();
+            params.leftMargin = uris.size() * (mAvatarSize - mAvatarShift);
+            countView.setLayoutParams(params);
+            countView.setText(getContext().getString(R.string.plus_count, count));
+            countView.setVisibility(VISIBLE);
+        } else {
+            countView.setVisibility(GONE);
+        }
     }
 
 

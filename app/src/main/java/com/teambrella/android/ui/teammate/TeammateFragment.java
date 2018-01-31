@@ -86,6 +86,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private float mHeCoversMeIf499;
     private float mMyRisk;
     private int mGender;
+    private int mPosterCount;
 
 
     private boolean mIsShown;
@@ -242,13 +243,14 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     .doOnNext(discussion -> mMessage.setText(Html.fromHtml(discussion.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT, null))))
                     .doOnNext(discussion -> mTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID))
                     .doOnNext(discussion -> mWhen.setText(TeambrellaDateUtils.getRelativeTime(-discussion.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES, 0))))
+                    .doOnNext(discussion -> mPosterCount = discussion.getInt(TeambrellaModel.ATTR_DATA_POSTER_COUNT))
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
 
             discussionsObservable.flatMap(discussion -> Observable.fromIterable(discussion.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)))
                     .map(JsonElement::getAsString)
                     .toList()
-                    .subscribe(uris -> mAvatars.setAvatars(getImageLoader(), uris), e -> {
+                    .subscribe(uris -> mAvatars.setAvatars(getImageLoader(), uris, mPosterCount), e -> {
                     });
 
             mCoverThemSection.setVisibility(mDataHost.isItMe() ? View.GONE : View.VISIBLE);

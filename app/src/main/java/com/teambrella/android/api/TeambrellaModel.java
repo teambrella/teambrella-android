@@ -364,6 +364,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ITEM_DATE = "ItemDate";
     public static final String ATTR_DATA_CHAT_TITLE = "ChatTitle";
     public static final String ATTR_DATA_TOP_POSTER_AVATARS = "TopPosterAvatars";
+    public static final String ATTR_DATA_POSTER_COUNT = "PosterCount";
     public static final String ATTR_DATA_MODEL_OR_NAME = "ModelOrName";
     public static final String ATTR_DATA_ITEM_USER_ID = "ItemUserId";
     public static final String ATTR_DATA_IS_MY_PROXY = "IsMyProxy";
@@ -372,6 +373,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DECISION_FREQUENCY = "DecisionFreq";
     public static final String ATTR_DATA_DISCUSSION_FREQUENCY = "DiscussionFreq";
     public static final String ATTR_DATA_VOTING_FREQUENCY = "VotingFreq";
+    public static final String ATTR_DATA_OTHER_COUNT = "OtherCount";
     public static final String ATTR_DATA_COMMISSION = "Commission";
     public static final String ATTR_DATA_MEMBERS = "Members";
     public static final String ATTR_DATA_POSITION = "Position";

@@ -199,11 +199,13 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             }
 
 
+            int posterCount = item.getInt(TeambrellaModel.ATTR_DATA_POSTER_COUNT);
+
             Observable.
                     fromIterable(item.getJsonArray(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS))
                     .map(JsonElement::getAsString)
                     .toList()
-                    .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris));
+                    .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris, posterCount));
 
 
             itemView.setOnClickListener(v -> {
