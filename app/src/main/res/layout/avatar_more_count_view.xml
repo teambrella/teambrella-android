@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.teambrella.android.ui.widget.AkkuratBoldTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/more_count"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/avatar_more_count"
+    android:gravity="center"
+    android:text="+3"
+    android:textColor="@color/battleshipGrey"
+    android:textSize="9sp" />

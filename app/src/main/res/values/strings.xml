@@ -1,5 +1,6 @@
 <resources>
     <string name="ethereum" translatable="false">ETH</string>
+    <string name="plus_count" translatable="false">+%d</string>
     <string name="milli_ethereum" translatable="false">mETH</string>
     <string name="drop_down_icon">&#x25BC;</string>
     <string name="eth_amount_format_string" translatable="false">%f</string>
