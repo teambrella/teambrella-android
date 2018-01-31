@@ -70,7 +70,7 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
 
         AkkuratBoldTextView countView = (AkkuratBoldTextView) LayoutInflater.from(getContext())
                 .inflate(R.layout.avatar_more_count_view, this, false);
-        FrameLayout.LayoutParams params = new LayoutParams(mAvatarSize, mAvatarSize);
+        FrameLayout.LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, mAvatarSize);
         params.gravity = Gravity.CENTER_VERTICAL;
         addView(countView, params);
     }
