@@ -217,7 +217,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             transaction.add(R.id.container, createFragmentByTag(newFragmentTag), newFragmentTag);
         }
         transaction.commit();
-        fragmentManager.executePendingTransactions();
+        //fragmentManager.executePendingTransactions();
         mSelectedItemId = view.getId();
         return true;
     }
