@@ -91,7 +91,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             item.avatar?.let {
                 icon?.let {
                     GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar))
-                            .apply(RequestOptions().circleCrop()).into(icon)
+                            .apply(RequestOptions().circleCrop().placeholder(R.drawable.picture_background_circle)).into(icon)
                 }
             }
 

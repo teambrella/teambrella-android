@@ -142,7 +142,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                                 .map(uri -> GlideApp.with(this).load(getImageLoader().getImageUrl(uri)))
                                 .subscribe(requestCreator -> requestCreator
                                         .apply(new RequestOptions().transforms(new CenterCrop()
-                                                , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
+                                                , new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))).placeholder(R.drawable.picture_background_round_4dp))
                                         .into(mIcon), throwable -> {
                                 });
                         mTitleView.setText(basicPart.getString(TeambrellaModel.ATTR_DATA_MODEL));

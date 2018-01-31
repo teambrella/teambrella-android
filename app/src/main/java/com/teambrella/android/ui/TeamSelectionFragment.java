@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
@@ -174,7 +176,8 @@ public class TeamSelectionFragment extends ATeambrellaDialogFragment {
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME));
             mCoverage.setText(String.format(Locale.US, "%d%%", Math.round(100 * item.getFloat(TeambrellaModel.ATTR_DATA_OBJECT_COVERAGE))));
             GlideApp.with(itemView).load(getTeambrellaImageLoader().getImageUrl((item.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO))))
-                    .into(mIcon);
+                    .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))
+                            .placeholder(R.drawable.picture_background_round_4dp)).into(mIcon);
 
             mCurrentTeamMark.setVisibility(mDataHost.getTeamId() != item.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID) ? View.INVISIBLE : View.VISIBLE);
 

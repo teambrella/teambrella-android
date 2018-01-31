@@ -148,10 +148,11 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
 
             if (itemType == TeambrellaModel.FEED_ITEM_TEAMMATE
                     || itemType == TeambrellaModel.FEED_ITEM_TEAM_CHAT) {
-                requestCreator = requestCreator.apply(new RequestOptions().transform(new CircleCrop()));
+                requestCreator = requestCreator.apply(new RequestOptions().transform(new CircleCrop())
+                        .placeholder(R.drawable.picture_background_circle));
             } else {
                 requestCreator = requestCreator.apply(new RequestOptions().transforms(new CenterCrop()
-                        , new RoundedCorners(context.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_2dp))));
+                        , new RoundedCorners(context.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_2dp))).placeholder(R.drawable.picture_background_round_2dp));
             }
 
             requestCreator.into(mIcon);

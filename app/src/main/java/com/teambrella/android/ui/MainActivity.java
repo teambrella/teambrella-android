@@ -294,7 +294,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 GlideApp.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                        .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mAvatar);
+                        .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
+                                .placeholder(R.drawable.picture_background_circle)).into(mAvatar);
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
                 mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
                 mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));

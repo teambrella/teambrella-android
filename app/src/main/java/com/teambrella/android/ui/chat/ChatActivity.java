@@ -229,7 +229,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                     String mImageUri = intent.getStringExtra(EXTRA_IMAGE_URI);
                     if (mImageUri != null && mIcon != null) {
                         GlideApp.with(this).load(getImageLoader().getImageUrl(mImageUri))
-                                .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop()))
+                                .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
+                                        .placeholder(R.drawable.picture_background_circle))
                                 .into(mIcon);
                         mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
                     }

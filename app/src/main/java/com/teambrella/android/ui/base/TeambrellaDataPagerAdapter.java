@@ -227,7 +227,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                             .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                             .apply(new RequestOptions().transforms(new CenterCrop()
-                                    , new CircleCrop())).into(mIcon), throwable -> {
+                                    , new CircleCrop()).placeholder(R.drawable.picture_background_circle)).into(mIcon), throwable -> {
                         // 8)
                     });
             String userPictureUri = Observable.fromArray(item).map(json -> Notification.createOnNext(json.getString(TeambrellaModel.ATTR_DATA_AVATAR)))

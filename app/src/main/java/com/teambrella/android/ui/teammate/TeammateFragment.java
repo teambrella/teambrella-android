@@ -194,9 +194,12 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             if (basic != null) {
                 GlideUrl url = getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR));
                 if (url != null) {
-                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mUserPicture);
-                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mTeammateIcon);
-                    manager.load(url).apply(RequestOptions.circleCropTransform()).into(mSmallImagePicture);
+                    manager.load(url).apply(RequestOptions.circleCropTransform()
+                            .placeholder(R.drawable.picture_background_round_4dp)).into(mUserPicture);
+                    manager.load(url).apply(RequestOptions.circleCropTransform()
+                            .placeholder(R.drawable.picture_background_round_4dp)).into(mTeammateIcon);
+                    manager.load(url).apply(RequestOptions.circleCropTransform()
+                            .placeholder(R.drawable.picture_background_round_4dp)).into(mSmallImagePicture);
                 }
             }
 

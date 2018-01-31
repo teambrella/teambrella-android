@@ -100,7 +100,8 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
                 })
             }
 
-            GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar)).apply(RequestOptions().circleCrop())
+            GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar)).apply(RequestOptions().circleCrop()
+                    .placeholder(R.drawable.picture_background_circle))
                     .into(itemView.icon)
         }
 

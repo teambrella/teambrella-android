@@ -64,8 +64,9 @@ public class HomeCoverageAndWalletFragment extends ADataFragment<IMainDataHost> 
             mObjectModel.setText(objectName);
             final String objectImageUri = data.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
             GlideApp.with(this).load(getImageLoader().getImageUrl(objectImageUri))
-                    .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getContext()
-                            .getResources().getDimensionPixelOffset(R.dimen.rounded_corners_3dp))))
+                    .apply(new RequestOptions().transforms(new CenterCrop()
+                            , new RoundedCorners(getContext()
+                                    .getResources().getDimensionPixelOffset(R.dimen.rounded_corners_3dp))))
                     .into(mObjectPicture);
             mCoverage.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round((data.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)) * 100))));
             mSubmitClaim.setVisibility(mDataHost.getTeamAccessLevel() == TeambrellaModel.TeamAccessLevel.FULL_ACCESS

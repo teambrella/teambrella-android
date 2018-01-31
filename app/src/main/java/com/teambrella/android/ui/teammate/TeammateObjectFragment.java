@@ -120,7 +120,8 @@ public class TeammateObjectFragment extends ADataFragment<ITeammateActivity> {
             if (photos != null && photos.size() > 0) {
                 Context context = getContext();
                 GlideApp.with(this).load(getImageLoader().getImageUrl(photos.get(0)))
-                        .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))))
+                        .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp))
+                        ).placeholder(R.drawable.picture_background_round_4dp))
                         .into(mObjectPicture);
                 mObjectPicture.setOnClickListener(v -> v.getContext().startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)));
             }
