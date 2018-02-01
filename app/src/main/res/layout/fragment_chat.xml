@@ -89,7 +89,7 @@
                 android:gravity="start|center_vertical"
                 android:orientation="vertical"
                 android:paddingEnd="8dp"
-                android:paddingStart="8dp"
+                android:paddingStart="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/vote"
                 app:layout_constraintTop_toTopOf="parent"
