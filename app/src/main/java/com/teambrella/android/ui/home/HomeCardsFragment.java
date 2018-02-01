@@ -197,7 +197,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             int itemType = card.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
 
-            leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.limit : R.string.claimed);
+            leftTitle.setText(itemType == TeambrellaModel.FEED_ITEM_TEAMMATE ? R.string.coverage : R.string.claimed);
 
 
             RequestBuilder requestCreator = GlideApp.with(this).load(getImageLoader().getImageUrl(card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)));
