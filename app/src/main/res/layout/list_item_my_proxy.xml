@@ -92,6 +92,8 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@string/decisions" />
 
             <ProgressBar
@@ -118,6 +120,8 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@string/discussion" />
 
             <ProgressBar
@@ -144,6 +148,8 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@string/voting_frequency" />
 
 

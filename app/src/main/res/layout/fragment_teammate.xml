@@ -109,6 +109,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:paddingBottom="8dp"
+                    android:textAllCaps="true"
                     android:textColor="@color/blueGrey"
                     android:textSize="12sp" />
 
