@@ -38,7 +38,7 @@
 
             <ImageView
                 style="@style/Teambrella.BottomBarIcon"
-                android:background="@drawable/ic_icon_home"
+                android:src="@drawable/ic_icon_home"
                 tools:ignore="ContentDescription" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -57,7 +57,7 @@
 
             <ImageView
                 style="@style/Teambrella.BottomBarIcon"
-                android:background="@drawable/ic_icon_team"
+                android:src="@drawable/ic_icon_team"
                 tools:ignore="ContentDescription" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -77,7 +77,7 @@
 
             <ImageView
                 style="@style/Teambrella.BottomBarIcon"
-                android:background="@drawable/ic_icon_proxies"
+                android:src="@drawable/ic_icon_proxies"
                 tools:ignore="ContentDescription" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -98,7 +98,6 @@
             <ImageView
                 android:id="@+id/avatar"
                 style="@style/Teambrella.BottomBarIcon"
-
                 tools:ignore="ContentDescription" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
