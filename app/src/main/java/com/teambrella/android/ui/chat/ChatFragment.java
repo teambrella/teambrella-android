@@ -171,7 +171,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                         mSubtitleView.setAllCaps(true);
 
                         if (votingPart == null) {
-                            mVoteTitleView.setText(R.string.risk_factor);
+                            mVoteTitleView.setText(R.string.risk);
                             setTeammateVoteValue(basicPart.getFloat(TeambrellaModel.ATTR_DATA_RISK));
                         }
                     }

@@ -32,7 +32,6 @@
     <string name="collision_deductible_insurance">Deducible por Colisión</string>
 
     <string name="limit">Límite</string>
-    <string name="risk_factor">Factor de Riesgo</string>
     <string name="see_claims">Véase los Reclamaciones</string>
     <string name="see_claims_format_string">Ver las Reclamaciones (%d)</string>
     <string name="voting_stats">Estadísticas de votación</string>

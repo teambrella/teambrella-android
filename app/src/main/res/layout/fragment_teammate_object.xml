@@ -117,7 +117,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:text="@string/risk_factor" />
+                android:text="@string/risk" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/risk"

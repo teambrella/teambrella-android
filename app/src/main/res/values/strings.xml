@@ -42,7 +42,6 @@
     <string name="collision_deductible_insurance">Collision Deductible</string>
 
     <string name="limit">Limit</string>
-    <string name="risk_factor">Risk Factor</string>
     <string name="see_claims_format_string">See Claims (%d)</string>
     <string name="voting_stats">Voting Stats</string>
     <string name="weight">Weight</string>
