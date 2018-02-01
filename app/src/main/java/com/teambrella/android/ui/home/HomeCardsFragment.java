@@ -214,10 +214,11 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             requestCreator.into(icon);
 
             message.setText(Html.fromHtml(card.getString(TeambrellaModel.ATTR_DATA_TEXT, "")));
+            message.post(() -> message.setMaxLines(message.length() > 64 ? 2 : 1));
 
             int unreadCount = card.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT);
 
-            unread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.GONE);
+            unread.setVisibility(unreadCount > 0 ? View.VISIBLE : View.INVISIBLE);
             unread.setText(card.getString(TeambrellaModel.ATTR_DATA_UNREAD_COUNT));
 
             AmountCurrencyUtil.setAmount(amountWidget, card.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT), mDataHost.getCurrency());
