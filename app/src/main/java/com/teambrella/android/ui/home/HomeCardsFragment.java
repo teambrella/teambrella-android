@@ -155,6 +155,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         TextView title;
         TextView subtitle;
         TextView leftTitle;
+        View votingLabel;
         int mPosition;
 
         public static CardsFragment getInstance(int position, String[] tags) {
@@ -184,6 +185,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             title = view.findViewById(R.id.title);
             subtitle = view.findViewById(R.id.subtitle);
             leftTitle = view.findViewById(R.id.left_title);
+            votingLabel = view.findViewById(R.id.voting_label);
             return view;
         }
 
@@ -244,6 +246,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
                     , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
                     , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
+
+            votingLabel.setVisibility(card.getBoolean(TeambrellaModel.ATTR_DATA_IS_VOTING, false) ? View.VISIBLE : View.GONE);
 
             View view = getView();
             if (view != null) {
