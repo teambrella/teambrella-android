@@ -38,7 +38,7 @@ public class PercentageWidget extends ConstraintLayout {
         int percent = Math.round(percentage * 100);
         mProgress.setMax(100);
         mProgress.setProgress(percent);
-        mPercentage.setText(Integer.toString(percent));
+        mPercentage.setText(getContext().getString(R.string.percentage_format_string, percent));
     }
 
     public void setDescription(String description) {
@@ -47,9 +47,9 @@ public class PercentageWidget extends ConstraintLayout {
 
     private void init(Context context, AttributeSet attrs) {
         inflate(getContext(), R.layout.widget_percentage, this);
-        mPercentage = (TextView) findViewById(R.id.percentage);
-        mProgress = (ProgressBar) findViewById(R.id.progress);
-        mDescription = (TextView) findViewById(R.id.description);
+        mPercentage = findViewById(R.id.percentage);
+        mProgress = findViewById(R.id.progress);
+        mDescription = findViewById(R.id.description);
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
