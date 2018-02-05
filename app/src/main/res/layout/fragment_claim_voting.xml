@@ -29,6 +29,7 @@
 
 
         <com.teambrella.android.ui.widget.CountDownClock
+            android:id="@+id/clock"
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_marginStart="12dp" />
