@@ -177,11 +177,22 @@
     </android.support.constraint.ConstraintLayout>
 
 
-    <SeekBar
-        android:id="@+id/voting_control"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:thumb="@drawable/seek_bar_thumb" />
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="38dp"
+            android:background="@drawable/seek_bar_background" />
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/voting_control"
+            style="@style/Teambrella.SeekBar"
+            android:paddingTop="24dp"
+            android:thumb="@drawable/seek_bar_thumb" />
+
+    </RelativeLayout>
 
 </LinearLayout>

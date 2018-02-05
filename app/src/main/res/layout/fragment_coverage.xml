@@ -153,7 +153,6 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp">
 
                 <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -195,21 +194,32 @@
             </android.support.constraint.ConstraintLayout>
 
 
-            <android.support.v7.widget.AppCompatSeekBar
-                android:id="@+id/coverage_slider"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:thumb="@drawable/seek_bar_thumb" />`
+                android:layout_marginStart="20dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/seek_bar_background" />
+
+                <android.support.v7.widget.AppCompatSeekBar
+                    android:id="@+id/coverage_slider"
+                    style="@style/Teambrella.SeekBar"
+                    android:paddingBottom="17dp"
+                    android:paddingTop="14dp"
+                    android:thumb="@drawable/seek_bar_thumb" />
+
+            </RelativeLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:paddingBottom="4dp">
 
                 <com.teambrella.android.ui.widget.AkkuratRegularTextView
                     android:id="@+id/team_pay_title"
