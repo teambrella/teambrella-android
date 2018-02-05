@@ -263,5 +263,12 @@
         <item name="android:layout_width">28dp</item>
     </style>
 
+    <style name="Teambrella.SeekBar">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:thumb">@drawable/seek_bar_thumb</item>
+        <item name="android:progressDrawable">@drawable/seek_bar_progress</item>
+    </style>
+
 
 </resources>
