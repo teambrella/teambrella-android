@@ -183,7 +183,7 @@ class EthWallet {
             depositTx = mEtherAcc.newDepositTx(getMyNonce(), 50_000L, multisig.address, getGasPrice(), value);
             depositTx = mEtherAcc.signTx(depositTx, mIsTestNet);
             String txHash = publish(depositTx);
-            if (txHash != null){
+            if (txHash != null) {
                 mBalance = mBalance.subtract(value, MathContext.UNLIMITED);    // neglect gas cost; estimate value only. Until tx is mined rough balance estimate is ok..
             }
         }
@@ -289,14 +289,14 @@ class EthWallet {
 
             index++;
         }
-        if (j < txSignatures.size() && j < 3){
-            Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
-                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
+        if (j < txSignatures.size() && j < 3) {
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
+                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id));
             return null;
         }
 
         Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, payToAddresses, payToValues, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
-        if (cryptoTx == null){
+        if (cryptoTx == null) {
             Log.w(LOG_TAG, "tx was skipped. Seek details in the log above. Tx.id: " + tx.id);
             return null;
         }
@@ -355,14 +355,14 @@ class EthWallet {
 
             index++;
         }
-        if (j < txSignatures.size() && j < 3){
-            Log.reportNonFatal(LOG_TAG, "tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
-                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id);
+        if (j < txSignatures.size() && j < 3) {
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("tx was skipped. One or more signatures are not from a valid cosigner. Total signatures: " + txSignatures.size() + ". Valid signatures: " + j +
+                    ". pos[0]: " + pos[0] + "" + ". pos[1]: " + pos[1] + ". pos[2]: " + pos[2] + ". Tx.id: " + tx.id));
             return null;
         }
 
         Transaction cryptoTx = mEtherAcc.newMessageTx(myNonce, gasLimit, multisigAddress, gasPrice, methodId, opNum, nextCosignerAddresses, pos[0], pos[1], pos[2], sig[0], sig[1], sig[2]);
-        if (cryptoTx == null){
+        if (cryptoTx == null) {
             Log.w(LOG_TAG, "move tx was skipped. Seek details in the log above. Tx.id: " + tx.id);
             return null;
         }
@@ -383,10 +383,10 @@ class EthWallet {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
         if (price < 0) {
-            Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("Failed to get the gas price from a server. A default gas price will be used."));
             return 100_000_001L;  // 0.1 Gwei is enough since October 16, 2017 (1 Gwei = 10^9 wei)
-        }else if (price > 50_000_000_001L) {
-            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the gas price: " + price);
+        } else if (price > 50_000_000_001L) {
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("The server is kidding with us about the gas price: " + price));
             // The server is kidding with us
             return 50_000_000_001L;
         }
@@ -402,10 +402,10 @@ class EthWallet {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkGasPrice();
         if (price < 0) {
-            Log.reportNonFatal(LOG_TAG, "Failed to get the gas price from a server. A default gas price will be used.");
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("Failed to get the gas price from a server. A default gas price will be used."));
             return 1_000_000_001L;  // 1 Gwei or more is required since Dec, 2017 (1 Gwei = 10^9 wei)
-        }else if (price > 4_000_000_001L) {
-            Log.reportNonFatal(LOG_TAG, "With the current version gas price for a clime is limited. This high price will be supported later (when off-chain payments are implemented) : " + price);
+        } else if (price > 4_000_000_001L) {
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("With the current version gas price for a clime is limited. This high price will be supported later (when off-chain payments are implemented) : " + price));
             // The server is kidding with us
             return 4_000_000_001L;
         }
@@ -421,10 +421,10 @@ class EthWallet {
         EtherGasStation gasStation = new EtherGasStation(mIsTestNet);
         long price = gasStation.checkContractCreationGasPrice();
         if (price < 0) {
-            Log.reportNonFatal(LOG_TAG, "Failed to get the contract gas price from a server. A default contract gas price will be used.");
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("Failed to get the contract gas price from a server. A default contract gas price will be used."));
             return 100_000_001L;
-        }else if (price > 8_000_000_002L) {
-            Log.reportNonFatal(LOG_TAG, "The server is kidding with us about the contract gas price: " + price);
+        } else if (price > 8_000_000_002L) {
+            Log.reportNonFatal(LOG_TAG, new EtherWalletException("The server is kidding with us about the contract gas price: " + price));
             // The server is kidding with us
             return 8_000_000_002L;
         }
@@ -438,21 +438,21 @@ class EthWallet {
     }
 
     private long getGasPrice() {
-        if (mIsTestNet){
+        if (mIsTestNet) {
             return mTestGasPrice < 0 ? refreshGasPrice() : mTestGasPrice;
         }
         return mGasPrice < 0 ? refreshGasPrice() : mGasPrice;
     }
 
     private long getGasPriceForClaim() {
-        if (mIsTestNet){
+        if (mIsTestNet) {
             return mTestClaimGasPrice < 0 ? refreshClaimGasPrice() : mTestClaimGasPrice;
         }
         return mClaimGasPrice < 0 ? refreshClaimGasPrice() : mClaimGasPrice;
     }
 
     long getGasPriceForContractCreation() {
-        if (mIsTestNet){
+        if (mIsTestNet) {
             return mTestContractGasPrice < 0 ? refreshContractCreateGasPrice() : mTestContractGasPrice;
         }
         return mContractGasPrice < 0 ? refreshContractCreateGasPrice() : mContractGasPrice;
@@ -468,13 +468,13 @@ class EthWallet {
         return mNonce < 0 ? refreshMyNonce() : mNonce;
     }
 
-    BigDecimal refreshBalance(){
+    BigDecimal refreshBalance() {
         EtherNode blockchain = new EtherNode(mIsTestNet);
         return mBalance = blockchain.checkBalance(mEtherAcc.getDepositAddress());
     }
 
-    BigDecimal getBalance(){
-        return  (mBalance.compareTo(BigDecimal.ZERO) < 0) ? refreshBalance() : mBalance;
+    BigDecimal getBalance() {
+        return (mBalance.compareTo(BigDecimal.ZERO) < 0) ? refreshBalance() : mBalance;
     }
 
     private long getBetterGasPriceForContractCreation(long oldPrice) {
@@ -506,7 +506,7 @@ class EthWallet {
 
             EtherNode blockchain = new EtherNode(mIsTestNet);
             String txHash = blockchain.pushTx(hex);
-            if (txHash != null){
+            if (txHash != null) {
                 mNonce++;
             }
             return txHash;
@@ -593,7 +593,7 @@ class EthWallet {
         return Sha3.getKeccak256Hash(data);
     }
 
-    private static void sanityAddressCheck(String a){
+    private static void sanityAddressCheck(String a) {
         if (null == a) throw new IllegalArgumentException("address is null");
 
         if (!Pattern.matches("^0x[a-fA-F0-9]{40}$", a))
@@ -610,5 +610,11 @@ class EthWallet {
         return String.format("'Multisig creation(teamId=%s)' tx:%s", teamId, creationTx);
     }
 
+
+    public static class EtherWalletException extends Exception {
+        public EtherWalletException(String message) {
+            super(message);
+        }
+    }
 
 }

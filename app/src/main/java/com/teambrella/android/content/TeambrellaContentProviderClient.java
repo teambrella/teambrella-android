@@ -10,11 +10,9 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.content.model.Cosigner;
 import com.teambrella.android.content.model.Multisig;
@@ -157,10 +155,11 @@ public class TeambrellaContentProviderClient {
             cv.put(TeambrellaRepository.Teammate.PUBLIC_KEY_ADDRESS, teammate.publicKeyAddress);
             return ContentProviderOperation.newInsert(TeambrellaRepository.Teammate.CONTENT_URI).withValues(cv).build();
         } else {
-            if (existingTeammate.publicKey != null && !Objects.equals(teammate.publicKey, existingTeammate.publicKey) ||
-                    existingTeammate.publicKeyAddress != null && !Objects.equals(teammate.publicKeyAddress, existingTeammate.publicKeyAddress) ||
-                    existingTeammate.facebookName != null && !Objects.equals(teammate.facebookName, existingTeammate.facebookName)) {
-                Log.reportNonFatal(LOG_TAG, "An attempt to alter basic teammate info: \n\texisting:" + existingTeammate + ", \n\t new one:" + teammate);
+
+            if (existingTeammate.publicKey != null && !existingTeammate.publicKey.equalsIgnoreCase(teammate.publicKey) ||
+                    existingTeammate.publicKeyAddress != null && !existingTeammate.publicKeyAddress.equalsIgnoreCase(teammate.publicKeyAddress) ||
+                    existingTeammate.facebookName != null && !existingTeammate.facebookName.equalsIgnoreCase(teammate.facebookName)) {
+                Log.reportNonFatal(LOG_TAG, new AttemptToAlertException("An attempt to alter basic teammate info: \n\texisting:" + existingTeammate + ", \n\t new one:" + teammate));
                 return null;
             }
 
@@ -307,10 +306,10 @@ public class TeambrellaContentProviderClient {
     public List<ContentProviderOperation> insertTXOutputs(Tx[] txs, TxOutput[] txOutputs) throws RemoteException {
         List<ContentProviderOperation> list = new LinkedList<>();
         for (final TxOutput txOutput : txOutputs) {
-            TxOutput existing =  queryOne(TeambrellaRepository.TXOutput.CONTENT_URI, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
+            TxOutput existing = queryOne(TeambrellaRepository.TXOutput.CONTENT_URI, TeambrellaRepository.TX_OUTPUT_TABLE + "." + TeambrellaRepository.TXOutput.ID + "=?",
                     new String[]{txOutput.id.toString()}, TxOutput.class);
 
-            if (existing == null)  {
+            if (existing == null) {
                 long count = Observable.fromArray(txs).filter(iTx -> iTx.id.equals(txOutput.txId)).count().blockingGet();
 
                 if (count > 0) {
@@ -323,15 +322,15 @@ public class TeambrellaContentProviderClient {
                             .build());
                 }
 
-            }else{
-                if (Objects.equals(txOutput.txId, existing.txId) &&  Objects.equals(txOutput.payToId, existing.payToId) && compareDecimalStrings(txOutput.cryptoAmount, existing.cryptoAmount) <= 0) {
+            } else {
+                if (Objects.equals(txOutput.txId, existing.txId) && Objects.equals(txOutput.payToId, existing.payToId) && compareDecimalStrings(txOutput.cryptoAmount, existing.cryptoAmount) <= 0) {
                     list.add(ContentProviderOperation.newUpdate(TeambrellaRepository.TXOutput.CONTENT_URI)
                             .withValue(TeambrellaRepository.TXOutput.AMOUNT_CRYPTO, txOutput.cryptoAmount)
                             .withSelection(TeambrellaRepository.TXOutput.ID + "=?", new String[]{txOutput.id.toString()})
                             .build());
                     Log.v(LOG_TAG, "Updating tx output amount: " + existing.cryptoAmount + " with a new record:" + txOutput);
-                }else{
-                    Log.reportNonFatal(LOG_TAG, "An attempt to cheat with tx output values: \n\texisting:" + existing + ", \n\t new one:" + txOutput);
+                } else {
+                    Log.reportNonFatal(LOG_TAG, new AttemptToAlertException("An attempt to cheat with tx output values: \n\texisting:" + existing + ", \n\t new one:" + txOutput));
                 }
             }
         }
@@ -339,7 +338,7 @@ public class TeambrellaContentProviderClient {
         return list;
     }
 
-    private static final int compareDecimalStrings(String s1, String s2){
+    private static final int compareDecimalStrings(String s1, String s2) {
         BigDecimal d1 = new BigDecimal(s1, MathContext.UNLIMITED);
         BigDecimal d2 = new BigDecimal(s2, MathContext.UNLIMITED);
         return d1.compareTo(d2);
@@ -405,7 +404,7 @@ public class TeambrellaContentProviderClient {
     }
 
     @NonNull
-    private ContentProviderOperation insertOrUpdateOneMultisig(Multisig newOne) throws RemoteException{
+    private ContentProviderOperation insertOrUpdateOneMultisig(Multisig newOne) throws RemoteException {
         Multisig existing = getMultisigById(newOne.id);
         if (existing == null) {
             ContentValues cv = new ContentValues();
@@ -417,9 +416,9 @@ public class TeambrellaContentProviderClient {
             cv.put(TeambrellaRepository.Multisig.NEED_UPDATE_SERVER, false);
             return ContentProviderOperation.newInsert(TeambrellaRepository.Multisig.CONTENT_URI).withValues(cv).build();
         } else {
-            if (existing.address != null && !Objects.equals(newOne.address, existing.address) ||
-                existing.teammateId != newOne.teammateId) {
-                Log.reportNonFatal(LOG_TAG, "An attempt to alter basic multisig info: \n\texisting:" + existing + ", \n\t new one:" + newOne);
+            if (existing.address != null && !existing.address.equalsIgnoreCase(newOne.address) ||
+                    existing.teammateId != newOne.teammateId) {
+                Log.reportNonFatal(LOG_TAG, new AttemptToAlertException("An attempt to alter basic multisig info: \n\texisting:" + existing + ", \n\t new one:" + newOne));
                 return null;
             }
 
@@ -535,14 +534,14 @@ public class TeambrellaContentProviderClient {
 
                     Multisig currentMultisig = tx.getFromMultisig();
                     if (currentMultisig == null) {
-                        setNeedsFullCleintUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+                        setNeedsFullClientUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
 
                         iterator.remove();
                     } else {
 
                         tx.cosigners = getCosigners(currentMultisig);
                         if (getIndexByPublicKey(publicKey, tx.cosigners) < 0) {
-                            setNeedsFullCleintUpdate("Could not cosign Tx " + tx.id + ". I am not a cosigner for this multisig id: " + currentMultisig.id);
+                            setNeedsFullClientUpdate("Could not cosign Tx " + tx.id + ". I am not a cosigner for this multisig id: " + currentMultisig.id);
                             iterator.remove();
                         } else {
 
@@ -564,9 +563,8 @@ public class TeambrellaContentProviderClient {
 
     private int getIndexByPublicKey(String publicKey, List<Cosigner> cosigners) {
         for (int i = 0, n = cosigners.size(); i < n; i++) {
-            if (Objects.equals(cosigners.get(i).publicKey, publicKey)) {
+            if (publicKey != null && publicKey.equalsIgnoreCase(cosigners.get(i).publicKey))
                 return i;
-            }
         }
         return -1;
     }
@@ -756,17 +754,18 @@ public class TeambrellaContentProviderClient {
                         TeambrellaRepository.TEAMMATE_TABLE + "." + TeambrellaRepository.Teammate.ID + "=?", new String[]{Long.toString(tx.teammateId)}, Teammate.class);
                 if (tx.teammate == null) {
                     iterator.remove();
-                    Crashlytics.logException(new Exception("tx id: " + tx.id + " has no teammate to pay from"));
+                    Log.reportNonFatal(LOG_TAG, new Exception("tx id: " + tx.id + " has no teammate to pay from"));
                     continue;
                 }
-                if (!Objects.equals(tx.teammate.publicKey, publicKey)) {
+
+                if (publicKey != null && publicKey.equalsIgnoreCase(tx.teammate.publicKey)) {
                     iterator.remove();
                     continue;           // filter out not my Tx (where I was just a cosigner.
                 }
 
                 tx.txInputs = queryList(TeambrellaRepository.TXInput.CONTENT_URI, TeambrellaRepository.TXInput.TX_ID + "=?", new String[]{tx.id.toString()}, TxInput.class);
                 if (tx.txInputs == null || tx.txInputs.isEmpty()) {
-                    setNeedsFullCleintUpdate("No tx inputs for tx id: " + tx.id);
+                    setNeedsFullClientUpdate("No tx inputs for tx id: " + tx.id);
                     iterator.remove();
                     continue;
                 }
@@ -777,14 +776,14 @@ public class TeambrellaContentProviderClient {
 
                 Multisig currentMultisig = tx.getFromMultisig();
                 if (currentMultisig == null) {
-                    setNeedsFullCleintUpdate("Could not publish Tx " + tx.id + ". No current Multisig for my teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+                    setNeedsFullClientUpdate("Could not publish Tx " + tx.id + ". No current Multisig for my teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
 
                     iterator.remove();
                     continue;
                 }
 
                 Multisig nextMultisig = tx.getToMultisig();
-                if (nextMultisig != null){
+                if (nextMultisig != null) {
                     nextMultisig.cosigners = getCosigners(nextMultisig);
                 }
                 tx.cosigners = getCosigners(tx.getFromMultisig());
@@ -950,7 +949,7 @@ public class TeambrellaContentProviderClient {
         Cursor cursor = mClient.query(TeambrellaRepository.Connection.CONTENT_URI, new String[]{TeambrellaRepository.Connection.LAST_UPDATED}, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             long since = 0;
-           if (!needFullClientUpdate) {
+            if (!needFullClientUpdate) {
                 since = cursor.getLong(cursor.getColumnIndex(TeambrellaRepository.Connection.LAST_UPDATED));
             }
             body.add(TeambrellaModel.ATTR_DATA_SINCE, new JsonPrimitive(since));
@@ -1046,8 +1045,8 @@ public class TeambrellaContentProviderClient {
         return result;
     }
 
-    private void setNeedsFullCleintUpdate(String msg) {
-        Log.reportNonFatal(LOG_TAG, "Full client update to be executed: " + msg);
+    private void setNeedsFullClientUpdate(String msg) {
+        Log.reportNonFatal(LOG_TAG, new FullClientUpdateException("Full client update to be executed: " + msg));
         needFullClientUpdate = true;
     }
 
@@ -1055,7 +1054,7 @@ public class TeambrellaContentProviderClient {
         Log.w(LOG_TAG, "Deleting lost teammate records...");
         Cursor cursor = mClient.query(TeambrellaRepository.Teammate.LOST_CONTENT_URI, null, null, null, null);
 
-        if (cursor != null){
+        if (cursor != null) {
             ArrayList<ContentProviderOperation> operations = new ArrayList<>();
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(cursor.getColumnIndex(TeambrellaRepository.Teammate.ID));
@@ -1071,6 +1070,19 @@ public class TeambrellaContentProviderClient {
         }
 
         Log.w(LOG_TAG, "Deleting lost teammate records... done!");
+    }
+
+
+    public static final class AttemptToAlertException extends Exception {
+        AttemptToAlertException(String message) {
+            super(message);
+        }
+    }
+
+    public static final class FullClientUpdateException extends Exception {
+        public FullClientUpdateException(String message) {
+            super(message);
+        }
     }
 
 }

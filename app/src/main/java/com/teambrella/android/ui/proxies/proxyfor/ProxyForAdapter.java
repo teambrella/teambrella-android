@@ -146,7 +146,7 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
                     mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string
                             , DateUtils.getRelativeTimeSpanString(time, now, DateUtils.HOUR_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)));
                 } else {
-                    mSubtitle.setText(R.string.voting_never);
+                    mSubtitle.setText(itemView.getContext().getString(R.string.last_voted_format_string, itemView.getContext().getString(R.string.voting_never)));
                 }
                 mSubtitle.setVisibility(View.VISIBLE);
             } catch (Exception e) {

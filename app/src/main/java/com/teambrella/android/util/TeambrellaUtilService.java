@@ -301,7 +301,7 @@ public class TeambrellaUtilService extends GcmTaskService {
                     break;
             }
         } else {
-            Log.reportNonFatal(LOG_TAG, "onRunTask got null tag.");
+            Log.reportNonFatal(LOG_TAG, new Exception("onRunTask got null tag."));
         }
 
         return GcmNetworkManager.RESULT_SUCCESS;

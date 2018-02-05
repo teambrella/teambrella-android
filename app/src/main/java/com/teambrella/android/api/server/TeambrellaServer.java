@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.util.Pair;
 
 import com.bumptech.glide.load.model.LazyHeaders;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -18,6 +17,7 @@ import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
+import com.teambrella.android.util.log.Log;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -52,6 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class TeambrellaServer {
 
+    private static final String LOG_TAG = TeambrellaServer.class.getSimpleName();
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
     public static final String AUTHORITY = BuildConfig.AUTHORITY;
@@ -120,16 +121,12 @@ public class TeambrellaServer {
                                     .map(jsonObjectResponse -> checkResponse(uri, jsonObjectResponse))
                                     .doOnNext(jsonObject -> checkStatus(uri, jsonObject));
                         } else {
-                            if (!BuildConfig.DEBUG) {
-                                Crashlytics.logException(throwable);
-                            }
+                            Log.reportNonFatal(LOG_TAG, throwable);
                             return Observable.error(throwable);
                         }
                     }
                     Exception exception = new TeambrellaClientException(uri, throwable.getMessage(), throwable);
-                    if (!BuildConfig.DEBUG) {
-                        Crashlytics.logException(exception);
-                    }
+                    Log.reportNonFatal(LOG_TAG, exception);
                     return Observable.error(exception);
                 });
     }

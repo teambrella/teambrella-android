@@ -124,7 +124,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             }
             return Uri.withAppendedPath(uri, Long.toString(rowId));
         } catch (Throwable e) {
-            Log.reportNonFatal(LOG_TAG, "error " + uri.toString() + " " + (values != null ? values.toString() : ""));
+            Log.reportNonFatal(LOG_TAG, new TeambrellaContentProviderException("error " + uri.toString() + " " + (values != null ? values.toString() : "")));
             throw e;
         }
     }
@@ -142,7 +142,7 @@ public class TeambrellaContentProvider extends ContentProvider {
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             return db.updateWithOnConflict(getTableName(uri), values, selection, selectionArgs, SQLiteDatabase.CONFLICT_FAIL);
         } catch (Throwable e) {
-            Log.reportNonFatal(LOG_TAG, "error " + uri.toString() + " " + (values != null ? values.toString() : ""));
+            Log.reportNonFatal(LOG_TAG, new TeambrellaContentProviderException("error " + uri.toString() + " " + (values != null ? values.toString() : "")));
             throw e;
         }
     }
@@ -376,6 +376,12 @@ public class TeambrellaContentProvider extends ContentProvider {
             }
 
 
+        }
+    }
+
+    public static class TeambrellaContentProviderException extends Exception {
+        public TeambrellaContentProviderException(String message) {
+            super(message);
         }
     }
 }

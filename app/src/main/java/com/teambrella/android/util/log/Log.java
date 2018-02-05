@@ -169,7 +169,7 @@ public final class Log {
 
     }
 
-    public static void reportNonFatal(String tag, Exception e) {
+    public static void reportNonFatal(String tag, Throwable e) {
         if (BuildConfig.DEBUG) {
             android.util.Log.e(tag, "" + e.toString(), e);
         } else {
@@ -180,11 +180,6 @@ public final class Log {
             sLoggerHandler.msg(e != null ? e.toString() : "");
         }
     }
-
-    public static void reportNonFatal(String tag, String msg) {
-        reportNonFatal(tag, new Exception(msg));
-    }
-
 
     public static synchronized void startDebugging(Context context) {
         if (sLoggerHandler == null) {

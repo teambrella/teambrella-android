@@ -96,10 +96,7 @@ public class EtherAccount {
             Log.v(LOG_TAG, "Tx constructed.");
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "" + e.getMessage(), e);
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.logException(e);
-            }
+            Log.reportNonFatal(LOG_TAG, e);
             throw new CryptoException("" + e.getMessage(), e);
         }
     }
@@ -123,10 +120,7 @@ public class EtherAccount {
             Log.v(LOG_TAG, "deposit tx constructed.");
             return tx;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "", e);
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.logException(e);
-            }
+            Log.reportNonFatal(LOG_TAG, e);
             throw new CryptoException(e.getMessage(), e);
         }
     }
@@ -149,12 +143,7 @@ public class EtherAccount {
             Log.v(LOG_TAG, "message tx constructed.");
             return tx;
         } catch (Exception e) {
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.logException(e);
-            }else{
-                Log.e(LOG_TAG, "" + e.getMessage(), e);
-            }
-
+            Log.reportNonFatal(LOG_TAG, e);
             return null;
         }
     }
@@ -231,10 +220,7 @@ public class EtherAccount {
             return sig;
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.logException(e);
-            }
+            Log.reportNonFatal(LOG_TAG, e);
         }
 
         return null;
