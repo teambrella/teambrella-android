@@ -19,6 +19,7 @@ import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.teammates.RiskRange;
 import com.teambrella.android.ui.teammates.TeammatesByRiskActivity;
 import com.teambrella.android.ui.votes.AllVotesActivity;
+import com.teambrella.android.ui.widget.CountDownClock;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.ui.widget.VoterBar;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -56,6 +57,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private View mAllVotesView;
     private View mOthersView;
     private TextView mWhen;
+    private CountDownClock mClock;
 
     private int mCount;
 
@@ -82,6 +84,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mAllVotesView = view.findViewById(R.id.all_votes);
         mOthersView = view.findViewById(R.id.others);
         mWhen = view.findViewById(R.id.when);
+        mClock = view.findViewById(R.id.clock);
         mVoterBar.setVoterBarListener(this);
 
 
@@ -172,6 +175,8 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                     mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(getContext()
                             , voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
+
+                    mClock.setRemainedMinutes(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES));
 
 
                     int otherCount = voting.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT);

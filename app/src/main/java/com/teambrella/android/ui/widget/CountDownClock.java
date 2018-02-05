@@ -15,9 +15,17 @@ import android.view.View;
 public class CountDownClock extends View {
 
 
+    private static final long MINUTES_IN_7_DAYS = 7 * 24 * 60;
+    private static final float MIN_RATIO = 0.08f;
+    private static final float MAX_RATIO = 0.92f;
+
+
     private static final Paint SOLID_PAINT;
     private static final Paint ALPHA_PAINT;
     private static final Paint STROKE_PAINT;
+
+
+    private float mSweepAngle = 0;
 
 
     static {
@@ -39,7 +47,6 @@ public class CountDownClock extends View {
 
     private RectF mRect = new RectF();
 
-
     public CountDownClock(Context context) {
         super(context);
     }
@@ -52,6 +59,12 @@ public class CountDownClock extends View {
         super(context, attrs, defStyleAttr);
     }
 
+    public void setRemainedMinutes(long minutes) {
+        float ratio = (float) (minutes) / MINUTES_IN_7_DAYS;
+        ratio = Math.max(Math.min(ratio, MAX_RATIO), MIN_RATIO);
+        mSweepAngle = -360 * ratio;
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -59,8 +72,9 @@ public class CountDownClock extends View {
         mRect.bottom = getMeasuredHeight();
         mRect.right = getMeasuredWidth();
         canvas.drawCircle(mRect.right / 2, mRect.bottom / 2, mRect.bottom / 2, ALPHA_PAINT);
-        canvas.drawArc(mRect, 150, 120, true, SOLID_PAINT);
+        float mStartAngle = 270f;
+        canvas.drawArc(mRect, mStartAngle, mSweepAngle, true, SOLID_PAINT);
         canvas.drawCircle(mRect.right / 2, mRect.bottom / 2, mRect.bottom / 2, STROKE_PAINT);
-        canvas.drawArc(mRect, 150, 120, true, STROKE_PAINT);
+        canvas.drawArc(mRect, mStartAngle, mSweepAngle, true, STROKE_PAINT);
     }
 }

@@ -17,6 +17,7 @@ import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.teammate.TeammateActivity
+import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.TeambrellaDateUtils
 
@@ -25,6 +26,7 @@ const val VIEW_TYPE_NEW_MEMBER = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 
 const val VIEW_TYPE_HEADER_TEAMMATES = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 2
 const val VIEW_TYPE_HEADER_NEW_MEMBERS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 3
 const val VIEW_TYPE_INVITES_FRIENDS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 4
+
 
 class KTeammateAdapter(pager: IDataPager<JsonArray>
                        , teamId: Int
@@ -140,11 +142,13 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
 
     inner class NewMemberViewHolder(view: View) : ATeammateViewHolder(view) {
         private val endsIn: TextView? = view.findViewById(R.id.ends_in)
+        private val clock: CountDownClock? = view.findViewById(R.id.clock)
         override fun onBind(item: JsonObject?) {
             super.onBind(item)
             val endsInValue = item.votingEndsIn
             endsInValue?.let {
                 endsIn?.text = TeambrellaDateUtils.getRelativeTimeLocalized(itemView.context, endsInValue)
+                clock?.setRemainedMinutes(endsInValue)
             }
         }
     }

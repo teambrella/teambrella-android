@@ -18,6 +18,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.votes.AllVotesActivity;
+import com.teambrella.android.ui.widget.CountDownClock;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -44,6 +45,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private TeambrellaAvatarsWidgets mAvatarWidgets;
     private View mRestVoteButton;
     private View mAllVotesView;
+    private CountDownClock mClock;
 
 
     private String mCurrency;
@@ -65,6 +67,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mWhen = view.findViewById(R.id.when);
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mAllVotesView = view.findViewById(R.id.all_votes);
+        mClock = view.findViewById(R.id.clock);
 
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
@@ -135,6 +138,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 mRestVoteButton.setAlpha(1f);
 
                 mWhen.setText(getContext().getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(getContext(), voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES))));
+                mClock.setRemainedMinutes(voting.getInt(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES));
 
                 int otherCount = voting.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT);
 
