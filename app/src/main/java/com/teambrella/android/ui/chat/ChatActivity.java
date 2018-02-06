@@ -39,6 +39,7 @@ import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
@@ -54,7 +55,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Claim chat
  */
-public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
+public class ChatActivity extends ATeambrellaActivity implements IChatActivity, IClaimActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";
@@ -70,6 +71,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
+    public static final String CLAIM_DATA_TAG = "claim_data_tag";
+    public static final String VOTE_DATA_TAG = "vote_data_tag";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
@@ -495,6 +498,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     @Override
     protected String[] getDataTags() {
+        if (mAction != null) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                    return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
+            }
+        }
         return new String[]{};
     }
 
@@ -505,6 +514,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
+        switch (tag) {
+            case CLAIM_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
+            case VOTE_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(null);
+        }
         return null;
     }
 
@@ -645,5 +660,35 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
     @Override
     public void setChatMuted(boolean muted) {
         request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
+    }
+
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        // nothing to do
+    }
+
+    @Override
+    public void postVote(int vote) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getClaimVoteUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1), vote));
+        }
+    }
+
+    @Override
+    public void showSnackBar(int text) {
+        // nothing to do
+    }
+
+    @Override
+    public void launchActivity(Intent intent) {
+        // nothing to do
     }
 }

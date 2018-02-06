@@ -3,6 +3,7 @@ package com.teambrella.android.ui.chat;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
 import android.view.View;
@@ -21,9 +22,11 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.claim.ClaimVotingFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import java.util.Locale;
@@ -36,6 +39,8 @@ import io.reactivex.Observable;
  * Claim Chat Fragment
  */
 public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
+
+    private static final String VOTING_FRAGMENT_TAG = "voting_fragment_tag";
 
 
     Long mLastRead = null;
@@ -90,19 +95,31 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onClaimClickListener);
                 mVoteButton.setOnClickListener(this::onClaimClickListener);
+                FragmentManager fragmentManager = getChildFragmentManager();
+                if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
+                    fragmentManager.beginTransaction().add(R.id.voting_container,
+                            ADataFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
+                                    , ClaimVotingFragment.class)
+                            , VOTING_FRAGMENT_TAG)
+                            .commit();
+                }
+                mDataHost.load(ChatActivity.CLAIM_DATA_TAG);
                 break;
             case TeambrellaUris.TEAMMATE_CHAT:
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onTeammateClickListener);
                 mVoteButton.setOnClickListener(this::onTeammateClickListener);
+                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
                 break;
             case TeambrellaUris.CONVERSATION_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
                 break;
             case TeambrellaUris.FEED_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
                 break;
 
         }
