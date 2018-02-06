@@ -125,4 +125,15 @@
 
     </android.support.constraint.ConstraintLayout>
 
+
+    <FrameLayout
+        android:id="@+id/voting_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="3dp"
+        android:padding="20dp"
+        android:visibility="invisible"
+        app:layout_behavior="com.teambrella.android.ui.chat.VotingPanelBehaviour" />
+
 </android.support.design.widget.CoordinatorLayout>
