@@ -192,6 +192,10 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         @Override
         protected void onDataUpdated(Notification<JsonObject> notification) {
 
+            if (notification.isOnError()) {
+                return;
+            }
+
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
