@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -310,7 +311,8 @@ class ChatAdapter extends ChatDataPagerAdapter {
                         } else {
                             GlideApp.with(itemView).load(getImageLoader().getImageUrl(smallImage))
                                     .apply(new RequestOptions().transform(new RoundedCorners(itemView.getResources()
-                                            .getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))).into(mImage);
+                                            .getDimensionPixelOffset(R.dimen.rounded_corners_4dp)))).
+                                    transition(DrawableTransitionOptions.withCrossFade()).into(mImage);
                         }
                         final int position = i;
                         if (!TeambrellaModel.PostStatus.POST_PENDING.equals(object.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS))) {
