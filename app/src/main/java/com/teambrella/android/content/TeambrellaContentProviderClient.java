@@ -758,7 +758,7 @@ public class TeambrellaContentProviderClient {
                     continue;
                 }
 
-                if (publicKey != null && publicKey.equalsIgnoreCase(tx.teammate.publicKey)) {
+                if (publicKey != null && !publicKey.equalsIgnoreCase(tx.teammate.publicKey)) {
                     iterator.remove();
                     continue;           // filter out not my Tx (where I was just a cosigner.
                 }
