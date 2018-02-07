@@ -32,6 +32,20 @@ import io.reactivex.Observable;
 
 public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implements SeekBar.OnSeekBarChangeListener {
 
+    private static final String EXTRA_MODE = "mode";
+    public static final int MODE_CLAIM = 1;
+    public static final int MODE_CHAT = 2;
+
+
+    public static ClaimVotingFragment getInstance(String[] tags, int mode) {
+        ClaimVotingFragment fragment = new ClaimVotingFragment();
+        Bundle args = new Bundle();
+        args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, tags);
+        args.putInt(EXTRA_MODE, mode);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     private TextView mTeamVotePercents;
     private TextView mYourVotePercents;
@@ -80,6 +94,9 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             mRestVoteButton.setAlpha(0.3f);
         });
 
+
+        int mode = getArguments().getInt(EXTRA_MODE, MODE_CLAIM);
+        view.findViewById(R.id.header_line).setVisibility(mode == MODE_CLAIM ? View.VISIBLE : View.GONE);
 
         getComponent().inject(mAvatarWidgets);
 

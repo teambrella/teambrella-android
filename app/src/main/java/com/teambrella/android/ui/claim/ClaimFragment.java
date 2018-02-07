@@ -21,7 +21,6 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.glide.GlideApp;
-import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.widget.ImagePager;
@@ -89,7 +88,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_container, ADataFragment.getInstance(mTags, ClaimVotingFragment.class), VOTING_FRAGMENT_TAG);
+            transaction.add(R.id.voting_container, ClaimVotingFragment.getInstance(mTags, ClaimVotingFragment.MODE_CLAIM), VOTING_FRAGMENT_TAG);
         }
 
 

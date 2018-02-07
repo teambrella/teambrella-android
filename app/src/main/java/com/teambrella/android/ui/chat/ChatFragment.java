@@ -3,6 +3,7 @@ package com.teambrella.android.ui.chat;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
@@ -22,7 +23,6 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.TeambrellaUser;
-import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
@@ -55,6 +55,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private View mVoteButton;
     private ImageView mIcon;
     private String mUserName;
+    private View mVotingContainer;
+    private VotingContainerBehaviour mVotingContainerBehaviour;
+    private VotingPanelBehaviour mVotingPanelBehaviour;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -88,6 +91,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mVoteButton = view.findViewById(R.id.vote);
         mIcon = view.findViewById(R.id.image);
         mVoteTitleView = view.findViewById(R.id.your_vote_title);
+        mVotingContainer = view.findViewById(R.id.voting_container);
 
 
         switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
@@ -98,8 +102,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 FragmentManager fragmentManager = getChildFragmentManager();
                 if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
                     fragmentManager.beginTransaction().add(R.id.voting_container,
-                            ADataFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
-                                    , ClaimVotingFragment.class)
+                            ClaimVotingFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
+                                    , ClaimVotingFragment.MODE_CHAT)
                             , VOTING_FRAGMENT_TAG)
                             .commit();
                 }
@@ -109,21 +113,38 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onTeammateClickListener);
                 mVoteButton.setOnClickListener(this::onTeammateClickListener);
-                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
+                mVotingContainer.setVisibility(View.GONE);
                 break;
             case TeambrellaUris.CONVERSATION_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
-                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
+                mVotingContainer.setVisibility(View.GONE);
                 break;
             case TeambrellaUris.FEED_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
-                view.findViewById(R.id.voting_container).setVisibility(View.GONE);
+                mVotingContainer.setVisibility(View.GONE);
                 break;
 
         }
         mList.setItemAnimator(null);
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mVotingContainer.getLayoutParams();
+        params.setBehavior(mVotingContainerBehaviour = new VotingContainerBehaviour(new AVotingViewBehaviour.OnHideShowListener() {
+            @Override
+            public void onHide() {
+                mVotingPanelBehaviour.show(mVotingPanelView);
+            }
+
+            @Override
+            public void onShow() {
+
+            }
+        }));
+        mVotingContainer.setLayoutParams(params);
+        params = (CoordinatorLayout.LayoutParams) mVotingPanelView.getLayoutParams();
+        params.setBehavior(mVotingPanelBehaviour = new VotingPanelBehaviour());
+        mVotingPanelView.setLayoutParams(params);
     }
 
 
@@ -258,8 +279,11 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private void onClaimClickListener(View v) {
         switch (v.getId()) {
             case R.id.voting_panel:
-            case R.id.vote:
                 startActivityForResult(ClaimActivity.getLaunchIntent(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId()), 10);
+                break;
+            case R.id.vote:
+                mVotingPanelBehaviour.hide(mVotingPanelView);
+                mVotingContainerBehaviour.show(mVotingContainer);
                 break;
         }
     }
