@@ -23,4 +23,5 @@
     <dimen name="image_size_96">96dp</dimen>
     <dimen name="image_size_42">42dp</dimen>
     <dimen name="coverage_info_padding">4dp</dimen>
+    <dimen name="your_vote_extra_padding">8dp</dimen>
 </resources>

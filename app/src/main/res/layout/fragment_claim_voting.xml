@@ -107,7 +107,7 @@
             style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/your_vote_extra_padding"
             android:layout_marginTop="14dp"
             android:text="@string/your_vote"
             app:layout_constraintEnd_toEndOf="parent"
