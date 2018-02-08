@@ -74,6 +74,7 @@
             android:id="@+id/team_vote_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="bottom"
             android:textColor="@color/dark"
             android:textSize="36sp"
             app:layout_constraintStart_toStartOf="@id/team_vote_title"
@@ -84,8 +85,9 @@
             style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:includeFontPadding="false"
+            android:textColor="#95A5B1"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@id/team_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/team_vote_percent" />
 
@@ -128,8 +130,9 @@
             style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:includeFontPadding="false"
+            android:textColor="#95A5B1"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@id/your_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/your_vote_percent" />
 
