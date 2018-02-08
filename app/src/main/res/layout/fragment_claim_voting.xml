@@ -181,11 +181,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
+        <ProgressBar
+            android:id="@+id/voting_progress"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_marginTop="38dp"
-            android:background="@drawable/seek_bar_background" />
+            android:progressDrawable="@drawable/seek_bar_background" />
 
         <android.support.v7.widget.AppCompatSeekBar
             android:id="@+id/voting_control"
