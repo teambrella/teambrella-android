@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private View mRestVoteButton;
     private View mAllVotesView;
     private CountDownClock mClock;
+    private ProgressBar mVotingProgress;
 
 
     private String mCurrency;
@@ -71,7 +73,8 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
 
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
-
+        mVotingProgress = view.findViewById(R.id.voting_progress);
+        mVotingProgress.setMax(100);
 
         mRestVoteButton.setOnClickListener(v -> {
             mDataHost.postVote(-1);
@@ -179,6 +182,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
             mYourVoteCurrency.setAlpha(0.3f);
             mRestVoteButton.setAlpha(0.3f);
         }
+        mVotingProgress.setProgress(progress);
     }
 
     @Override
