@@ -54,6 +54,7 @@ public class VoterBar extends HorizontalScrollView {
     private boolean mIsFromUser;
     private boolean mIsTouched;
     private double mAverage;
+    private float mSrollX;
 
     public VoterBar(Context context) {
         super(context);
@@ -149,12 +150,15 @@ public class VoterBar extends HorizontalScrollView {
             case MotionEvent.ACTION_DOWN:
                 mIsFromUser = true;
                 mIsTouched = true;
+                mSrollX = getScrollX();
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mIsTouched = false;
-                removeCallbacks(mIdleChecker);
-                postDelayed(mIdleChecker, 200);
+                if (mSrollX != getScrollX()) {
+                    removeCallbacks(mIdleChecker);
+                    postDelayed(mIdleChecker, 200);
+                }
                 break;
         }
         return super.onTouchEvent(ev);
