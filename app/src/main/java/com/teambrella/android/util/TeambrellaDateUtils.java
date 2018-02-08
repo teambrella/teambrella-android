@@ -56,10 +56,10 @@ public class TeambrellaDateUtils {
         if (remainedMinutes == 0) {
             return context.getString(R.string.now);
         } else if (remainedMinutes / DAY > 0) {
-            int count = (int) remainedMinutes / DAY + 1;
+            int count = (int) remainedMinutes / DAY;
             return context.getResources().getQuantityString(R.plurals.days, count, count);
         } else if (remainedMinutes / HOUR > 0) {
-            int count = (int) remainedMinutes / HOUR + 1;
+            int count = (int) remainedMinutes / HOUR;
             return context.getResources().getQuantityString(R.plurals.hours, count, count);
         } else {
             return context.getResources().getQuantityString(R.plurals.minutes, (int) remainedMinutes, (int) remainedMinutes);
