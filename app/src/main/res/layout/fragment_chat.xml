@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingBottom="16dp"
-        android:paddingTop="52dp" />
+        android:paddingTop="56dp" />
 
 
     <FrameLayout
@@ -22,7 +22,10 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:elevation="2dp"
-        android:padding="20dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="65dp"
         android:visibility="invisible"
         tools:targetApi="lollipop" />
 
@@ -30,7 +33,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/voting_panel"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="56dp"
         android:background="@drawable/selectable_item_background"
         android:elevation="2dp"
         tools:targetApi="lollipop">
@@ -75,20 +78,35 @@
 
         </LinearLayout>
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/vote"
+        <FrameLayout
+            android:id="@+id/vote_action"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/selectable_item_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="@string/vote"
-            android:textColor="@color/blueWithAHintOfPurple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/vote"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selectable_item_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/vote"
+                android:textColor="@color/blueWithAHintOfPurple"
+                android:textSize="14sp" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/hide"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="center"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_hide_content" />
+
+        </FrameLayout>
 
 
         <LinearLayout
@@ -100,7 +118,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/vote"
+            app:layout_constraintEnd_toStartOf="@id/vote_action"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginEnd="8dp">
 
