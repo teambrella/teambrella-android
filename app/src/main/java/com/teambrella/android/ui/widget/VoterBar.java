@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -205,7 +207,21 @@ public class VoterBar extends HorizontalScrollView {
         int shift = getMeasuredWidth() / 2;
         for (int i = 0; i < mContainer.getChildCount(); i++) {
             View child = mContainer.getChildAt(i);
-            child.setSelected(child.getLeft() - shift < l && child.getRight() - shift > l);
+            View bar = child.findViewById(R.id.test);
+            Drawable drawable = bar != null ? bar.getBackground() : null;
+            boolean isSelected = child.getLeft() - shift < l && child.getRight() - shift > l;
+            if (drawable != null && drawable instanceof TransitionDrawable) {
+                if (child.getLeft() - shift < l && child.getRight() - shift > l) {
+                    if (!child.isSelected()) {
+                        ((TransitionDrawable) drawable).startTransition(300);
+                    }
+                } else {
+                    if (child.isSelected()) {
+                        ((TransitionDrawable) drawable).reverseTransition(300);
+                    }
+                }
+            }
+            child.setSelected(isSelected);
             View riskView = child.findViewById(R.id.risk);
             View avgView = child.findViewById(R.id.average_risk_label);
             if (riskView != null && avgView != null) {
