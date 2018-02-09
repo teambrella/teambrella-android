@@ -77,6 +77,7 @@
             android:id="@+id/team_vote_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="bottom"
             android:textColor="@color/dark"
             android:textSize="36sp"
             app:layout_constraintStart_toStartOf="@id/team_vote_title"
@@ -87,8 +88,9 @@
             style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:includeFontPadding="false"
+            android:textColor="#95A5B1"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@id/team_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/team_vote_percent" />
 
@@ -110,7 +112,7 @@
             style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/your_claim_vote_extra_padding"
             android:layout_marginTop="14dp"
             android:text="@string/your_vote"
             app:layout_constraintEnd_toEndOf="parent"
@@ -131,8 +133,9 @@
             style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:includeFontPadding="false"
+            android:textColor="#95A5B1"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@id/your_vote_percent"
             app:layout_constraintTop_toBottomOf="@id/your_vote_percent" />
 
@@ -184,11 +187,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
+        <ProgressBar
+            android:id="@+id/voting_progress"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_marginTop="38dp"
-            android:background="@drawable/seek_bar_background" />
+            android:progressDrawable="@drawable/seek_bar_background" />
 
         <android.support.v7.widget.AppCompatSeekBar
             android:id="@+id/voting_control"

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
     private TextView mPossibleExpenses;
     private TextView mTeamPay;
     private SeekBar mCoverageSlider;
+    private ProgressBar mCoverageProgress;
     private View mFundButton;
     private boolean mIsShown;
 
@@ -49,6 +51,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mTeamPay = view.findViewById(R.id.team_pay_value);
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
         mFundButton = view.findViewById(R.id.fund_wallet);
+        mCoverageProgress = view.findViewById(R.id.coverage_progress);
         mDataHost.load(mTags[0]);
         mCoverageSlider.setMax(100);
         mCoverageSlider.setProgress(70);
@@ -75,6 +78,8 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
 
             mCoverageSlider.setMax(Math.round(limit));
             mCoverageSlider.setProgress(Math.round(limit * 0.7f));
+            mCoverageProgress.setMax(mCoverageSlider.getMax());
+            mCoverageProgress.setProgress(mCoverageSlider.getProgress());
 
 
             mCoverageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -82,6 +87,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(i), mDataHost.getCurrency());
                     AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * i), mDataHost.getCurrency());
+                    mCoverageProgress.setProgress(i);
                 }
 
                 @Override
