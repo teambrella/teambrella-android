@@ -1,22 +1,18 @@
 package com.teambrella.android.ui.chat;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.teambrella.android.R;
-import com.teambrella.android.util.log.Log;
 
 /**
  * Voting Container Behaviour
  */
 public class VotingContainerBehaviour extends AVotingViewBehaviour {
-
-
-    private int mScrollCount;
 
     VotingContainerBehaviour(OnHideShowListener mListener) {
         super(mListener);
@@ -28,66 +24,29 @@ public class VotingContainerBehaviour extends AVotingViewBehaviour {
     }
 
     @Override
+    public boolean onInterceptTouchEvent(CoordinatorLayout parent, View child, MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN && child.getVisibility() == View.VISIBLE
+                && !isAnimated) {
+            int location[] = new int[2];
+            child.getLocationOnScreen(location);
+            RectF rect = new RectF(location[0], location[1], location[0] + child.getWidth(), location[1] + child.getHeight());
+            if (!rect.contains(ev.getRawX(), ev.getRawY()))
+                hide(child);
+        }
+        return super.onInterceptTouchEvent(parent, child, ev);
+    }
+
+    @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
-        mScrollCount++;
         return true;
     }
 
     @Override
     public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
-        Log.e("TEST", "On Nested Prescroll " + dy);
-        if (!isAnimated && child.getVisibility() == View.VISIBLE) {
-            float currentTranslation = child.getTranslationY() - dy;
-
-            if (currentTranslation < -child.getHeight()) {
-                currentTranslation = -child.getHeight();
-            }
-            if (currentTranslation > 0) {
-                currentTranslation = 0;
-            }
-            child.setTranslationY(currentTranslation);
+        if ((dy != 0 || dx != 0) && type == ViewCompat.TYPE_TOUCH) {
+            hide(child);
         }
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
     }
-
-    @Override
-    public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, float velocityX, float velocityY) {
-        return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-    }
-
-    @Override
-    public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int type) {
-        super.onStopNestedScroll(coordinatorLayout, child, target, type);
-        mScrollCount--;
-        if (mScrollCount == 0) {
-            float translationY = child.getTranslationY();
-            if (translationY <= (-child.getHeight()) / 2) {
-                ObjectAnimator translation = ObjectAnimator.ofFloat(child, "translationY", translationY, -child.getHeight());
-                translation.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        isAnimated = false;
-                    }
-                });
-                isAnimated = true;
-                translation.start();
-            } else {
-                ObjectAnimator translation = ObjectAnimator.ofFloat(child, "translationY", child.getTranslationY(), 0);
-                translation.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        isAnimated = false;
-                    }
-                });
-                isAnimated = true;
-                translation.start();
-            }
-
-            Log.e("TEST", "FIRE");
-        }
-    }
-
 
 }

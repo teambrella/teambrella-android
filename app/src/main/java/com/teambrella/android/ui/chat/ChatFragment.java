@@ -1,5 +1,8 @@
 package com.teambrella.android.ui.chat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -52,12 +55,15 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mSubtitleView;
     private TextView mVoteValueView;
     private TextView mVoteTitleView;
-    private View mVoteButton;
+    private TextView mVoteButton;
     private ImageView mIcon;
     private String mUserName;
     private View mVotingContainer;
     private VotingContainerBehaviour mVotingContainerBehaviour;
     private VotingPanelBehaviour mVotingPanelBehaviour;
+    private View mVotingSection;
+    private View mDivider;
+    private View mHideButton;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -92,6 +98,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mIcon = view.findViewById(R.id.image);
         mVoteTitleView = view.findViewById(R.id.your_vote_title);
         mVotingContainer = view.findViewById(R.id.voting_container);
+        mVotingSection = view.findViewById(R.id.voting_section);
+        mDivider = view.findViewById(R.id.divider);
+        mHideButton = view.findViewById(R.id.hide);
 
 
         switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
@@ -99,6 +108,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onClaimClickListener);
                 mVoteButton.setOnClickListener(this::onClaimClickListener);
+                mHideButton.setOnClickListener(this::onClaimClickListener);
                 FragmentManager fragmentManager = getChildFragmentManager();
                 if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
                     fragmentManager.beginTransaction().add(R.id.voting_container,
@@ -133,12 +143,18 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         params.setBehavior(mVotingContainerBehaviour = new VotingContainerBehaviour(new AVotingViewBehaviour.OnHideShowListener() {
             @Override
             public void onHide() {
-                mVotingPanelBehaviour.show(mVotingPanelView);
+                mVoteButton.setVisibility(View.VISIBLE);
+                mHideButton.setVisibility(View.INVISIBLE);
+                fadeIn(mVotingSection);
+                fadeIn(mDivider);
             }
 
             @Override
             public void onShow() {
-
+                mVoteButton.setVisibility(View.INVISIBLE);
+                mHideButton.setVisibility(View.VISIBLE);
+                fadeOut(mVotingSection);
+                fadeOut(mDivider);
             }
         }));
         mVotingContainer.setLayoutParams(params);
@@ -282,10 +298,33 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 startActivityForResult(ClaimActivity.getLaunchIntent(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId()), 10);
                 break;
             case R.id.vote:
-                mVotingPanelBehaviour.hide(mVotingPanelView);
                 mVotingContainerBehaviour.show(mVotingContainer);
                 break;
+            case R.id.hide:
+                mVotingContainerBehaviour.hide(mVotingContainer);
+                break;
         }
+    }
+
+
+    private static void fadeIn(View view) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        animator.setDuration(300);
+        view.setVisibility(View.VISIBLE);
+        animator.start();
+    }
+
+    private static void fadeOut(final View view) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
+        animator.setDuration(300);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                view.setVisibility(View.INVISIBLE);
+            }
+        });
+        animator.start();
     }
 
 

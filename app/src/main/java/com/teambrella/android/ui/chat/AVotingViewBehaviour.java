@@ -6,11 +6,16 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 /**
  * Voting View Behavior
  */
 public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
+
+
+    private static final long DURATION = 400;
 
     private final OnHideShowListener mListener;
 
@@ -35,10 +40,16 @@ public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
         if (!isAnimated) {
             isAnimated = true;
             ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", -view.getHeight(), 0f);
-            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0.5f, 1f);
             AnimatorSet set = new AnimatorSet();
-            set.playTogether(translation, fadeIn);
-            set.setDuration(300);
+            set.playTogether(translation);
+            set.setDuration(DURATION);
+//            set.setInterpolator((Interpolator) input -> {
+//                        float value = (float) (1 / (1 + Math.pow(Math.E, (double) (-input * 2 + 1) * 10)));
+//                        Log.e("TEST", "" + input + " " + value);
+//                        return value;
+//                    }
+//            );
+            set.setInterpolator(new DecelerateInterpolator());
             set.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -67,10 +78,10 @@ public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
                     mListener.onHide();
                 }
                 ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", 0, -(float) view.getHeight());
-                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(view, "alpha", 1f, 0.5f);
                 AnimatorSet set = new AnimatorSet();
-                set.playTogether(translation, fadeOut);
-                set.setDuration(300);
+                set.playTogether(translation);
+                set.setDuration(DURATION);
+                set.setInterpolator(new AccelerateInterpolator());
                 set.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -83,5 +94,4 @@ public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
             }
         }
     }
-
 }
