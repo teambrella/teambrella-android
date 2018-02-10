@@ -178,7 +178,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                 } else {
                     mProxyName.setVisibility(View.INVISIBLE);
                     mProxyAvatar.setVisibility(View.INVISIBLE);
-                    mRestVoteButton.setVisibility(yourVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                    mRestVoteButton.setVisibility(yourVote >= 0 ? View.VISIBLE : View.INVISIBLE);
                 }
 
 
