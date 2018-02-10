@@ -39,8 +39,8 @@ public class VotingPanelBehaviour extends AVotingViewBehaviour {
     @Override
     public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         if (!isAnimated && child.getVisibility() == View.VISIBLE) {
-            mDirection += dyConsumed;
-            float currentTranslation = child.getTranslationY() - dyConsumed / 3;
+                mDirection += dyConsumed;
+            float currentTranslation = child.getTranslationY() - dyConsumed;
 
             if (currentTranslation < -child.getHeight()) {
                 currentTranslation = -child.getHeight();
