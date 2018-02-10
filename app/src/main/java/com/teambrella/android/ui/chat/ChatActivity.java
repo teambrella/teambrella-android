@@ -489,6 +489,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             });
         }
         getPager(DATA_FRAGMENT_TAG).loadNext(true);
+        if (mAction != null) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                    load(CLAIM_DATA_TAG);
+            }
+        }
     }
 
     @Override
