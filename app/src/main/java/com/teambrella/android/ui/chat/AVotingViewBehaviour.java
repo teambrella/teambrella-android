@@ -15,7 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
 
 
-    private static final long DURATION = 400;
+    private static final long DURATION = 300;
 
     private final OnHideShowListener mListener;
 
@@ -43,12 +43,6 @@ public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
             AnimatorSet set = new AnimatorSet();
             set.playTogether(translation);
             set.setDuration(DURATION);
-//            set.setInterpolator((Interpolator) input -> {
-//                        float value = (float) (1 / (1 + Math.pow(Math.E, (double) (-input * 2 + 1) * 10)));
-//                        Log.e("TEST", "" + input + " " + value);
-//                        return value;
-//                    }
-//            );
             set.setInterpolator(new DecelerateInterpolator());
             set.addListener(new AnimatorListenerAdapter() {
                 @Override

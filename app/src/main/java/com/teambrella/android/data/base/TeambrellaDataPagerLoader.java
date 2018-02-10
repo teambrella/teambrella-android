@@ -64,6 +64,12 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     public void loadNext(boolean force) {
         if (!mIsLoading && (mHasNext || force)) {
             mServer.requestObservable(TeambrellaUris.appendPagination(mUri, mNextIndex, mLimit), null)
+                    .map(jsonObject -> {
+                        if (jsonObject != null) {
+                            jsonObject.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject().addProperty(TeambrellaModel.ATTR_STATUS_URI, mUri.toString());
+                        }
+                        return jsonObject;
+                    })
                     .subscribeOn(Schedulers.io())
                     .map(jsonObject -> {
                         JsonObject metadata = new JsonObject();
@@ -137,6 +143,12 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     @Override
     public void reload(Uri uri) {
         mServer.requestObservable(TeambrellaUris.appendPagination(uri, 0, mLimit), null)
+                .map(jsonObject -> {
+                    if (jsonObject != null) {
+                        jsonObject.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject().addProperty(TeambrellaModel.ATTR_STATUS_URI, uri.toString());
+                    }
+                    return jsonObject;
+                })
                 .subscribeOn(Schedulers.io())
                 .map(jsonObject -> {
                     JsonObject metadata = new JsonObject();
