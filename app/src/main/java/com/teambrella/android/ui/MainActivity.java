@@ -177,11 +177,15 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     private boolean onNavigationItemSelected(View view) {
-        return onNavigationItemSelected(view, true);
+        return onNavigationItemSelected(view, true, false);
+    }
+
+    private boolean onNavigationItemSelected(View view, boolean immediately) {
+        return onNavigationItemSelected(view, true, immediately);
     }
 
 
-    private boolean onNavigationItemSelected(View view, boolean fromUser) {
+    private boolean onNavigationItemSelected(View view, boolean fromUser, boolean immediately) {
 
         if (mSelectedItemId == view.getId()) {
             return false;
@@ -217,7 +221,9 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             transaction.add(R.id.container, createFragmentByTag(newFragmentTag), newFragmentTag);
         }
         transaction.commit();
-        //fragmentManager.executePendingTransactions();
+        if (immediately) {
+            fragmentManager.executePendingTransactions();
+        }
         mSelectedItemId = view.getId();
         return true;
     }
@@ -572,7 +578,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void showCoverage() {
-        onNavigationItemSelected(findViewById(R.id.me));
+        onNavigationItemSelected(findViewById(R.id.me), true, true);
         UserFragment userFragment = (UserFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_TAG);
         if (userFragment != null) {
             userFragment.showCoverage();
@@ -581,7 +587,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void showWallet() {
-        onNavigationItemSelected(findViewById(R.id.me));
+        onNavigationItemSelected(findViewById(R.id.me), true, true);
         UserFragment userFragment = (UserFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_TAG);
         if (userFragment != null) {
             userFragment.showWallet();
@@ -590,7 +596,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
 
     private void showFeed() {
-        onNavigationItemSelected(findViewById(R.id.team));
+        onNavigationItemSelected(findViewById(R.id.team), true, true);
     }
 
 
