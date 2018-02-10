@@ -15,7 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
 
 
-    private static final long DURATION = 300;
+    protected static final long DURATION = 300;
 
     private final OnHideShowListener mListener;
 

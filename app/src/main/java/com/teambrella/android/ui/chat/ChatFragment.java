@@ -199,16 +199,22 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     @Override
     public void onStart() {
         super.onStart();
-        mVoteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
-                .subscribe(this::onDataUpdated);
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                mVoteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
+                        .subscribe(this::onDataUpdated);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mVoteDisposable != null && !mVoteDisposable.isDisposed()) {
-            mVoteDisposable.dispose();
-            mVoteDisposable = null;
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                if (mVoteDisposable != null && !mVoteDisposable.isDisposed()) {
+                    mVoteDisposable.dispose();
+                    mVoteDisposable = null;
+                }
         }
     }
 
