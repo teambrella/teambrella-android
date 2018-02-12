@@ -155,8 +155,7 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
                 int recommendedVersion = status.getInt(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION);
                 if (recommendedVersion > BuildConfig.VERSION_CODE) {
                     long current = System.currentTimeMillis();
-                    //final long minDelay = 1000 * 60 * 60* 24 * 3;
-                    final long minDelay = 1000 * 60;
+                    final long minDelay = 1000 * 60 * 60 * 24 * 3;
                     if (Math.abs(current - mUser.getNewVersionLastNotificationTime()) < minDelay) {
                         return;
                     }

@@ -61,8 +61,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
  */
 public class TeambrellaUtilService extends GcmTaskService {
 
-    //private static final long MIN_SYNC_DELAY = 1000 * 60 * 30;
-    private static final long MIN_SYNC_DELAY = 1000 * 60;
+    private static final long MIN_SYNC_DELAY = 1000 * 60 * 30;
     private static final String ACTION_LOCAL_SYNC = "com.teambrella.android.util.ACTION_SYNC";
     private static final String EXTRA_TAG = "extra_tag";
     private static final String TASK_EXTRAS = "tag_extras";
@@ -720,16 +719,16 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
     }
 
-    private boolean checkStatus(JsonObject status) {
+    private void checkStatus(JsonObject status) {
         int recommendedVersion = status.get(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION).getAsInt();
         if (recommendedVersion > BuildConfig.VERSION_CODE) {
             long current = System.currentTimeMillis();
             TeambrellaUser user = TeambrellaUser.get(this);
-            //final long minDelay = 1000 * 60 * 60* 24 * 3;
-            final long minDelay = 1000 * 60;
+            final long minDelay = 1000 * 60 * 60 * 24 * 3;
             if (Math.abs(current - user.getNewVersionLastNotificationTime()) >= minDelay) {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Notification notification = new NotificationCompat.Builder(this, null)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_is_outdated_description)))
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_teambrella_status)
                         .setColor(getResources().getColor(R.color.lightBlue))
@@ -745,7 +744,5 @@ public class TeambrellaUtilService extends GcmTaskService {
             }
             user.setNewVersionLastNotificationTime(current);
         }
-
-        return true;
     }
 }
