@@ -303,6 +303,7 @@
     <string name="app_is_outdated_title">Update Required</string>
     <string name="app_is_outdated_description">A newer and improved version of Teambrella is available on Google Play.</string>
     <string name="app_is_outdated_description_critical">A newer version of Teambrella is required to continue the coverage.</string>
+    <string name="app_is_outdated_description_notification">Tap to get a newer and improved version of Teambrella on Google Play.</string>
     <string name="app_is_outdated_action">Update the App</string>
     <string name="remind_me_later">Remind me later</string>
 

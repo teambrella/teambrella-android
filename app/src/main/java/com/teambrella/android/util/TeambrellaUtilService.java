@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -725,24 +724,24 @@ public class TeambrellaUtilService extends GcmTaskService {
             long current = System.currentTimeMillis();
             TeambrellaUser user = TeambrellaUser.get(this);
             final long minDelay = 1000 * 60 * 60 * 24 * 3;
-            if (Math.abs(current - user.getNewVersionLastNotificationTime()) >= minDelay) {
+            if (Math.abs(current - Math.max(user.getNewVersionLastScreenTime(), user.getNewVersionLastNotificationTime())) >= minDelay) {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Notification notification = new NotificationCompat.Builder(this, null)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_is_outdated_description)))
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_is_outdated_description_notification)))
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_teambrella_status)
                         .setColor(getResources().getColor(R.color.lightBlue))
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setContentTitle(getString(R.string.app_is_outdated_title))
-                        .setContentText(getString(R.string.app_is_outdated_description))
+                        .setContentText(getString(R.string.app_is_outdated_description_notification))
                         .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(android.content.Intent.ACTION_VIEW)
                                 .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)), PendingIntent.FLAG_UPDATE_CURRENT))
                         .build();
                 if (notificationManager != null) {
-                    notificationManager.notify(333, notification);
+                    final int id = 333;
+                    notificationManager.notify(id, notification);
                 }
+                user.setNewVersionLastNotificationTime(current);
             }
-            user.setNewVersionLastNotificationTime(current);
         }
     }
 }
