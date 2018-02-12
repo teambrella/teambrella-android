@@ -13,6 +13,7 @@ import com.google.android.gms.auth.api.credentials.CredentialRequest;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.teambrella.android.util.log.Log;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class WalletBackupManager {
 
+    private static final String LOG_TAG = WalletBackupManager.class.getSimpleName();
 
     private static final int SAVE_WALLET_REQUEST_CODE = 205;
     private static final int READ_WALLET_REQUEST_CODE = 206;
@@ -113,6 +115,7 @@ public class WalletBackupManager {
                                 notifyOnWalletSaveError(IWalletBackupListener.RESOLUTION_REQUIRED, false);
                             }
                         } else {
+                            Log.reportNonFatal(LOG_TAG, new RuntimeException("unable to write wallet " + status));
                             notifyOnWalletSaveError(status.isCanceled() ? IWalletBackupListener.CANCELED : IWalletBackupListener.FAILED, force);
                         }
                     }
@@ -146,6 +149,7 @@ public class WalletBackupManager {
                         notifyOnWalletReadError(IWalletBackupListener.RESOLUTION_REQUIRED, false);
                     }
                 } else {
+                    Log.reportNonFatal(LOG_TAG, new RuntimeException("unable to read wallet " + status));
                     notifyOnWalletReadError(status.isCanceled() ? IWalletBackupListener.CANCELED : IWalletBackupListener.FAILED, force);
                 }
             }
@@ -197,7 +201,7 @@ public class WalletBackupManager {
 
 
     @SuppressWarnings("FieldCanBeLocal")
-    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+    private final GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             if (mForceReadOnConnected != null) {
@@ -214,7 +218,6 @@ public class WalletBackupManager {
 
 
     @SuppressWarnings("FieldCanBeLocal")
-    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = connectionResult -> {
-
-    };
+    private final GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener =
+            connectionResult -> Log.reportNonFatal(LOG_TAG, new RuntimeException(connectionResult.getErrorMessage()));
 }

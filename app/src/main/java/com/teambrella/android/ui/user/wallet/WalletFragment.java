@@ -28,6 +28,7 @@ import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.QRCodeUtils;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.log.Log;
 
 import java.util.Locale;
 
@@ -41,6 +42,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class WalletFragment extends ADataProgressFragment<IMainDataHost> implements WalletBackupManager.IWalletBackupListener {
 
+    private static final String LOG_TAG = WalletFragment.class.getSimpleName();
 
     private TextView mCryptoBalanceView;
     private TextView mBalanceView;
@@ -171,9 +173,13 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
             showWalletBackupInfo();
         } else {
 
-            if (force && code != WalletBackupManager.IWalletBackupListener.CANCELED) {
-                mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
-                        : R.string.no_internet_connection);
+            if (code != WalletBackupManager.IWalletBackupListener.CANCELED) {
+                if (force) {
+                    mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error
+                            : R.string.no_internet_connection);
+                }
+
+                Log.reportNonFatal(LOG_TAG, new RuntimeException("Unable to save key " + (force ? "force" : "no force")));
             }
 
             if (!force) {
