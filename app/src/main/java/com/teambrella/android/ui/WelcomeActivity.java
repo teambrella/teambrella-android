@@ -33,6 +33,7 @@ import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
@@ -429,6 +430,10 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
                         setState(State.PENDING_APPLICATION);
+                        break;
+                    case TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION:
+                        AppOutdatedActivity.start(this, true);
+                        finish();
                         break;
                     default:
                         tryAgainLater(error);

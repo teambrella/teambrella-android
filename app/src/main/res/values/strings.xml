@@ -300,8 +300,9 @@
     <string name="transaction_cancelled">Cancelled</string>
     <string name="no_transactions_yet">No transactions yet.</string>
 
-    <string name="app_is_outdated_title">App is outdated</string>
-    <string name="app_is_outdated_description">And might not work as promised, download the latest and stable version on Play Store</string>
+    <string name="app_is_outdated_title">Update Required</string>
+    <string name="app_is_outdated_description">A newer and improved version of Teambrella is available on Google Play.</string>
+    <string name="app_is_outdated_description_critical">A newer version of Teambrella is required to continue the coverage.</string>
     <string name="app_is_outdated_action">Update the App</string>
     <string name="remind_me_later">Remind me later</string>
 

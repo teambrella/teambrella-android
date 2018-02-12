@@ -152,9 +152,16 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper status = response.getObject(TeambrellaModel.ATTR_DATA_STATUS);
             if (status != null) {
-                int recommendedVersion = response.getInt(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION);
+                int recommendedVersion = status.getInt(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION);
                 if (recommendedVersion > BuildConfig.VERSION_CODE) {
+                    long current = System.currentTimeMillis();
+                    //final long minDelay = 1000 * 60 * 60* 24 * 3;
+                    final long minDelay = 1000 * 60;
+                    if (Math.abs(current - mUser.getNewVersionLastNotificationTime()) < minDelay) {
+                        return;
+                    }
                     AppOutdatedActivity.start(this, false);
+                    mUser.setNewVersionLastNotificationTime(current);
                 }
             }
         }
