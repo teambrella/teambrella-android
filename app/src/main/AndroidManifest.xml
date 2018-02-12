@@ -104,14 +104,15 @@
         <activity
             android:name=".ui.withdraw.WithdrawActivity"
             android:screenOrientation="portrait" />
-        
+
         <activity
             android:name=".ui.wallet.WalletTransactionsActivity"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.app.AppOutdatedActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Modal" />
 
         <provider
             android:name=".content.TeambrellaContentProvider"
