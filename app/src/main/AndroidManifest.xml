@@ -104,8 +104,13 @@
         <activity
             android:name=".ui.withdraw.WithdrawActivity"
             android:screenOrientation="portrait" />
+        
         <activity
             android:name=".ui.wallet.WalletTransactionsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.app.AppOutdatedActivity"
             android:screenOrientation="portrait" />
 
         <provider
