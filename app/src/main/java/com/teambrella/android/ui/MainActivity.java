@@ -505,7 +505,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     public void onBackPressed() {
         Integer nextId = mBackStack.isEmpty() ? null : mBackStack.pop();
         if (nextId != null) {
-            onNavigationItemSelected(findViewById(nextId), false);
+            onNavigationItemSelected(findViewById(nextId), false, false);
         } else {
             super.onBackPressed();
         }
