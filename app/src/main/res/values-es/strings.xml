@@ -287,4 +287,11 @@
     <string name="transaction_pending">Pendiente</string>
     <string name="transaction_cancelled">Cancelado</string>
     <string name="no_transactions_yet">No hay transacciones.</string>
+
+    <string name="app_is_outdated_title">Se requiere una actualización</string>
+    <string name="app_is_outdated_description"> Una versión de Teambrella más nueva y mejorada está disponible en Google Play</string>
+    <string name="app_is_outdated_description_critical">Una nueva versión de Teambrella se requiere para continuar la cobertura.</string>
+    <string name="app_is_outdated_description_notification">Tapear para obtener una versión de Teambrella más nueva y mejorada de Google Play.</string>
+    <string name="app_is_outdated_action">Actualizar la App</string>
+    <string name="remind_me_later">Recuérdame más tarde</string>
 </resources>
