@@ -193,7 +193,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
             dataFragment.load(TeambrellaUris.getTeammateVoteUri(mTeammateId, vote));
         }
 
-        StatisticHelper.onApplicationVote(getTeamId(), vote);
+        StatisticHelper.onApplicationVote(this, getTeamId(), vote);
     }
 
     @Override

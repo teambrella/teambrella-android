@@ -1,12 +1,14 @@
 package com.teambrella.android.util;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.TeambrellaApplication;
 
@@ -43,18 +45,27 @@ public class StatisticHelper {
     private static final String ACTION_SYNC = "Sync";
     private static final String ACTION_SAVE = "Save";
 
+
+    private static final String FIREBASE_APPLICATION_VOTE = "application_vote";
+
     public static void onTryDemo() {
         if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(TRY_DEMO));
         }
     }
 
-    public static void onApplicationVote(int teamId, double vote) {
+    public static void onApplicationVote(Context context, int teamId, double vote) {
         if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(APPLICATION_VOTE)
                     .putCustomAttribute(TEAM_ID, Integer.toString(teamId))
                     .putCustomAttribute(VOTE, vote));
         }
+
+        FirebaseAnalytics analytics = ((TeambrellaApplication) context.getApplicationContext()).getFireBaseAnalytics();
+        Bundle params = new Bundle();
+        params.putInt(TEAM_ID, teamId);
+        params.putDouble(VOTE, vote);
+        analytics.logEvent(FIREBASE_APPLICATION_VOTE, params);
     }
 
     public static void onClaimVote(int teamId, int vote) {
@@ -158,5 +169,9 @@ public class StatisticHelper {
         if (!BuildConfig.DEBUG) {
             Answers.getInstance().logCustom(new CustomEvent(GSL_BACKUP).putCustomAttribute(USER_ID, userId));
         }
+    }
+
+    public static void messageSent(Context context) {
+        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(context);
     }
 }
