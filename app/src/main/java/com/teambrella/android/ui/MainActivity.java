@@ -341,7 +341,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             dataFragment.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
         }
 
-        StatisticHelper.onApplicationVote(this, getTeamId(), vote);
+        StatisticHelper.onApplicationVote(this, getTeammateId(), getTeamId(), vote);
     }
 
     @Override

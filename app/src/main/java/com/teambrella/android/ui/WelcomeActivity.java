@@ -328,7 +328,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private void onTryDemo(@SuppressWarnings("unused") View v) {
         mUser.setDemoUser();
         getDemoTeams(mUser.getPrivateKey());
-        StatisticHelper.onTryDemo();
+        StatisticHelper.onTryDemo(this);
     }
 
     @Override
@@ -399,7 +399,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                             mFacebookId = null;
                         }
 
-                        StatisticHelper.onUserRegistered();
+                        StatisticHelper.onUserRegistered(this);
                         if (!BuildConfig.DEBUG) {
                             Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
                         }
