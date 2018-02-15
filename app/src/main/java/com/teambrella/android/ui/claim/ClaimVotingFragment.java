@@ -62,6 +62,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     private View mAllVotesView;
     private CountDownClock mClock;
     private ProgressBar mVotingProgress;
+    private TextView mYourVoteTitle;
 
 
     private String mCurrency;
@@ -84,6 +85,7 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mAllVotesView = view.findViewById(R.id.all_votes);
         mClock = view.findViewById(R.id.clock);
+        mYourVoteTitle = view.findViewById(R.id.your_vote_title);
 
         mVotingControl.setOnSeekBarChangeListener(this);
         mVotingControl.setMax(100);
@@ -175,10 +177,12 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
                     mProxyName.setVisibility(View.VISIBLE);
                     mProxyAvatar.setVisibility(View.VISIBLE);
                     mRestVoteButton.setVisibility(View.INVISIBLE);
+                    mYourVoteTitle.setText(R.string.proxy_vote);
                 } else {
                     mProxyName.setVisibility(View.INVISIBLE);
                     mProxyAvatar.setVisibility(View.INVISIBLE);
                     mRestVoteButton.setVisibility(yourVote >= 0 ? View.VISIBLE : View.INVISIBLE);
+                    mYourVoteTitle.setText(R.string.your_vote);
                 }
 
 

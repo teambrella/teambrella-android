@@ -67,6 +67,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private View mDivider;
     private View mHideButton;
     private Disposable mVoteDisposable;
+    private View mYourVoteTitle;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -290,6 +291,10 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     }
                     break;
                 }
+
+                String poxyName = votingPart.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
+                mVoteTitleView.setText(poxyName != null ? R.string.proxy_vote : R.string.your_vote);
+
             } else {
                 mVoteButton.setVisibility(View.GONE);
             }
