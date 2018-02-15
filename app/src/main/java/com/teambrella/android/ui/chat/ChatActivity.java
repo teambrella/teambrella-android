@@ -39,9 +39,11 @@ import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -54,7 +56,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Claim chat
  */
-public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
+public class ChatActivity extends ATeambrellaActivity implements IChatActivity, IClaimActivity {
 
     private static final String EXTRA_URI = "uri";
     private static final String EXTRA_TOPIC_ID = "topicId";
@@ -70,6 +72,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
+    public static final String CLAIM_DATA_TAG = "claim_data_tag";
+    public static final String VOTE_DATA_TAG = "vote_data_tag";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
@@ -320,6 +324,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                             ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
                             fragment.addPendingMessage(uuid, text, -1f);
                             request(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
+                            StatisticHelper.onPrivateMessage(this);
                         }
                         break;
                         default: {
@@ -328,6 +333,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                             ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
                             fragment.addPendingMessage(uuid, text, mVote);
                             request(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
+                            StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT);
                         }
                     }
                 }
@@ -357,6 +363,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
                     JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                             .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
                     request(TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString()));
+                    StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE);
                     break;
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
@@ -486,6 +493,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
             });
         }
         getPager(DATA_FRAGMENT_TAG).loadNext(true);
+        if (mAction != null) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                    load(CLAIM_DATA_TAG);
+            }
+        }
     }
 
     @Override
@@ -495,6 +508,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     @Override
     protected String[] getDataTags() {
+        if (mAction != null) {
+            switch (mAction) {
+                case SHOW_CLAIM_CHAT_ACTION:
+                    return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
+            }
+        }
         return new String[]{};
     }
 
@@ -505,6 +524,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
 
     @Override
     protected TeambrellaDataFragment getDataFragment(String tag) {
+        switch (tag) {
+            case CLAIM_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
+            case VOTE_DATA_TAG:
+                return TeambrellaDataFragment.getInstance(null);
+        }
         return null;
     }
 
@@ -645,5 +670,35 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity {
     @Override
     public void setChatMuted(boolean muted) {
         request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
+    }
+
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        // nothing to do
+    }
+
+    @Override
+    public void postVote(int vote) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
+        if (dataFragment != null) {
+            dataFragment.load(TeambrellaUris.getClaimVoteUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1), vote));
+        }
+    }
+
+    @Override
+    public void showSnackBar(int text) {
+        // nothing to do
+    }
+
+    @Override
+    public void launchActivity(Intent intent) {
+        // nothing to do
     }
 }

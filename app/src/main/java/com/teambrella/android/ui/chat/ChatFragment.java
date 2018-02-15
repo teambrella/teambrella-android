@@ -1,8 +1,14 @@
 package com.teambrella.android.ui.chat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
 import android.view.View;
@@ -24,18 +30,22 @@ import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
+import com.teambrella.android.ui.claim.ClaimVotingFragment;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import java.util.Locale;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 
 /**
  * Claim Chat Fragment
  */
 public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
+
+    private static final String VOTING_FRAGMENT_TAG = "voting_fragment_tag";
 
 
     Long mLastRead = null;
@@ -47,9 +57,16 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mSubtitleView;
     private TextView mVoteValueView;
     private TextView mVoteTitleView;
-    private View mVoteButton;
+    private TextView mVoteButton;
     private ImageView mIcon;
     private String mUserName;
+    private View mVotingContainer;
+    private VotingContainerBehaviour mVotingContainerBehaviour;
+    private VotingPanelBehaviour mVotingPanelBehaviour;
+    private View mVotingSection;
+    private View mDivider;
+    private View mHideButton;
+    private Disposable mVoteDisposable;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -83,6 +100,10 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mVoteButton = view.findViewById(R.id.vote);
         mIcon = view.findViewById(R.id.image);
         mVoteTitleView = view.findViewById(R.id.your_vote_title);
+        mVotingContainer = view.findViewById(R.id.voting_container);
+        mVotingSection = view.findViewById(R.id.voting_section);
+        mDivider = view.findViewById(R.id.divider);
+        mHideButton = view.findViewById(R.id.hide);
 
 
         switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
@@ -90,23 +111,59 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onClaimClickListener);
                 mVoteButton.setOnClickListener(this::onClaimClickListener);
+                mHideButton.setOnClickListener(this::onClaimClickListener);
+                FragmentManager fragmentManager = getChildFragmentManager();
+                if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
+                    fragmentManager.beginTransaction().add(R.id.voting_container,
+                            ClaimVotingFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
+                                    , ClaimVotingFragment.MODE_CHAT)
+                            , VOTING_FRAGMENT_TAG)
+                            .commit();
+                }
+                mDataHost.load(ChatActivity.CLAIM_DATA_TAG);
                 break;
             case TeambrellaUris.TEAMMATE_CHAT:
                 mVotingPanelView.setVisibility(View.VISIBLE);
                 mVotingPanelView.setOnClickListener(this::onTeammateClickListener);
                 mVoteButton.setOnClickListener(this::onTeammateClickListener);
+                mVotingContainer.setVisibility(View.GONE);
                 break;
             case TeambrellaUris.CONVERSATION_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                mVotingContainer.setVisibility(View.GONE);
                 break;
             case TeambrellaUris.FEED_CHAT:
                 mVotingPanelView.setVisibility(View.GONE);
                 mList.setPadding(mList.getPaddingLeft(), 0, mList.getPaddingRight(), mList.getPaddingBottom());
+                mVotingContainer.setVisibility(View.GONE);
                 break;
 
         }
         mList.setItemAnimator(null);
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mVotingContainer.getLayoutParams();
+        params.setBehavior(mVotingContainerBehaviour = new VotingContainerBehaviour(new AVotingViewBehaviour.OnHideShowListener() {
+            @Override
+            public void onHide() {
+                mVoteButton.setVisibility(View.VISIBLE);
+                mHideButton.setVisibility(View.INVISIBLE);
+                fadeIn(mVotingSection);
+                fadeIn(mDivider);
+            }
+
+            @Override
+            public void onShow() {
+                mVoteButton.setVisibility(View.INVISIBLE);
+                mHideButton.setVisibility(View.VISIBLE);
+                fadeOut(mVotingSection);
+                fadeOut(mDivider);
+            }
+        }));
+        mVotingContainer.setLayoutParams(params);
+        params = (CoordinatorLayout.LayoutParams) mVotingPanelView.getLayoutParams();
+        params.setBehavior(mVotingPanelBehaviour = new VotingPanelBehaviour());
+        mVotingPanelView.setLayoutParams(params);
     }
 
 
@@ -118,6 +175,50 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
+        if (notification.isOnNext()) {
+            JsonWrapper result = new JsonWrapper(notification.getValue());
+            JsonWrapper status = result.getObject(TeambrellaModel.ATTR_STATUS);
+            String uriString = status != null ? status.getString(TeambrellaModel.ATTR_STATUS_URI) : null;
+            Uri uri = uriString != null ? Uri.parse(uriString) : null;
+            if (uri != null) {
+                switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
+                    case TeambrellaUris.CLAIMS_CHAT:
+                    case TeambrellaUris.FEED_CHAT:
+                    case TeambrellaUris.CONVERSATION_CHAT:
+                    case TeambrellaUris.TEAMMATE_CHAT:
+                        onChatDataUpdated(notification);
+                        break;
+                    case TeambrellaUris.SET_CLAIM_VOTE:
+                        onVoteDataUpdated(notification);
+                        break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                mVoteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
+                        .subscribe(this::onDataUpdated);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getChatUri())) {
+            case TeambrellaUris.CLAIMS_CHAT:
+                if (mVoteDisposable != null && !mVoteDisposable.isDisposed()) {
+                    mVoteDisposable.dispose();
+                    mVoteDisposable = null;
+                }
+        }
+    }
+
+    private void onChatDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonWrapper data = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper metadata = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_METADATA_);
@@ -212,6 +313,15 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         }
     }
 
+    private void onVoteDataUpdated(Notification<JsonObject> notification) {
+        if (notification.isOnNext()) {
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
+            setClaimVoteValue(voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1));
+        }
+    }
+
 
     private void setClaimVoteValue(float value) {
         if (value >= 0) {
@@ -241,10 +351,36 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private void onClaimClickListener(View v) {
         switch (v.getId()) {
             case R.id.voting_panel:
-            case R.id.vote:
                 startActivityForResult(ClaimActivity.getLaunchIntent(getContext(), mDataHost.getClaimId(), mDataHost.getObjectName(), mDataHost.getTeamId()), 10);
                 break;
+            case R.id.vote:
+                mVotingContainerBehaviour.show(mVotingContainer);
+                break;
+            case R.id.hide:
+                mVotingContainerBehaviour.hide(mVotingContainer);
+                break;
         }
+    }
+
+
+    private static void fadeIn(View view) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        animator.setDuration(300);
+        view.setVisibility(View.VISIBLE);
+        animator.start();
+    }
+
+    private static void fadeOut(final View view) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
+        animator.setDuration(300);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                view.setVisibility(View.INVISIBLE);
+            }
+        });
+        animator.start();
     }
 
 

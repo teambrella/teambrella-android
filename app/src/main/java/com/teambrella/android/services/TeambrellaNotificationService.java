@@ -17,7 +17,6 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
@@ -300,11 +299,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                         , messageWrapper.getString(USER_IMAGE)
                         , messageWrapper.getString(USER_IMAGE)
                         , messageWrapper.getString(CONTENT));
-
-                StatisticHelper.onPostCreatedNotification(messageWrapper.getInt(TEAM_ID)
-                        , messageWrapper.getString(USER_ID)
-                        , messageWrapper.getString(TOPIC_ID)
-                        , messageWrapper.getString(POST_ID));
             }
             break;
 
@@ -338,7 +332,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (!notifyNewClaim(teamId, userId, claimId, name, imageUrl, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showNewClaimNotification(teamId, claimId, name, amount, teamName);
                 }
-                StatisticHelper.onNewClaimNotification(teamId, userId, claimId);
             }
             break;
 
@@ -363,7 +356,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (!notifyWalletFunded(teamId, userId, mEthAmount, amount, teamImgUrl, teamName)) {
                     mTeambrellaNotificationManager.showWalletIsFundedNotification(mEthAmount);
                 }
-                StatisticHelper.onWalletFundedNotification(teamId, userId, mEthAmount);
             }
             break;
 
@@ -376,7 +368,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
 
             case NEW_TEAMMATE: {
                 mTeambrellaNotificationManager.showNewTeammates(messageWrapper.getString(USER_NAME), messageWrapper.getInt(COUNT), messageWrapper.getString(TEAM_NAME));
-                StatisticHelper.onNewTeammateNotification(messageWrapper.getInt(TEAM_ID), messageWrapper.getString(USER_ID), messageWrapper.getInt(TEAMMATE_ID));
             }
             break;
             case NEW_DISCUSSION: {
@@ -396,7 +387,6 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 if (userId != null && !userId.equalsIgnoreCase(TeambrellaUser.get(this).getUserId())) {
                     mTeambrellaNotificationManager.showNewDiscussion(teamName, userName, teamId, topicName, topicId);
                 }
-                StatisticHelper.onNewDiscussionNotification(teamId, topicId);
             }
             break;
 

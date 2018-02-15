@@ -6,6 +6,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.teambrella.android.ui.TeambrellaUser;
 
@@ -23,6 +24,8 @@ public class TeambrellaApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
+
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
@@ -39,7 +42,6 @@ public class TeambrellaApplication extends MultiDexApplication {
         sAnalytics = GoogleAnalytics.getInstance(this);
         sAnalytics.setDryRun(BuildConfig.DEBUG);
 
-
     }
 
     /**
@@ -54,5 +56,12 @@ public class TeambrellaApplication extends MultiDexApplication {
         }
         sTracker.set("&uid", TeambrellaUser.get(this).getUserId());
         return sTracker;
+    }
+
+    synchronized public FirebaseAnalytics getFireBaseAnalytics() {
+        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(this);
+        analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
+        analytics.setUserId(TeambrellaUser.get(this).getUserId());
+        return analytics;
     }
 }

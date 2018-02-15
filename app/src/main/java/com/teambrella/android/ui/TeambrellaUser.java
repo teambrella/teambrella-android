@@ -24,6 +24,8 @@ public class TeambrellaUser {
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
     private static final String PREFERENCE_WALLET_BACKUP_SHOWN = "wallet_backup_shown";
     private static final String PREFERENCE_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME = "new_version_last_screen_time";
+    private static final String PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME = "new_version_last_notification_time";
 
 
     private static TeambrellaUser sUser;
@@ -32,7 +34,7 @@ public class TeambrellaUser {
     private SharedPreferences mPreferences;
 
 
-    public TeambrellaUser(Context context) {
+    private TeambrellaUser(Context context) {
         mPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 
         if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_PENDING_KEY, null))) {
@@ -124,6 +126,22 @@ public class TeambrellaUser {
 
     public void setLastSyncTime(long time) {
         mPreferences.edit().putLong(PREFERENCE_KEY_LAST_SYNC_TIME, time).apply();
+    }
+
+    public void setNewVersionLastScreenTime(long time) {
+        mPreferences.edit().putLong(PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME, time).apply();
+    }
+
+    public long getNewVersionLastScreenTime() {
+        return mPreferences.getLong(PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME, 0);
+    }
+
+    public void setNewVersionLastNotificationTime(long time) {
+        mPreferences.edit().putLong(PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME, time).apply();
+    }
+
+    public long getNewVersionLastNotificationTime() {
+        return mPreferences.getLong(PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME, 0);
     }
 
 }

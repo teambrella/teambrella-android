@@ -208,6 +208,7 @@ public class TeambrellaModel {
     public static final String ATTR_STATUS_RESULT_CODE = "ResultCode";
     public static final String ATTR_STATUS_ERROR_MESSAGE = "ErrorMessage";
     public static final String ATTR_STATUS_URI = "uri";
+    public static final String ATTR_STATUS_RECOMMENDING_VERSION = "RecommendedVersion";
 
 
     public static final int VALUE_STATUS_RESULT_CODE_SUCCESS = 0;
@@ -217,6 +218,8 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM = 6;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING = 8;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED = 9;
+    public static final int VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION = 12;
+
 
     /*Data*/
     public static final String ATTR_DATA_MY_TEAMMATE_ID = "MyTeammateId";

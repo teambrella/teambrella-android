@@ -19,6 +19,7 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.teammate.TeammateActivity
 import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
+import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TeambrellaDateUtils
 
 const val VIEW_TYPE_TEAMMATE = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR
@@ -160,6 +161,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             inviteButton?.setOnClickListener({
                 startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, mInviteText)
                         .setType("text/plain"), itemView.context.getString(R.string.invite_friends)))
+                StatisticHelper.onInviteFriends(itemView.context, mTeamId)
             })
         }
     }

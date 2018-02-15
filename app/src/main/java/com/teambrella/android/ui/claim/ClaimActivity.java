@@ -185,7 +185,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
         }
-        StatisticHelper.onClaimVote(getTeamId(), vote);
+        StatisticHelper.onClaimVote(this, getTeamId(), getClaimId(), vote);
     }
 
 

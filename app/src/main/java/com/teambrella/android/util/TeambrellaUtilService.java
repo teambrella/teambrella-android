@@ -1,5 +1,8 @@
 package com.teambrella.android.util;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
@@ -9,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -20,6 +24,7 @@ import com.google.android.gms.gcm.TaskParams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
+import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -335,6 +340,10 @@ public class TeambrellaUtilService extends GcmTaskService {
 
         if (response != null) {
             JsonObject status = response.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();
+
+            // checking status
+            checkStatus(status);
+
             long timestamp = status.get(TeambrellaModel.ATTR_STATUS_TIMESTAMP).getAsLong();
 
             JsonObject data = response.get(TeambrellaModel.ATTR_DATA).getAsJsonObject();
@@ -705,6 +714,33 @@ public class TeambrellaUtilService extends GcmTaskService {
             String key = Integer.toString(teammate.facebookName.hashCode());
             if (backupData.getValue(key) == null) {
                 backupData.setValue(key, TeambrellaUser.get(this).getPrivateKey());
+            }
+        }
+    }
+
+    private void checkStatus(JsonObject status) {
+        int recommendedVersion = status.get(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION).getAsInt();
+        if (recommendedVersion > BuildConfig.VERSION_CODE) {
+            long current = System.currentTimeMillis();
+            TeambrellaUser user = TeambrellaUser.get(this);
+            final long minDelay = 1000 * 60 * 60 * 24 * 3;
+            if (Math.abs(current - Math.max(user.getNewVersionLastScreenTime(), user.getNewVersionLastNotificationTime())) >= minDelay) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                Notification notification = new NotificationCompat.Builder(this, null)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_is_outdated_description_notification)))
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_teambrella_status)
+                        .setColor(getResources().getColor(R.color.lightBlue))
+                        .setContentTitle(getString(R.string.app_is_outdated_title))
+                        .setContentText(getString(R.string.app_is_outdated_description_notification))
+                        .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(android.content.Intent.ACTION_VIEW)
+                                .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)), PendingIntent.FLAG_UPDATE_CURRENT))
+                        .build();
+                if (notificationManager != null) {
+                    final int id = 333;
+                    notificationManager.notify(id, notification);
+                }
+                user.setNewVersionLastNotificationTime(current);
             }
         }
     }
