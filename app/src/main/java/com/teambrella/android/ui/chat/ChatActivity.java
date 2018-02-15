@@ -43,6 +43,7 @@ import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
+import com.teambrella.android.util.StatisticHelper;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -323,6 +324,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                             ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
                             fragment.addPendingMessage(uuid, text, -1f);
                             request(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
+                            StatisticHelper.onPrivateMessage(this);
                         }
                         break;
                         default: {
@@ -331,6 +333,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                             ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
                             fragment.addPendingMessage(uuid, text, mVote);
                             request(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
+                            StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT);
                         }
                     }
                 }
@@ -360,6 +363,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                     JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                             .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
                     request(TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString()));
+                    StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE);
                     break;
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:

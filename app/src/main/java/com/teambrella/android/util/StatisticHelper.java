@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -17,18 +15,23 @@ import com.teambrella.android.TeambrellaApplication;
  */
 public class StatisticHelper {
 
+    public static final String MESSAGE_TEXT = "text";
+    public static final String MESSAGE_IMAGE = "image";
+
     private static final String TRY_DEMO = "try_demo";
     private static final String USER_REGISTERED = "user_registered";
-    private static final String GSL_BACKUP = "GSL Back Up";
+    private static final String CHAT_MESSAGE = "chat_message";
+    private static final String PRIVATE_MESSAGE = "private_message";
+    private static final String INVITE_FRIENDS = "invite_friends";
+    private static final String WALLET_SYNC = "wallet_sync";
 
 
     private static final String TEAM_ID = "team_id";
-    private static final String USER_ID = "user_id";
     private static final String TOPIC_ID = "topic_id";
-    private static final String POST_ID = "post_id";
     private static final String CLAIM_ID = "claim_id";
     private static final String TEAMMATE_ID = "teammate_id";
     private static final String VOTE = "vote";
+    private static final String TYPE = "type";
 
 
     private static final String CATEGORY_WALLET = "Wallet";
@@ -80,6 +83,9 @@ public class StatisticHelper {
                 .setAction(ACTION_SYNC)
                 .setLabel(tag)
                 .build());
+
+        FirebaseAnalytics analytics = getAnalytics(context);
+        analytics.logEvent(WALLET_SYNC, null);
     }
 
     public static void onWalletSaved(Context context, String userId) {
@@ -89,14 +95,27 @@ public class StatisticHelper {
                 .setAction(ACTION_SAVE)
                 .setLabel(userId)
                 .build());
-
-        if (!BuildConfig.DEBUG) {
-            Answers.getInstance().logCustom(new CustomEvent(GSL_BACKUP).putCustomAttribute(USER_ID, userId));
-        }
     }
 
-    public static void messageSent(Context context) {
-        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(context);
+    public static void onChatMessage(Context context, int teamId, String topicId, String type) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(TEAM_ID, Integer.toString(teamId));
+        params.putString(TOPIC_ID, topicId);
+        params.putString(TYPE, type);
+        analytics.logEvent(CHAT_MESSAGE, params);
+    }
+
+    public static void onPrivateMessage(Context context) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        analytics.logEvent(PRIVATE_MESSAGE, null);
+    }
+
+    public static void onInviteFriends(Context context, int teamId) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(TEAM_ID, Integer.toString(teamId));
+        analytics.logEvent(INVITE_FRIENDS, params);
     }
 
 
