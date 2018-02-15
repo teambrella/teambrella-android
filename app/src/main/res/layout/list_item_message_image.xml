@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/date"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@id/user_picture"
         android:background="@drawable/chat_bubble_them_img"
