@@ -13,6 +13,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.ui.base.ADataFragment
+import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.widget.PercentageWidget
 import io.reactivex.Notification
 
@@ -27,25 +28,14 @@ fun getFragmentInstance(tags: Array<String>): KTeammateVotingStatsFragment {
 /**
  * Voting Stats Fragment
  */
-class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
+class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
 
-    private val weight: TextView?
-        get() = view?.findViewById(R.id.weight)
-
-    private val proxyRank: TextView?
-        get() = view?.findViewById(R.id.proxy_rank)
-
-    private val setProxy: TextView?
-        get() = view?.findViewById(R.id.add_to_proxies)
-
-    private val decisionView: PercentageWidget?
-        get() = view?.findViewById(R.id.decision_stats)
-
-    private val discussionView: PercentageWidget?
-        get() = view?.findViewById(R.id.discussion_stats)
-
-    private val votingView: PercentageWidget?
-        get() = view?.findViewById(R.id.voting_stats)
+    private val weight: TextView? by ViewHolder(R.id.weight)
+    private val proxyRank: TextView? by ViewHolder(R.id.proxy_rank)
+    private val setProxy: TextView? by ViewHolder(R.id.add_to_proxies)
+    private val decisionView: PercentageWidget? by ViewHolder(R.id.decision_stats)
+    private val discussionView: PercentageWidget? by ViewHolder(R.id.discussion_stats)
+    private val votingView: PercentageWidget? by ViewHolder(R.id.voting_stats)
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,8 +47,8 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<View>(R.id.add_to_proxies)?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
-        view.findViewById<View>(R.id.add_to_proxies)?.tag = true
+        setProxy?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
+        setProxy?.tag = true
     }
 
     /**
@@ -121,7 +111,6 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
         }
     }
 
-
     private fun getVotingStatsString(value: Float): Int {
         return when {
             value >= 0.95f -> R.string.voting_always
@@ -153,4 +142,6 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
             else -> R.string.discussion_quite
         }
     }
+
+
 }
