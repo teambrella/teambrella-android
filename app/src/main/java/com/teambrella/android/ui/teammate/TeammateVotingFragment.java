@@ -173,7 +173,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                         mProxyName.setVisibility(View.INVISIBLE);
                         mProxyAvatar.setVisibility(View.INVISIBLE);
                         mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
-                        mYourVoteTitle.setText(R.string.your_vote);
+                        mYourVoteTitle.setText(R.string.you);
                     }
 
 

@@ -42,18 +42,12 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
         return inflater.inflate(R.layout.fragment_teammate_voting_stats, container, false)
     }
 
-    /**
-     *
-     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setProxy?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
         setProxy?.tag = true
     }
 
-    /**
-     *
-     */
     override fun onDataUpdated(notification: Notification<JsonObject>?) {
         if (notification != null) {
             if (notification.isOnNext) {

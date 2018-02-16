@@ -82,11 +82,18 @@ val JsonObject?.claimId: Int?
 val JsonObject?.To: JsonArray?
     get() = this?.get(TO)?.asJsonArray
 
+val JsonObject?.voting: JsonObject?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_ONE_VOTING)?.asJsonObject
+
+val JsonObject?.remainedMinutes: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
+
 var JsonObject?.userName: String?
     get() = getString(USER_NAME)
     set(value) {
         this?.addProperty(USER_NAME, value)
     }
+
 
 var JsonObject?.amount: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
@@ -102,6 +109,31 @@ var JsonObject?.kind: Int?
 
 val JsonObject?.serverTxState: Int?
     get() = this.getInt(TeambrellaModel.ATTR_DATA_SERVER_TX_STATE)
+
+val JsonObject?.riskVoted: Double?
+    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_RISK_VOTED)
+
+val JsonObject?.myVote: Double?
+    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE)
+
+val JsonObject?.proxyName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME)
+
+val JsonObject?.proxyAvatar: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)
+
+val JsonObject?.riskScale: JsonObject?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE)?.asJsonObject
+
+val JsonObject?.avgRisk: Double?
+    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_AVG_RISK)
+
+val JsonObject?.otherAvatars: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_OTHER_AVATARS)?.asJsonArray
+
+val JsonObject?.otherCount: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT)
+
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
