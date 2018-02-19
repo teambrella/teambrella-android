@@ -237,10 +237,18 @@
                 android:background="@drawable/block_first" />
 
             <FrameLayout
-                android:id="@+id/voting_statistics_container"
+                android:id="@+id/voting_result_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/object_info_container"
+                android:background="@drawable/block"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:id="@+id/voting_statistics_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/voting_result_container"
                 android:background="@drawable/block_last" />
 
             <View
