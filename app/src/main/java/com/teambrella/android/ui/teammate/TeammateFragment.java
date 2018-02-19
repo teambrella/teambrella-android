@@ -48,6 +48,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private static final String VOTING_TAG = "voting_tag";
     private static final String VOTING_STATS_FRAGMENT_TAG = "voting_stats_tag";
     private static final String VOTING_RESULT_TAG = "voting_result_tag";
+    private static final String CONTACTS_TAG = "contacts_tag";
 
 
     private ImageView mUserPicture;
@@ -149,6 +150,10 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
 
         if (fragmentManager.findFragmentByTag(VOTING_RESULT_TAG) == null) {
             transaction.add(R.id.voting_result_container, ADataFragment.getInstance(mTags, TeammateVotingResultFragment.class), VOTING_RESULT_TAG);
+        }
+
+        if (fragmentManager.findFragmentByTag(CONTACTS_TAG) == null) {
+            transaction.add(R.id.contacts_container, ADataFragment.getInstance(mTags, TeammateContactsFragment.class), CONTACTS_TAG);
         }
 
         if (!transaction.isEmpty()) {

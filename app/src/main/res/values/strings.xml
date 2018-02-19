@@ -309,4 +309,6 @@
 
     <string name="proxy_vote_title">Proxy Vote</string>
     <string name="member_since_format_string">Member since %s</string>
+    <string name="contacts">Contact</string>
+    <string name="facebook">Facebook</string>
 </resources>

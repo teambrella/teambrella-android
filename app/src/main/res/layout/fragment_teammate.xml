@@ -249,6 +249,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/voting_result_container"
+                android:background="@drawable/block" />
+
+            <FrameLayout
+                android:id="@+id/contacts_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/voting_statistics_container"
                 android:background="@drawable/block_last" />
 
 
@@ -256,10 +263,9 @@
                 android:id="@+id/member_since"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_below="@id/voting_statistics_container"
+                android:layout_below="@id/contacts_container"
                 android:background="@color/paleGreyTwo"
                 android:gravity="center"
-                android:text="Member since 29 June 2017"
                 android:textColor="@color/blueGrey"
                 android:textSize="12sp" />
 
