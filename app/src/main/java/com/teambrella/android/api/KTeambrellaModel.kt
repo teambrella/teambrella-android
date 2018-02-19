@@ -83,7 +83,10 @@ val JsonObject?.To: JsonArray?
     get() = this?.get(TO)?.asJsonArray
 
 val JsonObject?.voting: JsonObject?
-    get() = this?.get(TeambrellaModel.ATTR_DATA_ONE_VOTING)?.asJsonObject
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING)
+
+val JsonObject?.voted: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_VOTED_PART)
 
 val JsonObject?.remainedMinutes: Long?
     get() = this?.getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
@@ -123,7 +126,7 @@ val JsonObject?.proxyAvatar: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)
 
 val JsonObject?.riskScale: JsonObject?
-    get() = this?.get(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE)?.asJsonObject
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE)
 
 val JsonObject?.avgRisk: Double?
     get() = this?.getDouble(TeambrellaModel.ATTR_DATA_AVG_RISK)

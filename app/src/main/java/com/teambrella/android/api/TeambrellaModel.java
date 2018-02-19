@@ -398,6 +398,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_IS_MUTED = "IsMuted";
     public static final String ATTR_DATA_MESSAGE_STATUS = "MesageStatus";
     public static final String ATTR_DATA_TOTAL_COMISSION = "TotalCommission";
+    public static final String ATTR_DATA_VOTED_PART = "VotedPart";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

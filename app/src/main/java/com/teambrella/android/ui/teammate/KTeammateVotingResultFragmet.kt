@@ -3,7 +3,9 @@
 package com.teambrella.android.ui.teammate
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.gson.JsonObject
@@ -14,7 +16,6 @@ import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
 import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
-import com.teambrella.android.ui.widget.VoterBar
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
 import java.util.*
@@ -36,45 +37,59 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     protected val clock: CountDownClock? by ViewHolder(R.id.clock)
     protected val yourVoteTitle: TextView? by ViewHolder(R.id.your_vote_title)
     protected val avatarWidget: TeambrellaAvatarsWidgets? by ViewHolder(R.id.team_avatars)
-    protected val voterBar: VoterBar? by ViewHolder(R.id.voter_bar)
-    protected val resetVote: View? by ViewHolder(R.id.reset_vote_btn)
 
     protected var avgRiskValue: Double? = null
 
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater?.inflate(R.layout.fragment_teammate_voting, container, false)
+        view?.findViewById<View>(R.id.voting_panel)?.visibility = View.GONE
+        view?.findViewById<View>(R.id.reset_vote_btn)?.visibility = View.GONE
+        return view
+    }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         allVotes?.setOnClickListener({
             AllVotesActivity.startTeammateAllVotes(context, mDataHost.teamId, mDataHost.teammateId)
         })
-        voterBar?.setVoterBarListener(voterBarListener)
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
         if (notification.isOnNext) {
             val response = notification.value
             val data = response?.data
-            val voting = data?.voting
+            val voted = data?.voted
             val riskScale = data?.riskScale
 
             riskScale?.let {
                 this.avgRiskValue = riskScale.avgRisk
             }
 
-            voting?.let {
-                it.riskVoted?.let {
-                    if (it > 0) {
-                        this.teamVoteRisk?.text = String.format(Locale.US, "%.2f", it)
-                        this.avgDifferenceTeamVote?.visibility = View.VISIBLE
-                        this.avgDifferenceTeamVote?.text = getAVGDifference(it, avgRiskValue
-                                ?: it)
-                    } else {
-                        this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-                        this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
+            voted?.let {
+                if (it.riskVoted != null) {
+                    it.riskVoted?.let {
+                        if (it > 0) {
+                            this.teamVoteRisk?.text = String.format(Locale.US, "%.2f", it)
+                            this.avgDifferenceTeamVote?.visibility = View.VISIBLE
+                            this.avgDifferenceTeamVote?.text = getAVGDifference(it, avgRiskValue
+                                    ?: it)
+                        } else {
+                            this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
+                            this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
+                        }
                     }
+                } else {
+                    this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
+                    this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
                 }
-                it.myVote?.let {
-                    setMyVote(it)
+
+                if (it.myVote != null) {
+                    it.myVote?.let {
+                        setMyVote(it)
+                    }
+                } else {
+                    setMyVote(-1.0)
                 }
 
                 val proxyName = it.proxyName
@@ -98,10 +113,11 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
                     this.yourVoteTitle?.text = getString(R.string.your_vote)
                 }
 
-                this.whenDate?.text = getString(R.string.ends_in, TeambrellaDateUtils.getRelativeTimeLocalized(context
-                        , it.remainedMinutes ?: 0))
+                this.whenDate?.text = getString(R.string.ended_ago, TeambrellaDateUtils.getRelativeTimeLocalized(context
+                        , Math.abs(it.remainedMinutes ?: 0)))
 
-                val otherCount = voting.otherCount ?: 0
+
+                val otherCount = voted.otherCount ?: 0
                 it.otherAvatars?.map { it.asString }.let {
                     this.avatarWidget?.setAvatars(imageLoader, it, otherCount)
                 }
@@ -121,12 +137,6 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
         }
     }
 
-    private fun setVoting(isVoting: Boolean) {
-        this.myVoteRisk?.alpha = if (isVoting) 0.3f else 1f
-        this.resetVote?.alpha = if (isVoting) 0.3f else 1f
-        this.resetVote?.isEnabled = !isVoting
-    }
-
     private fun setMyVote(vote: Double) {
         if (vote > 0) {
             this.myVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
@@ -136,29 +146,6 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
         } else {
             this.myVoteRisk?.text = getString(R.string.no_teammate_vote_value)
             this.avgDifferenceMyVote?.visibility = View.INVISIBLE
-        }
-    }
-
-
-    private val voterBarListener = object : VoterBar.VoterBarListener {
-
-        override fun onVoteChanged(vote: Float, fromUser: Boolean) {
-            val value = Math.pow(25.0, vote.toDouble()) / 5
-            setVoting(true)
-            if (fromUser) {
-                setMyVote(value)
-            }
-        }
-
-        override fun onVoterBarReleased(vote: Float, fromUser: Boolean) {
-            if (fromUser) {
-                mDataHost.postVote(Math.pow(25.0, vote.toDouble()) / 5)
-            }
-            parentFragment?.let {
-                if (it is VoterBar.VoterBarListener) {
-                    it.onVoterBarReleased(vote, fromUser)
-                }
-            }
         }
     }
 }

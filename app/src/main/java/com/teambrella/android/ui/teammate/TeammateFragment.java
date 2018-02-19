@@ -47,6 +47,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private static final String OBJECT_FRAGMENT_TAG = "object_tag";
     private static final String VOTING_TAG = "voting_tag";
     private static final String VOTING_STATS_FRAGMENT_TAG = "voting_stats_tag";
+    private static final String VOTING_RESULT_TAG = "voting_result_tag";
 
 
     private ImageView mUserPicture;
@@ -144,6 +145,10 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
             transaction.add(R.id.voting_container, ADataFragment.getInstance(mTags, TeammateVotingFragment.class), VOTING_TAG);
         }
 
+        if (fragmentManager.findFragmentByTag(VOTING_RESULT_TAG) == null) {
+            transaction.add(R.id.voting_result_container, ADataFragment.getInstance(mTags, TeammateVotingResultFragment.class), VOTING_RESULT_TAG);
+        }
+
         if (!transaction.isEmpty()) {
             transaction.commit();
         }
@@ -238,6 +243,21 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                         }
                     })
                     .onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
+
+
+            dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_VOTED_PART))
+                    .doOnNext(jsonWrapper -> {
+                        View view = getView();
+                        if (view != null) {
+                            view.findViewById(R.id.voting_result_container).setVisibility(View.VISIBLE);
+                        }
+                    })
+                    .doOnError(throwable -> {
+                        View view = getView();
+                        if (view != null) {
+                            view.findViewById(R.id.voting_result_container).setVisibility(View.VISIBLE);
+                        }
+                    }).onErrorReturnItem(new JsonWrapper(null)).blockingFirst();
 
             Observable<JsonWrapper> discussionsObservable = dataObservable.map(data -> data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION));
 
