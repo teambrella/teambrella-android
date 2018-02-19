@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 
 const val TO = "To"
 const val USER_NAME = "UserName"
+const val FACEBOOK_URL = "FacebookUrl"
 
 /**
  * Teambrella Kotlin Model
@@ -136,6 +137,12 @@ val JsonObject?.otherAvatars: JsonArray?
 
 val JsonObject?.otherCount: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT)
+
+val JsonObject?.fbName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_FB_NAME)
+
+val JsonObject?.facebookUrl: String?
+    get() = this?.getString(FACEBOOK_URL)
 
 
 private fun JsonObject?.getFloat(key: String): Float? {
