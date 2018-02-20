@@ -146,95 +146,104 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <LinearLayout
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/block_last"
-            android:orientation="vertical">
-
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="34dp"
-                android:text="@string/recommending_funding" />
+            android:background="@drawable/block_last">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="20dp">
+
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="34dp"
+                    android:text="@string/recommending_funding" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="bottom"
+                    android:orientation="horizontal">
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/for_max_coverage" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        android:id="@+id/for_max_coverage_crypto_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dark"
-                        android:textSize="24sp" />
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/for_max_coverage" />
 
-                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                        android:id="@+id/for_max_coverage_currency_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="10sp" />
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            android:id="@+id/for_max_coverage_crypto_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/dark"
+                            android:textSize="24sp" />
+
+                        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                            android:id="@+id/for_max_coverage_currency_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="10sp" />
 
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/for_uninterrupted_coverage" />
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/for_uninterrupted_coverage" />
 
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        android:id="@+id/for_uninterrupted_coverage_crypto_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dark"
-                        android:textSize="24sp" />
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            android:id="@+id/for_uninterrupted_coverage_crypto_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/dark"
+                            android:textSize="24sp" />
 
-                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                        android:id="@+id/for_uninterrupted_coverage_currency_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                            android:id="@+id/for_uninterrupted_coverage_currency_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="24dp"
+                            android:textSize="10sp" />
+
+                    </LinearLayout>
+
+
+                    <ImageView
+                        android:id="@+id/qr_code"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
                         android:layout_marginBottom="24dp"
-                        android:textSize="10sp" />
+                        android:background="@drawable/section_button_background"
+                        android:padding="3dp" />
 
                 </LinearLayout>
 
 
-                <ImageView
-                    android:id="@+id/qr_code"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:layout_marginBottom="24dp"
-                    android:background="@drawable/section_button_background"
-                    android:padding="3dp" />
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/fund_wallet"
+                    style="@style/Teambrella.TextAppearence.SectionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:text="@string/fund_wallet" />
 
             </LinearLayout>
 
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/fund_wallet"
-                style="@style/Teambrella.TextAppearence.SectionButton"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:text="@string/fund_wallet" />
-
-        </LinearLayout>
+        </FrameLayout>
 
 
         <View
