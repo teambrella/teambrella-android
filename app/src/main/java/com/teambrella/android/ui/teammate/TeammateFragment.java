@@ -75,7 +75,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
     private TextView mCoversThemTitle;
     private TextView mWouldCoverThemTitle;
     private TextView mCityView;
-    private TextView mMemeberSince;
+    private TextView mMemberSince;
 
 
     private String mUserId;
@@ -121,7 +121,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
         mCoversThemTitle = view.findViewById(R.id.covers_them_title);
         mWouldCoverThemTitle = view.findViewById(R.id.would_cover_them_title);
         mCityView = view.findViewById(R.id.city);
-        mMemeberSince = view.findViewById(R.id.member_since);
+        mMemberSince = view.findViewById(R.id.member_since);
         mDataHost.load(mTags[0]);
         setContentShown(false);
         view.findViewById(R.id.discussion_foreground).setOnClickListener(v ->
@@ -196,7 +196,7 @@ public class TeammateFragment extends ADataProgressFragment<ITeammateActivity> i
                     .doOnNext(basic -> mUserId = basic.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                     .doOnNext(basic -> mCityView.setText(basic.getString(TeambrellaModel.ATTR_DATA_CITY)))
                     .doOnNext(basic -> mGender = basic.getInt(TeambrellaModel.ATTR_DATA_GENDER, mGender))
-                    .doOnNext(basic -> mMemeberSince.setText(getString(R.string.member_since_format_string, TeambrellaDateUtils.getDatePresentation(getContext()
+                    .doOnNext(basic -> mMemberSince.setText(getString(R.string.member_since_format_string, TeambrellaDateUtils.getDatePresentation(getContext()
                             , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
                             , basic.getString(TeambrellaModel.ATTR_DATA_DATE_JOINED)))))
                     .subscribe(jsonWrapper -> {

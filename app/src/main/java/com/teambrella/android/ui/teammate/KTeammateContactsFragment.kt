@@ -42,7 +42,7 @@ class TeammateContactsFragment : AKDataFragment<ITeammateActivity>() {
                         Log.e(LOG_TAG, e.toString())
                     }
                     Uri.parse(str)
-                    val view = this.view
+                    val view = this.view?.findViewById<View>(R.id.contacts_panel)
                     facebookLink?.text = "fb.com/" + ((uri?.lastPathSegment) ?: "")
                     view?.setOnClickListener({
                         try {
