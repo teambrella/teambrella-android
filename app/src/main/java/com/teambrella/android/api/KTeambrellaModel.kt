@@ -8,6 +8,7 @@ import com.google.gson.JsonObject
 const val TO = "To"
 const val USER_NAME = "UserName"
 const val FACEBOOK_URL = "FacebookUrl"
+const val CLAIM_AMOUNT = "ClaimAmount"
 
 /**
  * Teambrella Kotlin Model
@@ -144,6 +145,17 @@ val JsonObject?.fbName: String?
 val JsonObject?.facebookUrl: String?
     get() = this?.getString(FACEBOOK_URL)
 
+val JsonObject?.claimAmount: Float?
+    get() = this?.getFloat(CLAIM_AMOUNT)
+
+val JsonObject?.team: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM)
+
+val JsonObject?.currency: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_CURRENCY)
+
+val JsonObject?.ratioVoted: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

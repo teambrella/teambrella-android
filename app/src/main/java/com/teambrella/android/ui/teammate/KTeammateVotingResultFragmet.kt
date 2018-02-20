@@ -67,30 +67,8 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
             }
 
             voted?.let {
-                if (it.riskVoted != null) {
-                    it.riskVoted?.let {
-                        if (it > 0) {
-                            this.teamVoteRisk?.text = String.format(Locale.US, "%.2f", it)
-                            this.avgDifferenceTeamVote?.visibility = View.VISIBLE
-                            this.avgDifferenceTeamVote?.text = getAVGDifference(it, avgRiskValue
-                                    ?: it)
-                        } else {
-                            this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-                            this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
-                        }
-                    }
-                } else {
-                    this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-                    this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
-                }
-
-                if (it.myVote != null) {
-                    it.myVote?.let {
-                        setMyVote(it)
-                    }
-                } else {
-                    setMyVote(-1.0)
-                }
+                setTeamVote(it.riskVoted)
+                setMyVote(it.myVote)
 
                 val proxyName = it.proxyName
                 val proxyAvatar = it.proxyAvatar
@@ -137,15 +115,35 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
         }
     }
 
-    private fun setMyVote(vote: Double) {
-        if (vote > 0) {
-            this.myVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
-            this.avgDifferenceMyVote?.visibility = View.VISIBLE
-            this.avgDifferenceMyVote?.text = getAVGDifference(vote, avgRiskValue
-                    ?: vote)
+    private fun setMyVote(vote: Double?) {
+        if (vote != null) {
+            if (vote > 0) {
+                this.myVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
+                this.avgDifferenceMyVote?.visibility = View.VISIBLE
+                this.avgDifferenceMyVote?.text = getAVGDifference(vote, avgRiskValue
+                        ?: vote)
+            } else {
+                this.myVoteRisk?.text = getString(R.string.no_teammate_vote_value)
+                this.avgDifferenceMyVote?.visibility = View.INVISIBLE
+            }
         } else {
-            this.myVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-            this.avgDifferenceMyVote?.visibility = View.INVISIBLE
+            setMyVote(-1.0)
+        }
+    }
+
+    private fun setTeamVote(vote: Double?) {
+        if (vote != null) {
+            if (vote > 0) {
+                this.teamVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
+                this.avgDifferenceTeamVote?.visibility = View.VISIBLE
+                this.avgDifferenceTeamVote?.text = getAVGDifference(vote, avgRiskValue
+                        ?: vote)
+            } else {
+                this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
+                this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
+            }
+        } else {
+            setTeamVote(-1.0)
         }
     }
 }
