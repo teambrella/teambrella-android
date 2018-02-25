@@ -2,7 +2,9 @@ package com.teambrella.android.ui.proxies.myproxies;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -22,10 +24,12 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
     private final int mTeamId;
+    private final ItemTouchHelper mItemTouchHelper;
 
-    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, OnStartActivityListener listener) {
+    MyProxiesAdapter(IDataPager<JsonArray> pager, int teamId, OnStartActivityListener listener, ItemTouchHelper helper) {
         super(pager, listener);
         mTeamId = teamId;
+        mItemTouchHelper = helper;
         setHasStableIds(false);
     }
 
@@ -75,6 +79,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         private ProgressBar mVoting;
         private TextView mPosition;
 
+        @SuppressLint("ClickableViewAccessibility")
         MyProxyViewHolder(View itemView) {
             super(itemView, mTeamId);
             mLocation = itemView.findViewById(R.id.location);
@@ -83,6 +88,12 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
             mDiscussion = itemView.findViewById(R.id.discussion_progress);
             mVoting = itemView.findViewById(R.id.voting_progress);
             mPosition = itemView.findViewById(R.id.position);
+            itemView.findViewById(R.id.anchor).setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mItemTouchHelper.startDrag(MyProxyViewHolder.this);
+                }
+                return false;
+            });
         }
 
         @SuppressLint("SetTextI18n")
