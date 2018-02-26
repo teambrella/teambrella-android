@@ -30,7 +30,7 @@ import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
-import com.teambrella.android.ui.claim.ClaimVotingFragment;
+import com.teambrella.android.ui.claim.KClaimVotingResultFragmentKt;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import java.util.Locale;
@@ -116,8 +116,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 FragmentManager fragmentManager = getChildFragmentManager();
                 if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
                     fragmentManager.beginTransaction().add(R.id.voting_container,
-                            ClaimVotingFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
-                                    , ClaimVotingFragment.MODE_CHAT)
+                            KClaimVotingResultFragmentKt.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
+                                    , KClaimVotingResultFragmentKt.MODE_CHAT)
                             , VOTING_FRAGMENT_TAG)
                             .commit();
                 }

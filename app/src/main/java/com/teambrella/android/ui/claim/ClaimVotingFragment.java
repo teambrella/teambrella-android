@@ -38,14 +38,14 @@ public class ClaimVotingFragment extends ADataFragment<IClaimActivity> implement
     public static final int MODE_CHAT = 2;
 
 
-    public static ClaimVotingFragment getInstance(String[] tags, int mode) {
-        ClaimVotingFragment fragment = new ClaimVotingFragment();
-        Bundle args = new Bundle();
-        args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, tags);
-        args.putInt(EXTRA_MODE, mode);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static ClaimVotingFragment getInstance(String[] tags, int mode) {
+//        ClaimVotingFragment fragment = new ClaimVotingFragment();
+//        Bundle args = new Bundle();
+//        args.putStringArray(EXTRA_DATA_FRAGMENT_TAG, tags);
+//        args.putInt(EXTRA_MODE, mode);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
 
     private TextView mTeamVotePercents;

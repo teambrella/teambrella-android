@@ -88,7 +88,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_container, ClaimVotingFragment.getInstance(mTags, ClaimVotingFragment.MODE_CLAIM), VOTING_FRAGMENT_TAG);
+            transaction.add(R.id.voting_container, KClaimVotingResultFragmentKt.getInstance(mTags, KClaimVotingResultFragmentKt.MODE_CLAIM), VOTING_FRAGMENT_TAG);
         }
 
 
