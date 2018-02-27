@@ -18,6 +18,7 @@ import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
+import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.TeambrellaDateUtils
@@ -50,11 +51,12 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
     protected val avatarWidget: TeambrellaAvatarsWidgets? by ViewHolder(R.id.team_avatars)
     protected val allVotes: View? by ViewHolder(R.id.all_votes)
     protected val whenDate: TextView? by ViewHolder(R.id.`when`)
-    protected val clock: TextView? by ViewHolder(R.id.clock)
+    protected val clock: CountDownClock? by ViewHolder(R.id.clock)
     protected val yourVoteTitle: TextView? by ViewHolder(R.id.your_vote_title)
     protected val resetVoteButton: TextView? by ViewHolder(R.id.reset_vote_btn)
     protected val votingControl: SeekBar? by ViewHolder(R.id.voting_control)
     protected val votingProgress: ProgressBar? by ViewHolder(R.id.voting_progress)
+    protected val votingPanel: View? by ViewHolder(R.id.voting_panel)
 
     protected var currency: String? = null
     protected var claimAmount: Float? = null
@@ -119,48 +121,63 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
             currency = team?.currency ?: currency
 
             voting?.let {
-                val teamVote = it.ratioVoted
-                val myVote = it.myVote
-                val proxyName = it.proxyName
-                val proxyAvatar = it.proxyAvatar
+                setVotes(it, true)
+            }
 
-                setTeamVote(teamVote, currency ?: "", claimAmount)
-                setMyVote(myVote?.toFloat(), currency ?: "", claimAmount)
-
-                this.votingControl?.progress = Math.round((myVote ?: 0.0) * 100).toInt()
-
-                if (proxyName != null && proxyAvatar != null) {
-                    this.proxyName?.let {
-                        it.text = proxyName
-                        it.visibility = View.VISIBLE
-                    }
-                    this.proxyAvatar?.let {
-                        GlideApp.with(this).load(imageLoader.getImageUrl(proxyAvatar)).into(it)
-                        it.visibility = View.VISIBLE
-                    }
-
-                    this.yourVoteTitle?.text = getString(R.string.proxy_vote)
-                    this.resetVoteButton?.visibility = View.GONE
-
-                } else {
-                    this.proxyName?.visibility = View.INVISIBLE
-                    this.proxyAvatar?.visibility = View.INVISIBLE
-                    this.yourVoteTitle?.text = getString(R.string.your_vote)
-                    this.resetVoteButton?.visibility = if (myVote ?: -1.0 >= 0) View.VISIBLE else View.GONE
-                }
-
-                this.whenDate?.text = getString(R.string.ended_ago, TeambrellaDateUtils.getRelativeTimeLocalized(context
-                        , Math.abs(it.remainedMinutes ?: 0)))
-
-
-                val otherCount = voting.otherCount ?: 0
-                it.otherAvatars?.map { it.asString }.let {
-                    this.avatarWidget?.setAvatars(imageLoader, it, otherCount)
-                }
-
+            data?.voted?.let {
+                setVotes(it, false)
             }
 
         }
+    }
+
+
+    private fun setVotes(voteData: JsonObject, voting: Boolean) {
+        val teamVote = voteData.ratioVoted
+        val myVote = voteData.myVote
+        val proxyName = voteData.proxyName
+        val proxyAvatar = voteData.proxyAvatar
+
+        setTeamVote(teamVote, currency ?: "", claimAmount)
+        setMyVote(myVote?.toFloat(), currency ?: "", claimAmount)
+
+        this.votingControl?.progress = Math.round((myVote ?: 0.0) * 100).toInt()
+
+        if (proxyName != null && proxyAvatar != null) {
+            this.proxyName?.let {
+                it.text = proxyName
+                it.visibility = View.VISIBLE
+            }
+            this.proxyAvatar?.let {
+                GlideApp.with(this).load(imageLoader.getImageUrl(proxyAvatar)).into(it)
+                it.visibility = View.VISIBLE
+            }
+
+            this.yourVoteTitle?.text = getString(R.string.proxy_vote)
+            this.resetVoteButton?.visibility = View.GONE
+
+        } else {
+            this.proxyName?.visibility = View.INVISIBLE
+            this.proxyAvatar?.visibility = View.INVISIBLE
+            this.yourVoteTitle?.text = getString(R.string.your_vote)
+            this.resetVoteButton?.visibility = if (myVote ?: -1.0 >= 0) View.VISIBLE else View.GONE
+        }
+
+        val remainedMinutes = voteData.remainedMinutes ?: 0
+        this.whenDate?.text = getString(if (remainedMinutes < 0) R.string.ended_ago else R.string.ends_in
+                , TeambrellaDateUtils.getRelativeTimeLocalized(context
+                , Math.abs(remainedMinutes)))
+
+        if (remainedMinutes >= 0) {
+            clock?.setRemainedMinutes(remainedMinutes)
+        }
+
+        val otherCount = voteData.otherCount ?: 0
+        voteData.otherAvatars?.map { it.asString }.let {
+            this.avatarWidget?.setAvatars(imageLoader, it, otherCount)
+        }
+
+        votingPanel?.visibility = if (voting) View.VISIBLE else View.GONE
     }
 
 

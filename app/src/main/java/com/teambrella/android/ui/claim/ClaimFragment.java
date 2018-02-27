@@ -166,15 +166,6 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             , mTeamAccessLevel)));
                 }
             }
-
-            JsonWrapper claimVoting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
-            if (claimVoting != null) {
-                View view = getView();
-                if (view != null) {
-                    view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.details_container).setBackgroundResource(R.drawable.block_last);
-                }
-            }
             setContentShown(true);
             mIsShown = true;
         } else {
