@@ -60,13 +60,10 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
             val response = notification.value
             val data = response?.data
             val voted = data?.voted
-            val riskScale = data?.riskScale
-
-            riskScale?.let {
-                this.avgRiskValue = riskScale.avgRisk
-            }
 
             voted?.let {
+
+                this.avgRiskValue = it.avgRisk
                 setTeamVote(it.riskVoted)
                 setMyVote(it.myVote)
 
