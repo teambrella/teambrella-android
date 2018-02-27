@@ -180,7 +180,6 @@
     <string name="proxies_for_empty_prompt"><![CDATA[<b>You’re not a Proxy Voter for anyone in the team.</b><br><br>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.]]></string>
     <string name="private_conversation">Private Conversation</string>
     <string name="ends_in">Ends in %s</string>
-    <string name="ended_ago">Ended %s ago</string>
     <string name="declined">Declined</string>
     <string name="all_votes">All Votes</string>
     <string name="weight_format_string"><![CDATA[Weight <b>%.1f</b>]]></string>
@@ -311,4 +310,5 @@
     <string name="member_since_format_string">Member since %s</string>
     <string name="contacts">Contact</string>
     <string name="facebook">Facebook</string>
+    <string name="ended_ago">Ended %s ago</string>
 </resources>
