@@ -165,6 +165,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.google.android.gms:play-services-auth:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
 
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
