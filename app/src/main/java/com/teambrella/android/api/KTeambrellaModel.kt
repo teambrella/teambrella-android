@@ -187,6 +187,12 @@ private fun JsonObject?.getJsonElement(key: String): JsonElement? {
 
 private fun JsonObject?.getString(key: String): String? = this?.getJsonElement(key)?.asString
 
-private fun JsonObject?.getObject(key: String): JsonObject? = this?.getJsonElement(key)?.asJsonObject
+private fun JsonObject?.getObject(key: String): JsonObject? {
+    val element = this?.getJsonElement(key)
+    if (element?.isJsonObject == true) {
+        return element.asJsonObject
+    }
+    return null
+}
 
 
