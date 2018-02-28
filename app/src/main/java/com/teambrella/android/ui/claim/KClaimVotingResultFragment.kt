@@ -153,7 +153,7 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
                 it.visibility = View.VISIBLE
             }
 
-            this.yourVoteTitle?.text = getString(R.string.proxy_vote)
+            this.yourVoteTitle?.text = getString(R.string.proxy_vote_title)
             this.resetVoteButton?.visibility = View.GONE
 
         } else {

@@ -293,7 +293,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 }
 
                 String poxyName = votingPart.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
-                mVoteTitleView.setText(poxyName != null ? R.string.proxy_vote : R.string.your_vote);
+                mVoteTitleView.setText(poxyName != null ? R.string.proxy_vote_title : R.string.your_vote);
 
             } else {
                 mVoteButton.setVisibility(View.GONE);

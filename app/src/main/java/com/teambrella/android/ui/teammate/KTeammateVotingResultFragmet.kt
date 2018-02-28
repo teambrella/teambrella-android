@@ -80,7 +80,7 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
                         it.visibility = View.VISIBLE
                     }
 
-                    this.yourVoteTitle?.text = getString(R.string.proxy_vote)
+                    this.yourVoteTitle?.text = getString(R.string.proxy_vote_title)
 
                 } else {
                     this.proxyName?.visibility = View.INVISIBLE

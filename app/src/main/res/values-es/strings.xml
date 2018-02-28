@@ -171,7 +171,6 @@
     <string name="proxies_for_empty_prompt"><![CDATA[<b>No estas Proxy de cualquier compañero del equipo.</b><br><br>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.]]></string>
     <string name="private_conversation">Mensaje privado</string>
     <string name="ends_in">Termina en %s</string>
-    <string name="ended_ago">Termino %s</string>
     <string name="declined">Rechazado</string>
     <string name="all_votes">Todos los Votos</string>
     <string name="weight_format_string"><![CDATA[Peso <b>%.1f</b>]]></string>
@@ -294,4 +293,8 @@
     <string name="app_is_outdated_description_notification">Tapear para obtener una versión de Teambrella más nueva y mejorada de Google Play.</string>
     <string name="app_is_outdated_action">Actualizar la App</string>
     <string name="remind_me_later">Recuérdame más tarde</string>
+    <string name="proxy_vote_title">Voto de Proxy</string>
+    <string name="member_since_format_string">Miembro desde %s</string>
+    <string name="contacts">Contacto</string>
+    <string name="ended_ago">Terminó hace %s</string>
 </resources>
