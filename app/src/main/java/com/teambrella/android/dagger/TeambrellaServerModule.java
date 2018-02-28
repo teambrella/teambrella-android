@@ -2,6 +2,7 @@ package com.teambrella.android.dagger;
 
 import android.content.Context;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.ui.TeambrellaUser;
 
@@ -20,6 +21,6 @@ public class TeambrellaServerModule {
     @Singleton
     @Named(Dependencies.TEAMBRELLA_SERVER)
     TeambrellaServer getTeambrellaServer(@Named(Dependencies.CONTEXT) Context context, @Named(Dependencies.TEAMBRELLA_USER) TeambrellaUser user) {
-        return new TeambrellaServer(context, user.getPrivateKey());
+        return new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
     }
 }

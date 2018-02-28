@@ -21,6 +21,7 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
@@ -199,12 +200,12 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean tryInit() throws CryptoException {
         Log.d(LOG_TAG, "---> SYNC -> tryInit() started...");
         if (mKey != null) return true;
-
         TeambrellaUser user = TeambrellaUser.get(this);
-        String privateKey = !user.isDemoUser() ? TeambrellaUser.get(this).getPrivateKey() : null;
+        String privateKey = !user.isDemoUser() ? user.getPrivateKey() : null;
+        String deviceToken = !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-            mServer = new TeambrellaServer(this, privateKey);
+            mServer = new TeambrellaServer(this, privateKey, user.getDeviceCode(), deviceToken);
             mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
             mWallet = getWallet();
@@ -676,7 +677,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static void debugDB(Context context) {
         try {
-            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            TeambrellaUser user = TeambrellaUser.get(context);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
             server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
                     .blockingFirst();
         } catch (Exception e) {
@@ -686,7 +688,8 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static void debugLog(Context context, String logPath) {
         try {
-            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            TeambrellaUser user = TeambrellaUser.get(context);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
             server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
                     .blockingFirst();
 

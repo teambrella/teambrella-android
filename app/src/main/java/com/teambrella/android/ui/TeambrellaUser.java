@@ -8,6 +8,8 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.Wallet;
 
+import java.util.UUID;
+
 /**
  * Teambrella User
  */
@@ -19,6 +21,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_PRIVATE_KEY = "private_key";
     private static final String PREFERENCE_USER_ID = "user_id_key";
     private static final String PREFERENCE_TEAM_ID = "team_id_key";
+    private static final String PREFERENCE_DEVICE_CODE = "device_code";
     private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
     private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
@@ -43,6 +46,9 @@ public class TeambrellaUser {
         if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_DEMO_KEY, null))) {
             mPreferences.edit().putString(PREFERENCE_DEMO_KEY, generatePrivateKey()).apply();
         }
+        if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_DEVICE_CODE, null))) {
+            mPreferences.edit().putString(PREFERENCE_DEVICE_CODE, UUID.randomUUID().toString()).apply();
+        }
     }
 
 
@@ -55,6 +61,11 @@ public class TeambrellaUser {
 
     public String getPrivateKey() {
         return mPreferences.getString(PREFERENCE_PRIVATE_KEY, null);
+    }
+
+
+    public String getDeviceCode() {
+        return mPreferences.getString(PREFERENCE_DEVICE_CODE, null);
     }
 
 

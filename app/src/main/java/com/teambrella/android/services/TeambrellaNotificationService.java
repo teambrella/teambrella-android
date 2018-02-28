@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -241,7 +242,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                 .authority(TeambrellaServer.AUTHORITY)
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
-                        mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey())
+                        mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey(), user.getDeviceCode()
+                                , FirebaseInstanceId.getInstance().getToken())
                                 .createSocketClient(uri, this, mUser.getNotificationTimeStamp());
                         mTeambrellaSocketClient.connect();
                     }

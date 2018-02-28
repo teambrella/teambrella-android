@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -48,7 +49,9 @@ public class TeambrellaRequestFragment extends Fragment {
         setRetainInstance(true);
         TeambrellaUser user = TeambrellaUser.get(getContext());
         if (user.getPrivateKey() != null) {
-            mServer = new TeambrellaServer(getContext(), user.getPrivateKey());
+            mServer = new TeambrellaServer(getContext()
+                    , user.getPrivateKey(), user.getDeviceCode()
+                    , !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
         }
         mConnectable.connect();
     }
@@ -72,7 +75,7 @@ public class TeambrellaRequestFragment extends Fragment {
 
 
     public void request(Context context, String privateKey, Uri uri) {
-        request(new TeambrellaServer(context, privateKey), uri);
+        request(new TeambrellaServer(context, privateKey, null, null), uri);
     }
 
 

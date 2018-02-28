@@ -3,7 +3,7 @@ package com.teambrella.android.api.server;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.Build;
 import android.util.Pair;
 
 import com.bumptech.glide.load.model.LazyHeaders;
@@ -35,7 +35,6 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.reactivex.Observable;
-import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -76,12 +75,17 @@ public class TeambrellaServer {
     private final ECKey mKey;
 
 
+    private final String mDeviceCode;
+
+    private final String mDeviceToken;
+
+
     /**
      * Constructor.
      *
      * @param context to use
      */
-    public TeambrellaServer(Context context, String password) {
+    public TeambrellaServer(Context context, String password, String deviceCode, String deviceToken) {
 
 
         mPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -107,6 +111,8 @@ public class TeambrellaServer {
         mAPI = retrofit.create(TeambrellaAPI.class);
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, password);
         mKey = dpk.getKey();
+        mDeviceCode = deviceCode != null ? deviceCode : "";
+        mDeviceToken = deviceToken != null ? deviceToken : "";
     }
 
 
@@ -131,28 +137,6 @@ public class TeambrellaServer {
                 });
     }
 
-    public OkHttpClient getHttpClient(Context context) {
-        Cache cache = null;
-        switch (Environment.getExternalStorageState()) {
-            case Environment.MEDIA_MOUNTED:
-                File cacheDir = context.getExternalCacheDir();
-                if (cacheDir != null) {
-                    cache = new Cache(context.getExternalCacheDir(), 1024 * 1024 * 100);
-                }
-            default:
-
-        }
-
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addInterceptor(new HeaderInterceptor());
-        if (cache != null) {
-            builder.cache(cache);
-        }
-
-        return builder.build();
-    }
-
-
     public LazyHeaders getHeaders() {
         Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
         String publicKey = Utils.HEX.encode(ECKey.compressPoint(mKey.getPubKeyPoint()).getEncoded());
@@ -161,6 +145,9 @@ public class TeambrellaServer {
                 .addHeader("key", publicKey)
                 .addHeader("sig", () -> mKey.signMessage(Long.toString(timestamp)))
                 .addHeader("clientVersion", BuildConfig.VERSION_NAME)
+                .addHeader("deviceId", mDeviceCode)
+                .addHeader("deviceToken", mDeviceToken)
+                .addHeader("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL)
                 .build();
     }
 
@@ -494,6 +481,9 @@ public class TeambrellaServer {
                     .addHeader("key", publicKey)
                     .addHeader("sig", signature)
                     .addHeader("clientVersion", BuildConfig.VERSION_NAME)
+                    .addHeader("deviceId", mDeviceCode)
+                    .addHeader("deviceToken", mDeviceToken)
+                    .addHeader("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL)
                     .build();
             return chain.proceed(newRequest);
         }
@@ -509,6 +499,9 @@ public class TeambrellaServer {
         headers.put("key", publicKey);
         headers.put("sig", signature);
         headers.put("clientVersion", BuildConfig.VERSION_NAME);
+        headers.put("deviceId", mDeviceCode);
+        headers.put("deviceToken", mDeviceToken);
+        headers.put("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL);
         return new TeambrellaSocketClient(uri, headers, listener, lastNotificationTimeStamp);
     }
 
