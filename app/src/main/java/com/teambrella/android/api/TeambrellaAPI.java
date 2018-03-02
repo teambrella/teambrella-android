@@ -198,4 +198,8 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("wallet/getMyTxList")
     Observable<Response<JsonObject>> getWalletTransactions(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("me/getMe")
+    Observable<Response<JsonObject>> getMe(@Body JsonElement body);
 }

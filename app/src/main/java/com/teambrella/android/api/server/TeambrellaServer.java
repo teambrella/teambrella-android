@@ -345,6 +345,7 @@ public class TeambrellaServer {
             case TeambrellaUris.DEMO_TEAMS:
             case TeambrellaUris.DEBUG_DB:
             case TeambrellaUris.DEBUG_LOG:
+            case TeambrellaUris.GET_ME:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -430,6 +431,8 @@ public class TeambrellaServer {
                 return mAPI.setChatMuted(requestBody);
             case TeambrellaUris.WALLET_TRANSACTIONS:
                 return mAPI.getWalletTransactions(requestBody);
+            case TeambrellaUris.GET_ME:
+                return mAPI.getMe(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
