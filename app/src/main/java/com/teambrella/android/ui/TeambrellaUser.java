@@ -164,4 +164,8 @@ public class TeambrellaUser {
         mPreferences.edit().putBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, value).apply();
     }
 
+    public int getInfoMask() {
+        return isDemoUser() ? 0 : isWalletBackedUp() ? 16 : 0;
+    }
+
 }

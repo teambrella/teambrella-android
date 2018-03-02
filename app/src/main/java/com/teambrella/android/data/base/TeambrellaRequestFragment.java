@@ -51,7 +51,7 @@ public class TeambrellaRequestFragment extends Fragment {
         if (user.getPrivateKey() != null) {
             mServer = new TeambrellaServer(getContext()
                     , user.getPrivateKey(), user.getDeviceCode()
-                    , !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
+                    , !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null, user.getInfoMask());
         }
         mConnectable.connect();
     }
@@ -75,7 +75,8 @@ public class TeambrellaRequestFragment extends Fragment {
 
 
     public void request(Context context, String privateKey, Uri uri) {
-        request(new TeambrellaServer(context, privateKey, null, null), uri);
+        TeambrellaUser user = TeambrellaUser.get(getContext());
+        request(new TeambrellaServer(context, privateKey, user.getDeviceCode(), null, user.getInfoMask()), uri);
     }
 
 

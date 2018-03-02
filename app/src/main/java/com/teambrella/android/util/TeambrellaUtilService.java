@@ -205,7 +205,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         String deviceToken = !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-            mServer = new TeambrellaServer(this, privateKey, user.getDeviceCode(), deviceToken);
+            mServer = new TeambrellaServer(this, privateKey, user.getDeviceCode(), deviceToken, user.getInfoMask());
             mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
             mWallet = getWallet();
@@ -678,7 +678,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     private static void debugDB(Context context) {
         try {
             TeambrellaUser user = TeambrellaUser.get(context);
-            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
+                    , user.getInfoMask());
             server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
                     .blockingFirst();
         } catch (Exception e) {
@@ -689,7 +690,8 @@ public class TeambrellaUtilService extends GcmTaskService {
     private static void debugLog(Context context, String logPath) {
         try {
             TeambrellaUser user = TeambrellaUser.get(context);
-            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
+                    , user.getInfoMask());
             server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
                     .blockingFirst();
 

@@ -243,7 +243,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
                         mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey(), user.getDeviceCode()
-                                , FirebaseInstanceId.getInstance().getToken())
+                                , FirebaseInstanceId.getInstance().getToken(), user.getInfoMask())
                                 .createSocketClient(uri, this, mUser.getNotificationTimeStamp());
                         mTeambrellaSocketClient.connect();
                     }

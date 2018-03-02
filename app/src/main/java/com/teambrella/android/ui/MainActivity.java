@@ -153,7 +153,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
-        WalletBackUpService.Companion.scheduleBackupCheck(this);
+
+        if (savedInstanceState == null) {
+            WalletBackUpService.Companion.scheduleBackupCheck(this);
+            WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
+        }
+
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
     }

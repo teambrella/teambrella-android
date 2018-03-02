@@ -7,6 +7,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.gcm.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.teambrella.android.api.avatar
+import com.teambrella.android.api.data
 import com.teambrella.android.api.fbName
 import com.teambrella.android.api.name
 import com.teambrella.android.api.server.TeambrellaServer
@@ -24,13 +25,24 @@ class WalletBackUpService : GcmTaskService() {
         private const val CHECK_BACKUP_TAG = "CheckBackup"
         private const val LOG_TAG = "WalletBackupService"
 
-        fun scheduleBackupCheck(context: Context) {
+        fun schedulePeriodicBackupCheck(context: Context) {
             val task = PeriodicTask.Builder()
                     .setService(WalletBackUpService::class.java)
                     .setTag(CHECK_BACKUP_TAG)
                     .setPersisted(true)
                     .setPeriod((12 * 60 * 60).toLong())
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .build()
+            GcmNetworkManager.getInstance(context).schedule(task)
+        }
+
+        fun scheduleBackupCheck(context: Context) {
+            val task = OneoffTask.Builder()
+                    .setService(WalletBackUpService::class.java)
+                    .setTag(CHECK_BACKUP_TAG)
+                    .setPersisted(true)
+                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .setExecutionWindow(0, 10)
                     .build()
             GcmNetworkManager.getInstance(context).schedule(task)
         }
@@ -50,9 +62,9 @@ class WalletBackUpService : GcmTaskService() {
     private fun onCheckBackUp() {
         val user = TeambrellaUser.get(this)
         if (!user.isDemoUser) {
-            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, FirebaseInstanceId.getInstance().token)
+            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, FirebaseInstanceId.getInstance().token, user.infoMask)
             val me = server.requestObservable(TeambrellaUris.getMe(), null).blockingFirst()
-            me?.let {
+            me?.data?.let {
                 val googleApiClient = GoogleApiClient.Builder(this)
                         .addApi(Auth.CREDENTIALS_API)
                         .build()
@@ -64,10 +76,12 @@ class WalletBackUpService : GcmTaskService() {
                             .setProfilePictureUri(TeambrellaImageLoader.getImageUri(it.avatar))
                             .build()
                     val status = Auth.CredentialsApi.save(googleApiClient, credential).await()
-                    if (status.isSuccess) {
-                        user.isWalletBackedUp = true
-                    } else if (status.hasResolution()) {
-                        user.isWalletBackedUp = false
+                    when {
+                        status.isSuccess -> user.isWalletBackedUp = true
+                        status.hasResolution() -> user.isWalletBackedUp = false
+                        else -> {
+                            Log.reportNonFatal(LOG_TAG, RuntimeException("unable to write wallet " + status))
+                        }
                     }
                     googleApiClient.disconnect()
                 } else {

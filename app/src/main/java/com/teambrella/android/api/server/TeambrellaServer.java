@@ -79,13 +79,15 @@ public class TeambrellaServer {
 
     private final String mDeviceToken;
 
+    private final int mMask;
+
 
     /**
      * Constructor.
      *
      * @param context to use
      */
-    public TeambrellaServer(Context context, String password, String deviceCode, String deviceToken) {
+    public TeambrellaServer(Context context, String password, String deviceCode, String deviceToken, int mask) {
 
 
         mPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -113,6 +115,7 @@ public class TeambrellaServer {
         mKey = dpk.getKey();
         mDeviceCode = deviceCode != null ? deviceCode : "";
         mDeviceToken = deviceToken != null ? deviceToken : "";
+        mMask = mask;
     }
 
 
@@ -147,7 +150,7 @@ public class TeambrellaServer {
                 .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                 .addHeader("deviceId", mDeviceCode)
                 .addHeader("deviceToken", mDeviceToken)
-                .addHeader("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL)
+                .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL)
                 .build();
     }
 
@@ -486,7 +489,7 @@ public class TeambrellaServer {
                     .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                     .addHeader("deviceId", mDeviceCode)
                     .addHeader("deviceToken", mDeviceToken)
-                    .addHeader("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL)
+                    .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL)
                     .build();
             return chain.proceed(newRequest);
         }
@@ -504,7 +507,7 @@ public class TeambrellaServer {
         headers.put("clientVersion", BuildConfig.VERSION_NAME);
         headers.put("deviceId", mDeviceCode);
         headers.put("deviceToken", mDeviceToken);
-        headers.put("info", "0;" + Build.VERSION.RELEASE + ";" + Build.MODEL);
+        headers.put("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL);
         return new TeambrellaSocketClient(uri, headers, listener, lastNotificationTimeStamp);
     }
 

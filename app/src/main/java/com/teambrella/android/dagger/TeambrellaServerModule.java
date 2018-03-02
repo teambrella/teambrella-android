@@ -21,6 +21,7 @@ public class TeambrellaServerModule {
     @Singleton
     @Named(Dependencies.TEAMBRELLA_SERVER)
     TeambrellaServer getTeambrellaServer(@Named(Dependencies.CONTEXT) Context context, @Named(Dependencies.TEAMBRELLA_USER) TeambrellaUser user) {
-        return new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null);
+        return new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
+                , user.getInfoMask());
     }
 }
