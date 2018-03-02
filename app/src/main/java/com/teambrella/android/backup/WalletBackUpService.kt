@@ -48,6 +48,12 @@ class WalletBackUpService : GcmTaskService() {
         }
     }
 
+
+    override fun onInitializeTasks() {
+        super.onInitializeTasks()
+        schedulePeriodicBackupCheck(this)
+    }
+
     override fun onRunTask(params: TaskParams?): Int {
         try {
             when (params?.tag) {
