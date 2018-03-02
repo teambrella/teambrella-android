@@ -23,6 +23,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
@@ -152,6 +153,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
+        WalletBackUpService.Companion.scheduleBackupCheck(this);
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
     }

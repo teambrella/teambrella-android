@@ -65,11 +65,10 @@ class WalletBackUpService : GcmTaskService() {
                             .build()
                     val status = Auth.CredentialsApi.save(googleApiClient, credential).await()
                     if (status.isSuccess) {
-
-                    } else {
-                        Log.e(LOG_TAG, "unable to connect to google API:" + connectionResult)
+                        user.isWalletBackedUp = true
+                    } else if (status.hasResolution()) {
+                        user.isWalletBackedUp = false
                     }
-
                     googleApiClient.disconnect()
                 } else {
                     Log.e(LOG_TAG, "unable to connect to google API:" + connectionResult)

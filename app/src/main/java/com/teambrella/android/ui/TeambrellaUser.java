@@ -27,6 +27,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
     private static final String PREFERENCE_WALLET_BACKUP_SHOWN = "wallet_backup_shown";
     private static final String PREFERENCE_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREFERENCE_KEY_IS_WALLET_BACKED_UP = "is_wallet_backed_up";
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME = "new_version_last_screen_time";
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME = "new_version_last_notification_time";
 
@@ -153,6 +154,14 @@ public class TeambrellaUser {
 
     public long getNewVersionLastNotificationTime() {
         return mPreferences.getLong(PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME, 0);
+    }
+
+    public boolean isWalletBackedUp() {
+        return mPreferences.getBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, false);
+    }
+
+    public void setWalletBackedUp(boolean value) {
+        mPreferences.edit().putBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, value).apply();
     }
 
 }
