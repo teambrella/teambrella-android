@@ -2,6 +2,7 @@ package com.teambrella.android.services
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.teambrella.android.backup.WalletBackUpService
 import com.teambrella.android.util.TeambrellaUtilService
 import com.teambrella.android.util.log.Log
 
@@ -28,5 +29,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 else -> TeambrellaUtilService.oneoffWalletSync(this, true)
             }
         }
+
+        WalletBackUpService.schedulePeriodicBackupCheck(this);
     }
 }

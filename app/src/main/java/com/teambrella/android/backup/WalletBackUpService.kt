@@ -32,6 +32,7 @@ class WalletBackUpService : GcmTaskService() {
                     .setPersisted(true)
                     .setPeriod((12 * 60 * 60).toLong())
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .setUpdateCurrent(false)
                     .build()
             GcmNetworkManager.getInstance(context).schedule(task)
         }
