@@ -31,6 +31,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.TeambrellaBackupData;
+import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
@@ -222,6 +223,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         super.onInitializeTasks();
         scheduleWalletSync(this);
         scheduleCheckingSocket(this);
+        WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
     }
 
     @Override
