@@ -15,14 +15,17 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
         private const val DEBUG_UPDATE = "102"
         private const val DEBUG_SYNC = "103"
         private const val CMD = "Cmd"
+        private const val DEBUG = "Debug"
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
         remoteMessage?.data?.let {
             when (it[CMD]) {
                 DEBUG_DB -> TeambrellaUtilService.scheduleDebugDB(this)
-                DEBUG_SYNC -> TeambrellaUtilService.oneoffWalletSync(this, true)
-                DEBUG_UPDATE -> TeambrellaUtilService.oneOffUpdate(this, true)
+                DEBUG_SYNC -> TeambrellaUtilService.oneoffWalletSync(this, (it[DEBUG]
+                        ?: "false").toBoolean(), true)
+                DEBUG_UPDATE -> TeambrellaUtilService.oneOffUpdate(this, (it[DEBUG]
+                        ?: "false").toBoolean())
             }
         }
         WalletBackUpService.schedulePeriodicBackupCheck(this)

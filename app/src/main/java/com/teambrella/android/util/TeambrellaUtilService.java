@@ -75,6 +75,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_DEBUG_LOGGING = "debug_logging";
+    private static final String EXTRA_FORCE = "force";
 
     private TeambrellaServer mServer;
     private ContentProviderClient mClient;
@@ -100,14 +101,15 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void oneoffWalletSync(Context context) {
-        oneoffWalletSync(context, false);
+        oneoffWalletSync(context, false, false);
     }
 
 
-    public static void oneoffWalletSync(Context context, boolean debug) {
+    public static void oneoffWalletSync(Context context, boolean debug, boolean force) {
         try {
             Bundle args = new Bundle();
             args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+            args.putBoolean(EXTRA_FORCE, force);
             context.startService(new Intent(context, TeambrellaUtilService.class)
                     .setAction(ACTION_LOCAL_SYNC)
                     .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
@@ -246,7 +248,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG: {
-                    if (isDebugLogging(taskParams) || canSyncByTime(System.currentTimeMillis())) {
+                    if (isForce(taskParams) || canSyncByTime(System.currentTimeMillis())) {
                         StatisticHelper.onWalletSync(this, tag);
                         if (isDebugLogging(taskParams)) {
                             Log.startDebugging(this);
@@ -674,6 +676,11 @@ public class TeambrellaUtilService extends GcmTaskService {
     private static boolean isDebugLogging(TaskParams params) {
         Bundle extras = params.getExtras();
         return extras != null && extras.getBoolean(EXTRA_DEBUG_LOGGING, false);
+    }
+
+    private static boolean isForce(TaskParams params) {
+        Bundle extras = params.getExtras();
+        return extras != null && extras.getBoolean(EXTRA_FORCE, false);
     }
 
 

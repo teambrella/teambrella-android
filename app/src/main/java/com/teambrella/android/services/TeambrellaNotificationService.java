@@ -449,7 +449,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 TeambrellaUtilService.scheduleDebugDB(this);
                 break;
             case DEBUG_SYNC:
-                TeambrellaUtilService.oneoffWalletSync(this, true);
+                TeambrellaUtilService.oneoffWalletSync(this, true, true);
                 break;
             case DEBUG_UPDATE:
                 TeambrellaUtilService.oneOffUpdate(this, true);
