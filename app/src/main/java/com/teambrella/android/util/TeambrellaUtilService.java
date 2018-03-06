@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -19,6 +20,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -106,30 +108,59 @@ public class TeambrellaUtilService extends GcmTaskService {
 
 
     public static void oneoffWalletSync(Context context, boolean debug, boolean force) {
-        try {
-            Bundle args = new Bundle();
-            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            args.putBoolean(EXTRA_FORCE, force);
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
-                    .putExtra(TASK_EXTRAS, args));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                args.putBoolean(EXTRA_FORCE, force);
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(SYNC_WALLET_ONCE_TAG)
+                        .setExecutionWindow(0, 1)
+                        .setExtras(args)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                args.putBoolean(EXTRA_FORCE, force);
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
+                        .putExtra(TASK_EXTRAS, args));
+            } catch (Throwable ignored) {
+            }
         }
     }
 
     public static void oneOffUpdate(Context context, boolean debug) {
-        try {
-            Bundle args = new Bundle();
-            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, DEBUG_UPDATE_TAG)
-                    .putExtra(TASK_EXTRAS, args));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(DEBUG_UPDATE_TAG)
+                        .setExecutionWindow(0, 1)
+                        .setExtras(args)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, DEBUG_UPDATE_TAG)
+                        .putExtra(TASK_EXTRAS, args));
+            } catch (Throwable ignored) {
+
+            }
         }
+
     }
 
     public static void scheduleCheckingSocket(Context context) {
@@ -149,12 +180,23 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void scheduleDebugDB(Context context) {
-        try {
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, DEBUG_DB_TASK_TAG));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(DEBUG_DB_TASK_TAG)
+                        .setExecutionWindow(0, 1)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, DEBUG_DB_TASK_TAG));
+            } catch (Throwable ignored) {
+
+            }
         }
     }
 
@@ -299,11 +341,11 @@ public class TeambrellaUtilService extends GcmTaskService {
                 break;
 
                 case CHECK_SOCKET:
+                    //noinspection EmptyCatchBlock
                     try {
                         startService(new Intent(this, TeambrellaNotificationService.class)
                                 .setAction(TeambrellaNotificationService.CONNECT_ACTION));
                     } catch (Exception e) {
-                        Log.reportNonFatal(LOG_TAG, e);
                     }
                     break;
                 case DEBUG_DB_TASK_TAG:
