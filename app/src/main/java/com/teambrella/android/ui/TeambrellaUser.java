@@ -2,6 +2,9 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.PowerManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
 import org.bitcoinj.params.MainNetParams;
@@ -164,8 +167,11 @@ public class TeambrellaUser {
         mPreferences.edit().putBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, value).apply();
     }
 
-    public int getInfoMask() {
-        return isDemoUser() ? 0 : isWalletBackedUp() ? 16 : 0;
+    public int getInfoMask(Context context) {
+        boolean notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean powerSaveMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && powerManager != null && powerManager.isPowerSaveMode();
+        return isDemoUser() ? 0 : (isWalletBackedUp() ? 16 : 0) | (notificationsEnabled ? 3 : 1) | (powerSaveMode ? 8 : 0);
     }
 
 }

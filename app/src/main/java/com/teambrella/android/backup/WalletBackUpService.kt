@@ -69,7 +69,7 @@ class WalletBackUpService : GcmTaskService() {
     private fun onCheckBackUp() {
         val user = TeambrellaUser.get(this)
         if (!user.isDemoUser) {
-            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, FirebaseInstanceId.getInstance().token, user.infoMask)
+            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, FirebaseInstanceId.getInstance().token, user.getInfoMask(this))
             val me = server.requestObservable(TeambrellaUris.getMe(), null).blockingFirst()
             me?.data?.let {
                 val googleApiClient = GoogleApiClient.Builder(this)
