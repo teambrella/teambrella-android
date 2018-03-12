@@ -266,7 +266,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                                     , card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                     , card.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                     , card.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                    , mDataHost.getTeamAccessLevel()));
+                                    , mDataHost.getTeamAccessLevel()
+                                    , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
                             break;
                         case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                             dataHost.launchActivity(ChatActivity.getFeedChat(context

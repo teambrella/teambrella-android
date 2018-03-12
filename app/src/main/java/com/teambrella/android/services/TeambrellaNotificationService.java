@@ -426,7 +426,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                             , claim.getString(OBJECT_NAME)
                                             , claim.getString(CLAIM_PHOTO)
                                             , messageWrapper.getString(TOPIC_ID)
-                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
+                                            , null));
                         } else if (discussion != null) {
                             mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
                                     , discussion.getString(TOPIC_NAME)

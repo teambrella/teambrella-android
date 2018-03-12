@@ -47,6 +47,7 @@
 
 
     <string name="claim_title_format_string">Reclamación %d</string>
+    <string name="claim_title_date_format_string">Reclamación - %s</string>
     <string name="claim_details">Detalles de Reclamación</string>
     <string name="claim_amount">Reclamado</string>
     <string name="voting">Votación</string>

@@ -44,6 +44,7 @@ import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.StatisticHelper;
+import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -68,6 +69,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private static final String EXTRA_OBJECT_NAME = "object_name";
     private static final String EXTRA_TEAM_ACCESS_LEVEL = "team_access_level";
     private static final String EXTRA_TITLE = "title";
+    private static final String EXTRA_DATE = "date";
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
@@ -112,7 +114,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .setAction(SHOW_CONVERSATION_CHAT);
     }
 
-    public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, String imageUri, String topicId, int accessLevel) {
+    public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, String imageUri, String topicId, int accessLevel, String date) {
         return new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
@@ -121,6 +123,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
                 .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
+                .putExtra(EXTRA_DATE, date)
                 .setAction(SHOW_CLAIM_CHAT_ACTION);
     }
 
@@ -212,10 +215,18 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                     setTitle(R.string.application);
                     break;
 
-                case SHOW_CLAIM_CHAT_ACTION:
-                    setTitle(getString(R.string.claim_title_format_string, mClaimId));
-                    break;
+                case SHOW_CLAIM_CHAT_ACTION: {
+                    String incidentDate = intent.getStringExtra(EXTRA_DATE);
+                    if (incidentDate != null) {
+                        setTitle(getString(R.string.claim_title_date_format_string, TeambrellaDateUtils.getDatePresentation(this
+                                , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                                , incidentDate)));
+                    } else {
+                        setTitle(R.string.claim);
+                    }
 
+                }
+                break;
                 case SHOW_CONVERSATION_CHAT:
                     setTitle(R.string.private_conversation);
                     findViewById(R.id.send_image).setVisibility(View.GONE);
@@ -396,6 +407,18 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                         JsonWrapper voting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
                         if (voting != null) {
                             mVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, mVote);
+                        }
+
+                        JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                        if (basic != null) {
+                            if (mAction != null && mAction.equals(SHOW_CLAIM_CHAT_ACTION)) {
+                                String incidentDate = basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE);
+                                if (incidentDate != null) {
+                                    setTitle(getString(R.string.claim_title_date_format_string, TeambrellaDateUtils.getDatePresentation(this
+                                            , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                                            , incidentDate)));
+                                }
+                            }
                         }
                     })
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))

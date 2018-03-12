@@ -218,7 +218,8 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
                                 , item.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
                                 , item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
                                 , item.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
-                                , mDataHost.getTeamAccessLevel()));
+                                , mDataHost.getTeamAccessLevel()
+                                , item.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
                         break;
                     case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                         startActivity(ChatActivity.getFeedChat(context
