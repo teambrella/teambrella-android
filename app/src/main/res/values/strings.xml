@@ -51,7 +51,8 @@
 
     <string name="decisions">Decisions</string>
     <string name="discussions">Discussions</string>
-    <string name="voting_frequency">Voting Frequency</string>
+    <string name="voting_frequency">Voting Freq.</string>
+    <string name="mildness">Mildness</string>
     <string name="add_to_my_proxies">Add to my proxy voters</string>
 
 

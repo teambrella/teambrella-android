@@ -85,6 +85,13 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
                 if ((arguments?.getInt(EXTRA_MODE, MODE_CLAIM)
                                 ?: MODE_CLAIM) == MODE_CLAIM) View.VISIBLE else View.GONE
 
+
+        val padding = context?.resources?.getDimensionPixelOffset(if ((arguments?.getInt(EXTRA_MODE, MODE_CLAIM)
+                        ?: MODE_CLAIM) == MODE_CLAIM) R.dimen.padding_20dp else R.dimen.padding_16dp)
+                ?: 0
+
+        view?.setPadding(padding, padding, padding, padding)
+
         votingControl?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
