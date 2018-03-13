@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -148,6 +149,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
         private static final String EXTRA_POSITION = "position";
         ImageView icon;
+        ImageView teammtePicture;
         TextView message;
         TextView unread;
         TextView amountWidget;
@@ -186,6 +188,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             subtitle = view.findViewById(R.id.subtitle);
             leftTitle = view.findViewById(R.id.left_title);
             votingLabel = view.findViewById(R.id.voting_label);
+            teammtePicture = view.findViewById(R.id.teammate_picture);
             return view;
         }
 
@@ -237,7 +240,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
             switch (itemType) {
                 case TeambrellaModel.FEED_ITEM_CLAIM:
-                    title.setText(getString(R.string.claim_title_format_string, card.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)));
+                    title.setText(card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME));
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAM_CHAT:
                     title.setText(card.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
@@ -247,9 +250,26 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                     break;
             }
 
-            subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
-                    , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
-                    , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
+            if (itemType == TeambrellaModel.FEED_ITEM_CLAIM) {
+                subtitle.setText(card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_NAME));
+                teammtePicture.setVisibility(View.VISIBLE);
+                GlideApp.with(this).load(getImageLoader().getImageUrl(card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_AVATAR)))
+                        .into(teammtePicture);
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) subtitle.getLayoutParams();
+                params.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.margin_8));
+                subtitle.setLayoutParams(params);
+
+            } else {
+                subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
+                        , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                        , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
+                teammtePicture.setVisibility(View.GONE);
+
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) subtitle.getLayoutParams();
+                params.setMarginStart(0);
+                subtitle.setLayoutParams(params);
+            }
+
 
             votingLabel.setVisibility(card.getBoolean(TeambrellaModel.ATTR_DATA_IS_VOTING, false) ? View.VISIBLE : View.GONE);
 
