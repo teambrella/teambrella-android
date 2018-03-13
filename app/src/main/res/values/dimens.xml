@@ -27,4 +27,6 @@
     <dimen name="your_claim_vote_extra_padding">8dp</dimen>
     <dimen name="your_application_vote_extra_padding">8dp</dimen>
     <dimen name="all_votes_margin_end">4dp</dimen>
+    <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="padding_16dp">16dp</dimen>
 </resources>
