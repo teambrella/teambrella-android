@@ -217,7 +217,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             } else {
                 Resources resources = getContext().getResources();
                 requestCreator = requestCreator.apply(new RequestOptions()
-                        .transforms(new CenterCrop(), new RoundedCorners(resources.getDimensionPixelOffset(R.dimen.rounded_corners_2dp))));
+                        .transforms(new CenterCrop(), new RoundedCorners(resources.getDimensionPixelOffset(R.dimen.rounded_corners_3dp))));
             }
 
             requestCreator.into(icon);
@@ -256,9 +256,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                 GlideApp.with(this).load(getImageLoader().getImageUrl(card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_AVATAR)))
                         .into(teammtePicture);
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) subtitle.getLayoutParams();
-                params.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.margin_8));
+                params.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.margin_4));
                 subtitle.setLayoutParams(params);
-
             } else {
                 subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
                         , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
