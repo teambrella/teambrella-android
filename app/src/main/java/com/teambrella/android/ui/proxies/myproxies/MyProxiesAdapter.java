@@ -47,6 +47,9 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof MyProxyViewHolder) {
+            int size = mPager.getLoadedData().size();
+            holder.itemView.setBackgroundResource(position == 0 ? R.drawable.section_background_top : (position == size - 1) ? R.drawable.section_background_bottom :
+                    R.drawable.section_background_middle);
             ((MyProxyViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
@@ -67,7 +70,15 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
     public void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         ((MyProxyViewHolder) viewHolder).mPosition.setText(Integer.toString(target.getAdapterPosition() + 1));
         ((MyProxyViewHolder) target).mPosition.setText(Integer.toString(viewHolder.getAdapterPosition() + 1));
+        setBackground(viewHolder.itemView, target.getAdapterPosition());
+        setBackground(target.itemView, viewHolder.getAdapterPosition());
         super.exchangeItems(viewHolder, target);
+    }
+
+    private void setBackground(View itemView, int position) {
+        int size = mPager.getLoadedData().size();
+        itemView.setBackgroundResource(position == 0 ? R.drawable.section_background_top : (position == size - 1) ? R.drawable.section_background_bottom :
+                R.drawable.section_background_middle);
     }
 
     private final class MyProxyViewHolder extends AMemberViewHolder {

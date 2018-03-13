@@ -183,7 +183,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
             super.onSelectedChanged(viewHolder, actionState);
             switch (actionState) {
                 case ItemTouchHelper.ACTION_STATE_DRAG:
-                    viewHolder.itemView.setAlpha(0.9f);
+                    //viewHolder.itemView.setAlpha(0.9f);
                     setRefreshable(false);
                     break;
             }
@@ -192,7 +192,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
-            viewHolder.itemView.setAlpha(1f);
+            //viewHolder.itemView.setAlpha(1f);
             ADataPagerProgressFragment.this.onDraggingFinished(viewHolder);
             setRefreshable(true);
         }
