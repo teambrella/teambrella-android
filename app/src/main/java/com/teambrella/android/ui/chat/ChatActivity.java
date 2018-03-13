@@ -46,8 +46,11 @@ import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.UUID;
 
 import io.reactivex.Notification;
@@ -218,9 +221,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 case SHOW_CLAIM_CHAT_ACTION: {
                     String incidentDate = intent.getStringExtra(EXTRA_DATE);
                     if (incidentDate != null) {
-                        setTitle(getString(R.string.claim_title_date_format_string, TeambrellaDateUtils.getDatePresentation(this
-                                , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
-                                , incidentDate)));
+                        setClaimTitle(incidentDate);
                     } else {
                         setTitle(R.string.claim);
                     }
@@ -414,9 +415,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                             if (mAction != null && mAction.equals(SHOW_CLAIM_CHAT_ACTION)) {
                                 String incidentDate = basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE);
                                 if (incidentDate != null) {
-                                    setTitle(getString(R.string.claim_title_date_format_string, TeambrellaDateUtils.getDatePresentation(this
-                                            , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
-                                            , incidentDate)));
+                                    setClaimTitle(incidentDate);
                                 }
                             }
                         }
@@ -723,5 +722,14 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     public void launchActivity(Intent intent) {
         // nothing to do
+    }
+
+    private void setClaimTitle(@NotNull String incidentDate) {
+        Date date = TeambrellaDateUtils.getDate(incidentDate);
+        Date current = new Date();
+        boolean isTheSameYear = date != null && date.getYear() == current.getYear();
+        setTitle(getString(R.string.claim_title_date_format_string, TeambrellaDateUtils.getDatePresentation(this
+                , isTheSameYear ? TeambrellaDateUtils.TEAMBRELLA_UI_DATE_CHAT_SHORT : TeambrellaDateUtils.TEAMBRELLA_UI_DATE
+                , incidentDate)));
     }
 }
