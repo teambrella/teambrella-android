@@ -175,8 +175,11 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
                 , TeambrellaDateUtils.getRelativeTimeLocalized(context
                 , Math.abs(remainedMinutes)))
 
-        if (remainedMinutes >= 0) {
+        if (remainedMinutes > 0) {
             clock?.setRemainedMinutes(remainedMinutes)
+            clock?.visibility = View.VISIBLE
+        } else {
+            clock?.visibility = View.GONE
         }
 
         val otherCount = voteData.otherCount ?: 0

@@ -14,7 +14,6 @@ import com.teambrella.android.api.*
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
-import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
@@ -34,7 +33,6 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     protected val proxyAvatar: ImageView? by ViewHolder(R.id.proxy_avatar)
     protected val allVotes: View? by ViewHolder(R.id.all_votes)
     protected val whenDate: TextView? by ViewHolder(R.id.`when`)
-    protected val clock: CountDownClock? by ViewHolder(R.id.clock)
     protected val yourVoteTitle: TextView? by ViewHolder(R.id.your_vote_title)
     protected val avatarWidget: TeambrellaAvatarsWidgets? by ViewHolder(R.id.team_avatars)
 
@@ -45,6 +43,7 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
         val view = inflater?.inflate(R.layout.fragment_teammate_voting, container, false)
         view?.findViewById<View>(R.id.voting_panel)?.visibility = View.GONE
         view?.findViewById<View>(R.id.reset_vote_btn)?.visibility = View.GONE
+        view?.findViewById<View>(R.id.clock)?.visibility = View.GONE
         return view
     }
 
