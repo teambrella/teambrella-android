@@ -2,11 +2,11 @@
     <string name="ethereum" translatable="false">ETH</string>
     <string name="plus_count" translatable="false">+%d</string>
     <string name="milli_ethereum" translatable="false">mETH</string>
-    <string name="drop_down_icon">&#x25BC;</string>
+    <string name="drop_down_icon" translatable="false">&#x25BC;</string>
     <string name="eth_amount_format_string" translatable="false">%f</string>
     <string name="eth_amount_short_format_string" translatable="false">%.2f</string>
 
-    <string name="unknown_value">…</string>
+    <string name="unknown_value" translatable="false">…</string>
     <string name="object_format_string" translatable="false">%1$s, %2$s</string>
     <string name="locale">en</string>
 
@@ -26,8 +26,8 @@
     <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
     <string name="teammate_net_format_string_zero">%s0</string>
     <string name="risk_format_string">%.1f</string>
-    <string name="risk_vote_format_string">%.2f</string>
-    <string name="currency_format_string">%.0f</string>
+    <string name="risk_vote_format_string" translatable="false">%.2f</string>
+    <string name="currency_format_string" translatable="false">%.0f</string>
 
 
     <string name="teammates">Teammates</string>
@@ -248,7 +248,7 @@
     <string name="notification_title_your_application">Your application</string>
     <string name="notification_title_other_claim">"%s\'s claim"</string>
     <string name="notification_title_other_application">"%s\'s application"</string>
-    <string name="notification_chat_text_format_string">%1$s: %2$s</string>
+    <string name="notification_chat_text_format_string" translatable="false">%1$s: %2$s</string>
     <string name="notification_chat_picture_format_string">%1$s sent a picture</string>
     <string name="image_full_screen_indicator_format_string">%1$d of %2$d</string>
 
@@ -311,6 +311,6 @@
     <string name="proxy_vote_title">Proxy Vote</string>
     <string name="member_since_format_string">Member since %s</string>
     <string name="contacts">Contact</string>
-    <string name="facebook">Facebook</string>
+    <string name="facebook" translatable="false">Facebook</string>
     <string name="ended_ago">Ended %s ago</string>
 </resources>

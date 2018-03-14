@@ -33,7 +33,6 @@ import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
 import com.teambrella.android.ui.base.dagger.IDaggerActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
-import com.teambrella.android.util.TeambrellaDateUtils;
 
 import io.reactivex.Notification;
 
@@ -246,7 +245,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                     title.setText(card.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE));
                     break;
                 case TeambrellaModel.FEED_ITEM_TEAMMATE:
-                    title.setText(R.string.application);
+                    title.setText(card.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_NAME));
                     break;
             }
 
@@ -259,11 +258,8 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                 params.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.margin_4));
                 subtitle.setLayoutParams(params);
             } else {
-                subtitle.setText(TeambrellaDateUtils.getDatePresentation(getContext()
-                        , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
-                        , card.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)));
+                subtitle.setText(card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME));
                 teammtePicture.setVisibility(View.GONE);
-
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) subtitle.getLayoutParams();
                 params.setMarginStart(0);
                 subtitle.setLayoutParams(params);

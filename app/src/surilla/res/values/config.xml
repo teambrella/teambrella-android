@@ -3,6 +3,6 @@
     <string name="app_name" translatable="false">Surilla</string>
     <string name="facebook_app_id" translatable="false">416598765047865</string>
     <string name="content_provider_authority" translatable="false">com.surilla.android.provider</string>
-    <string name="com_google_android_backup_api_key">AEdPqrEAAAAItxQVorn2p8Bee-CtL-8KFboakuVt-Ppexc400Q</string>
-    <string name="file_provider_authorities">com.surilla.android.file.provider</string>
+    <string name="com_google_android_backup_api_key" translatable="false">AEdPqrEAAAAItxQVorn2p8Bee-CtL-8KFboakuVt-Ppexc400Q</string>
+    <string name="file_provider_authorities" translatable="false">com.surilla.android.file.provider</string>
 </resources>
