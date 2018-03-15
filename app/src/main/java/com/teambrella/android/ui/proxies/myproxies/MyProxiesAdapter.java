@@ -47,9 +47,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder instanceof MyProxyViewHolder) {
-            int size = mPager.getLoadedData().size();
-            holder.itemView.setBackgroundResource(position == 0 ? R.drawable.section_background_top : (position == size - 1) ? R.drawable.section_background_bottom :
-                    R.drawable.section_background_middle);
+            setBackground(holder.itemView, position);
             ((MyProxyViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position).getAsJsonObject()));
         }
     }
@@ -77,8 +75,12 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
 
     private void setBackground(View itemView, int position) {
         int size = mPager.getLoadedData().size();
-        itemView.setBackgroundResource(position == 0 ? R.drawable.section_background_top : (position == size - 1) ? R.drawable.section_background_bottom :
-                R.drawable.section_background_middle);
+        if (size == 1 && position == 0) {
+            itemView.setBackgroundResource(R.drawable.section_background);
+        } else {
+            itemView.setBackgroundResource(position == 0 ? R.drawable.section_background_top : (position == size - 1) ? R.drawable.section_background_bottom :
+                    R.drawable.section_background_middle);
+        }
     }
 
     private final class MyProxyViewHolder extends AMemberViewHolder {
