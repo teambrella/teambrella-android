@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="1"
-                    android:text="@string/mildness" />
+                    android:text="@string/decisions" />
 
                 <ProgressBar
                     android:id="@+id/decision_progress"
