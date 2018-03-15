@@ -58,6 +58,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mVoteValueView;
     private TextView mVoteTitleView;
     private TextView mVoteButton;
+    private View mVoteAction;
     private ImageView mIcon;
     private String mUserName;
     private View mVotingContainer;
@@ -99,6 +100,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mSubtitleView = view.findViewById(R.id.subtitle);
         mVoteValueView = view.findViewById(R.id.vote_value);
         mVoteButton = view.findViewById(R.id.vote);
+        mVoteAction = view.findViewById(R.id.vote_action);
         mIcon = view.findViewById(R.id.image);
         mVoteTitleView = view.findViewById(R.id.your_vote_title);
         mVotingContainer = view.findViewById(R.id.voting_container);
@@ -294,9 +296,9 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
 
                 String poxyName = votingPart.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
                 mVoteTitleView.setText(poxyName != null ? R.string.proxy_vote_title : R.string.your_vote);
-
+                mVoteAction.setVisibility(View.VISIBLE);
             } else {
-                mVoteButton.setVisibility(View.GONE);
+                mVoteAction.setVisibility(View.GONE);
             }
         }
 
