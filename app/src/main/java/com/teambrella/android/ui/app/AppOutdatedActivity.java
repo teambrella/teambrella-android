@@ -40,7 +40,7 @@ public class AppOutdatedActivity extends AppCompatActivity {
         action.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(android.content.Intent.ACTION_VIEW)
-                        .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&ver=" + BuildConfig.VERSION_CODE)));
+                        .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&q=" + BuildConfig.FLAVOR)));
             } catch (Exception e) {
                 Log.reportNonFatal(LOG_TAG, e);
             }
