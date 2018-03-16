@@ -258,7 +258,10 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
                 params.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.margin_4));
                 subtitle.setLayoutParams(params);
             } else {
-                subtitle.setText(card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME));
+                subtitle.setText(getContext().getString(R.string.object_format_string
+                        , card.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+                        , card.getString(TeambrellaModel.ATTR_DATA_YEAR)
+                ));
                 teammtePicture.setVisibility(View.GONE);
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) subtitle.getLayoutParams();
                 params.setMarginStart(0);
