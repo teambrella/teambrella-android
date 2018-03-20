@@ -19,7 +19,7 @@ import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
-import com.teambrella.android.ui.user.wallet.WalletFragment;
+import com.teambrella.android.ui.user.wallet.KWalletFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 
 /**
@@ -46,7 +46,7 @@ public class UserFragment extends AMainLandingFragment {
                     case 1:
                         return ADataFragment.getInstance(MainActivity.WALLET_DATA, CoverageFragment.class);
                     case 2:
-                        return ADataProgressFragment.getInstance(MainActivity.WALLET_DATA, WalletFragment.class);
+                        return ADataProgressFragment.getInstance(MainActivity.WALLET_DATA, KWalletFragment.class);
                     default:
                         throw new RuntimeException();
                 }

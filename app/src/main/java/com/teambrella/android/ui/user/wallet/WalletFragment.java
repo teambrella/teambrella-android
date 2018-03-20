@@ -76,11 +76,11 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mCryptoBalanceView = view.findViewById(R.id.crypto_balance);
         mBalanceView = view.findViewById(R.id.balance);
         mCurrencyView = view.findViewById(R.id.currency);
-        mReservedValueView = view.findViewById(R.id.reserved_value);
-        mAvailableValueView = view.findViewById(R.id.available_value);
+//        mReservedValueView = view.findViewById(R.id.reserved_value);
+//        mAvailableValueView = view.findViewById(R.id.available_value);
         ImageView QRCodeView = view.findViewById(R.id.qr_code);
-        mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
-        mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
+//        mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
+//        mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
         mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
         mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
         TextView fundWalletButton = view.findViewById(R.id.fund_wallet);

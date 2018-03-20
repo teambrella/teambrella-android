@@ -157,6 +157,12 @@ val JsonObject?.currency: String?
 val JsonObject?.ratioVoted: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED)
 
+val JsonObject?.cryptoBalance: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
+
+val JsonObject?.currencyRate: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE)
+
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
 }
