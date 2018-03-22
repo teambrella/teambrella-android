@@ -32,11 +32,104 @@
             app:srcCompat="@drawable/ic_icon_info" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/crypto_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:includeFontPadding="false"
+            android:text="123.34"
+            android:textColor="@color/dark"
+            android:textSize="44sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="mETH"
+            android:textColor="@color/darkSkyBlue"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/crypto_balance"
+            app:layout_constraintLeft_toRightOf="@id/crypto_balance" />
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="$123"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@id/currency"
+            app:layout_constraintLeft_toRightOf="@id/crypto_balance" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/reserved_title"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/reserved"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/crypto_balance" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/reserved_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123"
+            android:textColor="@color/dark"
+            android:textSize="24sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reserved_title" />
+
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@color/paleGrey"
+            app:layout_constraintBottom_toBottomOf="@id/reserved_value"
+            app:layout_constraintLeft_toRightOf="@id/reserved_value"
+            app:layout_constraintTop_toTopOf="@id/reserved_title" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/available_title"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/available"
+            app:layout_constraintLeft_toLeftOf="@id/divider"
+            app:layout_constraintTop_toBottomOf="@id/crypto_balance" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/available_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginStart="30dp"
+            android:text="123"
+            android:textColor="@color/dark"
+            android:textSize="24sp"
+            app:layout_constraintLeft_toLeftOf="@id/divider"
+            app:layout_constraintTop_toBottomOf="@id/available_title" />
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/to_address_title"
             style="@style/Teambrella.TextAppearence.InputTitle"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="@string/to_address"
-            app:layout_constraintTop_toBottomOf="@id/header" />
+            app:layout_constraintTop_toBottomOf="@id/reserved_value" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularEditText
             android:id="@+id/eth_address_input"
