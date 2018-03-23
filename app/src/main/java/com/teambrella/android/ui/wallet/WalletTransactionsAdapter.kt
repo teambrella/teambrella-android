@@ -37,19 +37,19 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
         return viewType
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        var holder = super.onCreateViewHolder(parent, viewType)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        var holder : RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
         if (holder == null) {
             holder = when (viewType) {
                 ViewType.VIEW_TYPE_HEADER -> Header(parent, R.string.to_address, R.string.milli_ethereum, R.drawable.list_item_header_background_top)
-                VIEW_TYPE_REGULAR -> TransactionViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.list_item_transaction, parent, false))
+                VIEW_TYPE_REGULAR -> TransactionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_transaction, parent, false))
                 else -> null
             }
         }
-        return holder
+        return holder!!
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int, payloads: MutableList<Any>?) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
         super.onBindViewHolder(holder, position, payloads)
         if (holder is TransactionViewHolder) {
             holder.onBind(mPager.loadedData[position - headersCount].asJsonObject)

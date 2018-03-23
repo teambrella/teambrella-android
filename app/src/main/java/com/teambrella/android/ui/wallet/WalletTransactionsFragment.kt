@@ -20,9 +20,9 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
         })
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val dividerItemDecoration = object : DividerItemDecoration(context.resources.getDrawable(R.drawable.divder)) {
+        val dividerItemDecoration = object : DividerItemDecoration(context!!.resources.getDrawable(R.drawable.divder)) {
             override fun canDrawChild(view: View, parent: RecyclerView): Boolean {
                 var position = parent.getChildAdapterPosition(view)
                 var drawDivider = canDrawChild(position, parent)

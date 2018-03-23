@@ -39,15 +39,15 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     protected var avgRiskValue: Double? = null
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater?.inflate(R.layout.fragment_teammate_voting, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_teammate_voting, container, false)
         view?.findViewById<View>(R.id.voting_panel)?.visibility = View.GONE
         view?.findViewById<View>(R.id.reset_vote_btn)?.visibility = View.GONE
         view?.findViewById<View>(R.id.clock)?.visibility = View.GONE
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         allVotes?.setOnClickListener({
             AllVotesActivity.startTeammateAllVotes(context, mDataHost.teamId, mDataHost.teammateId)
