@@ -248,7 +248,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                                 .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
                                         .placeholder(R.drawable.picture_background_circle))
                                 .into(mIcon);
-                        mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
+                        //mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
                     }
                     break;
 

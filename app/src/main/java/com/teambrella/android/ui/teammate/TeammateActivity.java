@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.teammate;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -286,6 +287,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @SuppressLint("CheckResult")
     private void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             Observable.fromArray(notification.getValue())
@@ -295,7 +297,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
                     .map(node -> node.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC))
                     .doOnNext(node -> mUserId = node.getString(TeambrellaModel.ATTR_DATA_USER_ID))
                     .doOnNext(node -> mUserName = node.getString(TeambrellaModel.ATTR_DATA_NAME))
-                    .doOnNext(node -> node.getString(TeambrellaModel.ATTR_DATA_AVATAR))
+                    .doOnNext(node -> mAvatar = node.getString(TeambrellaModel.ATTR_DATA_AVATAR))
                     .onErrorReturnItem(new JsonWrapper(null))
                     .blockingFirst();
 
