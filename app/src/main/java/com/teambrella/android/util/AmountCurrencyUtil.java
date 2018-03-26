@@ -2,6 +2,7 @@ package com.teambrella.android.util;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -9,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
 import android.widget.TextView;
 
+import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 
 import java.util.Locale;
@@ -87,7 +89,8 @@ public class AmountCurrencyUtil {
             return "$";
         } else if (EUR.equalsIgnoreCase(currency)) {
             return "€";
-        } else if (RUB.equalsIgnoreCase(currency)){
+        } else if (RUB.equalsIgnoreCase(currency) && Build.VERSION.SDK_INT
+                >= Build.VERSION_CODES.M){
             return "\u20BD";
         } else {
             return currency;
