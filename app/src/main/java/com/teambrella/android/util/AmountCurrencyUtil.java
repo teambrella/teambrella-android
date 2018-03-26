@@ -24,6 +24,7 @@ public class AmountCurrencyUtil {
     private static final String PEN = "PEN";
     private static final String ARS = "ARS";
     private static final String EUR = "EUR";
+    private static final String RUB = "RUB";
 
 
     public static void setAmount(TextView textView, int amount, String currency) {
@@ -86,6 +87,8 @@ public class AmountCurrencyUtil {
             return "$";
         } else if (EUR.equalsIgnoreCase(currency)) {
             return "€";
+        } else if (RUB.equalsIgnoreCase(currency)){
+            return "\u20BD";
         } else {
             return currency;
         }
