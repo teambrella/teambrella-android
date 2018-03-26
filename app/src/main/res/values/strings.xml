@@ -313,4 +313,6 @@
     <string name="contacts">Contact</string>
     <string name="facebook" translatable="false">Facebook</string>
     <string name="ended_ago">Ended %s ago</string>
+
+    <string name="available_to_withdraw">Available to withdraw</string>
 </resources>

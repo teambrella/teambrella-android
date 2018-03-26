@@ -74,7 +74,7 @@
             android:paddingStart="16dp"
             android:text="@string/withdraw_info_description"
             android:textColor="#767D85"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
     </LinearLayout>
