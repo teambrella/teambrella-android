@@ -140,11 +140,9 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         private TextView mAddressView;
         private TextView mAmountView;
         private TextView mSubmitView;
-        private TextView mCryptoBalanceView;
-        private TextView mCryptoReservedView;
         private TextView mCryptoAvailableView;
         private TextView mCurrencyView;
-        private TextView mBalanceView;
+        private TextView mAvailableView;
         private View mInfoView;
 
         SubmitWithdrawViewHolder(View itemView) {
@@ -153,11 +151,9 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             mAmountView = itemView.findViewById(R.id.amount_input);
             mSubmitView = itemView.findViewById(R.id.submit);
             mInfoView = itemView.findViewById(R.id.info);
-            mCryptoBalanceView = itemView.findViewById(R.id.crypto_balance);
-            mCryptoReservedView = itemView.findViewById(R.id.reserved_value);
-            mCryptoAvailableView = itemView.findViewById(R.id.available_value);
+            mCryptoAvailableView = itemView.findViewById(R.id.crypto_available);
             mCurrencyView = itemView.findViewById(R.id.currency);
-            mBalanceView = itemView.findViewById(R.id.balance);
+            mAvailableView = itemView.findViewById(R.id.currency_available);
 
             mSubmitView.setOnClickListener(v -> {
                 String address = mAddressView.getText().toString();
@@ -195,19 +191,17 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             String cryptoCurrency = itemView.getContext().getString(stringId);
             switch (stringId) {
                 case R.string.ethereum:
-                    mCryptoBalanceView.setText(String.format(Locale.US, "%.2f", cryptoBalance));
+                    mCryptoAvailableView.setText(String.format(Locale.US, "%.2f", available));
                     break;
                 case R.string.milli_ethereum:
-                    mCryptoBalanceView.setText(String.format(Locale.US, "%d", Math.round(cryptoBalance * 1000)));
+                    mCryptoAvailableView.setText(String.format(Locale.US, "%d", Math.round(available * 1000)));
                     break;
 
             }
             mCurrencyView.setText(cryptoCurrency);
-            AmountCurrencyUtil.setCryptoAmount(mCryptoReservedView, reserved);
-            AmountCurrencyUtil.setCryptoAmount(mCryptoAvailableView, available);
-            mBalanceView.setText(itemView.getContext().getString(R.string.amount_format_string
+            mAvailableView.setText(itemView.getContext().getString(R.string.amount_format_string
                     , AmountCurrencyUtil.getCurrencySign(mCurrency)
-                    , Math.round(cryptoBalance * mRate)));
+                    , Math.round(available * mRate)));
         }
 
         private boolean checkEthereum(String address) {
