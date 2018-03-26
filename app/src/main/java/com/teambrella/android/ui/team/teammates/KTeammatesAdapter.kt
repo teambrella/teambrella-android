@@ -59,9 +59,9 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         return type
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        var viewHolder = super.onCreateViewHolder(parent, viewType)
-        val inflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        var viewHolder:RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
+        val inflater = LayoutInflater.from(parent.context)
         if (viewHolder == null)
             viewHolder = when (viewType) {
                 VIEW_TYPE_INVITES_FRIENDS -> InviteFriendsViewHolder(inflater.inflate(R.layout.list_item_invite_friends, parent, false))
@@ -72,12 +72,12 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
                 else -> null
             }
 
-        return viewHolder
+        return viewHolder!!
     }
 
     override fun getHeadersCount(): Int = if (mInviteText != null) 1 else 0
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         if (holder is ATeammateViewHolder) {
             holder.onBind(mPager.loadedData.get(position - headersCount).asJsonObject)

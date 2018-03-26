@@ -24,8 +24,8 @@ class TeammateContactsFragment : AKDataFragment<ITeammateActivity>() {
 
     private val facebookLink: TextView? by ViewHolder(R.id.facebook_link)
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_teammate_contacts, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_teammate_contacts, container, false)
     }
 
     @SuppressLint("SetTextI18n")
