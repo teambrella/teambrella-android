@@ -135,8 +135,8 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
 
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
-        view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
-        view.findViewById(R.id.transactions).setOnClickListener(v -> startActivity(WalletTransactionsActivityKt.getLaunchIntent(getContext(), mDataHost.getTeamId())));
+//        view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId(), mDataHost.getCurrency(), ));
+//        view.findViewById(R.id.transactions).setOnClickListener(v -> startActivity(WalletTransactionsActivityKt.getLaunchIntent(getContext(), mDataHost.getTeamId(), mDataHost.getCurrency())));
 
         mBackupWalletButton = view.findViewById(R.id.backup_wallet);
 

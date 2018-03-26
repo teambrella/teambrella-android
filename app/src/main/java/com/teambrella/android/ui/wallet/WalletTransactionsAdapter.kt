@@ -22,7 +22,11 @@ import kotlinx.android.synthetic.main.list_item_transaction.view.*
 /**
  * Wallet Transaction Adapter
  */
-class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: Int, val listener: OnStartActivityListener?)
+class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
+                                , val teamId: Int
+                                , val currency: String
+                                , val cryptoRate: Float
+                                , listener: OnStartActivityListener?)
     : TeambrellaDataPagerAdapter(pager, listener) {
 
     object ViewType {
@@ -96,7 +100,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
             if (claimId == null) {
                 this.type?.text = itemView.resources.getString(R.string.withdrawal)
                 itemView.setOnClickListener({
-                    startActivity(WithdrawActivity.getIntent(itemView.context, teamId))
+                    startActivity(WithdrawActivity.getIntent(itemView.context, teamId, currency, cryptoRate))
                 })
             }
 

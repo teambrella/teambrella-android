@@ -67,7 +67,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
         return inflater?.inflate(R.layout.fragment_wallet, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         currencyView?.text = getString(R.string.milli_ethereum)
@@ -90,11 +90,8 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
         }
 
         AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, 0f)
-        uninterruptedCoverageCurrencyValue?.text = context.getString(R.string.amount_format_string
+        uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string
                 , AmountCurrencyUtil.getCurrencySign(mDataHost.currency), 0)
-
-        transactionsView?.setOnClickListener({ startActivity(getLaunchIntent(context, mDataHost.teamId)) })
-        withdrawView?.setOnClickListener({ WithdrawActivity.start(context, mDataHost.teamId) })
 
         mDataHost?.addWalletBackupListener(this)
     }
@@ -142,7 +139,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
                     ?: 0f)
 
             AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, forUninterruptedCoverage)
-            uninterruptedCoverageCurrencyValue?.text = context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.currency), Math.round(forUninterruptedCoverage
+            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.currency), Math.round(forUninterruptedCoverage
                     * (data?.currencyRate ?: 0f)))
 
             Observable.just(data)
@@ -161,6 +158,9 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
                         , data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray?.toString()
                         , mDataHost.teamId)
             })
+
+            transactionsView?.setOnClickListener({ startActivity(getLaunchIntent(context!!, mDataHost.teamId, mDataHost.currency, currencyRate)) })
+            withdrawView?.setOnClickListener({ WithdrawActivity.start(context, mDataHost.teamId, mDataHost.currency, currencyRate) })
         }
         setContentShown(true)
     }

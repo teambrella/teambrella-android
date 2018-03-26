@@ -3,6 +3,7 @@ package com.teambrella.android.ui.base;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -86,6 +87,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     }
 
     @Override
+    @Nullable
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {

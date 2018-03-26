@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.withdraw;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,26 +38,34 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     public static final String WITHDRAWALS_INFO_DIALOG_TAG = "info_dialog";
 
     private static final String EXTRA_TEAM_ID = "extra_team_id";
+    private static final String EXTRA_CURRENCY = "extra_currency";
+    private static final String EXTRA_CRYPTO_RATE = "extra_crypto_rate";
 
     private int mTeamId;
+    private String mCurrency;
+    private float mCryptoRate;
     private float mAvailableValue;
     private float mReservedValue;
     private Disposable mWithdrawalsDisposable;
     private Snackbar mSnackBar;
 
-    public static void start(Context context, int teamId) {
-        context.startActivity(getIntent(context, teamId));
+    public static void start(Context context, int teamId, String currency, float cryptoRate) {
+        context.startActivity(getIntent(context, teamId, currency, cryptoRate));
     }
 
-    public static Intent getIntent(Context context, int teamId) {
+    public static Intent getIntent(Context context, int teamId, String currency, float cryptoRate) {
         return new Intent(context, WithdrawActivity.class)
-                .putExtra(EXTRA_TEAM_ID, teamId);
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_CRYPTO_RATE, cryptoRate);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         final Intent intent = getIntent();
         mTeamId = intent != null ? intent.getIntExtra(EXTRA_TEAM_ID, -1) : -1;
+        mCurrency = intent != null ? intent.getStringExtra(EXTRA_CURRENCY) : null;
+        mCryptoRate = intent != null ? intent.getFloatExtra(EXTRA_CRYPTO_RATE, 0) : 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_fragment);
 
@@ -145,6 +154,17 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
         showInfoDialog();
     }
 
+
+    @Override
+    public String getCurrency() {
+        return mCurrency;
+    }
+
+    @Override
+    public float getCurrencyRate() {
+        return mCryptoRate;
+    }
+
     @Override
     public void requestWithdraw(String address, float amount) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -157,9 +177,9 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
         if (fragment != null) {
             fragment.setRefreshing(true);
         }
-
     }
 
+    @SuppressLint("CheckResult")
     private void onDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             Observable.just(notification.getValue())

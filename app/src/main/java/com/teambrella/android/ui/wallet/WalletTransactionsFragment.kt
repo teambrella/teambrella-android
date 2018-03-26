@@ -15,9 +15,10 @@ import com.teambrella.android.ui.widget.DividerItemDecoration
 class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransactionActivity>() {
 
     override fun getAdapter(): ATeambrellaDataPagerAdapter {
-        return WalletTransactionsAdapter(mDataHost.getPager(mTag), mDataHost.teamId, ATeambrellaDataPagerAdapter.OnStartActivityListener {
-            startActivity(it)
-        })
+        return WalletTransactionsAdapter(mDataHost.getPager(mTag), mDataHost.teamId, mDataHost.currency, mDataHost.cryptoRate,
+                ATeambrellaDataPagerAdapter.OnStartActivityListener {
+                    startActivity(it)
+                })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
