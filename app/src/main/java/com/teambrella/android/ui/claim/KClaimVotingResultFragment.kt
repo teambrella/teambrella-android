@@ -81,7 +81,7 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
 
         component.inject(avatarWidget)
 
-        view?.findViewById<View>(R.id.header_line)?.visibility =
+        view.findViewById<View>(R.id.header_line)?.visibility =
                 if ((arguments?.getInt(EXTRA_MODE, MODE_CLAIM)
                                 ?: MODE_CLAIM) == MODE_CLAIM) View.VISIBLE else View.GONE
 
@@ -90,7 +90,7 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
                         ?: MODE_CLAIM) == MODE_CLAIM) R.dimen.padding_20dp else R.dimen.padding_16dp)
                 ?: 0
 
-        view?.setPadding(padding, padding, padding, padding)
+        view.setPadding(padding, padding, padding, 0)
 
         votingControl?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
