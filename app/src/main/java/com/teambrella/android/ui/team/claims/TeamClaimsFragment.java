@@ -76,7 +76,7 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mObjectDataDisposal = mDataHost.getObservable(MainActivity.HOME_DATA_TAG).subscribe(this::onObjectDataUpdated);
+        mObjectDataDisposal = mDataHost.getObservable(MainActivity.USER_DATA).subscribe(this::onUserDataUpdated);
     }
 
 
@@ -90,13 +90,16 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
     }
 
 
-    private void onObjectDataUpdated(Notification<JsonObject> notification) {
+    private void onUserDataUpdated(Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-            final String objectName = data.getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME);
-            final String objectImageUri = data.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO);
-            ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, null);
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            final String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+            JsonWrapper object = data.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT);
+            final String objectName = object.getString(TeambrellaModel.ATTR_DATA_MODEL);
+            final String objectImageUri = object.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).get(0).getAsString();
+            ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, location);
         }
     }
 
