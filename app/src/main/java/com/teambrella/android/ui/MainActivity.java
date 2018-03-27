@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -14,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -51,7 +49,6 @@ import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Stack;
 
 import io.reactivex.disposables.Disposable;
@@ -108,10 +105,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private String mUserName;
     private String mFBName;
     private Uri mUserPicture;
-    private Disposable mDisposable;
+    private Disposable mHomeDisposable;
+    private Disposable mUserDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
+    private String mUserCity;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
 
@@ -314,7 +313,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @Override
     protected void onStart() {
         super.onStart();
-        mDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
+        mHomeDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
             if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
@@ -324,6 +323,17 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
                 mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
                 mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            }
+        });
+
+        mUserDisposable = getObservable(USER_DATA).subscribe(notification -> {
+            if (notification.isOnNext()){
+                JsonWrapper response = new JsonWrapper(notification.getValue());
+                JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+                JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+                String[] locations = location != null ? location.split(","): null;
+                mUserCity = locations != null ? locations[0] : null;
             }
         });
     }
@@ -400,10 +410,18 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     @Override
+    public String getUserCity() {
+        return mUserCity;
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
+        if (mHomeDisposable != null && !mHomeDisposable.isDisposed()) {
+            mHomeDisposable.dispose();
+        }
+        if (mUserDisposable != null && !mUserDisposable.isDisposed()) {
+            mUserDisposable.dispose();
         }
     }
 

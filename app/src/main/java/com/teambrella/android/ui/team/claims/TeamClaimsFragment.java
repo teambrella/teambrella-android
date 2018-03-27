@@ -95,11 +95,12 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
-            final String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+            String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+            String[] locations = location != null ? location.split(","): null;
             JsonWrapper object = data.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT);
             final String objectName = object.getString(TeambrellaModel.ATTR_DATA_MODEL);
             final String objectImageUri = object.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).get(0).getAsString();
-            ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, location);
+            ((ClaimsAdapter) mAdapter).setObjectDetails(objectImageUri, objectName, locations != null ? locations[0] : null);
         }
     }
 
