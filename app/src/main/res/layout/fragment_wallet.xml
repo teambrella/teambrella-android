@@ -73,6 +73,8 @@
                     android:layout_marginStart="30dp"
                     android:textColor="@color/dark"
                     android:textSize="88sp"
+                    android:paddingTop="15dp"
+                    android:layout_marginBottom="12dp"
                     app:layout_constraintBottom_toTopOf="@id/withdraw"
                     app:layout_constraintLeft_toLeftOf="parent" />
 
