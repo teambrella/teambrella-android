@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -158,9 +160,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
 
-        load(HOME_DATA_TAG);
-        load(USER_DATA);
-
         if (savedInstanceState == null) {
             WalletBackUpService.Companion.scheduleBackupCheck(this);
             WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
@@ -176,7 +175,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -298,11 +296,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case HOME_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)), true);
             case SET_PROXY_POSITION_DATA:
                 return TeambrellaDataFragment.getInstance(null);
             case USER_DATA:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId), true);
             case WALLET_DATA:
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
             case VOTE_DATA:

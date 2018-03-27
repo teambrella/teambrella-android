@@ -84,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/darkSkyBlue"
                     android:textSize="16sp"
+                    android:layout_marginStart="8dp"
                     app:layout_constraintBaseline_toBaselineOf="@id/crypto_balance"
                     app:layout_constraintLeft_toRightOf="@id/crypto_balance" />
 
@@ -91,7 +92,8 @@
                     android:id="@+id/balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
+                    android:layout_marginStart="8dp"
                     app:layout_constraintBottom_toTopOf="@id/currency"
                     app:layout_constraintLeft_toRightOf="@id/crypto_balance" />
 

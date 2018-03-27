@@ -345,7 +345,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mLocationView.setText(mLocation);
 
             mSubmitClaimView.setOnClickListener(v -> startActivity(ReportClaimActivity.
-                    getLaunchIntent(context, mObjectImageUri, mObjectName, mTeamId, mCurrency)));
+                    getLaunchIntent(context, mObjectImageUri, mObjectName, mTeamId, mCurrency, mLocation)));
         }
     }
 }

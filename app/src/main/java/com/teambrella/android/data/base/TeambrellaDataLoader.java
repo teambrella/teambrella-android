@@ -1,5 +1,6 @@
 package com.teambrella.android.data.base;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 
 import com.google.gson.JsonObject;
@@ -42,6 +43,7 @@ public class TeambrellaDataLoader {
     }
 
 
+    @SuppressLint("CheckResult")
     public void load(Uri uri, JsonObject data) {
         mServer.requestObservable(uri, data)
                 .map(jsonObject -> {

@@ -49,6 +49,7 @@
                 tools:text="Ford S-MAX 2008" />
 
             <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
