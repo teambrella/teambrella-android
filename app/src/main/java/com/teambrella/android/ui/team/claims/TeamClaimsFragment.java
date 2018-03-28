@@ -63,6 +63,7 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
                                 case ClaimsAdapter.VIEW_TYPE_BOTTOM:
                                 case ClaimsAdapter.VIEW_TYPE_ERROR:
                                 case ClaimsAdapter.VIEW_TYPE_LOADING:
+                                case ClaimsAdapter.VIEW_TYPE_EMPTY:
                                     drawDivider = false;
                             }
                         }
