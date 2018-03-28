@@ -175,7 +175,7 @@
     <string name="notification_claim_header">New claim in %1$s</string>
     <string name="notification_claim_text">%1$s for %2$s</string>
     <string name="notification_messages_since">%d new messages</string>
-    <string name="notification_funded_header">You wallet is funded</string>
+    <string name="notification_funded_header">Your wallet has been funded</string>
     <string name="inbox">Inbox</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>You don’t have Proxy Voters yet.</font><br><br><font color=\'#95a5b1\'>Please consider someone you trust to be your first Proxy Voter.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>You’re not a Proxy Voter for anyone in the team.</font><br><br><font color=\'#95a5b1\'>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.</font]]></string>
