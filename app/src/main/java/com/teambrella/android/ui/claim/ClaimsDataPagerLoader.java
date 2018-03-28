@@ -85,7 +85,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mVotingClaims.size() > 0) {
-            mArray.addAll(mVotingClaims);
+            //mArray.addAll(mVotingClaims);
             mVotingClaims = new JsonArray();
 
         }
@@ -95,7 +95,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_VOTED_HEADER:
                     if (mVotedClaims.size() > 1) {
-                        mArray.addAll(mVotedClaims);
+                        //mArray.addAll(mVotedClaims);
                         mVotedClaims = new JsonArray();
                     }
                     break;
@@ -112,12 +112,12 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
                     if (mProcessingClaims.size() > 1) {
-                        mArray.addAll(mProcessingClaims);
+                        //mArray.addAll(mProcessingClaims);
                         mProcessingClaims = new JsonArray();
                     }
                     break;
                 case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT:
-                    mArray.addAll(mProcessingClaims);
+                    //mArray.addAll(mProcessingClaims);
                     mProcessingClaims = new JsonArray();
                     break;
             }
@@ -129,12 +129,12 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
                     if (mProcessedClaims.size() > 1) {
-                        mArray.addAll(mProcessedClaims);
+                        //mArray.addAll(mProcessedClaims);
                         mProcessedClaims = new JsonArray();
                     }
                     break;
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED:
-                    mArray.addAll(mProcessedClaims);
+                    //mArray.addAll(mProcessedClaims);
                     mProcessedClaims = new JsonArray();
                     break;
             }
