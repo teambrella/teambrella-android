@@ -297,4 +297,5 @@
     <string name="member_since_format_string">Miembro desde %s</string>
     <string name="contacts">Contacto</string>
     <string name="ended_ago">Terminó hace %s</string>
+    <string name="available_to_withdraw">Disponible para retirar</string>
 </resources>
