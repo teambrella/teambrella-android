@@ -172,14 +172,14 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             TextView titleView = itemView.findViewById(R.id.status_title);
             TextView subtitleView = itemView.findViewById(R.id.status_subtitle);
 
-            if (titleResId > 0)
+            if (titleResId != -1)
                 titleView.setText(titleResId);
 
-            if (subtitleResId > 0)
+            if (subtitleResId != -1)
                 subtitleView.setText(subtitleResId);
 
 
-            if (backgroundResId > 0) {
+            if (backgroundResId != -1) {
                 itemView.setBackgroundResource(backgroundResId);
             }
         }
@@ -192,7 +192,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             subtitleView.setText(subtitle);
 
 
-            if (backgroundResId > 0) {
+            if (backgroundResId != -1) {
                 itemView.setBackgroundResource(backgroundResId);
             }
         }
@@ -202,7 +202,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         }
 
         public void setBackgroundDrawable(@DrawableRes int backgroundResId) {
-            if (backgroundResId > 0) {
+            if (backgroundResId != -1) {
                 itemView.setBackgroundResource(backgroundResId);
             }
         }
