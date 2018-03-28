@@ -166,8 +166,8 @@
     <string name="coverage_explanation_possible_expenses">Si tus gastos son</string>
     <string name="coverage_explanation_team_would_pay">El equipo te pagaría hasta</string>
     <string name="inbox">Mensajes privados</string>
-    <string name="my_proxies_empty_prompt"><![CDATA[<b>Todavía no tienes los Proxies.</b><br><br>Por favor, considera a alguien en quien confías para nombrar a tu primero Proxy.]]></string>
-    <string name="proxies_for_empty_prompt"><![CDATA[<b>No estas Proxy de cualquier compañero del equipo.</b><br><br>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.]]></string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Todavía no tienes los Proxies.</font><br><br><font color=\'#95a5b1\'>Por favor, considera a alguien en quien confías para nombrar a tu primero Proxy.</font>]]></string>
+    <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>No estas Proxy de cualquier compañero del equipo.</font><br><br><font color=\'#95a5b1\'>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.</font>]]></string>
     <string name="private_conversation">Mensaje privado</string>
     <string name="ends_in">Termina en %s</string>
     <string name="declined">Rechazado</string>
@@ -223,8 +223,8 @@
     <string name="would_cover_her">Le cubriría</string>
 
     <string name="others">Otros</string>
-    <string name="no_claims"><![CDATA[<b>Hasta el momento no hay reclamaciones en tu equipo.</b>]]></string>
-    <string name="no_messages"><![CDATA[<b>No hay mensajes privados.</b>]]></string>
+    <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Hasta el momento no hay reclamaciones en tu equipo.</font>]]></string>
+    <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>No hay mensajes privados.</font>]]></string>
     <string name="new_teammate_notification_description">%s quiere unirse a tu equipo. Dile hola!</string>
     <string name="new_discussion_notification_description">"%1$s inició una nueva discusión \"%2$s\""</string>
     <string name="risk">Riesgo</string>
