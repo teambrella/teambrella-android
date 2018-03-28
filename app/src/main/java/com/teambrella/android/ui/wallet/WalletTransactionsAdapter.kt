@@ -66,7 +66,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
 
 
     override fun createEmptyViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return DefaultEmptyViewHolder(parent?.context, parent, R.string.no_transactions_yet)
+        return DefaultEmptyViewHolder(parent?.context, parent, R.string.no_transactions_yet, -1)
     }
 
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {

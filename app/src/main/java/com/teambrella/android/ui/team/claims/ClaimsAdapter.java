@@ -310,7 +310,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
-        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_claims);
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_claims, -1);
     }
 
     private class SubmitClaimViewHolder extends RecyclerView.ViewHolder {

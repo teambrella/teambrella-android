@@ -140,7 +140,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     }
 
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
-        return new DefaultEmptyViewHolder(parent.getContext(), parent, -1);
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, -1, -1);
     }
 
     protected RecyclerView.ViewHolder createBottomViewHolder(ViewGroup parent) {
@@ -247,11 +247,16 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
 
     protected static class DefaultEmptyViewHolder extends RecyclerView.ViewHolder {
-        public DefaultEmptyViewHolder(Context context, ViewGroup parent, @StringRes int text) {
+        public DefaultEmptyViewHolder(Context context, ViewGroup parent, @StringRes int text, @DrawableRes int iconId) {
             super(LayoutInflater.from(context).inflate(R.layout.list_item_empty, parent, false));
-            if (text > 0) {
+            if (text != -1) {
                 TextView prompt = itemView.findViewById(R.id.prompt);
                 prompt.setText(Html.fromHtml(context.getString(text)));
+            }
+
+            if (iconId != -1) {
+                ImageView icon = itemView.findViewById(R.id.icon);
+                icon.setImageResource(iconId);
             }
         }
     }

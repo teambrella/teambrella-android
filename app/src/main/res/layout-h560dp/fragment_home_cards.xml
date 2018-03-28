@@ -46,6 +46,7 @@
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/home_sub_header"
             style="@style/Teambrella.TextAppearence.Home.SunHeader"
+            android:visibility="invisible"
             android:text="@string/here_whats_new" />
 
     </LinearLayout>

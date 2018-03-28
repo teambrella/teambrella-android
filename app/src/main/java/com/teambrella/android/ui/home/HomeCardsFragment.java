@@ -43,6 +43,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
 
 
     private TextView mHeader;
+    private TextView mSubHeader;
     private ViewPager mCardsPager;
     private CardAdapter mAdapter;
     private LinearLayout mPagerIndicator;
@@ -54,6 +55,7 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
         mHeader = view.findViewById(R.id.home_header);
         mCardsPager = view.findViewById(R.id.cards_pager);
         mPagerIndicator = view.findViewById(R.id.page_indicator);
+        mSubHeader = view.findViewById(R.id.home_sub_header);
         mCardsPager.setPageMargin(20);
         return view;
     }
@@ -79,6 +81,11 @@ public class HomeCardsFragment extends ADataFragment<IMainDataHost> {
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
             mHeader.setText(getString(R.string.welcome_user_format_string, data.getString(TeambrellaModel.ATTR_DATA_NAME).trim().split(" ")[0]));
             JsonArray cards = data.getJsonArray(TeambrellaModel.ATTR_DATA_CARDS);
+
+            if (mSubHeader != null) {
+                mSubHeader.setVisibility(View.VISIBLE);
+            }
+
             if (mAdapter == null) {
                 mCardsPager.setAdapter(mAdapter = new CardAdapter(cards));
                 LayoutInflater inflater = LayoutInflater.from(getContext());

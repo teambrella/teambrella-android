@@ -43,7 +43,7 @@ public class HomeFragment extends AMainLandingFragment {
 
     @Override
     public void onStart() {
-        mSwipeRefreshLayout.postDelayed(mRefreshingRunnable, 100);
+        mSwipeRefreshLayout.postDelayed(mRefreshingRunnable, 1000);
         super.onStart();
     }
 
