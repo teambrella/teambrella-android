@@ -21,7 +21,7 @@
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_icon_team"
+            app:srcCompat="@drawable/ic_icon_team_large"
             android:tint="@color/cloudyBlue"
             app:layout_constraintVertical_chainStyle="packed"/>
 
