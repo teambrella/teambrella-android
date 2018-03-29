@@ -176,10 +176,10 @@
     <string name="notification_claim_text">%1$s for %2$s</string>
     <string name="notification_messages_since">%d new messages</string>
     <string name="notification_funded_header">Your wallet has been funded</string>
-    <string name="inbox">Inbox</string>
+    <string name="inbox">Private Chats</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>You don’t have Proxy Voters yet.</font><br><br><font color=\'#95a5b1\'>Please consider someone you trust to be your first Proxy Voter.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>You’re not a Proxy Voter for anyone in the team.</font><br><br><font color=\'#95a5b1\'>You can become a Proxy Voter by gaining trust of other teammates - post your ideas, opinions and votes.</font]]></string>
-    <string name="private_conversation">Private Conversation</string>
+    <string name="private_conversation">Private Chat</string>
     <string name="ends_in">Ends in %s</string>
     <string name="declined">Declined</string>
     <string name="all_votes">All Votes</string>
@@ -209,7 +209,7 @@
     <string name="we_are_invite_only_description"><![CDATA[Hey there, for now we’re invite only.<br> Want to join? <br><a href="http://teambrella.com/join/team">Ask us for invitation!</a>]]></string>
     <string name="almost_ready_title">Hiya!</string>
     <string name="almost_ready_description">We are working round the clock to set up your team. It will be ready soon!</string>
-    <string name="choose_your_team">Choose your team</string>
+    <string name="your_teams">Your teams</string>
     <string name="exit_demo">Exit Demo</string>
     <string name="would_cover_me">Would cover me</string>
     <string name="would_cover_them">Would cover them</string>
