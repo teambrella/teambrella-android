@@ -37,6 +37,7 @@ import java.util.*
 class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupManager.IWalletBackupListener {
     companion object {
         val LOG_TAG: String = KWalletFragment::class.java.simpleName
+        val EXTRA_BACKUP = "extra_backup"
     }
 
     private val user: TeambrellaUser by lazy(LazyThreadSafetyMode.NONE, { TeambrellaUser.get(context) })
@@ -55,6 +56,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
     private val backupWalletButton: View? by ViewHolder(R.id.backup_wallet)
     private val backupWalletMessage: View? by ViewHolder(R.id.wallet_not_backed_up_message)
     private var showBackupInfoOnShow: Boolean = false
+    private var isWalletBackedUp : Boolean? = null
 
 
     override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,6 +96,16 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
                 , AmountCurrencyUtil.getCurrencySign(mDataHost.currency), 0)
 
         mDataHost?.addWalletBackupListener(this)
+
+        savedInstanceState?.let {
+            if (it.containsKey(EXTRA_BACKUP)) {
+                backupWalletMessage?.visibility =
+                        if (it.getBoolean(EXTRA_BACKUP, false)) View.GONE else View.VISIBLE
+                backupWalletButton?.visibility =
+                        if (it.getBoolean(EXTRA_BACKUP, false)) View.VISIBLE else View.GONE
+            }
+        }
+
     }
 
     override fun onReload() {
@@ -178,12 +190,14 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             Toast.makeText(context, R.string.your_wallet_is_backed_up, Toast.LENGTH_SHORT).show()
             StatisticHelper.onWalletSaved(context, user.userId)
         }
+        isWalletBackedUp = true
     }
 
     override fun onWalletSaveError(code: Int, force: Boolean) {
         if (code == WalletBackupManager.IWalletBackupListener.RESOLUTION_REQUIRED) {
             backupWalletMessage?.visibility = View.VISIBLE
             backupWalletMessage?.setOnClickListener({ mDataHost.backUpWallet(true) })
+            isWalletBackedUp = false
             showWalletBackupInfo()
         } else {
             if (code != WalletBackupManager.IWalletBackupListener.CANCELED) {
@@ -199,6 +213,14 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             if (!force) {
                 backupWalletMessage?.visibility = View.GONE
             }
+        }
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        isWalletBackedUp?.let {
+            outState.putBoolean(EXTRA_BACKUP, it)
         }
     }
 

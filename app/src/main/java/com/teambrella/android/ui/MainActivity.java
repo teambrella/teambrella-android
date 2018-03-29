@@ -76,7 +76,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
     private static final String EXTRA_SELECTED_ITEM = "selected_item";
-    private static final String EXTRA_BACKSTASK = "extra_back_stack";
+    private static final String EXTRA_BACKSTACK = "extra_back_stack";
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
@@ -163,7 +163,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             WalletBackUpService.Companion.scheduleBackupCheck(this);
             WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
         } else {
-            ArrayList<Integer> backStack = savedInstanceState.getIntegerArrayList(EXTRA_BACKSTASK);
+            ArrayList<Integer> backStack = savedInstanceState.getIntegerArrayList(EXTRA_BACKSTACK);
             if (backStack != null) {
                 for(Integer i:backStack) {
                     mBackStack.push(i);
@@ -430,7 +430,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_SELECTED_ITEM, mSelectedItemId);
-        outState.putIntegerArrayList(EXTRA_BACKSTASK, new ArrayList<>(mBackStack));
+        outState.putIntegerArrayList(EXTRA_BACKSTACK, new ArrayList<>(mBackStack));
     }
 
     @Override
@@ -598,11 +598,13 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void backUpWallet(boolean force) {
-        mWalletBackupManager.saveWallet(mFBName,
-                mUserName,
-                mUserPicture,
-                TeambrellaUser.get(this).getPrivateKey()
-                , force);
+        if (mUserName != null && mUserPicture != null && mFBName != null) {
+            mWalletBackupManager.saveWallet(mFBName,
+                    mUserName,
+                    mUserPicture,
+                    TeambrellaUser.get(this).getPrivateKey()
+                    , force);
+        }
     }
 
     @Override
