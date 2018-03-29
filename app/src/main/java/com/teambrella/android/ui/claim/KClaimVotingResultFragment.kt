@@ -148,7 +148,8 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
         setTeamVote(teamVote, currency ?: "", claimAmount)
         setMyVote(myVote?.toFloat(), currency ?: "", claimAmount)
 
-        this.votingControl?.progress = Math.round((myVote ?: 0.0) * 100).toInt()
+        val vote : Float = myVote ?: if (teamVote != null) teamVote else 0f
+        this.votingControl?.progress = Math.round(vote * 100).toInt()
 
         if (proxyName != null && proxyAvatar != null) {
             this.proxyName?.let {
@@ -167,7 +168,7 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
             this.proxyName?.visibility = View.INVISIBLE
             this.proxyAvatar?.visibility = View.INVISIBLE
             this.yourVoteTitle?.text = getString(R.string.your_vote)
-            this.resetVoteButton?.visibility = if (myVote ?: -1.0 >= 0) View.VISIBLE else View.GONE
+            this.resetVoteButton?.visibility = if (myVote ?: -1f >= 0f) View.VISIBLE else View.GONE
         }
 
         val remainedMinutes = voteData.remainedMinutes ?: 0

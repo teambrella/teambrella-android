@@ -118,8 +118,8 @@ val JsonObject?.serverTxState: Int?
 val JsonObject?.riskVoted: Double?
     get() = this?.getDouble(TeambrellaModel.ATTR_DATA_RISK_VOTED)
 
-val JsonObject?.myVote: Double?
-    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_MY_VOTE)
+val JsonObject?.myVote: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE)
 
 val JsonObject?.proxyName: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME)

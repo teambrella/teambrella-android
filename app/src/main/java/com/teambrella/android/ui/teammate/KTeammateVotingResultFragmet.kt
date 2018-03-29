@@ -64,7 +64,7 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
 
                 this.avgRiskValue = it.avgRisk
                 setTeamVote(it.riskVoted)
-                setMyVote(it.myVote)
+                setMyVote(it.myVote?.toDouble())
 
                 val proxyName = it.proxyName
                 val proxyAvatar = it.proxyAvatar
