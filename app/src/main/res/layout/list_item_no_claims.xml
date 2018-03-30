@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_marginTop="78dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/empty_screen_background">
+
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/prompt"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_icon_team_large"
+            android:tint="@color/cloudyBlue"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:gravity="center"
+            android:maxWidth="300dp"
+            android:textColor="@color/dark"
+            android:textSize="16sp"
+            android:text="@string/no_claims"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:targetApi="lollipop" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/report_claim_background"
+        android:padding="16dp"
+        android:id="@+id/submit_claim_panel"
+        tools:targetApi="lollipop">
+
+
+        <ImageView
+            android:id="@+id/object_icon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/charcoalGrey"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toRightOf="@id/object_icon"
+            app:layout_constraintTop_toTopOf="@id/object_icon"
+            tools:text="Ford S-Max" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/subtitle"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/blueGrey"
+            android:textSize="12sp"
+            android:lines="1"
+            android:ellipsize="end"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintLeft_toRightOf="@id/object_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/submit_claim"
+            style="@style/Teambrella.TextAppearence.SectionButton"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/header_button"
+            android:text="@string/submit_another_claim"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/object_icon"
+            app:layout_constraintLeft_toRightOf="@id/object_icon"
+            app:layout_constraintRight_toRightOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_below="@id/submit_claim_panel"
+        android:background="@drawable/list_delim_bottom"/>
+
+</RelativeLayout>

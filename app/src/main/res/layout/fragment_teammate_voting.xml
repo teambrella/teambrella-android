@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
 
     <LinearLayout
@@ -148,7 +149,7 @@
             android:id="@+id/all_votes"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginRight="@dimen/all_votes_margin_end"
             android:background="@drawable/teammate_team_vote_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/your_vote_title"
@@ -160,6 +161,7 @@
 
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/voting_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp">
