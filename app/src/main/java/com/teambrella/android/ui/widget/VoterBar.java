@@ -207,17 +207,17 @@ public class VoterBar extends HorizontalScrollView {
         int shift = getMeasuredWidth() / 2;
         for (int i = 0; i < mContainer.getChildCount(); i++) {
             View child = mContainer.getChildAt(i);
-            View bar = child.findViewById(R.id.test);
+            View bar = child.findViewById(R.id.voter_box);
             Drawable drawable = bar != null ? bar.getBackground() : null;
             boolean isSelected = child.getLeft() - shift < l && child.getRight() - shift > l;
             if (drawable != null && drawable instanceof TransitionDrawable) {
                 if (child.getLeft() - shift < l && child.getRight() - shift > l) {
                     if (!child.isSelected()) {
-                        ((TransitionDrawable) drawable).startTransition(300);
+                        ((TransitionDrawable) drawable).startTransition(200);
                     }
                 } else {
                     if (child.isSelected()) {
-                        ((TransitionDrawable) drawable).reverseTransition(300);
+                        ((TransitionDrawable) drawable).reverseTransition(200);
                     }
                 }
             }

@@ -64,7 +64,7 @@ import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
  */
 public class TeambrellaUtilService extends GcmTaskService {
 
-    private static final long MIN_SYNC_DELAY = 1;
+    private static final long MIN_SYNC_DELAY = 1000 * 60 * 30;
     private static final String ACTION_LOCAL_SYNC = "com.teambrella.android.util.ACTION_SYNC";
     private static final String EXTRA_TAG = "extra_tag";
     private static final String TASK_EXTRAS = "tag_extras";
