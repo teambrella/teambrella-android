@@ -189,6 +189,11 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
         }
 
         votingPanel?.visibility = if (voting) View.VISIBLE else View.GONE
+
+        val padding = context?.resources?.getDimensionPixelOffset(if ((arguments?.getInt(EXTRA_MODE, MODE_CLAIM)
+                        ?: MODE_CLAIM) == MODE_CLAIM) R.dimen.padding_20dp else R.dimen.padding_16dp)
+                ?: 0
+        view?.setPadding(padding, padding, padding, if (voting) 0 else padding)
     }
 
 
