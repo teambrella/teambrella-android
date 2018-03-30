@@ -3,6 +3,7 @@ package com.teambrella.android.ui.team.claims;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -310,7 +311,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
-        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_claims);
+        return new NoClaimsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_no_claims, parent, false));
     }
 
     private class SubmitClaimViewHolder extends RecyclerView.ViewHolder {
@@ -345,7 +346,14 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
             mLocationView.setText(mLocation);
 
             mSubmitClaimView.setOnClickListener(v -> startActivity(ReportClaimActivity.
-                    getLaunchIntent(context, mObjectImageUri, mObjectName, mTeamId, mCurrency)));
+                    getLaunchIntent(context, mObjectImageUri, mObjectName, mTeamId, mCurrency, mLocation)));
+        }
+    }
+
+    private class NoClaimsViewHolder extends SubmitClaimViewHolder {
+        NoClaimsViewHolder(View itemView) {
+            super(itemView);
+            ((TextView) itemView.findViewById(R.id.prompt)).setText(Html.fromHtml(itemView.getContext().getString(R.string.no_claims)));
         }
     }
 }

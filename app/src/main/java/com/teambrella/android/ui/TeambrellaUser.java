@@ -2,11 +2,16 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.PowerManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.Wallet;
+
+import java.util.UUID;
 
 /**
  * Teambrella User
@@ -19,11 +24,13 @@ public class TeambrellaUser {
     private static final String PREFERENCE_PRIVATE_KEY = "private_key";
     private static final String PREFERENCE_USER_ID = "user_id_key";
     private static final String PREFERENCE_TEAM_ID = "team_id_key";
+    private static final String PREFERENCE_DEVICE_CODE = "device_code";
     private static final String PREFERENCE_DEMO_KEY = "demo_private_key";
     private static final String PREFERENCE_PENDING_KEY = "pending_private_key";
     private static final String PREFERENCE_NOTIFICATION_TIMESTAMP = "notification_timestamp_key";
     private static final String PREFERENCE_WALLET_BACKUP_SHOWN = "wallet_backup_shown";
     private static final String PREFERENCE_KEY_LAST_SYNC_TIME = "last_sync_time";
+    private static final String PREFERENCE_KEY_IS_WALLET_BACKED_UP = "is_wallet_backed_up";
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME = "new_version_last_screen_time";
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME = "new_version_last_notification_time";
 
@@ -43,6 +50,9 @@ public class TeambrellaUser {
         if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_DEMO_KEY, null))) {
             mPreferences.edit().putString(PREFERENCE_DEMO_KEY, generatePrivateKey()).apply();
         }
+        if (TextUtils.isEmpty(mPreferences.getString(PREFERENCE_DEVICE_CODE, null))) {
+            mPreferences.edit().putString(PREFERENCE_DEVICE_CODE, UUID.randomUUID().toString()).apply();
+        }
     }
 
 
@@ -55,6 +65,11 @@ public class TeambrellaUser {
 
     public String getPrivateKey() {
         return mPreferences.getString(PREFERENCE_PRIVATE_KEY, null);
+    }
+
+
+    public String getDeviceCode() {
+        return mPreferences.getString(PREFERENCE_DEVICE_CODE, null);
     }
 
 
@@ -142,6 +157,21 @@ public class TeambrellaUser {
 
     public long getNewVersionLastNotificationTime() {
         return mPreferences.getLong(PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME, 0);
+    }
+
+    public boolean isWalletBackedUp() {
+        return mPreferences.getBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, false);
+    }
+
+    public void setWalletBackedUp(boolean value) {
+        mPreferences.edit().putBoolean(PREFERENCE_KEY_IS_WALLET_BACKED_UP, value).apply();
+    }
+
+    public int getInfoMask(Context context) {
+        boolean notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean powerSaveMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && powerManager != null && powerManager.isPowerSaveMode();
+        return isDemoUser() ? 0 : (isWalletBackedUp() ? 16 : 0) | (notificationsEnabled ? 3 : 1) | (powerSaveMode ? 8 : 0);
     }
 
 }

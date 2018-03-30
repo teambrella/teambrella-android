@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -19,8 +20,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
@@ -30,6 +33,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.TeambrellaBackupData;
+import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.content.TeambrellaContentProviderClient;
 import com.teambrella.android.content.TeambrellaRepository;
@@ -73,6 +77,7 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
     private static final String EXTRA_DEBUG_LOGGING = "debug_logging";
+    private static final String EXTRA_FORCE = "force";
 
     private TeambrellaServer mServer;
     private ContentProviderClient mClient;
@@ -98,34 +103,64 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void oneoffWalletSync(Context context) {
-        oneoffWalletSync(context, false);
+        oneoffWalletSync(context, false, false);
     }
 
 
-    public static void oneoffWalletSync(Context context, boolean debug) {
-        try {
-            Bundle args = new Bundle();
-            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
-                    .putExtra(TASK_EXTRAS, args));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+    public static void oneoffWalletSync(Context context, boolean debug, boolean force) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                args.putBoolean(EXTRA_FORCE, force);
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(SYNC_WALLET_ONCE_TAG)
+                        .setExecutionWindow(0, 1)
+                        .setExtras(args)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                args.putBoolean(EXTRA_FORCE, force);
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, SYNC_WALLET_ONCE_TAG)
+                        .putExtra(TASK_EXTRAS, args));
+            } catch (Throwable ignored) {
+            }
         }
     }
 
     public static void oneOffUpdate(Context context, boolean debug) {
-        try {
-            Bundle args = new Bundle();
-            args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, DEBUG_UPDATE_TAG)
-                    .putExtra(TASK_EXTRAS, args));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(DEBUG_UPDATE_TAG)
+                        .setExecutionWindow(0, 1)
+                        .setExtras(args)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                Bundle args = new Bundle();
+                args.putBoolean(EXTRA_DEBUG_LOGGING, debug);
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, DEBUG_UPDATE_TAG)
+                        .putExtra(TASK_EXTRAS, args));
+            } catch (Throwable ignored) {
+
+            }
         }
+
     }
 
     public static void scheduleCheckingSocket(Context context) {
@@ -145,12 +180,23 @@ public class TeambrellaUtilService extends GcmTaskService {
     }
 
     public static void scheduleDebugDB(Context context) {
-        try {
-            context.startService(new Intent(context, TeambrellaUtilService.class)
-                    .setAction(ACTION_LOCAL_SYNC)
-                    .putExtra(EXTRA_TAG, DEBUG_DB_TASK_TAG));
-        } catch (Throwable throwable) {
-            Log.e(LOG_TAG, throwable.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (checkGooglePlayServices(context)) {
+                OneoffTask task = new OneoffTask.Builder()
+                        .setService(TeambrellaUtilService.class)
+                        .setTag(DEBUG_DB_TASK_TAG)
+                        .setExecutionWindow(0, 1)
+                        .build();
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
+        } else {
+            try {
+                context.startService(new Intent(context, TeambrellaUtilService.class)
+                        .setAction(ACTION_LOCAL_SYNC)
+                        .putExtra(EXTRA_TAG, DEBUG_DB_TASK_TAG));
+            } catch (Throwable ignored) {
+
+            }
         }
     }
 
@@ -199,12 +245,12 @@ public class TeambrellaUtilService extends GcmTaskService {
     private boolean tryInit() throws CryptoException {
         Log.d(LOG_TAG, "---> SYNC -> tryInit() started...");
         if (mKey != null) return true;
-
         TeambrellaUser user = TeambrellaUser.get(this);
-        String privateKey = !user.isDemoUser() ? TeambrellaUser.get(this).getPrivateKey() : null;
+        String privateKey = !user.isDemoUser() ? user.getPrivateKey() : null;
+        String deviceToken = !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-            mServer = new TeambrellaServer(this, privateKey);
+            mServer = new TeambrellaServer(this, privateKey, user.getDeviceCode(), deviceToken, user.getInfoMask(this));
             mClient = getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
             mWallet = getWallet();
@@ -221,6 +267,7 @@ public class TeambrellaUtilService extends GcmTaskService {
         super.onInitializeTasks();
         scheduleWalletSync(this);
         scheduleCheckingSocket(this);
+        WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
     }
 
     @Override
@@ -243,7 +290,7 @@ public class TeambrellaUtilService extends GcmTaskService {
             switch (tag) {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG: {
-                    if (canSyncByTime(System.currentTimeMillis())) {
+                    if (isForce(taskParams) || canSyncByTime(System.currentTimeMillis())) {
                         StatisticHelper.onWalletSync(this, tag);
                         if (isDebugLogging(taskParams)) {
                             Log.startDebugging(this);
@@ -294,11 +341,11 @@ public class TeambrellaUtilService extends GcmTaskService {
                 break;
 
                 case CHECK_SOCKET:
+                    //noinspection EmptyCatchBlock
                     try {
                         startService(new Intent(this, TeambrellaNotificationService.class)
                                 .setAction(TeambrellaNotificationService.CONNECT_ACTION));
                     } catch (Exception e) {
-                        Log.reportNonFatal(LOG_TAG, e);
                     }
                     break;
                 case DEBUG_DB_TASK_TAG:
@@ -673,10 +720,17 @@ public class TeambrellaUtilService extends GcmTaskService {
         return extras != null && extras.getBoolean(EXTRA_DEBUG_LOGGING, false);
     }
 
+    private static boolean isForce(TaskParams params) {
+        Bundle extras = params.getExtras();
+        return extras != null && extras.getBoolean(EXTRA_FORCE, false);
+    }
+
 
     private static void debugDB(Context context) {
         try {
-            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            TeambrellaUser user = TeambrellaUser.get(context);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
+                    , user.getInfoMask(context));
             server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
                     .blockingFirst();
         } catch (Exception e) {
@@ -686,7 +740,9 @@ public class TeambrellaUtilService extends GcmTaskService {
 
     private static void debugLog(Context context, String logPath) {
         try {
-            TeambrellaServer server = new TeambrellaServer(context, TeambrellaUser.get(context).getPrivateKey());
+            TeambrellaUser user = TeambrellaUser.get(context);
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
+                    , user.getInfoMask(context));
             server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
                     .blockingFirst();
 

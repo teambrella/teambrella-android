@@ -49,7 +49,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
-        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_messages);
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.no_messages, R.drawable.ic_icon_message_large);
     }
 
     private class ConversationViewHolder extends RecyclerView.ViewHolder {

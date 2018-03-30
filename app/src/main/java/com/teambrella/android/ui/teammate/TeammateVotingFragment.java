@@ -56,6 +56,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private float mAVGRisk;
     private View mAllVotesView;
     private View mOthersView;
+    private TextView mYourVoteTitle;
     private TextView mWhen;
     private CountDownClock mClock;
 
@@ -85,6 +86,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mOthersView = view.findViewById(R.id.others);
         mWhen = view.findViewById(R.id.when);
         mClock = view.findViewById(R.id.clock);
+        mYourVoteTitle = view.findViewById(R.id.your_vote_title);
         mVoterBar.setVoterBarListener(this);
 
 
@@ -166,10 +168,12 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                         mProxyName.setVisibility(View.VISIBLE);
                         mProxyAvatar.setVisibility(View.VISIBLE);
                         mRestVoteButton.setVisibility(View.INVISIBLE);
+                        mYourVoteTitle.setText(R.string.proxy_vote_title);
                     } else {
                         mProxyName.setVisibility(View.INVISIBLE);
                         mProxyAvatar.setVisibility(View.INVISIBLE);
                         mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                        mYourVoteTitle.setText(R.string.your_vote);
                     }
 
 

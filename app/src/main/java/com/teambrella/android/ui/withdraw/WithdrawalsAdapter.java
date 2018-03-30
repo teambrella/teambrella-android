@@ -14,8 +14,10 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
+import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -32,6 +34,10 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
     private String mDefaultWithdrawAddress;
 
     private float mAvailableValue;
+    private float mBalanceValue;
+    private float mReservedValue;
+    private String mCurrency;
+    private float mRate;
     private final IWithdrawActivity mWithdrawActivity;
 
     WithdrawalsAdapter(IDataPager<JsonArray> pager, IWithdrawActivity withdrawActivity) {
@@ -44,8 +50,12 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         notifyItemChanged(0);
     }
 
-    void setAvailableValue(float availableValue) {
-        mAvailableValue = availableValue;
+    void setBalanceValue(float balance, float reserved, String currency, float rate) {
+        mBalanceValue = balance;
+        mReservedValue = reserved;
+        mCurrency = currency;
+        mRate = rate;
+        mAvailableValue = mBalanceValue - mReservedValue;
         notifyItemChanged(0);
     }
 
@@ -104,7 +114,7 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         super.onBindViewHolder(holder, position);
         if (holder instanceof SubmitWithdrawViewHolder) {
             ((SubmitWithdrawViewHolder) holder).setAddress(mDefaultWithdrawAddress);
-            ((SubmitWithdrawViewHolder) holder).setAvailableValue(mAvailableValue);
+            ((SubmitWithdrawViewHolder) holder).setBalance(mBalanceValue, mReservedValue, mAvailableValue, mCurrency);
         } else if (holder instanceof WithdrawalViewHolder) {
             ((WithdrawalViewHolder) holder).onBind(new JsonWrapper(mPager.getLoadedData().get(position - getHeadersCount()).getAsJsonObject()));
         } else if (holder instanceof Header && getItemCount() > 2 && getItemViewType(position) != VIEW_TYPE_BOTTOM) {
@@ -130,6 +140,9 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
         private TextView mAddressView;
         private TextView mAmountView;
         private TextView mSubmitView;
+        private TextView mCryptoAvailableView;
+        private TextView mCurrencyView;
+        private TextView mAvailableView;
         private View mInfoView;
 
         SubmitWithdrawViewHolder(View itemView) {
@@ -138,6 +151,10 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             mAmountView = itemView.findViewById(R.id.amount_input);
             mSubmitView = itemView.findViewById(R.id.submit);
             mInfoView = itemView.findViewById(R.id.info);
+            mCryptoAvailableView = itemView.findViewById(R.id.crypto_available);
+            mCurrencyView = itemView.findViewById(R.id.currency);
+            mAvailableView = itemView.findViewById(R.id.currency_available);
+
             mSubmitView.setOnClickListener(v -> {
                 String address = mAddressView.getText().toString();
                 if (!checkEthereum(address)) {
@@ -166,9 +183,25 @@ class WithdrawalsAdapter extends TeambrellaDataPagerAdapter {
             }
         }
 
-        void setAvailableValue(float value) {
-            mAmountView.setHint(itemView.getContext().getResources().getString(R.string.eth_amount_format_string, value * 1000));
+        void setBalance(float cryptoBalance, float reserved, float available, String currency ) {
+            mAmountView.setHint(itemView.getContext().getResources().getString(R.string.eth_amount_format_string, available * 1000));
             mSubmitView.setEnabled(mAvailableValue > 0f);
+
+            int stringId = cryptoBalance > 1 ? R.string.ethereum : R.string.milli_ethereum;
+            String cryptoCurrency = itemView.getContext().getString(stringId);
+            switch (stringId) {
+                case R.string.ethereum:
+                    mCryptoAvailableView.setText(String.format(Locale.US, "%.2f", available));
+                    break;
+                case R.string.milli_ethereum:
+                    mCryptoAvailableView.setText(String.format(Locale.US, "%d", Math.round(available * 1000)));
+                    break;
+
+            }
+            mCurrencyView.setText(cryptoCurrency);
+            mAvailableView.setText(itemView.getContext().getString(R.string.amount_format_string
+                    , AmountCurrencyUtil.getCurrencySign(mCurrency)
+                    , Math.round(available * mRate)));
         }
 
         private boolean checkEthereum(String address) {

@@ -46,6 +46,7 @@ public class ProxyForFragment extends AMainDataPagerProgressFragment {
                             case ProxyForAdapter.VIEW_TYPE_HEADER:
                             case ProxyForAdapter.VIEW_TYPE_BOTTOM:
                             case ProxyForAdapter.VIEW_TYPE_ERROR:
+                            case ProxyForAdapter.VIEW_TYPE_EMPTY:
                             case ProxyForAdapter.VIEW_TYPE_LOADING:
                                 drawDivider = false;
                         }

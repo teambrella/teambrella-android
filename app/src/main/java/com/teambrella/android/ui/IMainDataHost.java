@@ -17,6 +17,8 @@ public interface IMainDataHost extends IDataHost {
 
     String getTeamName();
 
+    String getUserCity();
+
     void setProxyPosition(String userId, int position);
 
     void optInToRating(boolean optIn);

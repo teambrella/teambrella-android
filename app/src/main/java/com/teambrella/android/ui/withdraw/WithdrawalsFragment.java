@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.withdraw;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -67,6 +68,7 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
         mList.addItemDecoration(dividerItemDecoration);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onDataUpdated(Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
@@ -77,7 +79,9 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                     .doOnNext(jsonWrapper -> {
                         WithdrawalsAdapter adapter = (WithdrawalsAdapter) mAdapter;
                         adapter.setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
-                        adapter.setAvailableValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE) - jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED));
+                        adapter.setBalanceValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
+                                , jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED)
+                                , mDataHost.getCurrency(), mDataHost.getCurrencyRate());
                     }).blockingFirst();
         }
     }

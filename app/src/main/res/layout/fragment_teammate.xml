@@ -7,7 +7,8 @@
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -241,14 +242,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/object_info_container"
-                android:background="@drawable/block_last" />
+                android:background="@drawable/block" />
 
-            <View
+            <FrameLayout
+                android:id="@+id/voting_result_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/voting_statistics_container"
-                android:background="@drawable/actionlist_top" />
+                android:background="@drawable/block"
+                android:visibility="gone" />
 
+            <FrameLayout
+                android:id="@+id/contacts_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/voting_result_container"
+                android:background="@drawable/block_last" />
+
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/member_since"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_below="@id/contacts_container"
+                android:background="@color/paleGreyTwo"
+                android:gravity="center"
+                android:textColor="@color/blueGrey"
+                android:textSize="12sp" />
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

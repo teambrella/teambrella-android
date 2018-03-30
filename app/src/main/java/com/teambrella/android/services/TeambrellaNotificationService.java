@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -241,7 +242,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                 .authority(TeambrellaServer.AUTHORITY)
                                 .appendEncodedPath("wshandler.ashx")
                                 .build().toString());
-                        mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey())
+                        mTeambrellaSocketClient = new TeambrellaServer(this, user.getPrivateKey(), user.getDeviceCode()
+                                , FirebaseInstanceId.getInstance().getToken(), user.getInfoMask(this))
                                 .createSocketClient(uri, this, mUser.getNotificationTimeStamp());
                         mTeambrellaSocketClient.connect();
                     }
@@ -424,7 +426,8 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                                             , claim.getString(OBJECT_NAME)
                                             , claim.getString(CLAIM_PHOTO)
                                             , messageWrapper.getString(TOPIC_ID)
-                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
+                                            , null));
                         } else if (discussion != null) {
                             mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
                                     , discussion.getString(TOPIC_NAME)
@@ -447,7 +450,7 @@ public class TeambrellaNotificationService extends Service implements Teambrella
                 TeambrellaUtilService.scheduleDebugDB(this);
                 break;
             case DEBUG_SYNC:
-                TeambrellaUtilService.oneoffWalletSync(this, true);
+                TeambrellaUtilService.oneoffWalletSync(this, true, true);
                 break;
             case DEBUG_UPDATE:
                 TeambrellaUtilService.oneOffUpdate(this, true);

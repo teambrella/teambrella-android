@@ -30,7 +30,7 @@ import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.claim.ClaimActivity;
-import com.teambrella.android.ui.claim.ClaimVotingFragment;
+import com.teambrella.android.ui.claim.KClaimVotingResultFragmentKt;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 
 import java.util.Locale;
@@ -58,6 +58,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private TextView mVoteValueView;
     private TextView mVoteTitleView;
     private TextView mVoteButton;
+    private View mVoteAction;
     private ImageView mIcon;
     private String mUserName;
     private View mVotingContainer;
@@ -67,6 +68,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
     private View mDivider;
     private View mHideButton;
     private Disposable mVoteDisposable;
+    private View mYourVoteTitle;
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
@@ -98,6 +100,7 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
         mSubtitleView = view.findViewById(R.id.subtitle);
         mVoteValueView = view.findViewById(R.id.vote_value);
         mVoteButton = view.findViewById(R.id.vote);
+        mVoteAction = view.findViewById(R.id.vote_action);
         mIcon = view.findViewById(R.id.image);
         mVoteTitleView = view.findViewById(R.id.your_vote_title);
         mVotingContainer = view.findViewById(R.id.voting_container);
@@ -115,8 +118,8 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                 FragmentManager fragmentManager = getChildFragmentManager();
                 if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
                     fragmentManager.beginTransaction().add(R.id.voting_container,
-                            ClaimVotingFragment.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
-                                    , ClaimVotingFragment.MODE_CHAT)
+                            KClaimVotingResultFragmentKt.getInstance(new String[]{ChatActivity.CLAIM_DATA_TAG, ChatActivity.VOTE_DATA_TAG}
+                                    , KClaimVotingResultFragmentKt.MODE_CHAT)
                             , VOTING_FRAGMENT_TAG)
                             .commit();
                 }
@@ -290,8 +293,12 @@ public class ChatFragment extends ADataPagerProgressFragment<IChatActivity> {
                     }
                     break;
                 }
+
+                String poxyName = votingPart.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
+                mVoteTitleView.setText(poxyName != null ? R.string.proxy_vote_title : R.string.your_vote);
+                mVoteAction.setVisibility(View.VISIBLE);
             } else {
-                mVoteButton.setVisibility(View.GONE);
+                mVoteAction.setVisibility(View.GONE);
             }
         }
 

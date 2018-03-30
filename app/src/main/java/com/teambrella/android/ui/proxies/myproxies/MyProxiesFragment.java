@@ -14,7 +14,7 @@ public class MyProxiesFragment extends AMainDataPagerProgressFragment {
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost::launchActivity);
+        return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost::launchActivity, mItemTouchHelper);
     }
 
     @Override
@@ -26,8 +26,11 @@ public class MyProxiesFragment extends AMainDataPagerProgressFragment {
     @Override
     protected void onDraggingFinished(RecyclerView.ViewHolder viewHolder) {
         super.onDraggingFinished(viewHolder);
-        JsonWrapper item = new JsonWrapper(mDataHost.getPager(mTag).getLoadedData().get(viewHolder.getAdapterPosition()).getAsJsonObject());
-        mDataHost.setProxyPosition(item.getString(TeambrellaModel.ATTR_DATA_USER_ID), viewHolder.getAdapterPosition());
+        int position = viewHolder.getAdapterPosition();
+        if (position >= 0) {
+            JsonWrapper item = new JsonWrapper(mDataHost.getPager(mTag).getLoadedData().get(position).getAsJsonObject());
+            mDataHost.setProxyPosition(item.getString(TeambrellaModel.ATTR_DATA_USER_ID), position);
+        }
     }
 }
 

@@ -34,6 +34,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected RecyclerView mList;
     protected ATeambrellaDataPagerAdapter mAdapter;
     protected String mTag;
+    protected ItemTouchHelper mItemTouchHelper;
 
     public static <T extends ADataPagerProgressFragment> T getInstance(String tag, Class<T> clazz) {
         T fragment;
@@ -66,7 +67,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getContentLayout(), container, false);
         mList = view.findViewById(R.id.list);
-        new ItemTouchHelper(new ItemTouchCallback()).attachToRecyclerView(mList);
+        (mItemTouchHelper = new ItemTouchHelper(new ItemTouchCallback())).attachToRecyclerView(mList);
         mList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State
@@ -182,7 +183,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
             super.onSelectedChanged(viewHolder, actionState);
             switch (actionState) {
                 case ItemTouchHelper.ACTION_STATE_DRAG:
-                    viewHolder.itemView.setAlpha(0.5f);
+                    //viewHolder.itemView.setAlpha(0.9f);
                     setRefreshable(false);
                     break;
             }
@@ -191,7 +192,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
-            viewHolder.itemView.setAlpha(1f);
+            //viewHolder.itemView.setAlpha(1f);
             ADataPagerProgressFragment.this.onDraggingFinished(viewHolder);
             setRefreshable(true);
         }

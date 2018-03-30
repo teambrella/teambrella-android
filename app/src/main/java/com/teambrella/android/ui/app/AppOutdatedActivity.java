@@ -35,11 +35,13 @@ public class AppOutdatedActivity extends AppCompatActivity {
         final TextView back = findViewById(R.id.back);
         final Intent intent = getIntent();
         boolean critical = intent != null && intent.getBooleanExtra(EXTRA_CRITICAL, false);
-        description.setText(critical ? R.string.app_is_outdated_description_critical : R.string.app_is_outdated_description);
+        description.setText(critical ? R.string.app_is_outdated_description_critical
+                : R.string.app_is_outdated_description);
         action.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(android.content.Intent.ACTION_VIEW)
-                        .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)));
+                        .setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&q=" + BuildConfig.FLAVOR))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } catch (Exception e) {
                 Log.reportNonFatal(LOG_TAG, e);
             }

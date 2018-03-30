@@ -14,10 +14,14 @@ import com.teambrella.android.ui.base.TeambrellaDataHostActivity
 
 
 private const val TEAM_ID_EXTRA = "team_id"
+private const val CURRENCY_EXTRA = "currency";
+private const val CRYPTO_RATE = "crypto_rate";
 
-fun getLaunchIntent(context: Context, teamId: Int): Intent {
+fun getLaunchIntent(context: Context, teamId: Int, currency: String, cryptoRate: Float): Intent {
     return Intent(context, WalletTransactionsActivity::class.java)
             .putExtra(TEAM_ID_EXTRA, teamId)
+            .putExtra(CURRENCY_EXTRA, currency)
+            .putExtra(CRYPTO_RATE, cryptoRate)
 }
 
 
@@ -37,9 +41,9 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
         setContentView(R.layout.activity_one_fragment)
         val actionBar = supportActionBar
         actionBar?.let {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setTitle(R.string.transactions)
-            actionBar.setHomeAsUpIndicator(VectorDrawableCompat.create(resources, R.drawable.ic_arrow_back, null))
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setTitle(R.string.transactions)
+            it.setHomeAsUpIndicator(VectorDrawableCompat.create(resources, R.drawable.ic_arrow_back, null))
         }
 
         val fragmentManager = supportFragmentManager
@@ -87,7 +91,9 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
         }
     }
 
-    override fun getTeamId(): Int {
-        return intent?.getIntExtra(TEAM_ID_EXTRA, -1) ?: -1
-    }
+    override fun getTeamId() = intent?.getIntExtra(TEAM_ID_EXTRA, -1) ?: -1
+
+    override fun getCurrency()= intent?.getStringExtra(CURRENCY_EXTRA)?: "";
+
+    override fun getCryptoRate() = intent?.getFloatExtra(CRYPTO_RATE, 0f) ?: 0f
 }

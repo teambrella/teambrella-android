@@ -65,6 +65,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private static final String EXTRA_NAME = "object_name";
     private static final String EXTRA_TEAM_ID = "teamId";
     private static final String EXTRA_CURRENCY = "currency";
+    private static final String EXTRA_LOCAION = "location";
 
     private static final String LOG_TAG = ReportClaimActivity.class.getSimpleName();
 
@@ -93,13 +94,16 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private String mCurrency;
     private Snackbar mSnackBar;
 
-    public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency) {
-        context.startActivity(getLaunchIntent(context, objectImageUri, objectName, teamId, currency));
+    public static void start(Context context, String objectImageUri, String objectName, int teamId, String currency, String location) {
+        context.startActivity(getLaunchIntent(context, objectImageUri, objectName, teamId, currency, location));
     }
 
-    public static Intent getLaunchIntent(Context context, String objectImageUri, String objectName, int teamId, String currency) {
+    public static Intent getLaunchIntent(Context context, String objectImageUri, String objectName, int teamId, String currency, String location) {
         return new Intent(context, ReportClaimActivity.class).putExtra(EXTRA_IMAGE_URI, objectImageUri)
-                .putExtra(EXTRA_NAME, objectName).putExtra(EXTRA_TEAM_ID, teamId).putExtra(EXTRA_CURRENCY, currency);
+                .putExtra(EXTRA_NAME, objectName)
+                .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_CURRENCY, currency)
+                .putExtra(EXTRA_LOCAION, location);
     }
 
 
@@ -129,6 +133,10 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         mIncidentDateView = findViewById(R.id.incident_date);
         mCoverageView = findViewById(R.id.coverage);
         mClaimAmount = findViewById(R.id.claim_amount);
+
+
+        TextView locationView = findViewById(R.id.location);
+        locationView.setText(getIntent().getStringExtra(EXTRA_LOCAION));
 
 
         RecyclerView mPhotos = findViewById(R.id.photos);

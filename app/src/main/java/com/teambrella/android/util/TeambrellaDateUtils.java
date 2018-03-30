@@ -7,6 +7,7 @@ import com.teambrella.android.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -16,6 +17,7 @@ import java.util.TimeZone;
 public class TeambrellaDateUtils {
 
     public static final String TEAMBRELLA_UI_DATE = "d LLLL yyyy";
+    public static final String TEAMBRELLA_UI_DATE_CHAT_SHORT = "d LLLL";
     public static final String TEAMBRELLA_UI_DATE_SHORT = "d MMM yyyy";
     private static final String TEAMBRELLA_SERVER_DATE = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat SDF = new SimpleDateFormat(TEAMBRELLA_SERVER_DATE, Locale.US);
@@ -34,6 +36,14 @@ public class TeambrellaDateUtils {
             return new SimpleDateFormat(formatString, locale).format(SDF.parse(serverDate));
         } catch (ParseException e) {
             return "";
+        }
+    }
+
+    public static Date getDate(String incidentDate) {
+        try {
+            return SDF.parse(incidentDate);
+        } catch (ParseException e) {
+            return null;
         }
     }
 

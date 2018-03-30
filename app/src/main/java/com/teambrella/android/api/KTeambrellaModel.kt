@@ -7,6 +7,8 @@ import com.google.gson.JsonObject
 
 const val TO = "To"
 const val USER_NAME = "UserName"
+const val FACEBOOK_URL = "FacebookUrl"
+const val CLAIM_AMOUNT = "ClaimAmount"
 
 /**
  * Teambrella Kotlin Model
@@ -82,11 +84,21 @@ val JsonObject?.claimId: Int?
 val JsonObject?.To: JsonArray?
     get() = this?.get(TO)?.asJsonArray
 
+val JsonObject?.voting: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING)
+
+val JsonObject?.voted: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_VOTED_PART)
+
+val JsonObject?.remainedMinutes: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
+
 var JsonObject?.userName: String?
     get() = getString(USER_NAME)
     set(value) {
         this?.addProperty(USER_NAME, value)
     }
+
 
 var JsonObject?.amount: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
@@ -102,6 +114,54 @@ var JsonObject?.kind: Int?
 
 val JsonObject?.serverTxState: Int?
     get() = this.getInt(TeambrellaModel.ATTR_DATA_SERVER_TX_STATE)
+
+val JsonObject?.riskVoted: Double?
+    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_RISK_VOTED)
+
+val JsonObject?.myVote: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE)
+
+val JsonObject?.proxyName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME)
+
+val JsonObject?.proxyAvatar: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)
+
+val JsonObject?.riskScale: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE)
+
+val JsonObject?.avgRisk: Double?
+    get() = this?.getDouble(TeambrellaModel.ATTR_DATA_AVG_RISK)
+
+val JsonObject?.otherAvatars: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_OTHER_AVATARS)?.asJsonArray
+
+val JsonObject?.otherCount: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_OTHER_COUNT)
+
+val JsonObject?.fbName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_FB_NAME)
+
+val JsonObject?.facebookUrl: String?
+    get() = this?.getString(FACEBOOK_URL)
+
+val JsonObject?.claimAmount: Float?
+    get() = this?.getFloat(CLAIM_AMOUNT)
+
+val JsonObject?.team: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM)
+
+val JsonObject?.currency: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_CURRENCY)
+
+val JsonObject?.ratioVoted: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_RATIO_VOTED)
+
+val JsonObject?.cryptoBalance: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
+
+val JsonObject?.currencyRate: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
@@ -133,6 +193,12 @@ private fun JsonObject?.getJsonElement(key: String): JsonElement? {
 
 private fun JsonObject?.getString(key: String): String? = this?.getJsonElement(key)?.asString
 
-private fun JsonObject?.getObject(key: String): JsonObject? = this?.getJsonElement(key)?.asJsonObject
+private fun JsonObject?.getObject(key: String): JsonObject? {
+    val element = this?.getJsonElement(key)
+    if (element?.isJsonObject == true) {
+        return element.asJsonObject
+    }
+    return null
+}
 
 

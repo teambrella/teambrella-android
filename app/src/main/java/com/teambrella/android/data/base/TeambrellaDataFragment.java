@@ -18,6 +18,7 @@ import io.reactivex.Observable;
 public class TeambrellaDataFragment extends Fragment {
 
     private static final String EXTRA_URI = "uri";
+    private static final String EXTRA_LOAD_ON_CREATE = "load_on_create";
 
 
     private Uri mUri;
@@ -31,6 +32,15 @@ public class TeambrellaDataFragment extends Fragment {
         return fragment;
     }
 
+    public static TeambrellaDataFragment getInstance(Uri uri, boolean loadOnCreate) {
+        TeambrellaDataFragment fragment = new TeambrellaDataFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_URI, uri);
+        args.putBoolean(EXTRA_LOAD_ON_CREATE, loadOnCreate);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +49,12 @@ public class TeambrellaDataFragment extends Fragment {
         Context context = getContext();
         mLoader = new TeambrellaDataLoader();
         ((TeambrellaDataHostActivity) context).getComponent().inject(mLoader);
-        mUri = getArguments().getParcelable(EXTRA_URI);
+        Bundle args = getArguments();
+        mUri = args.getParcelable(EXTRA_URI);
+        if (args.getBoolean(EXTRA_LOAD_ON_CREATE, false)) {
+            load();
+        }
+
     }
 
 

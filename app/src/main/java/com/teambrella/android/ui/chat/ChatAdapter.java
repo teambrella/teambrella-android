@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,7 +144,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
     }
 
     private class ClaimChatViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDateFormat mTimeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        private SimpleDateFormat mTimeFormat;
         private SimpleDateFormat mDateFormat = new SimpleDateFormat("d LLLL", Locale.ENGLISH);
         ImageView mUserPicture;
         TextView mTime;
@@ -153,6 +154,7 @@ class ChatAdapter extends ChatDataPagerAdapter {
 
         ClaimChatViewHolder(View itemView) {
             super(itemView);
+            mTimeFormat = new SimpleDateFormat(DateFormat.is24HourFormat(itemView.getContext()) ? "HH:mm" : "hh:mm a", Locale.ENGLISH);
             imageLoader = getImageLoader();
             mUserPicture = itemView.findViewById(R.id.user_picture);
             mTime = itemView.findViewById(R.id.time);

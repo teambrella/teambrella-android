@@ -88,7 +88,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_container, ClaimVotingFragment.getInstance(mTags, ClaimVotingFragment.MODE_CLAIM), VOTING_FRAGMENT_TAG);
+            transaction.add(R.id.voting_container, KClaimVotingResultFragmentKt.getInstance(mTags, KClaimVotingResultFragmentKt.MODE_CLAIM), VOTING_FRAGMENT_TAG);
         }
 
 
@@ -163,16 +163,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null
                             , smallPhoto
                             , topicId
-                            , mTeamAccessLevel)));
-                }
-            }
-
-            JsonWrapper claimVoting = data.getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING);
-            if (claimVoting != null) {
-                View view = getView();
-                if (view != null) {
-                    view.findViewById(R.id.voting_container).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.details_container).setBackgroundResource(R.drawable.block_last);
+                            , mTeamAccessLevel
+                            , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE) : null)));
                 }
             }
             setContentShown(true);

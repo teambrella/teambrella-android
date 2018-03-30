@@ -16,7 +16,11 @@ public class UserPresentBroadCastReceiver extends BroadcastReceiver {
         TeambrellaUser user = TeambrellaUser.get(context);
         String action = intent != null ? intent.getAction() : null;
         if (Intent.ACTION_USER_PRESENT.equals(action) && !user.isDemoUser() && user.getPrivateKey() != null) {
-            context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
+            try {
+                context.startService(new Intent(context, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
+            } catch (Exception ignored) {
+
+            }
             TeambrellaUtilService.oneoffWalletSync(context);
         }
     }

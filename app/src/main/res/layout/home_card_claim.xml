@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/home_card_background">
@@ -18,8 +19,8 @@
 
             <ImageView
                 android:id="@+id/icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -29,11 +30,21 @@
                 style="@style/Teambrella.TextAppearence.MessageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:includeFontPadding="false"
                 android:text="@string/your_claim"
                 app:layout_constraintStart_toEndOf="@id/icon"
                 app:layout_constraintTop_toTopOf="parent" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/teammate_picture"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/icon"
+                app:layout_constraintStart_toStartOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:ignore="RtlSymmetry" />
 
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -43,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
                 app:layout_constraintBottom_toBottomOf="@id/icon"
-                app:layout_constraintStart_toStartOf="@id/title"
+                app:layout_constraintStart_toEndOf="@id/teammate_picture"
                 app:layout_constraintTop_toBottomOf="@id/title" />
 
         </android.support.constraint.ConstraintLayout>
@@ -90,8 +101,7 @@
                     android:id="@+id/amount_widget"
                     style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp" />
+                    android:layout_height="wrap_content" />
 
 
             </LinearLayout>
@@ -115,7 +125,6 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 

@@ -22,10 +22,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:elevation="2dp"
-        android:paddingBottom="16dp"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:paddingTop="65dp"
+        android:paddingTop="49dp"
         android:visibility="invisible"
         tools:targetApi="lollipop" />
 
@@ -82,7 +79,8 @@
             android:id="@+id/vote_action"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_goneMarginStart="16dp">
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/vote"

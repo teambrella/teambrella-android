@@ -22,7 +22,11 @@ import kotlinx.android.synthetic.main.list_item_transaction.view.*
 /**
  * Wallet Transaction Adapter
  */
-class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: Int, val listener: OnStartActivityListener?)
+class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
+                                , val teamId: Int
+                                , val currency: String
+                                , val cryptoRate: Float
+                                , listener: OnStartActivityListener?)
     : TeambrellaDataPagerAdapter(pager, listener) {
 
     object ViewType {
@@ -37,19 +41,19 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
         return viewType
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        var holder = super.onCreateViewHolder(parent, viewType)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        var holder : RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
         if (holder == null) {
             holder = when (viewType) {
                 ViewType.VIEW_TYPE_HEADER -> Header(parent, R.string.to_address, R.string.milli_ethereum, R.drawable.list_item_header_background_top)
-                VIEW_TYPE_REGULAR -> TransactionViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.list_item_transaction, parent, false))
+                VIEW_TYPE_REGULAR -> TransactionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_transaction, parent, false))
                 else -> null
             }
         }
-        return holder
+        return holder!!
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int, payloads: MutableList<Any>?) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
         super.onBindViewHolder(holder, position, payloads)
         if (holder is TransactionViewHolder) {
             holder.onBind(mPager.loadedData[position - headersCount].asJsonObject)
@@ -62,7 +66,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
 
 
     override fun createEmptyViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return DefaultEmptyViewHolder(parent?.context, parent, R.string.no_transactions_yet)
+        return DefaultEmptyViewHolder(parent?.context, parent, R.string.no_transactions_yet, -1)
     }
 
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -96,7 +100,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>, val teamId: In
             if (claimId == null) {
                 this.type?.text = itemView.resources.getString(R.string.withdrawal)
                 itemView.setOnClickListener({
-                    startActivity(WithdrawActivity.getIntent(itemView.context, teamId))
+                    startActivity(WithdrawActivity.getIntent(itemView.context, teamId, currency, cryptoRate))
                 })
             }
 

@@ -4,6 +4,7 @@
     <dimen name="rounded_corners_4dp">4dp</dimen>
     <dimen name="rounded_corners_3dp">3dp</dimen>
     <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
     <dimen name="teammate_object_picture_width">96dp</dimen>
     <dimen name="teammate_object_picture_height">80dp</dimen>
     <dimen name="claim_object_picture_height">40dp</dimen>
@@ -25,4 +26,7 @@
     <dimen name="coverage_info_padding">4dp</dimen>
     <dimen name="your_claim_vote_extra_padding">8dp</dimen>
     <dimen name="your_application_vote_extra_padding">8dp</dimen>
+    <dimen name="all_votes_margin_end">4dp</dimen>
+    <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="padding_16dp">16dp</dimen>
 </resources>

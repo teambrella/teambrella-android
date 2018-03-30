@@ -23,6 +23,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
@@ -47,6 +48,7 @@ import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import io.reactivex.disposables.Disposable;
@@ -73,6 +75,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
+    private static final String EXTRA_SELECTED_ITEM = "selected_item";
+    private static final String EXTRA_BACKSTACK = "extra_back_stack";
 
     public static final String TEAMMATES_DATA_TAG = "teammates";
     public static final String CLAIMS_DATA_TAG = "claims";
@@ -101,10 +105,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private String mUserName;
     private String mFBName;
     private Uri mUserPicture;
-    private Disposable mDisposable;
+    private Disposable mHomeDisposable;
+    private Disposable mUserDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
+    private String mUserCity;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
 
@@ -136,7 +142,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
-            onNavigationItemSelected(findViewById(R.id.home));
+            onNavigationItemSelected(findViewById(savedInstanceState != null ? savedInstanceState.getInt(EXTRA_SELECTED_ITEM, R.id.home) : R.id.home));
             if (savedInstanceState == null) {
                 startService(new Intent(this, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
             }
@@ -152,10 +158,22 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         TeambrellaUtilService.scheduleWalletSync(this);
         TeambrellaUtilService.scheduleCheckingSocket(this);
         TeambrellaUtilService.oneoffWalletSync(this);
+
+        if (savedInstanceState == null) {
+            WalletBackUpService.Companion.scheduleBackupCheck(this);
+            WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
+        } else {
+            ArrayList<Integer> backStack = savedInstanceState.getIntegerArrayList(EXTRA_BACKSTACK);
+            if (backStack != null) {
+                for(Integer i:backStack) {
+                    mBackStack.push(i);
+                }
+            }
+        }
+
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -277,11 +295,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case HOME_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)), true);
             case SET_PROXY_POSITION_DATA:
                 return TeambrellaDataFragment.getInstance(null);
             case USER_DATA:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId));
+                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId), true);
             case WALLET_DATA:
                 return TeambrellaDataFragment.getInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
             case VOTE_DATA:
@@ -295,7 +313,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @Override
     protected void onStart() {
         super.onStart();
-        mDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
+        mHomeDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
             if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
@@ -305,6 +323,17 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
                 mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
                 mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            }
+        });
+
+        mUserDisposable = getObservable(USER_DATA).subscribe(notification -> {
+            if (notification.isOnNext()){
+                JsonWrapper response = new JsonWrapper(notification.getValue());
+                JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+                JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+                String[] locations = location != null ? location.split(","): null;
+                mUserCity = locations != null ? locations[0] : null;
             }
         });
     }
@@ -381,11 +410,27 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     @Override
+    public String getUserCity() {
+        return mUserCity;
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
+        if (mHomeDisposable != null && !mHomeDisposable.isDisposed()) {
+            mHomeDisposable.dispose();
         }
+        if (mUserDisposable != null && !mUserDisposable.isDisposed()) {
+            mUserDisposable.dispose();
+        }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(EXTRA_SELECTED_ITEM, mSelectedItemId);
+        outState.putIntegerArrayList(EXTRA_BACKSTACK, new ArrayList<>(mBackStack));
     }
 
     @Override
@@ -553,11 +598,13 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void backUpWallet(boolean force) {
-        mWalletBackupManager.saveWallet(mFBName,
-                mUserName,
-                mUserPicture,
-                TeambrellaUser.get(this).getPrivateKey()
-                , force);
+        if (mUserName != null && mUserPicture != null && mFBName != null) {
+            mWalletBackupManager.saveWallet(mFBName,
+                    mUserName,
+                    mUserPicture,
+                    TeambrellaUser.get(this).getPrivateKey()
+                    , force);
+        }
     }
 
     @Override

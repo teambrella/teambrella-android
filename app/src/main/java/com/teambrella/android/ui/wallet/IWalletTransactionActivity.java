@@ -7,4 +7,6 @@ import com.teambrella.android.data.base.IDataHost;
  */
 public interface IWalletTransactionActivity extends IDataHost {
     int getTeamId();
+    String getCurrency();
+    Float getCryptoRate();
 }

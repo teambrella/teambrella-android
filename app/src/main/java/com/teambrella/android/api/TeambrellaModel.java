@@ -356,6 +356,8 @@ public class TeambrellaModel {
 
 
     public static final String ATTR_DATA_ITEM_TYPE = "ItemType";
+    public static final String ATTR_DATA_ITEM_USER_NAME = "ItemUserName";
+    public static final String ATTR_DATA_ITEM_USER_AVATAR = "ItemUserAvatar";
     public static final String ATTR_DATA_AVG_RISK = "AverageRisk";
     public static final String ATTR_DATA_VOTE = "Vote";
     public static final String ATTR_DATA_OTHER_AVATARS = "OtherAvatars";
@@ -398,6 +400,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_IS_MUTED = "IsMuted";
     public static final String ATTR_DATA_MESSAGE_STATUS = "MesageStatus";
     public static final String ATTR_DATA_TOTAL_COMISSION = "TotalCommission";
+    public static final String ATTR_DATA_VOTED_PART = "VotedPart";
+    public static final String ATTR_DATA_DATE_JOINED = "DateJoined";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

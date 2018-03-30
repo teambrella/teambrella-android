@@ -76,11 +76,11 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
         mCryptoBalanceView = view.findViewById(R.id.crypto_balance);
         mBalanceView = view.findViewById(R.id.balance);
         mCurrencyView = view.findViewById(R.id.currency);
-        mReservedValueView = view.findViewById(R.id.reserved_value);
-        mAvailableValueView = view.findViewById(R.id.available_value);
+//        mReservedValueView = view.findViewById(R.id.reserved_value);
+//        mAvailableValueView = view.findViewById(R.id.available_value);
         ImageView QRCodeView = view.findViewById(R.id.qr_code);
-        mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
-        mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
+//        mMaxCoverageCryptoValue = view.findViewById(R.id.for_max_coverage_crypto_value);
+//        mMaxCoverageCurrencyValue = view.findViewById(R.id.for_max_coverage_currency_value);
         mUninterruptedCoverageCryptoValue = view.findViewById(R.id.for_uninterrupted_coverage_crypto_value);
         mUninterruptedCoverageCurrencyValue = view.findViewById(R.id.for_uninterrupted_coverage_currency_value);
         TextView fundWalletButton = view.findViewById(R.id.fund_wallet);
@@ -135,8 +135,8 @@ public class WalletFragment extends ADataProgressFragment<IMainDataHost> impleme
 
         mCryptoBalanceView.setText(String.format(Locale.US, "%d", 0));
 
-        view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId()));
-        view.findViewById(R.id.transactions).setOnClickListener(v -> startActivity(WalletTransactionsActivityKt.getLaunchIntent(getContext(), mDataHost.getTeamId())));
+//        view.findViewById(R.id.withdraw).setOnClickListener(v -> WithdrawActivity.start(getContext(), mDataHost.getTeamId(), mDataHost.getCurrency(), ));
+//        view.findViewById(R.id.transactions).setOnClickListener(v -> startActivity(WalletTransactionsActivityKt.getLaunchIntent(getContext(), mDataHost.getTeamId(), mDataHost.getCurrency())));
 
         mBackupWalletButton = view.findViewById(R.id.backup_wallet);
 

@@ -86,7 +86,7 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
 
     @Override
     protected RecyclerView.ViewHolder createEmptyViewHolder(ViewGroup parent) {
-        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.proxies_for_empty_prompt);
+        return new DefaultEmptyViewHolder(parent.getContext(), parent, R.string.proxies_for_empty_prompt, R.drawable.ic_icon_vote);
     }
 
     @Override
