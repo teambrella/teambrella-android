@@ -9,6 +9,13 @@ const val TO = "To"
 const val USER_NAME = "UserName"
 const val FACEBOOK_URL = "FacebookUrl"
 const val CLAIM_AMOUNT = "ClaimAmount"
+const val CMD = "Cmd"
+const val POST_ID = "PostId"
+const val CONTENT = "Content"
+const val BALANCE_CRYPTO = "BalanceCrypto"
+const val BALANCE_FIAT = "BalanceFiat"
+const val MESSAGE = "Message";
+const val TOPIC_NAME = "TopicName";
 
 /**
  * Teambrella Kotlin Model
@@ -99,12 +106,17 @@ var JsonObject?.userName: String?
         this?.addProperty(USER_NAME, value)
     }
 
+val JsonObject?.message: String?
+    get() = getString(MESSAGE)
 
 var JsonObject?.amount: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
     set(value) {
         this?.addProperty(TeambrellaModel.ATTR_DATA_AMOUNT, value)
     }
+
+val  JsonObject?.amountStr: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_AMOUNT)
 
 var JsonObject?.kind: Int?
     get() = this.getInt(TeambrellaModel.ATTR_DATA_KIND)
@@ -163,6 +175,46 @@ val JsonObject?.cryptoBalance: Float?
 val JsonObject?.currencyRate: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE)
 
+val JsonObject?.cmd : Int?
+    get() = this?.getInt(CMD)
+
+val JsonObject?.timeStamp : Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_STATUS_TIMESTAMP)
+
+val JsonObject?.teamId: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
+
+val JsonObject?.topicId: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
+
+val JsonObject?.topicName: String?
+    get() = this?.getString(TOPIC_NAME)
+
+val JsonObject?.postId: String?
+    get() = this?.getString(POST_ID)
+
+val JsonObject?.userImage: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_AVATAR)
+
+val JsonObject?.content: String?
+    get() = this?.getString(CONTENT)
+
+val JsonObject?.teamLogo: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO)
+
+val JsonObject?.teamName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME)
+
+val JsonObject?.count: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_COUNT)
+
+val JsonObject?.balanceCrypto: String?
+    get() = this?.getString(BALANCE_CRYPTO)
+
+val JsonObject?.balanceFiat: String?
+    get() = this?.getString(BALANCE_FIAT)
+
+
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
 }
@@ -182,6 +234,11 @@ private fun JsonObject?.getLong(key: String): Long? {
 private fun JsonObject?.getInt(key: String): Int? {
     return this?.getJsonElement(key)?.asInt
 }
+
+
+
+
+
 
 private fun JsonObject?.getJsonElement(key: String): JsonElement? {
     var element = this?.get(key)

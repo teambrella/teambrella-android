@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.teambrella.android.R
+import com.teambrella.android.TeambrellaApplication
 import com.teambrella.android.backup.WalletBackUpService
 import com.teambrella.android.ui.WelcomeActivity
 import com.teambrella.android.util.TeambrellaUtilService
@@ -35,7 +36,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 val builder = NotificationCompat.Builder(this)
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_teambrella_status)
-                        .setColor(getColor(R.color.lightBlue))
+                        .setColor(resources.getColor(R.color.lightBlue))
                         .setContentTitle(it.title ?: getString(R.string.app_name))
                         .setContentText(it.body)
                         .setStyle(NotificationCompat.BigTextStyle()
@@ -69,6 +70,9 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
         }
         WalletBackUpService.schedulePeriodicBackupCheck(this)
     }
+
+
+    private fun isForeground() : Boolean = (applicationContext as TeambrellaApplication).isForeground
 
 
     open class TeambrellaFirebaseMessagingException(message: String) : Exception(message)

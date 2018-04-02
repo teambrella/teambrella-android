@@ -1,5 +1,8 @@
 package com.teambrella.android;
 
+import android.app.Activity;
+import android.app.Application;
+import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
@@ -10,15 +13,20 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.teambrella.android.ui.TeambrellaUser;
 
+import java.util.HashSet;
+
 import io.fabric.sdk.android.Fabric;
 
 /**
  * Teambrella Application
  */
-public class TeambrellaApplication extends MultiDexApplication {
+public class TeambrellaApplication extends MultiDexApplication implements Application.ActivityLifecycleCallbacks {
 
     private static GoogleAnalytics sAnalytics;
     private static Tracker sTracker;
+
+
+    private HashSet<Activity> mActivities = new HashSet<>();
 
     @Override
     public void onCreate() {
@@ -26,12 +34,14 @@ public class TeambrellaApplication extends MultiDexApplication {
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
 
+        //noinspection ConstantConditions
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }
 
+        //noinspection ResultOfMethodCallIgnored
         LeakCanary.install(this);
 
         if (!BuildConfig.DEBUG) {
@@ -41,6 +51,8 @@ public class TeambrellaApplication extends MultiDexApplication {
 
         sAnalytics = GoogleAnalytics.getInstance(this);
         sAnalytics.setDryRun(BuildConfig.DEBUG);
+
+        registerActivityLifecycleCallbacks(this);
     }
 
     /**
@@ -62,5 +74,45 @@ public class TeambrellaApplication extends MultiDexApplication {
         analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         analytics.setUserId(TeambrellaUser.get(this).getUserId());
         return analytics;
+    }
+
+    public boolean isForeground(){
+        return mActivities.size() > 0;
+    }
+
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        mActivities.add(activity);
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        mActivities.remove(activity);
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+
     }
 }
