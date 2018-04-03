@@ -7,8 +7,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -29,7 +27,7 @@ public class TeambrellaNotificationService extends Service {
     private static final String EXTRA_SENDER_AVATAR = "sender_avatar";
     private static final String EXTRA_TEAMMATE_USER_ID = "teammte_user_id";
     private static final String EXTRA_TEAMMATE_AVATAR = "teammate_avatar";
-    private static final String EXTRA_SENDER_USER_ID = "user_id";
+    private static final String EXTRA_SENDER_USER_ID = "sender_user_id";
     private static final String EXTRA_TOPIC_ID = "topic_id";
     private static final String EXTRA_TOPIC_NAME = "topic_name";
     private static final String EXTRA_POST_ID = "post_id";
@@ -98,11 +96,8 @@ public class TeambrellaNotificationService extends Service {
     public static final String CONNECT_ACTION = "connect";
 
     private CopyOnWriteArrayList<ITeambrellaNotificationServiceBinder.INotificationServiceListener> mListeners = new CopyOnWriteArrayList<>();
-    private Gson mGson = new GsonBuilder().setLenient().create();
-
     private TeambrellaNotificationSocketClient mTeambrellaSocketClient;
     private TeambrellaNotificationManager mTeambrellaNotificationManager;
-    private TeambrellaUser mUser;
 
 
     @Nullable
@@ -176,7 +171,6 @@ public class TeambrellaNotificationService extends Service {
         );
     }
 
-
     public static void onPrivateMessage(Context context, String senderUserId, String senderName, String senderAvatar, String text) {
         context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_PRIVATE_MESSAGE)
@@ -235,13 +229,13 @@ public class TeambrellaNotificationService extends Service {
     }
 
 
-    public static void onNewApplicationChatMessage(Context context, int teamId, String userId, String topicId,
+    public static void onNewApplicationChatMessage(Context context, int teamId, String teammateUserId, String topicId,
                                                    String teammateName, String senderName, String senderAvatar,
                                                    String text, Boolean isMyTopic) {
         context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_NEW_APPLICATION_CHAT_MESSAGE)
                 .putExtra(EXTRA_TEAM_ID, teamId)
-                //.putExtra(EXTRA_SENDER_USER_ID, userId)
+                .putExtra(EXTRA_TEAMMATE_USER_ID, teammateUserId)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_SENDER_NAME, senderName)
                 .putExtra(EXTRA_SENDER_AVATAR, senderAvatar)
@@ -257,8 +251,8 @@ public class TeambrellaNotificationService extends Service {
                 .setAction(ACTION_ON_NEW_CLAIM_MESSAGE)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
-                .putExtra(EXTRA_SUBJECT_NAME, claimerName)
-                .putExtra(EXTRA_NAME, senderName)
+                .putExtra(EXTRA_CLAIMER_NAME, claimerName)
+                .putExtra(EXTRA_SENDER_NAME, senderName)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_TEXT, text)
                 .putExtra(EXTRA_OBJECT_NAME, objectName)
@@ -351,7 +345,6 @@ public class TeambrellaNotificationService extends Service {
     public void onCreate() {
         super.onCreate();
         mTeambrellaNotificationManager = new TeambrellaNotificationManager(this);
-        mUser = TeambrellaUser.get(this);
     }
 
     @Override
@@ -366,7 +359,6 @@ public class TeambrellaNotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : null;
-
         if (action != null) {
             switch (action) {
                 case CONNECT_ACTION:
