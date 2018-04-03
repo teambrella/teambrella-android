@@ -9,8 +9,12 @@ import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.ui.TeambrellaUser
 import com.teambrella.android.util.TeambrellaUtilService
+import com.teambrella.android.util.log.Log
 import java.lang.Exception
 import java.net.URI
+
+
+const val LOG_TAG = "TeambrellaNotificationSocketClient"
 
 class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServer.SocketClientListener {
 
@@ -32,7 +36,7 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
     }
 
 
-    private val socketClient: TeambrellaServer.TeambrellaSocketClient
+    private var socketClient: TeambrellaServer.TeambrellaSocketClient?
     private val gson = GsonBuilder().setLenient().create()
 
     init {
@@ -49,14 +53,20 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
                 , FirebaseInstanceId.getInstance().token
                 , user.getInfoMask(context))
         socketClient = server.createSocketClient(uri, this, user.notificationTimeStamp)
+        socketClient?.connect()
     }
 
 
     override fun onOpen() {
-
+        Log.i(LOG_TAG, "onOpen")
     }
 
     override fun onMessage(message: String?) {
+
+        message?.let {
+            Log.d(LOG_TAG, message)
+        }
+
 
         val messageObject = message?.let {
             gson.fromJson(it, JsonObject::class.java)
@@ -129,7 +139,7 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
                 }
 
                 NEW_TEAMMATE -> {
-                    TeambrellaNotificationService.onNewTeammate( context,
+                    TeambrellaNotificationService.onNewTeammate(context,
                             it.userName
                             , it.count ?: 0
                             , it.teamName
@@ -138,15 +148,15 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
                 NEW_DISCUSSION -> {
                     TeambrellaNotificationService.onNewDiscussion(context
-                        , it.teamId ?: 0
-                        , it.userId
-                        , it.topicId
-                        , it.topicName
-                        , it.postId
-                        , it.userName
-                        , it.avatar
-                        , it.teamLogo
-                        , it.teamName)
+                            , it.teamId ?: 0
+                            , it.userId
+                            , it.topicId
+                            , it.topicName
+                            , it.postId
+                            , it.userName
+                            , it.avatar
+                            , it.teamLogo
+                            , it.teamName)
                 }
 
 
@@ -173,11 +183,24 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
     }
 
-    override fun onClose(code: Int, reason: String?, remote: Boolean) {
+    public fun isClosed() = socketClient?.isClosed ?: true
+    public fun isClosing() = socketClient?.isClosing
 
+    public fun close() {
+        socketClient?.close()
+        socketClient = null
+    }
+
+
+    override fun onClose(code: Int, reason: String?, remote: Boolean) {
+        Log.d(LOG_TAG, "onClose")
+        socketClient?.close()
+        socketClient = null
     }
 
     override fun onError(ex: Exception?) {
-
+        Log.d(LOG_TAG, "onError")
+        socketClient?.close()
+        socketClient = null
     }
 }
