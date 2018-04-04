@@ -215,7 +215,7 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
                                 , it.teamId ?: 0
                                 , it.userId
                                 , it.userName
-                                , discussion.topicName
+                                , _discussion.topicName
                                 , it.topicId
                                 , it.content)
                     }

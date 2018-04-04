@@ -180,10 +180,10 @@ public class TeambrellaNotificationService extends Service {
         );
     }
 
-    public static void onWalletFunded(Context context, int teammateId, String teammteUserId, String cryptoAmount, String currencyAmount, String teamUrl, String teamName) {
+    public static void onWalletFunded(Context context, int teamId, String teammteUserId, String cryptoAmount, String currencyAmount, String teamUrl, String teamName) {
         context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_WALLET_FUNDED)
-                .putExtra(EXTRA_TEAMMATE_ID, teammateId)
+                .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_TEAMMATE_USER_ID, teammteUserId)
                 .putExtra(EXTRA_BALANCE_CRYPTO, cryptoAmount)
                 .putExtra(EXTRA_BALANCE_FIAT, currencyAmount)
