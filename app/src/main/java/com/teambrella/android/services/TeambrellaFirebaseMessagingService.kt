@@ -20,13 +20,28 @@ import com.teambrella.android.util.log.Log
 class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
+
         private const val LOG_TAG = "TeambrellaFirebaseMessagingService"
+
+        private const val CREATED_POST = "1"
+        private const val DELETED_POST = "2"
+        private const val TYPING = "13"
+        private const val NEW_CLAIM = "4"
+        private const val PRIVATE_MSG = "5"
+        private const val WALLET_FUNDED = "6"
+        private const val POSTS_SINCE_INTERACTED = "7"
+        private const val NEW_TEAMMATE = "8"
+        private const val NEW_DISCUSSION = "9"
+        private const val TOPIC_MESSAGE_NOTIFICATION = "21"
         private const val DEBUG_DB = "101"
         private const val DEBUG_UPDATE = "102"
         private const val DEBUG_SYNC = "103"
         private const val CMD = "Cmd"
         private const val DEBUG = "Debug"
+
+
     }
+
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
@@ -52,6 +67,48 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
 
         remoteMessage?.data?.let {
             when (it[CMD]) {
+
+                CREATED_POST -> {
+
+                }
+
+                DELETED_POST -> {
+
+                }
+
+                TYPING -> {
+
+                }
+
+                NEW_CLAIM -> {
+
+                }
+
+                PRIVATE_MSG -> {
+
+                }
+
+                WALLET_FUNDED -> {
+
+                }
+
+                POSTS_SINCE_INTERACTED -> {
+
+                }
+
+                NEW_TEAMMATE -> {
+
+                }
+
+                NEW_DISCUSSION -> {
+
+                }
+
+                TOPIC_MESSAGE_NOTIFICATION -> {
+
+                }
+
+
                 DEBUG_DB -> {
                     TeambrellaUtilService.scheduleDebugDB(this)
                     Log.reportNonFatal(LOG_TAG, DebugDBMessagingException())
@@ -72,7 +129,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-    private fun isForeground() : Boolean = (applicationContext as TeambrellaApplication).isForeground
+    private fun isForeground(): Boolean = (applicationContext as TeambrellaApplication).isForeground
 
 
     open class TeambrellaFirebaseMessagingException(message: String) : Exception(message)

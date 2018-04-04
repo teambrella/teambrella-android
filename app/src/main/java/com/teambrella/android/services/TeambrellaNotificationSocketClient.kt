@@ -38,6 +38,7 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
     private var socketClient: TeambrellaServer.TeambrellaSocketClient?
     private val gson = GsonBuilder().setLenient().create()
+    private val user: TeambrellaUser
 
     init {
         val uri = URI.create(Uri.Builder()
@@ -46,7 +47,7 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
                 .appendEncodedPath("wshandler.ashx")
                 .build().toString())
 
-        val user = TeambrellaUser.get(context)
+        user = TeambrellaUser.get(context)
 
         val server = TeambrellaServer(context, user.privateKey
                 , user.deviceCode
@@ -70,6 +71,22 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
         val messageObject = message?.let {
             gson.fromJson(it, JsonObject::class.java)
+        }
+
+
+        if (messageObject != null) {
+            val timestamp = messageObject.timeStamp
+            if (timestamp != null) {
+                if (timestamp != -1L && timestamp <= user.notificationTimeStamp) {
+                    return
+                }
+            }
+
+            timestamp?.let { _timestamp ->
+                if (_timestamp > 0L) {
+                    user.notificationTimeStamp = _timestamp
+                }
+            }
         }
 
         messageObject?.let {
@@ -161,7 +178,47 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
 
                 TOPIC_MESSAGE_NOTIFICATION -> {
+                    val teammate = it.teammate
+                    val claim = it.claim
+                    val discussion = it.discussion
 
+                    teammate?.let { _teammate ->
+                        TeambrellaNotificationService.onNewApplicationChatMessage(context
+                                , it.teamId ?: 0
+                                , _teammate.userId
+                                , it.topicId
+                                , _teammate.userName
+                                , it.userId
+                                , it.userName
+                                , it.avatar
+                                , it.content
+                                , it.isMyTopic ?: false
+                        )
+                    }
+
+                    claim?.let { _claim ->
+                        TeambrellaNotificationService.onNewClaimChatMessage(context
+                                , it.teamId ?: 0
+                                , _claim.claimId ?: 0
+                                , _claim.userName
+                                , it.userId
+                                , it.userName
+                                , it.topicId
+                                , it.content
+                                , _claim.objectName
+                                , _claim.objectPhoto
+                                , it.isMyTopic ?: false
+                        )
+                    }
+                    discussion?.let { _discussion ->
+                        TeambrellaNotificationService.onNewDiscussionChatMessage(context
+                                , it.teamId ?: 0
+                                , it.userId
+                                , it.userName
+                                , discussion.topicName
+                                , it.topicId
+                                , it.content)
+                    }
                 }
 
 
@@ -178,9 +235,10 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
                     TeambrellaUtilService.oneoffWalletSync(context, true, true)
                 }
 
+                else -> Unit
+
             }
         }
-
     }
 
     public fun isClosed() = socketClient?.isClosed ?: true

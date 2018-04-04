@@ -16,6 +16,10 @@ const val BALANCE_CRYPTO = "BalanceCrypto"
 const val BALANCE_FIAT = "BalanceFiat"
 const val MESSAGE = "Message";
 const val TOPIC_NAME = "TopicName";
+const val TEAMMATE = "Teammate";
+const val CLAIM = "Claim";
+const val DISCUSSION = "Discussion";
+const val IS_MY_TOPIC = "MyTopic"
 
 /**
  * Teambrella Kotlin Model
@@ -106,6 +110,12 @@ var JsonObject?.userName: String?
         this?.addProperty(USER_NAME, value)
     }
 
+val JsonObject?.objectName: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_OBJECT_NAME)
+
+val JsonObject?.objectPhoto: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)
+
 val JsonObject?.message: String?
     get() = getString(MESSAGE)
 
@@ -115,7 +125,7 @@ var JsonObject?.amount: Float?
         this?.addProperty(TeambrellaModel.ATTR_DATA_AMOUNT, value)
     }
 
-val  JsonObject?.amountStr: String?
+val JsonObject?.amountStr: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_AMOUNT)
 
 var JsonObject?.kind: Int?
@@ -175,10 +185,10 @@ val JsonObject?.cryptoBalance: Float?
 val JsonObject?.currencyRate: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CURRENCY_RATE)
 
-val JsonObject?.cmd : Int?
+val JsonObject?.cmd: Int?
     get() = this?.getInt(CMD)
 
-val JsonObject?.timeStamp : Long?
+val JsonObject?.timeStamp: Long?
     get() = this?.getLong(TeambrellaModel.ATTR_STATUS_TIMESTAMP)
 
 val JsonObject?.teamId: Int?
@@ -214,6 +224,17 @@ val JsonObject?.balanceCrypto: String?
 val JsonObject?.balanceFiat: String?
     get() = this?.getString(BALANCE_FIAT)
 
+val JsonObject?.teammate: JsonObject?
+    get() = this?.getObject(TEAMMATE)
+
+val JsonObject?.claim: JsonObject?
+    get() = this?.getObject(CLAIM)
+
+val JsonObject?.discussion: JsonObject?
+    get() = this?.getObject(DISCUSSION)
+
+val JsonObject?.isMyTopic: Boolean?
+    get() = this.getBoolean(IS_MY_TOPIC)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
@@ -234,10 +255,6 @@ private fun JsonObject?.getLong(key: String): Long? {
 private fun JsonObject?.getInt(key: String): Int? {
     return this?.getJsonElement(key)?.asInt
 }
-
-
-
-
 
 
 private fun JsonObject?.getJsonElement(key: String): JsonElement? {

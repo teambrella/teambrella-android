@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,7 +43,6 @@ public class TeambrellaNotificationService extends Service {
     private static final String EXTRA_COUNT = "count";
     private static final String EXTRA_TEAMMATE_NAME = "teammateName";
     private static final String EXTRA_IS_MY_TOPIC = "isMyTopic";
-    private static final String EXTRA_SUBJECT_NAME = "subject_name";
     private static final String EXTRA_OBJECT_NAME = "object_name";
     private static final String EXTRA_CLAIM_PHOTO = "object_photo";
 
@@ -98,6 +96,7 @@ public class TeambrellaNotificationService extends Service {
     private CopyOnWriteArrayList<ITeambrellaNotificationServiceBinder.INotificationServiceListener> mListeners = new CopyOnWriteArrayList<>();
     private TeambrellaNotificationSocketClient mTeambrellaSocketClient;
     private TeambrellaNotificationManager mTeambrellaNotificationManager;
+    private TeambrellaUser mUser;
 
 
     @Nullable
@@ -230,13 +229,14 @@ public class TeambrellaNotificationService extends Service {
 
 
     public static void onNewApplicationChatMessage(Context context, int teamId, String teammateUserId, String topicId,
-                                                   String teammateName, String senderName, String senderAvatar,
+                                                   String teammateName, String senderUserId, String senderName, String senderAvatar,
                                                    String text, Boolean isMyTopic) {
         context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_NEW_APPLICATION_CHAT_MESSAGE)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_TEAMMATE_USER_ID, teammateUserId)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
+                .putExtra(EXTRA_SENDER_USER_ID, senderUserId)
                 .putExtra(EXTRA_SENDER_NAME, senderName)
                 .putExtra(EXTRA_SENDER_AVATAR, senderAvatar)
                 .putExtra(EXTRA_TEXT, text)
@@ -246,12 +246,13 @@ public class TeambrellaNotificationService extends Service {
     }
 
     public static void onNewClaimChatMessage(Context context, int teamId, int claimId, String claimerName,
-                                             String senderName, String topicId, String text, String objectName, String claimPhoto, Boolean isMyTopic) {
-        context.startService(new Intent(context, TeambrellaUtilService.class)
+                                             String senderUserId, String senderName, String topicId, String text, String objectName, String claimPhoto, Boolean isMyTopic) {
+        context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_NEW_CLAIM_MESSAGE)
                 .putExtra(EXTRA_TEAM_ID, teamId)
                 .putExtra(EXTRA_CLAIM_ID, claimId)
                 .putExtra(EXTRA_CLAIMER_NAME, claimerName)
+                .putExtra(EXTRA_SENDER_USER_ID, senderUserId)
                 .putExtra(EXTRA_SENDER_NAME, senderName)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_TEXT, text)
@@ -262,15 +263,15 @@ public class TeambrellaNotificationService extends Service {
     }
 
 
-    public static void onNewDiscussionChatMessage(Context context, int teamId, String senderName, String topicName, String topicId, Boolean isMyTopic) {
-        context.startService(new Intent(context, TeambrellaUtilService.class)
+    public static void onNewDiscussionChatMessage(Context context, int teamId, String senderUserId, String senderName, String topicName, String topicId, String text) {
+        context.startService(new Intent(context, TeambrellaNotificationService.class)
                 .setAction(ACTION_ON_NEW_DISCUSSION_MESSAGE)
                 .putExtra(EXTRA_TEAM_ID, teamId)
+                .putExtra(EXTRA_SENDER_USER_ID, senderUserId)
                 .putExtra(EXTRA_SENDER_NAME, senderName)
                 .putExtra(EXTRA_TOPIC_NAME, topicName)
                 .putExtra(EXTRA_TOPIC_ID, topicId)
-                .putExtra(EXTRA_IS_MY_TOPIC, isMyTopic)
-        );
+                .putExtra(EXTRA_TEXT, text));
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -345,6 +346,7 @@ public class TeambrellaNotificationService extends Service {
     public void onCreate() {
         super.onCreate();
         mTeambrellaNotificationManager = new TeambrellaNotificationManager(this);
+        mUser = TeambrellaUser.get(this);
     }
 
     @Override
@@ -482,56 +484,68 @@ public class TeambrellaNotificationService extends Service {
                 }
 
                 case ACTION_ON_NEW_APPLICATION_CHAT_MESSAGE: {
-
-                    mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
-                            , intent.getStringExtra(EXTRA_TEAMMATE_NAME)
-                            , intent.getStringExtra(EXTRA_SENDER_NAME)
-                            , intent.getStringExtra(EXTRA_TEXT)
-                            , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
-                            , intent.getStringExtra(EXTRA_TOPIC_ID)
-                            , ChatActivity.getTeammateChat(this
-                                    , intent.getIntExtra(EXTRA_TEAM_ID, 0)
-                                    , intent.getStringExtra(EXTRA_TEAMMATE_USER_ID)
+                    if (!notifyChatNotification(intent.getStringExtra(EXTRA_TOPIC_ID))) {
+                        String userId = intent.getStringExtra(EXTRA_SENDER_USER_ID);
+                        if (userId != null && !userId.equalsIgnoreCase(mUser.getUserId())) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
                                     , intent.getStringExtra(EXTRA_TEAMMATE_NAME)
-                                    , intent.getStringExtra(EXTRA_TEAMMATE_AVATAR)
+                                    , intent.getStringExtra(EXTRA_SENDER_NAME)
+                                    , intent.getStringExtra(EXTRA_TEXT)
+                                    , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
                                     , intent.getStringExtra(EXTRA_TOPIC_ID)
-                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                                    , ChatActivity.getTeammateChat(this
+                                            , intent.getIntExtra(EXTRA_TEAM_ID, 0)
+                                            , intent.getStringExtra(EXTRA_TEAMMATE_USER_ID)
+                                            , intent.getStringExtra(EXTRA_TEAMMATE_NAME)
+                                            , intent.getStringExtra(EXTRA_TEAMMATE_AVATAR)
+                                            , intent.getStringExtra(EXTRA_TOPIC_ID)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                        }
+                    }
                     return START_STICKY;
                 }
 
                 case ACTION_ON_NEW_CLAIM_MESSAGE: {
 
-                    mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
-                            , intent.getStringExtra(EXTRA_CLAIMER_NAME)
-                            , intent.getStringExtra(EXTRA_SENDER_NAME)
-                            , intent.getStringExtra(EXTRA_TEXT)
-                            , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
-                            , intent.getStringExtra(EXTRA_TOPIC_ID)
-                            , ChatActivity.getClaimChat(this
-                                    , intent.getIntExtra(EXTRA_TEAM_ID, 0)
-                                    , intent.getIntExtra(EXTRA_CLAIM_ID, 0)
-                                    , intent.getStringExtra(EXTRA_OBJECT_NAME)
-                                    , intent.getStringExtra(EXTRA_CLAIM_PHOTO)
+                    if (!notifyChatNotification(intent.getStringExtra(EXTRA_TOPIC_ID))) {
+                        String userId = intent.getStringExtra(EXTRA_SENDER_USER_ID);
+                        if (userId != null && !userId.equalsIgnoreCase(mUser.getUserId())) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
+                                    , intent.getStringExtra(EXTRA_CLAIMER_NAME)
+                                    , intent.getStringExtra(EXTRA_SENDER_NAME)
+                                    , intent.getStringExtra(EXTRA_TEXT)
+                                    , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
                                     , intent.getStringExtra(EXTRA_TOPIC_ID)
-                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
-                                    , null));
+                                    , ChatActivity.getClaimChat(this
+                                            , intent.getIntExtra(EXTRA_TEAM_ID, 0)
+                                            , intent.getIntExtra(EXTRA_CLAIM_ID, 0)
+                                            , intent.getStringExtra(EXTRA_OBJECT_NAME)
+                                            , intent.getStringExtra(EXTRA_CLAIM_PHOTO)
+                                            , intent.getStringExtra(EXTRA_TOPIC_ID)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
+                                            , null));
+                        }
+                    }
                     return START_STICKY;
                 }
 
                 case ACTION_ON_NEW_DISCUSSION_MESSAGE: {
-
-                    mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
-                            , intent.getStringExtra(EXTRA_TOPIC_NAME)
-                            , intent.getStringExtra(EXTRA_SENDER_NAME)
-                            , intent.getStringExtra(EXTRA_TEXT)
-                            , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
-                            , intent.getStringExtra(EXTRA_TOPIC_ID)
-                            , ChatActivity.getFeedChat(this
+                    if (!notifyChatNotification(intent.getStringExtra(EXTRA_TOPIC_ID))) {
+                        String userId = intent.getStringExtra(EXTRA_SENDER_USER_ID);
+                        if (userId != null && !userId.equalsIgnoreCase(mUser.getUserId())) {
+                            mTeambrellaNotificationManager.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
                                     , intent.getStringExtra(EXTRA_TOPIC_NAME)
+                                    , intent.getStringExtra(EXTRA_SENDER_NAME)
+                                    , intent.getStringExtra(EXTRA_TEXT)
+                                    , intent.getBooleanExtra(EXTRA_IS_MY_TOPIC, false)
                                     , intent.getStringExtra(EXTRA_TOPIC_ID)
-                                    , intent.getIntExtra(EXTRA_TEAM_ID, 0)
-                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
-
+                                    , ChatActivity.getFeedChat(this
+                                            , intent.getStringExtra(EXTRA_TOPIC_NAME)
+                                            , intent.getStringExtra(EXTRA_TOPIC_ID)
+                                            , intent.getIntExtra(EXTRA_TEAM_ID, 0)
+                                            , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                        }
+                    }
                     return START_STICKY;
                 }
 
