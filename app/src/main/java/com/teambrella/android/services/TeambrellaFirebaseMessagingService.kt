@@ -60,11 +60,12 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
         private const val TEAMMATE_USER_ID = "TeammateUserId"
         private const val TEAMMATE_USER_NAME = "TeammateUserName"
         private const val TEAMMATE_AVATAR = "TeammateAvatar"
-        private const val CLAIM_ID = "ClaimId"
+        private const val CLAIM_ID = "ClaimClaimId"
         private const val CLAIM_USER_NAME = "ClaimUserName"
-        private const val OBJECT_NAME = TeambrellaModel.ATTR_DATA_OBJECT_NAME
-        private const val CLAIM_PHOTO = TeambrellaModel.ATTR_DATA_SMALL_PHOTO
+        private const val OBJECT_NAME = "ClaimObjectName"
+        private const val CLAIM_PHOTO = "ClaimSmallPhoto"
         private const val TOPIC_NAME = "TopicName"
+        private const val DISCUSSION_TOPIC_NAME = "DiscussionTopicName"
         private const val MY_TOPIC = "MyTopic"
     }
 
@@ -78,6 +79,10 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+
+
+        Log.e(LOG_TAG, remoteMessage?.data?.toString() ?: "null")
+
 
         remoteMessage?.notification?.let {
             if (it.body != null) {
@@ -292,24 +297,24 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                                     , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
                                     , null));
                         }
-                    } else if (data[TOPIC_NAME] != null) {
+                    } else if (data[DISCUSSION_TOPIC_NAME] != null) {
                         if (isForeground) {
                             TeambrellaNotificationService.onNewDiscussionChatMessage(this
                                     , data[TEAM_ID]?.toInt() ?: 0
                                     , data[USER_ID]
                                     , data[USER_NAME]
-                                    , data[TOPIC_NAME]
+                                    , data[DISCUSSION_TOPIC_NAME]
                                     , data[TOPIC_ID]
                                     , data[CONTENT])
                         } else {
                             notificationManager?.showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
-                                    , data[TOPIC_NAME]
+                                    , data[DISCUSSION_TOPIC_NAME]
                                     , data[USER_ID]
                                     , data[CONTENT]
                                     , data[MY_TOPIC]?.toBoolean() ?: false
                                     , data[TOPIC_ID]
                                     , ChatActivity.getFeedChat(this
-                                    , data[TOPIC_NAME]
+                                    , data[DISCUSSION_TOPIC_NAME]
                                     , data[TOPIC_ID]
                                     , data[TEAM_ID]?.toInt() ?: 0
                                     , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
@@ -343,9 +348,9 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
         WalletBackUpService.schedulePeriodicBackupCheck(this)
     }
 
-
-    private val isForeground: Boolean = (applicationContext as TeambrellaApplication).isForeground
-            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    private val isForeground: Boolean
+        get() = (applicationContext as TeambrellaApplication).isForeground
+                || Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 
 
     open class TeambrellaFirebaseMessagingException(message: String) : Exception(message)
