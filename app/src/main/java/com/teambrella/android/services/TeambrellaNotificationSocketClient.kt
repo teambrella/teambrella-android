@@ -5,8 +5,10 @@ import android.net.Uri
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import com.teambrella.android.api.*
+import com.teambrella.android.api.cmd
 import com.teambrella.android.api.server.TeambrellaServer
+import com.teambrella.android.api.timeStamp
+import com.teambrella.android.services.push.SocketNotificationMessage
 import com.teambrella.android.ui.TeambrellaUser
 import com.teambrella.android.util.TeambrellaUtilService
 import com.teambrella.android.util.log.Log
@@ -91,136 +93,18 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
         messageObject?.let {
             when (it.cmd) {
-                CREATED_POST -> {
-                    TeambrellaNotificationService.onPostCreated(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.topicId
-                            , it.postId
-                            , it.userName
-                            , it.avatar
-                            , it.content)
-                }
-
-                DELETED_POST -> {
-                    TeambrellaNotificationService.onPostDeleted(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.topicId
-                            , it.postId)
-                }
-
-                TYPING -> {
-                    TeambrellaNotificationService.onTyping(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.topicId
-                            , it.postId)
-                }
-
-                NEW_CLAIM -> {
-                    TeambrellaNotificationService.onNewClaim(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.claimId ?: 0
-                            , it.userName
-                            , it.avatar
-                            , it.amountStr
-                            , it.teamLogo
-                            , it.teamName)
-
-                }
-
-                PRIVATE_MSG -> {
-                    TeambrellaNotificationService.onPrivateMessage(context
-                            , it.userId
-                            , it.userName
-                            , it.avatar
-                            , it.message
-                    )
-                }
-
-                WALLET_FUNDED -> {
-                    TeambrellaNotificationService.onWalletFunded(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.balanceCrypto
-                            , it.balanceFiat
-                            , it.teamLogo
-                            , it.teamName)
-                }
-
-                POSTS_SINCE_INTERACTED -> {
-                    TeambrellaNotificationService.onPostSinceInteracted(context,
-                            it.count ?: 0)
-                }
-
-                NEW_TEAMMATE -> {
-                    TeambrellaNotificationService.onNewTeammate(context,
-                            it.userName
-                            , it.count ?: 0
-                            , it.teamName
-                    )
-                }
-
-                NEW_DISCUSSION -> {
-                    TeambrellaNotificationService.onNewDiscussion(context
-                            , it.teamId ?: 0
-                            , it.userId
-                            , it.topicId
-                            , it.topicName
-                            , it.postId
-                            , it.userName
-                            , it.avatar
-                            , it.teamLogo
-                            , it.teamName)
-                }
-
-
+                CREATED_POST,
+                DELETED_POST,
+                TYPING,
+                NEW_CLAIM,
+                PRIVATE_MSG,
+                WALLET_FUNDED,
+                POSTS_SINCE_INTERACTED,
+                NEW_TEAMMATE,
+                NEW_DISCUSSION,
                 TOPIC_MESSAGE_NOTIFICATION -> {
-                    val teammate = it.teammate
-                    val claim = it.claim
-                    val discussion = it.discussion
-
-                    teammate?.let { _teammate ->
-                        TeambrellaNotificationService.onNewApplicationChatMessage(context
-                                , it.teamId ?: 0
-                                , _teammate.userId
-                                , it.topicId
-                                , _teammate.userName
-                                , it.userId
-                                , it.userName
-                                , it.avatar
-                                , it.content
-                                , it.isMyTopic ?: false
-                        )
-                    }
-
-                    claim?.let { _claim ->
-                        TeambrellaNotificationService.onNewClaimChatMessage(context
-                                , it.teamId ?: 0
-                                , _claim.claimId ?: 0
-                                , _claim.userName
-                                , it.userId
-                                , it.userName
-                                , it.topicId
-                                , it.content
-                                , _claim.objectName
-                                , _claim.objectPhoto
-                                , it.isMyTopic ?: false
-                        )
-                    }
-                    discussion?.let { _discussion ->
-                        TeambrellaNotificationService.onNewDiscussionChatMessage(context
-                                , it.teamId ?: 0
-                                , it.userId
-                                , it.userName
-                                , _discussion.topicName
-                                , it.topicId
-                                , it.content)
-                    }
+                    TeambrellaNotificationService.onPushMessage(context, SocketNotificationMessage(it))
                 }
-
 
                 DEBUG_DB -> {
                     TeambrellaUtilService.scheduleDebugDB(context)

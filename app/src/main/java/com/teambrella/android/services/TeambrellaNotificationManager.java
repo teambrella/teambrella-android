@@ -11,12 +11,21 @@ import android.support.v4.app.NotificationCompat;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
 
 import java.util.UUID;
+
+import static com.teambrella.android.services.push.KPushNotifications.NEW_CLAIM;
+import static com.teambrella.android.services.push.KPushNotifications.NEW_DISCUSSION;
+import static com.teambrella.android.services.push.KPushNotifications.NEW_TEAMMATE;
+import static com.teambrella.android.services.push.KPushNotifications.POSTS_SINCE_INTERACTED;
+import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MSG;
+import static com.teambrella.android.services.push.KPushNotifications.TOPIC_MESSAGE_NOTIFICATION;
+import static com.teambrella.android.services.push.KPushNotifications.WALLET_FUNDED;
 
 /**
  * Teambrella Notification Manager
@@ -133,6 +142,74 @@ public class TeambrellaNotificationManager {
      */
     public void cancelChatNotification(String topicId) {
         mNotificationManager.cancel(topicId.hashCode());
+    }
+
+
+    public void handlePushMessage(INotificationMessage message) {
+        switch (message.getCmd()) {
+            case NEW_CLAIM:
+                showNewClaimNotification(message.getTeamId(), message.getClaimId(), message.getSenderUserName(), message.getAmount(), message.getTeamName());
+                break;
+            case POSTS_SINCE_INTERACTED:
+                showWalletIsFundedNotification(message.getAmount());
+                break;
+            case PRIVATE_MSG:
+                showPrivateMessageNotification(message.getSenderUserId(), message.getSenderUserName(), message.getSenderAvatar(), message.getMessage());
+                break;
+            case NEW_DISCUSSION:
+                showNewDiscussion(message.getTeamName(), message.getSenderUserName(), message.getTeamId(), message.getTopicName(), message.getTopicId());
+                break;
+            case NEW_TEAMMATE:
+                showNewTeammates(message.getSenderUserName(), message.getCount(), message.getTeamName());
+                break;
+            case WALLET_FUNDED:
+                showWalletIsFundedNotification(message.getBalanceCrypto());
+                break;
+            case TOPIC_MESSAGE_NOTIFICATION:
+                if (message.getTeammateUserId() != null) {
+                    showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
+                            , message.getTeammateUserName()
+                            , message.getSenderUserName()
+                            , message.getContent()
+                            , message.isMyTopic()
+                            , message.getTopicId()
+                            , ChatActivity.getTeammateChat(mContext
+                                    , message.getTeamId()
+                                    , message.getTeammateUserId()
+                                    , message.getTeammateUserName()
+                                    , message.getTeammateAvatar()
+                                    , message.getTopicId()
+                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                } else if (message.getClaimId() != 0) {
+                    showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.CLAIM
+                            , message.getClaimerName()
+                            , message.getSenderUserName()
+                            , message.getContent()
+                            , message.isMyTopic()
+                            , message.getTopicId()
+                            , ChatActivity.getClaimChat(mContext
+                                    , message.getTeamId()
+                                    , message.getClaimId()
+                                    , message.getClaimObjectName()
+                                    , message.getClaimPhoto()
+                                    , message.getTopicId()
+                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
+                                    , null));
+                } else if (message.getDiscussionTopicName() != null) {
+                    showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.DISCUSSION
+                            , message.getDiscussionTopicName()
+                            , message.getSenderUserName()
+                            , message.getContent()
+                            , message.isMyTopic()
+                            , message.getTopicId()
+                            , ChatActivity.getFeedChat(mContext
+                                    , message.getDiscussionTopicName()
+                                    , message.getTopicId()
+                                    , message.getTeamId()
+                                    , TeambrellaModel.TeamAccessLevel.FULL_ACCESS));
+                }
+                break;
+        }
     }
 
 
