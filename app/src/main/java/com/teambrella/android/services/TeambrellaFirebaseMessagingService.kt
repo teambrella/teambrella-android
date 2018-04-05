@@ -36,6 +36,9 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
+        Log.e(LOG_TAG, remoteMessage?.data?.toString() ?: "null")
+
+
         remoteMessage?.notification?.let {
             if (it.body != null) {
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -55,42 +58,40 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
 
-        remoteMessage?.data?.let { data ->
-            {
-                Log.e(LOG_TAG, data.toString())
-                val pushMessage = FireBaseNotificationMessage(data)
-                when (pushMessage.cmd) {
-                    CREATED_POST,
-                    DELETED_POST,
-                    TYPING,
-                    NEW_CLAIM,
-                    PRIVATE_MSG,
-                    WALLET_FUNDED,
-                    POSTS_SINCE_INTERACTED,
-                    NEW_TEAMMATE,
-                    NEW_DISCUSSION,
-                    TOPIC_MESSAGE_NOTIFICATION -> {
-                        if (isForeground) {
-                            TeambrellaNotificationService.onPushMessage(this, pushMessage)
-                        } else {
-                            notificationManager?.handlePushMessage(pushMessage)
-                        }
+        remoteMessage?.data?.let { _data ->
+            Log.e(LOG_TAG, _data.toString())
+            val pushMessage = FireBaseNotificationMessage(_data)
+            when (pushMessage.cmd) {
+                CREATED_POST,
+                DELETED_POST,
+                TYPING,
+                NEW_CLAIM,
+                PRIVATE_MSG,
+                WALLET_FUNDED,
+                POSTS_SINCE_INTERACTED,
+                NEW_TEAMMATE,
+                NEW_DISCUSSION,
+                TOPIC_MESSAGE_NOTIFICATION -> {
+                    if (isForeground) {
+                        TeambrellaNotificationService.onPushMessage(this, pushMessage)
+                    } else {
+                        notificationManager?.handlePushMessage(pushMessage)
                     }
-                    DEBUG_DB -> {
-                        TeambrellaUtilService.scheduleDebugDB(this)
-                        Log.reportNonFatal(LOG_TAG, DebugDBMessagingException())
-                    }
-                    DEBUG_SYNC -> {
-                        TeambrellaUtilService.oneoffWalletSync(this, pushMessage.debug, true)
-                        Log.reportNonFatal(LOG_TAG, DebugSyncMessagingException())
-                    }
-                    DEBUG_UPDATE -> {
-                        TeambrellaUtilService.oneOffUpdate(this, pushMessage.debug)
-                        Log.reportNonFatal(LOG_TAG, DebugUpdateMessagingException())
-                    }
-                    else -> {
+                }
+                DEBUG_DB -> {
+                    TeambrellaUtilService.scheduleDebugDB(this)
+                    Log.reportNonFatal(LOG_TAG, DebugDBMessagingException())
+                }
+                DEBUG_SYNC -> {
+                    TeambrellaUtilService.oneoffWalletSync(this, pushMessage.debug, true)
+                    Log.reportNonFatal(LOG_TAG, DebugSyncMessagingException())
+                }
+                DEBUG_UPDATE -> {
+                    TeambrellaUtilService.oneOffUpdate(this, pushMessage.debug)
+                    Log.reportNonFatal(LOG_TAG, DebugUpdateMessagingException())
+                }
+                else -> {
 
-                    }
                 }
             }
         }
