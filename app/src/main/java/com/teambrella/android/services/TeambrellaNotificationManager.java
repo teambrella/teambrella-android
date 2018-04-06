@@ -13,6 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 import com.teambrella.android.ui.claim.ClaimActivity;
@@ -46,10 +47,12 @@ public class TeambrellaNotificationManager {
 
     private final Context mContext;
     private final NotificationManager mNotificationManager;
+    private final TeambrellaUser mUser;
 
     public TeambrellaNotificationManager(Context context) {
         mContext = context;
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mUser = TeambrellaUser.get(mContext);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -166,6 +169,12 @@ public class TeambrellaNotificationManager {
                 showWalletIsFundedNotification(message.getBalanceCrypto());
                 break;
             case TOPIC_MESSAGE_NOTIFICATION:
+
+                String senderUserId = message.getSenderUserId();
+                if (senderUserId != null && senderUserId.equalsIgnoreCase(mUser.getUserId())) {
+                    break;
+                }
+                
                 if (message.getTeammateUserId() != null) {
                     showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
                             , message.getTeammateUserName()

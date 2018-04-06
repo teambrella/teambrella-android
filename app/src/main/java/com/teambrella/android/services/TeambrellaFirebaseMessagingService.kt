@@ -78,6 +78,11 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                         notificationManager?.handlePushMessage(pushMessage)
                     }
                 }
+
+                SYNC -> {
+                    TeambrellaUtilService.oneoffWalletSync(this, false, true)
+                }
+
                 DEBUG_DB -> {
                     TeambrellaUtilService.scheduleDebugDB(this)
                     Log.reportNonFatal(LOG_TAG, DebugDBMessagingException())
