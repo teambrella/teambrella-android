@@ -142,7 +142,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.me).setOnClickListener(this::onNavigationItemSelected);
-            onNavigationItemSelected(findViewById(savedInstanceState != null ? savedInstanceState.getInt(EXTRA_SELECTED_ITEM, R.id.home) : R.id.home));
+            onNavigationItemSelected(findViewById(savedInstanceState != null ? savedInstanceState.getInt(EXTRA_SELECTED_ITEM, R.id.home) : R.id.home), true, true);
             if (savedInstanceState == null) {
                 startService(new Intent(this, TeambrellaNotificationService.class).setAction(TeambrellaNotificationService.CONNECT_ACTION));
             }
@@ -165,7 +165,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         } else {
             ArrayList<Integer> backStack = savedInstanceState.getIntegerArrayList(EXTRA_BACKSTACK);
             if (backStack != null) {
-                for(Integer i:backStack) {
+                for (Integer i : backStack) {
                     mBackStack.push(i);
                 }
             }
@@ -327,12 +327,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         });
 
         mUserDisposable = getObservable(USER_DATA).subscribe(notification -> {
-            if (notification.isOnNext()){
+            if (notification.isOnNext()) {
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
                 String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
-                String[] locations = location != null ? location.split(","): null;
+                String[] locations = location != null ? location.split(",") : null;
                 mUserCity = locations != null ? locations[0] : null;
             }
         });
