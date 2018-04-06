@@ -154,7 +154,7 @@ public class TeambrellaNotificationManager {
                 showNewClaimNotification(message.getTeamId(), message.getClaimId(), message.getSenderUserName(), message.getAmount(), message.getTeamName());
                 break;
             case POSTS_SINCE_INTERACTED:
-                showWalletIsFundedNotification(message.getAmount());
+                showNewMessagesSinceLastVisit(message.getCount());
                 break;
             case PRIVATE_MSG:
                 showPrivateMessageNotification(message.getSenderUserId(), message.getSenderUserName(), message.getSenderAvatar(), message.getMessage());
@@ -174,7 +174,7 @@ public class TeambrellaNotificationManager {
                 if (senderUserId != null && senderUserId.equalsIgnoreCase(mUser.getUserId())) {
                     break;
                 }
-                
+
                 if (message.getTeammateUserId() != null) {
                     showNewPublicChatMessage(TeambrellaNotificationManager.ChatType.APPLICATION
                             , message.getTeammateUserName()
