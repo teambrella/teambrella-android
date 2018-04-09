@@ -17,12 +17,16 @@
         <item quantity="one">1 day</item>
         <item quantity="other">%d days</item>
     </plurals>
-
-
+    
     <plurals name="new_teammate_notification_description">
         <item quantity="zero">%1$s wants to join your team.</item>
         <item quantity="one">%1$s and one more want to join your team. Say hello to them.</item>
         <item quantity="other">%1$s and %2$d others want to join your team. Say hello to them.</item>
+    </plurals>
+
+    <plurals name="new_comments_since_yesterday">
+        <item quantity="one">1 new comment since yesterday</item>
+        <item quantity="other">%1$d new comments since yesterday</item>
     </plurals>
 
 </resources>
