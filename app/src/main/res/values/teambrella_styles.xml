@@ -28,7 +28,8 @@
 
     <style name="Teambrella.ListItem">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@drawable/selectable_item_background</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:foreground">@drawable/selectable_item_foreground</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">16dp</item>
     </style>
@@ -254,9 +255,19 @@
     </style>
 
     <style name="Teambrella.BottomBarIcon">
+        <item name="android:gravity">center</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:adjustViewBounds">true</item>
         <item name="android:layout_marginTop">3dp</item>
         <item name="android:layout_height">28dp</item>
         <item name="android:layout_width">28dp</item>
+    </style>
+
+    <style name="Teambrella.SeekBar">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:thumb">@drawable/seek_bar_thumb</item>
+        <item name="android:progressDrawable">@drawable/seek_bar_progress</item>
     </style>
 
 

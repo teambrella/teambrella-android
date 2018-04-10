@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|start"
             android:padding="24dp"
-            android:text="@string/choose_your_team"
+            android:text="@string/your_teams"
             android:textAllCaps="true"
             android:textColor="@color/darkSkyBlue" />
 

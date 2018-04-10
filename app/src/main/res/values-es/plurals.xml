@@ -14,11 +14,16 @@
         <item quantity="one">1 día</item>
         <item quantity="other">%d días</item>
     </plurals>
-
-
+    
     <plurals name="new_teammate_notification_description">
         <item quantity="zero">%1$s quiere unirse a tu equipo. Dile hola!</item>
         <item quantity="one">%1$s y una persona más quieren unirse a tu equipo. Diles hola!</item>
         <item quantity="other">%1$s y %2$d personas más quieren unirse a tu equipo. Diles hola!</item>
     </plurals>
+
+    <plurals name="new_comments_since_yesterday">
+        <item quantity="one">1 nuevo comentario desde ayer</item>
+        <item quantity="other">%1$d nuevos comentarios desde ayer</item>
+    </plurals>
+
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contacts_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_item_foreground_4dp"
+    android:padding="20dp">
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/header"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/contacts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/facebook_logo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:srcCompat="@drawable/facebook" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/facebook_title"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+        android:layout_marginStart="20dp"
+        android:includeFontPadding="false"
+        android:text="@string/facebook"
+        app:layout_constraintStart_toEndOf="@id/facebook_logo"
+        app:layout_constraintTop_toTopOf="@id/facebook_logo" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/facebook_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/charcoalGrey"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/facebook_title"
+        app:layout_constraintTop_toBottomOf="@id/facebook_title"
+        tools:text="facebook.com/demo" />
+
+
+</android.support.constraint.ConstraintLayout>

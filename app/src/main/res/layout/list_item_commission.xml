@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/section_background"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:background="@drawable/section_background">
 
-
-    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-        android:layout_width="0dp"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/total_commission"
-        android:textAllCaps="true"
-        android:textColor="@color/darkSkyBlue"
-        android:textSize="14sp" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="36dp">
 
-    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-        android:id="@+id/commission"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/dark"
-        android:textSize="23sp" />
 
-</LinearLayout>
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/total_commission"
+            android:textAllCaps="true"
+            android:textColor="@color/darkSkyBlue"
+            android:textSize="14sp" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/commission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

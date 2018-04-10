@@ -2,7 +2,8 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,6 +52,7 @@
                 android:id="@+id/coverage_icon"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toTopOf="@id/fund_wallet"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -137,6 +139,8 @@
                     android:layout_marginEnd="20dp"
                     android:gravity="end"
                     android:lines="1"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
                     android:textColor="@color/dark"
                     android:textSize="23sp"
                     app:layout_constraintBaseline_toBaselineOf="@+id/max_expenses_title"
@@ -153,7 +157,6 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp">
 
                 <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -180,8 +183,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:background="@drawable/expenses_value_background"
                     android:gravity="end"
                     android:lines="1"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
                     android:textColor="@color/dark"
                     android:textSize="23sp"
                     app:layout_constraintBaseline_toBaselineOf="@+id/possible_expenses_title"
@@ -195,21 +201,36 @@
             </android.support.constraint.ConstraintLayout>
 
 
-            <android.support.v7.widget.AppCompatSeekBar
-                android:id="@+id/coverage_slider"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:thumb="@drawable/seek_bar_thumb" />`
+                android:layout_marginStart="20dp">
+
+                <ProgressBar
+                    android:id="@+id/coverage_progress"
+                    style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_centerVertical="true"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/seek_bar_background" />
+
+                <android.support.v7.widget.AppCompatSeekBar
+                    android:id="@+id/coverage_slider"
+                    style="@style/Teambrella.SeekBar"
+                    android:paddingBottom="17dp"
+                    android:paddingTop="14dp"
+                    android:thumb="@drawable/seek_bar_thumb" />
+
+            </RelativeLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:paddingBottom="4dp">
 
                 <com.teambrella.android.ui.widget.AkkuratRegularTextView
                     android:id="@+id/team_pay_title"
@@ -237,6 +258,8 @@
                     android:layout_marginEnd="20dp"
                     android:gravity="end"
                     android:lines="1"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
                     android:textColor="@color/dark"
                     android:textSize="23sp"
                     app:layout_constraintBaseline_toBaselineOf="@+id/team_pay_title"

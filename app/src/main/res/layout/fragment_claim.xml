@@ -40,92 +40,106 @@
                         tools:layout_editor_absoluteX="0dp" />
                 </android.support.constraint.ConstraintLayout>
 
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/discussion"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/discussion_background_top"
-                    android:paddingBottom="32dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp">
+                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/object_picture"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:layout_editor_absoluteX="16dp" />
-
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        android:id="@+id/message_title"
-                        style="@style/Teambrella.TextAppearence.MessageTitle"
-                        android:layout_width="wrap_content"
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/discussion"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        app:layout_constraintStart_toEndOf="@+id/object_picture"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:layout_editor_absoluteX="72dp"
-                        tools:layout_editor_absoluteY="97dp" />
-
-
-                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                        android:id="@+id/when"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAllCaps="true"
-                        android:textColor="@color/blueGrey"
-                        android:textSize="10sp"
-                        app:layout_constraintBaseline_toBaselineOf="@id/message_title"
-                        app:layout_constraintRight_toRightOf="parent" />
-
-                    <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        android:id="@+id/unread"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/unread_message_count_background"
-                        android:gravity="center"
-                        android:lines="1"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/message_title"
-                        app:layout_constraintVertical_bias="0.67"
-                        tools:layout_editor_absoluteX="180dp" />
-
-                    <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                        android:id="@+id/message_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:ellipsize="end"
-                        android:lineSpacingExtra="5dp"
-                        android:lines="3"
+                        android:background="@drawable/block_discussion_top"
+                        android:paddingBottom="32dp"
                         android:paddingEnd="16dp"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="@id/unread"
-                        app:layout_constraintEnd_toStartOf="@id/unread"
-                        app:layout_constraintStart_toStartOf="@id/message_title"
-                        app:layout_constraintTop_toBottomOf="@+id/message_title"
-                        tools:layout_editor_absoluteX="72dp" />
+                        android:paddingStart="16dp"
+                        android:paddingTop="16dp">
 
-                </android.support.constraint.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/object_picture"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:layout_editor_absoluteX="16dp" />
+
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            android:id="@+id/message_title"
+                            style="@style/Teambrella.TextAppearence.MessageTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            app:layout_constraintStart_toEndOf="@+id/object_picture"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:layout_editor_absoluteX="72dp"
+                            tools:layout_editor_absoluteY="97dp" />
+
+
+                        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                            android:id="@+id/when"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAllCaps="true"
+                            android:textColor="@color/blueGrey"
+                            android:textSize="10sp"
+                            app:layout_constraintBaseline_toBaselineOf="@id/message_title"
+                            app:layout_constraintRight_toRightOf="parent" />
+
+                        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                            android:id="@+id/unread"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/unread_message_count_background"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:textColor="@android:color/white"
+                            android:textSize="13sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/message_title"
+                            app:layout_constraintVertical_bias="0.67"
+                            tools:layout_editor_absoluteX="180dp" />
+
+                        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                            android:id="@+id/message_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:ellipsize="end"
+                            android:lineSpacingExtra="5dp"
+                            android:lines="3"
+                            android:paddingEnd="16dp"
+                            android:textSize="12sp"
+                            app:layout_constraintEnd_toEndOf="@id/unread"
+                            app:layout_constraintEnd_toStartOf="@id/unread"
+                            app:layout_constraintStart_toStartOf="@id/message_title"
+                            app:layout_constraintTop_toBottomOf="@+id/message_title"
+                            tools:layout_editor_absoluteX="72dp" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/discussion_foreground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="11dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </FrameLayout>
 
 
                 <FrameLayout
                     android:id="@+id/voting_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/block_first"
-                    android:visibility="gone" />
+                    android:background="@drawable/block_first" />
 
                 <FrameLayout
                     android:id="@+id/details_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/block_first" />
+                    android:background="@drawable/block_last" />
 
                 <View
                     android:layout_width="match_parent"

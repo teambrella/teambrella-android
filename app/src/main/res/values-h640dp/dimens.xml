@@ -9,4 +9,7 @@
     <dimen name="home_and_coverage_max_height">330dp</dimen>
     <dimen name="home_submit_claim_margin_bottom">32dp</dimen>
     <dimen name="coverage_info_padding">12dp</dimen>
+    <dimen name="your_claim_vote_extra_padding">20dp</dimen>
+    <dimen name="your_application_vote_extra_padding">20dp</dimen>
+    <dimen name="all_votes_margin_end">16dp</dimen>
 </resources>

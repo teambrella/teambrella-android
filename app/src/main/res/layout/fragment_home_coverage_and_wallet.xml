@@ -33,6 +33,7 @@
         android:layout_marginBottom="@dimen/home_default_vertical_margin"
         android:layout_marginStart="24dp"
         android:layout_marginTop="@dimen/home_default_vertical_margin"
+        android:background="@drawable/picture_background_round_3dp"
         app:layout_constraintBottom_toTopOf="@id/submit_claim"
         app:layout_constraintStart_toStartOf="parent" />
 
