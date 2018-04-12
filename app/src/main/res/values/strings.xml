@@ -315,4 +315,13 @@
     <string name="ended_ago">Ended %s ago</string>
 
     <string name="available_to_withdraw">Available to withdraw</string>
+
+
+    <string name="notification_channel_private_chats">Private chats</string>
+    <string name="notification_channel_subscribed_chats">Subscribed chats</string>
+    <string name="notification_channel_new_claims">New claims</string>
+    <string name="notification_channel_wallet">Wallet</string>
+    <string name="notification_channel_team_updates">Team updates</string>
+    <string name="notification_group_chats">Chats</string>
+
 </resources>

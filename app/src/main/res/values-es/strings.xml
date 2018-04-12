@@ -298,4 +298,11 @@
     <string name="contacts">Contacto</string>
     <string name="ended_ago">Terminó hace %s</string>
     <string name="available_to_withdraw">Disponible para retirar</string>
+    
+    <string name="notification_channel_private_chats">Mensajes privados</string>
+    <string name="notification_channel_subscribed_chats">Conversaciones a las que estás suscripto</string>
+    <string name="notification_channel_new_claims">Nuevas reclamaciones</string>
+    <string name="notification_channel_wallet"> Monedero </string>
+    <string name="notification_channel_team_updates">Noticias del Equipo</string>
+    <string name="notification_group_chats">Conversaciones</string>
 </resources>
