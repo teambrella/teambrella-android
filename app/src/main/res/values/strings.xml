@@ -324,4 +324,6 @@
     <string name="notification_channel_team_updates">Team updates</string>
     <string name="notification_group_chats">Chats</string>
 
+    <string name="swipe_to_vote">Swipe left and right to vote</string>
+
 </resources>
