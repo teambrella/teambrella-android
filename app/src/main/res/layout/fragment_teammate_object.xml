@@ -63,6 +63,7 @@
         android:orientation="horizontal"
         android:showDividers="middle"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/object_picture"
         app:layout_constraintTop_toBottomOf="@+id/object_picture">
 

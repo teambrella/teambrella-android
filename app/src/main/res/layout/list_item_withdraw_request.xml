@@ -90,7 +90,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/amount_prefix"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:background="@drawable/prefix_subtitle_background"
             android:gravity="center"

@@ -27,16 +27,15 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def getProps(path) {
+    Properties props = new Properties()
+    props.load(new FileInputStream(file(path)))
+    return props
+}
 
+def keystoreProperties = getProps(rootProject.file("keystore.properties"))
 
 android {
-
-    Properties keyProperties = new Properties()
-    keyProperties.load(new FileInputStream(file(project.property("KeyProperties"))))
-
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
@@ -82,26 +81,30 @@ android {
 
     productFlavors {
 
-        surilla {
+        development {
             dimension "default"
-            buildConfigField "String", "AUTHORITY", "\"surilla.com\""
-            buildConfigField "String", "BASE_URL", "\"https://surilla.com\""
-            buildConfigField "boolean", "isTestNet", "true"
+            def config = getProps(rootProject.file("development.properties"))
+            buildConfigField "String", "AUTHORITY", config['Authority'].toString()
+            buildConfigField "String", "BASE_URL", config['BaseUrl'].toString()
+            buildConfigField "boolean", "isTestNet", config['IsTestNetwork']
+            buildConfigField "String", "CP_AUTHORITY", config['ContentProviderAuthority'].toString()
             sourceSets {
-                main.res.srcDirs = ['src/main/res', 'src/surilla/res']
+                main.res.srcDirs = ['src/main/res', 'src/development/res']
             }
-            applicationId "com.surilla.android"
+            applicationId config['ApplicationId']
         }
 
-        teambrella {
+        production {
             dimension "default"
-            buildConfigField "String", "AUTHORITY", "\"teambrella.com\""
-            buildConfigField "String", "BASE_URL", "\"https://teambrella.com\""
-            buildConfigField "boolean", "isTestNet", "false"
+            def config = getProps(rootProject.file("production.properties"))
+            buildConfigField "String", "AUTHORITY", config['Authority'].toString()
+            buildConfigField "String", "BASE_URL", config['BaseUrl'].toString()
+            buildConfigField "boolean", "isTestNet", config['IsTestNetwork']
+            buildConfigField "String", "CP_AUTHORITY", config['ContentProviderAuthority'].toString()
             sourceSets {
-                main.res.srcDirs = ['src/main/res', 'src/teambrella/res']
+                main.res.srcDirs = ['src/main/res', 'src/production/res']
             }
-            applicationId "com.teambrella.android"
+            applicationId config['ApplicationId']
         }
     }
 
@@ -132,7 +135,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:design:27.1.1'
 
@@ -166,11 +169,11 @@ dependencies {
     /* *Facebook SDK*/
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
 
-    implementation 'com.google.android.gms:play-services-gcm:12.0.1'
-    implementation 'com.google.android.gms:play-services-analytics:12.0.1'
-    implementation 'com.google.android.gms:play-services-auth:12.0.1'
-    implementation 'com.google.firebase:firebase-core:12.0.1'
-    implementation 'com.google.firebase:firebase-messaging:12.0.1'
+    implementation 'com.google.android.gms:play-services-gcm:15.0.0'
+    implementation 'com.google.android.gms:play-services-analytics:15.0.0'
+    implementation 'com.google.android.gms:play-services-auth:15.0.0'
+    implementation 'com.google.firebase:firebase-core:15.0.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.0'
 
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -209,5 +212,38 @@ android.applicationVariants.all { variant ->
         }
     }
 }
+
+
+task copyDevelopmentAppConfig(type: Copy) {
+    from rootProject.file("development.xml")
+    into file("src/development/res/values")
+}
+
+task copyProductionAppConfig(type: Copy) {
+    from rootProject.file("production.xml")
+    into file("src/production/res/values")
+}
+
+task copyDevelopmentGAConfig(type: Copy) {
+    from rootProject.file("ga_development.xml")
+    into file("src/development/res/xml")
+    rename { String fileName ->
+        fileName.replace("ga_development.xml", "ga_tracker.xml")
+    }
+}
+
+task copyProductionGAConfig(type: Copy) {
+    from rootProject.file("ga_production.xml")
+    into file("src/production/res/xml")
+    rename { String fileName ->
+        fileName.replace("ga_production.xml", "ga_tracker.xml")
+    }
+}
+
+
+preBuild.dependsOn copyDevelopmentAppConfig
+preBuild.dependsOn copyProductionAppConfig
+preBuild.dependsOn copyDevelopmentGAConfig
+preBuild.dependsOn copyProductionGAConfig
 
 apply plugin: 'com.google.gms.google-services'
