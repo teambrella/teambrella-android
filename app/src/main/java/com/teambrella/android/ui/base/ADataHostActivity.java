@@ -39,7 +39,6 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
 
     private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
 
-
     private List<Disposable> mCheckErrorDisposables = new LinkedList<>();
     private Disposable mRequestDisposable;
     private TeambrellaUser mUser;
@@ -116,7 +115,7 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
         String[] pagerTags = getPagerTags();
         if (pagerTags != null && pagerTags.length > 0) {
             for (String tag : pagerTags) {
-                mCheckErrorDisposables.add(getPager(tag).getObservable().subscribe(this::checkServerError));
+                mCheckErrorDisposables.add(getPager(tag).getDataObservable().subscribe(this::checkServerError));
             }
         }
 
@@ -165,7 +164,6 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
             }
         }
     }
-
 
     @Override
     protected void onStop() {

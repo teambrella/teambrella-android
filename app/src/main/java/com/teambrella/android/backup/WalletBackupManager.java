@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.CredentialRequest;
+import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -65,10 +66,13 @@ public class WalletBackupManager {
      */
     public WalletBackupManager(FragmentActivity activity) {
         mActivity = activity;
+
+        CredentialsOptions options =
+                new CredentialsOptions.Builder().forceEnableSaveDialog().build();
         mGoogleApiClient = new GoogleApiClient.Builder(activity)
                 .addConnectionCallbacks(mConnectionCallbacks)
                 .enableAutoManage(activity, mConnectionFailedListener)
-                .addApi(Auth.CREDENTIALS_API)
+                .addApi(Auth.CREDENTIALS_API, options)
                 .build();
     }
 

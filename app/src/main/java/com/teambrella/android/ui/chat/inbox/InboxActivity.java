@@ -16,8 +16,8 @@ import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
-import com.teambrella.android.ui.chat.ChatBroadCastManager;
-import com.teambrella.android.ui.chat.ChatBroadCastReceiver;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
+import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class InboxActivity extends ATeambrellaActivity {
 
 
     private InboxNotificationClient mNotificationClient;
-    private ChatBroadCastManager mChatBroadcastManager;
+    private TeambrellaBroadcastManager mChatBroadcastManager;
 
 
     @Override
@@ -44,7 +44,7 @@ public class InboxActivity extends ATeambrellaActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_fragment);
 
-        mChatBroadcastManager = new ChatBroadCastManager(this);
+        mChatBroadcastManager = new TeambrellaBroadcastManager(this);
         mChatBroadcastManager.registerReceiver(mChatBroadCastReceiver);
 
         setTitle(R.string.inbox);
@@ -167,7 +167,7 @@ public class InboxActivity extends ATeambrellaActivity {
         }
     }
 
-    private ChatBroadCastReceiver mChatBroadCastReceiver = new ChatBroadCastReceiver() {
+    private TeambrellaBroadcastReceiver mChatBroadCastReceiver = new TeambrellaBroadcastReceiver() {
         @Override
         protected void onTopicRead(@NotNull String topicId) {
             super.onTopicRead(topicId);

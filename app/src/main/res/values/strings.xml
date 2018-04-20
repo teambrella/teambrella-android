@@ -26,6 +26,8 @@
     <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
     <string name="teammate_net_format_string_zero">%s0</string>
     <string name="risk_format_string">%.1f</string>
+    <string name="float_format_string_1" translatable="false">%.1f</string>
+    <string name="float_format_string_2" translatable="false">%.2f</string>
     <string name="risk_vote_format_string" translatable="false">%.2f</string>
     <string name="currency_format_string" translatable="false">%.0f</string>
 
@@ -325,5 +327,12 @@
     <string name="notification_group_chats">Chats</string>
 
     <string name="swipe_to_vote">Swipe left and right to vote</string>
+    <string name="notification_description_new_teammate_joined">%s has joined</string>
+    <string name="notification_description_your_are_proxy_male">Congratulations! %s has appointed you as his proxy.</string>
+    <string name="notification_description_your_are_proxy_female">Congratulations! %s has appointed you as her proxy.</string>
 
+    <string name="huawei_protected_app_title">App Protection Required</string>
+    <string name="huawei_protected_app_description">For uninterrupted coverage please make sure the app is protected</string>
+    <string name="huawei_protected_app_action">Go to Protected Apps</string>
+    <string name="huawei_protected_app_done">Already Done</string>
 </resources>

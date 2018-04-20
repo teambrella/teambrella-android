@@ -62,7 +62,6 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         remoteMessage?.data?.let { _data ->
-            Log.e(LOG_TAG, _data.toString())
             val pushMessage = FireBaseNotificationMessage(_data)
             when (pushMessage.cmd) {
                 CREATED_POST,
@@ -74,7 +73,9 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 POSTS_SINCE_INTERACTED,
                 NEW_TEAMMATE,
                 NEW_DISCUSSION,
-                TOPIC_MESSAGE_NOTIFICATION -> {
+                TOPIC_MESSAGE_NOTIFICATION,
+                PROXY,
+                PROXY_SEED -> {
                     if (isForeground) {
                         TeambrellaNotificationService.onPushMessage(this, pushMessage)
                     } else {

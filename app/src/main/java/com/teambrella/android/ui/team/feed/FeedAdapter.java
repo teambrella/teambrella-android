@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.team.feed;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
@@ -118,6 +119,11 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
         }
     }
 
+    @Override
+    protected void onPagerItemChanged(int item) {
+        notifyItemChanged(getHeadersCount() + item);
+    }
+
     class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mIcon;
@@ -139,6 +145,7 @@ class FeedAdapter extends TeambrellaDataPagerAdapter {
             mType = itemView.findViewById(R.id.type);
         }
 
+        @SuppressLint("CheckResult")
         void bind(JsonWrapper item) {
             int itemType = item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE);
             Context context = itemView.getContext();

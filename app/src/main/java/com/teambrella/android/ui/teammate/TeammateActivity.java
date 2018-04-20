@@ -3,6 +3,7 @@ package com.teambrella.android.ui.teammate;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -21,15 +22,16 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
+import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
 import com.teambrella.android.ui.chat.ChatActivity;
-import com.teambrella.android.ui.chat.ChatBroadCastManager;
-import com.teambrella.android.ui.chat.ChatBroadCastReceiver;
 import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.util.StatisticHelper;
 
@@ -72,7 +74,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
     private TextView mTitleView;
 
     private TeammateNotificationClient mNotificationClient;
-    private ChatBroadCastManager mChatBroadCastManager;
+    private TeambrellaBroadcastManager mChatBroadCastManager;
 
 
     public static Intent getIntent(Context context, int teamId, String userId, String name, String userPictureUri) {
@@ -94,7 +96,7 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
         mCurrency = getIntent().getStringExtra(CURRENCY);
         mUserId = getIntent().getStringExtra(TEAMMATE_USER_ID);
         mTeamId = getIntent().getIntExtra(TEAM_ID, 0);
-        mChatBroadCastManager = new ChatBroadCastManager(this);
+        mChatBroadCastManager = new TeambrellaBroadcastManager(this);
         mChatBroadCastManager.registerReceiver(mChatBroadCastReceiver);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiity_teammate);
@@ -279,11 +281,11 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case DATA_FRAGMENT:
-                return TeambrellaDataFragment
-                        .getInstance(getIntent().getParcelableExtra(TEAMMATE_URI));
+                return TeambrellaDataFragmentKt
+                        .createInstance((Uri) getIntent().getParcelableExtra(TEAMMATE_URI), false, TeammateDataFragment.class);
             case VOTE_FRAGMENT:
             case PROXY_FRAGMENT:
-                return TeambrellaDataFragment.getInstance(null);
+                return TeambrellaDataFragmentKt.createInstance();
         }
         return null;
     }
@@ -339,6 +341,14 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
         mChatBroadCastManager.unregisterReceiver(mChatBroadCastReceiver);
     }
 
+
+    private void markTopicRead(String topicId) {
+        TeammateDataFragment fragment = (TeammateDataFragment) getSupportFragmentManager().findFragmentByTag(DATA_FRAGMENT);
+        if (fragment != null) {
+            fragment.markTopicRead(topicId);
+        }
+    }
+
     private class TeammateNotificationClient extends TeambrellaNotificationServiceClient {
 
         private boolean mResumed;
@@ -374,12 +384,12 @@ public class TeammateActivity extends ATeambrellaActivity implements ITeammateAc
         }
     }
 
-    private ChatBroadCastReceiver mChatBroadCastReceiver = new ChatBroadCastReceiver() {
+    private TeambrellaBroadcastReceiver mChatBroadCastReceiver = new TeambrellaBroadcastReceiver() {
         @Override
         protected void onTopicRead(@NotNull String topicId) {
             super.onTopicRead(topicId);
             if (topicId.equals(mTopicId)) {
-                load(DATA_FRAGMENT);
+                markTopicRead(topicId);
             }
         }
     };

@@ -119,7 +119,7 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     @Override
     protected void onStart() {
         super.onStart();
-        mWithdrawalsDisposable = getPager(WITHDRAWALS_DATA_TAG).getObservable().subscribe(this::onDataUpdated);
+        mWithdrawalsDisposable = getPager(WITHDRAWALS_DATA_TAG).getDataObservable().subscribe(this::onDataUpdated);
     }
 
     @Override

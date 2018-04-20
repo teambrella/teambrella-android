@@ -156,7 +156,7 @@ public class TeambrellaServer {
                 .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                 .addHeader("deviceId", mDeviceCode)
                 .addHeader("deviceToken", mDeviceToken)
-                .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL)
+                .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL)
                 .build();
     }
 
@@ -495,7 +495,7 @@ public class TeambrellaServer {
                     .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                     .addHeader("deviceId", mDeviceCode)
                     .addHeader("deviceToken", mDeviceToken)
-                    .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL)
+                    .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL)
                     .build();
             return chain.proceed(newRequest);
         }
@@ -513,7 +513,7 @@ public class TeambrellaServer {
         headers.put("clientVersion", BuildConfig.VERSION_NAME);
         headers.put("deviceId", mDeviceCode);
         headers.put("deviceToken", mDeviceToken);
-        headers.put("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MODEL);
+        headers.put("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL);
         return new TeambrellaSocketClient(uri, headers, listener, lastNotificationTimeStamp);
     }
 

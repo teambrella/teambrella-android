@@ -41,8 +41,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 127
-        versionName "and-0.3.3.127"
+        versionCode 130
+        versionName "and-0.3.4.130"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -129,7 +129,7 @@ dependencies {
     })
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.31"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.41"
 
     /* Support */
     //noinspection GradleCompatible
@@ -138,6 +138,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:support-emoji:27.1.1'
 
     /* Server communication */
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
@@ -174,6 +175,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
     implementation 'com.google.firebase:firebase-core:15.0.0'
     implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
 
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -183,13 +185,11 @@ dependencies {
 
     /* Test */
     testImplementation 'junit:junit:4.12'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
-        transitive = true
-    }
 
     /* Dagger */
     implementation 'com.google.dagger:dagger-android:2.11'
     implementation 'com.google.dagger:dagger-android-support:2.11'
+
     // if you use the support libraries
     kapt 'com.google.dagger:dagger-android-processor:2.11'
     kapt 'com.google.dagger:dagger-compiler:2.11'

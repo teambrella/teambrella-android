@@ -114,6 +114,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
 
+        <activity
+            android:name=".ui.background.BackgroundRestrictionsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Modal" />
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"

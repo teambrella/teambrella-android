@@ -39,6 +39,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaRequestFragment;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.dialog.TeambrellaDatePickerDialog;
@@ -325,6 +326,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
                                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                                 .map(jsonWrapper -> jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_ID)).blockingFirst();
                         startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
+                        new TeambrellaBroadcastManager(this).notifyClaimSubmitted();
                         finish();
                         break;
                 }

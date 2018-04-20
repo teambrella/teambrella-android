@@ -92,9 +92,13 @@ public class TeambrellaChatDataPagerLoader implements IDataPager<JsonArray> {
         }
     }
 
+    @Override
+    public Observable<Integer> getItemChangeObservable() {
+        return null;
+    }
 
     @Override
-    public Observable<Notification<JsonObject>> getObservable() {
+    public Observable<Notification<JsonObject>> getDataObservable() {
         return mConnectableObservable;
     }
 

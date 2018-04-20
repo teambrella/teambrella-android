@@ -14,7 +14,9 @@ public interface IDataPager<T> {
 
     T getLoadedData();
 
-    Observable<Notification<JsonObject>> getObservable();
+    Observable<Notification<JsonObject>> getDataObservable();
+
+    Observable<Integer> getItemChangeObservable();
 
     void loadNext(boolean force);
 

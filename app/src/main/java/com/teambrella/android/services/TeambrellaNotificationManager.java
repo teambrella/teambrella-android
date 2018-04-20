@@ -29,6 +29,7 @@ import com.teambrella.android.image.glide.GlideRequest;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
 
@@ -41,6 +42,8 @@ import static com.teambrella.android.services.push.KPushNotifications.NEW_DISCUS
 import static com.teambrella.android.services.push.KPushNotifications.NEW_TEAMMATE;
 import static com.teambrella.android.services.push.KPushNotifications.POSTS_SINCE_INTERACTED;
 import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MSG;
+import static com.teambrella.android.services.push.KPushNotifications.PROXY;
+import static com.teambrella.android.services.push.KPushNotifications.PROXY_SEED;
 import static com.teambrella.android.services.push.KPushNotifications.TOPIC_MESSAGE_NOTIFICATION;
 import static com.teambrella.android.services.push.KPushNotifications.WALLET_FUNDED;
 
@@ -60,7 +63,6 @@ public class TeambrellaNotificationManager {
     private static final String WALLET_ID = "wallet";
     private static final String TEAM_UPDATES_ID = "team_updates";
     private static final String CHATS_ID = "chats";
-    private static final String OTHER_ID = "other";
 
 
     public enum ChatType {
@@ -144,39 +146,71 @@ public class TeambrellaNotificationManager {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void showNewClaimNotification(int claimId, String name, String amount, String avatar, String teamName, Intent intent) {
+    public void showNewClaimNotification(int claimId, String name, String amount, String avatar, int teamId, String teamName, Intent intent) {
         notifyUser(claimId
                 , mContext.getString(R.string.notification_claim_header, teamName)
                 , mContext.getString(R.string.notification_claim_text, name, amount)
                 , getAvatarRequest(avatar)
                 , getBuilder(NEW_CLAIMS_ID).setContentIntent(
-                        PendingIntent.getActivities(mContext
+                        PendingIntent.getActivity(mContext
                                 , 1
-                                , new Intent[]{new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_FEED), intent}
+                                , intent
                                 , PendingIntent.FLAG_UPDATE_CURRENT)));
     }
 
+
+    private void showNewTeammateJoined(String userId, String userName, String avatar, int teamId, String teamName, String topicId) {
+        notifyUser(topicId.hashCode(),
+                teamName,
+                mContext.getString(R.string.notification_description_new_teammate_joined, userName),
+                getAvatarRequest(avatar),
+                getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext
+                        , 1
+                        , ChatActivity.getTeammateChat(mContext
+                                , teamId
+                                , userId
+                                , userName
+                                , avatar
+                                , topicId
+                                , TeambrellaModel.TeamAccessLevel.FULL_ACCESS)
+                                .putExtra(ATeambrellaActivity.EXTRA_BACK_PRESSED_INTENT, getMainActivityPendingIntent(MainActivity.ACTION_SHOW_FEED, teamId))
+                        , PendingIntent.FLAG_UPDATE_CURRENT)));
+    }
+
+
+    private void showUserIsProxyFor(String userName, int teamId, String teamName, String avatar, boolean male) {
+        notifyUser(37
+                , teamName
+                , mContext.getString(male ? R.string.notification_description_your_are_proxy_male : R.string.notification_description_your_are_proxy_female, userName)
+                , getAvatarRequest(avatar)
+                , getBuilder(WALLET_ID).setContentIntent(PendingIntent.getActivity(mContext
+                        , 1
+                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_SHOW_I_AM_PROXY_FOR, teamId)
+                        , PendingIntent.FLAG_UPDATE_CURRENT)));
+    }
+
+
     @SuppressWarnings("ConstantConditions")
-    public void showWalletIsFundedNotification(String amount, String teamIcon) {
+    public void showWalletIsFundedNotification(String amount, int teamId, String teamIcon) {
         notifyUser(WALLET_ID.hashCode()
                 , mContext.getString(R.string.notification_funded_header)
                 , "+ " + amount + " mETH"
                 , getTeamIconRequest(teamIcon)
                 , getBuilder(WALLET_ID).setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_WALLET)
+                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_SHOW_WALLET, teamId)
                         , PendingIntent.FLAG_UPDATE_CURRENT)));
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void showNewMessagesSinceLastVisit(int count, String teamName, String teamIcon) {
+    public void showNewMessagesSinceLastVisit(int count, String teamName, String teamIcon, int teamId) {
         notifyUser(TEAM_UPDATES_ID.hashCode()
                 , teamName
                 , mContext.getResources().getQuantityString(R.plurals.new_comments_since_yesterday, count, count)
                 , getTeamIconRequest(teamIcon)
                 , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_FEED)
+                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_SHOW_FEED, teamId)
                         , PendingIntent.FLAG_UPDATE_CURRENT)));
     }
 
@@ -213,12 +247,21 @@ public class TeambrellaNotificationManager {
         mNotificationManager.cancel(topicId.hashCode());
     }
 
+    /**
+     * Cancel private chat notification
+     *
+     * @param userId user Id
+     */
+    public void cancelPrivateChatNotification(String userId) {
+        mNotificationManager.cancel(UUID.fromString(userId).hashCode());
+    }
+
 
     public void handlePushMessage(INotificationMessage message) {
         switch (message.getCmd()) {
             case NEW_CLAIM:
                 showNewClaimNotification(message.getClaimId(), message.getSenderUserName()
-                        , message.getAmount(), message.getSenderAvatar(), message.getTeamName()
+                        , message.getAmount(), message.getSenderAvatar(), message.getTeamId(), message.getTeamName()
                         , ChatActivity.getClaimChat(mContext
                                 , message.getTeamId()
                                 , message.getClaimId()
@@ -226,10 +269,10 @@ public class TeambrellaNotificationManager {
                                 , message.getClaimPhoto()
                                 , message.getTopicId()
                                 , TeambrellaModel.TeamAccessLevel.FULL_ACCESS
-                                , null));
+                                , null).putExtra(ATeambrellaActivity.EXTRA_BACK_PRESSED_INTENT, getMainActivityPendingIntent(MainActivity.ACTION_SHOW_FEED, message.getTeamId())));
                 break;
             case POSTS_SINCE_INTERACTED:
-                showNewMessagesSinceLastVisit(message.getCount(), message.getTeamName(), message.getTeamLogo());
+                showNewMessagesSinceLastVisit(message.getCount(), message.getTeamName(), message.getTeamLogo(), message.getTeamId());
                 break;
             case PRIVATE_MSG:
                 showPrivateMessageNotification(message.getSenderUserId(), message.getSenderUserName(), message.getSenderAvatar(), message.getMessage());
@@ -241,10 +284,18 @@ public class TeambrellaNotificationManager {
                 showNewTeammates(message.getSenderUserName(), message.getCount(), message.getTeamName(), message.getTeamLogo());
                 break;
             case WALLET_FUNDED:
-                showWalletIsFundedNotification(message.getBalanceCrypto(), message.getTeamLogo());
+                showWalletIsFundedNotification(message.getBalanceCrypto(), message.getTeamId(), message.getTeamLogo());
+                break;
+            case PROXY_SEED:
+                showNewTeammateJoined(message.getSenderUserId(), message.getSenderUserName()
+                        , message.getSenderAvatar(), message.getTeamId(), message.getTeamName()
+                        , message.getTopicId());
+                break;
+            case PROXY:
+                showUserIsProxyFor(message.getSenderUserName(), message.getTeamId()
+                        , message.getTeamName(), message.getSenderAvatar(), message.isMale());
                 break;
             case TOPIC_MESSAGE_NOTIFICATION:
-
                 String senderUserId = message.getSenderUserId();
                 if (senderUserId != null && senderUserId.equalsIgnoreCase(mUser.getUserId())) {
                     break;
@@ -257,6 +308,7 @@ public class TeambrellaNotificationManager {
                             , message.getContent()
                             , message.getSenderAvatar()
                             , message.isMyTopic()
+                            , message.getTeamId()
                             , message.getTopicId()
                             , ChatActivity.getTeammateChat(mContext
                                     , message.getTeamId()
@@ -272,6 +324,7 @@ public class TeambrellaNotificationManager {
                             , message.getContent()
                             , message.getSenderAvatar()
                             , message.isMyTopic()
+                            , message.getTeamId()
                             , message.getTopicId()
                             , ChatActivity.getClaimChat(mContext
                                     , message.getTeamId()
@@ -288,6 +341,7 @@ public class TeambrellaNotificationManager {
                             , message.getContent()
                             , message.getSenderAvatar()
                             , message.isMyTopic()
+                            , message.getTeamId()
                             , message.getTopicId()
                             , ChatActivity.getFeedChat(mContext
                                     , message.getDiscussionTopicName()
@@ -300,14 +354,14 @@ public class TeambrellaNotificationManager {
     }
 
 
-    public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, String senderAvatar, boolean userTopic, String topicId, Intent intent) {
+    public void showNewPublicChatMessage(ChatType type, String title, String sender, String text, String senderAvatar, boolean userTopic, int teamId, String topicId, Intent intent) {
         String notificationText = text != null && text.startsWith(PICTURE_PREFIX) ? mContext.getString(R.string.notification_chat_picture_format_string, sender)
                 : mContext.getString(R.string.notification_chat_text_format_string, sender, text);
         String contentTitle = null;
         NotificationCompat.Builder builder = getBuilder(SUBSCRIBED_CHATS_ID)
-                .setContentIntent(PendingIntent.getActivities(mContext
+                .setContentIntent(PendingIntent.getActivity(mContext
                         , 0
-                        , new Intent[]{new Intent(mContext, MainActivity.class).setAction(MainActivity.ACTION_SHOW_FEED), intent}
+                        , intent.putExtra(ATeambrellaActivity.EXTRA_BACK_PRESSED_INTENT, getMainActivityPendingIntent(MainActivity.ACTION_SHOW_FEED, teamId))
                         , PendingIntent.FLAG_UPDATE_CURRENT));
 
         switch (type) {
@@ -391,5 +445,10 @@ public class TeambrellaNotificationManager {
                 .setSmallIcon(R.drawable.ic_teambrella_status)
                 .setLargeIcon(iconBitmap);
         mNotificationManager.notify(id, builder.build());
+    }
+
+    private PendingIntent getMainActivityPendingIntent(String action, int teamId) {
+        return PendingIntent.getActivity(mContext, 1
+                , MainActivity.getLaunchIntent(mContext, action, teamId), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

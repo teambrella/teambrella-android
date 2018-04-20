@@ -93,7 +93,7 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
 
     override fun getTeamId() = intent?.getIntExtra(TEAM_ID_EXTRA, -1) ?: -1
 
-    override fun getCurrency()= intent?.getStringExtra(CURRENCY_EXTRA)?: "";
+    override fun getCurrency() = intent?.getStringExtra(CURRENCY_EXTRA) ?: "";
 
     override fun getCryptoRate() = intent?.getFloatExtra(CRYPTO_RATE, 0f) ?: 0f
 }

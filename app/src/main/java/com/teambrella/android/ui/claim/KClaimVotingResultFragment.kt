@@ -148,7 +148,8 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
         setTeamVote(teamVote, currency ?: "", claimAmount)
         setMyVote(myVote?.toFloat(), currency ?: "", claimAmount)
 
-        val vote: Float = myVote ?: if (teamVote != null) teamVote else 0f
+        val vote: Float = myVote
+                ?: if (teamVote != null) (if (teamVote == 1f) teamVote * 0.90f else teamVote) else 0f
         this.votingControl?.progress = Math.round(vote * 100).toInt()
 
         if (proxyName != null && proxyAvatar != null) {

@@ -27,43 +27,45 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:maxWidth="@dimen/chat_bubble_max_width"
         android:background="@drawable/chat_bubble_me"
-        android:maxWidth="300dp"
-        app:layout_constraintWidth_default="wrap"
         tools:ignore="RtlHardcoded">
 
-        <LinearLayout
-            android:id="@+id/header"
-            android:layout_width="match_parent"
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/you"
+            style="@style/Teambrella.TextAppearence.MessageTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginLeft="8dp"
+            android:paddingTop="4dp"
+            android:text="@string/you"
+            android:textColor="@color/darkSkyBlue"
+            android:textSize="12sp"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vote"
+            app:layout_constraintBottom_toTopOf="@id/message"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_goneMarginTop="4dp" />
 
-            <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                android:id="@+id/you"
-                style="@style/Teambrella.TextAppearence.MessageTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:paddingTop="4dp"
-                android:text="@string/you"
-                android:textColor="@color/darkSkyBlue"
-                android:textSize="12sp" />
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/vote"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:includeFontPadding="false"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            app:layout_constraintBaseline_toBaselineOf="@id/you"
+            app:layout_constraintStart_toEndOf="@id/you"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/message" />
 
-            <com.teambrella.android.ui.widget.AkkuratRegularTextView
-                android:id="@+id/vote"
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:includeFontPadding="false"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="8dp" />
-
-        </LinearLayout>
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/message"
@@ -77,8 +79,12 @@
             android:paddingTop="4dp"
             android:textColor="@color/charcoalGrey"
             android:textSize="14sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toTopOf="@id/time"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header" />
+            app:layout_constraintTop_toBottomOf="@id/you" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/time"
@@ -92,6 +98,7 @@
             android:textColor="@color/blueGrey"
             android:textSize="10sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintTop_toBottomOf="@id/message" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -103,9 +110,16 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintTop_toBottomOf="@id/message"
             app:srcCompat="@drawable/ic_schedule" />
-        
+
+        <android.support.constraint.Group
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="you,vote" />
+
     </android.support.constraint.ConstraintLayout>
 
 </RelativeLayout>

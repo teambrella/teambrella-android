@@ -109,7 +109,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     public void onStart() {
         super.onStart();
         IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
-        mDisposable = pager.getObservable()
+        mDisposable = pager.getDataObservable()
                 .subscribe(this::onDataUpdated);
     }
 

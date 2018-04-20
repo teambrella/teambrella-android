@@ -1,5 +1,6 @@
 package com.teambrella.android.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,7 +58,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     public static final String FACEBOOK_ID_EXTRA = "EXTRA_FACEBOOK_ID";
 
-    public static final String CUSTOM_ACTION = "extra_custom_action";
+    private static final String CUSTOM_ACTION = "extra_custom_action";
+    private static final String TEAM_ID_EXTRA = "team_id_extra";
 
     private enum State {
         INIT,
@@ -85,7 +87,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private WalletBackupManager mWalletBackupManager;
 
 
+    public static Intent getLaunchIntent(Context context, String action, int teamId) {
+        return new Intent(context, WelcomeActivity.class)
+                .putExtra(CUSTOM_ACTION, action)
+                .putExtra(TEAM_ID_EXTRA, teamId);
+    }
+
+
     @Override
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -351,7 +361,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
                     case TeambrellaUris.MY_TEAMS:
                     case TeambrellaUris.DEMO_TEAMS: {
-                        final int selectedTeam = TeambrellaUser.get(this).getTeamId();
+                        Intent intent = getIntent();
+
+                        final int selectedTeam = intent != null ? intent.getIntExtra(TEAM_ID_EXTRA, TeambrellaUser.get(this).getTeamId())
+                                : TeambrellaUser.get(this).getTeamId();
+
                         JsonWrapper data = result.getObject(TeambrellaModel.ATTR_DATA);
                         String userId = data != null ? data.getString(TeambrellaModel.ATTR_DATA_USER_ID) : null;
                         if (userId != null) {
