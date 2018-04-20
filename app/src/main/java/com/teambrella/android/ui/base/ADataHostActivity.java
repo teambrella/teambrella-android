@@ -39,7 +39,6 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
 
     private static final String DATA_REQUEST_FRAGMENT_TAG = "data_request";
 
-
     private List<Disposable> mCheckErrorDisposables = new LinkedList<>();
     private Disposable mRequestDisposable;
     private TeambrellaUser mUser;
@@ -165,7 +164,6 @@ public abstract class ADataHostActivity<T> extends ADaggerActivity<T> implements
             }
         }
     }
-
 
     @Override
     protected void onStop() {

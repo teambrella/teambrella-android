@@ -20,6 +20,7 @@ const val TEAMMATE = "Teammate";
 const val CLAIM = "Claim";
 const val DISCUSSION = "Discussion";
 const val IS_MY_TOPIC = "MyTopic"
+const val USER_GENDER = "UserGender"
 
 /**
  * Teambrella Kotlin Model
@@ -234,7 +235,10 @@ val JsonObject?.discussion: JsonObject?
     get() = this?.getObject(DISCUSSION)
 
 val JsonObject?.isMyTopic: Boolean?
-    get() = this.getBoolean(IS_MY_TOPIC)
+    get() = this?.getBoolean(IS_MY_TOPIC)
+
+val JsonObject?.userGender: String?
+    get() = this?.getString(USER_GENDER)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

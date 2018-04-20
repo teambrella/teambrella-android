@@ -74,7 +74,9 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 POSTS_SINCE_INTERACTED,
                 NEW_TEAMMATE,
                 NEW_DISCUSSION,
-                TOPIC_MESSAGE_NOTIFICATION -> {
+                TOPIC_MESSAGE_NOTIFICATION,
+                PROXY,
+                PROXY_SEED -> {
                     if (isForeground) {
                         TeambrellaNotificationService.onPushMessage(this, pushMessage)
                     } else {

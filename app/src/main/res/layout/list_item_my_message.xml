@@ -27,15 +27,18 @@
         android:layout_marginEnd="4dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/chat_bubble_me"
         android:maxWidth="300dp"
-        app:layout_constraintWidth_default="wrap"
+        android:background="@drawable/chat_bubble_me"
         tools:ignore="RtlHardcoded">
 
         <LinearLayout
             android:id="@+id/header"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintWidth_min="150dp"
+            app:layout_constraintWidth_max="300dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:orientation="horizontal">
 
             <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -105,7 +108,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/message"
             app:srcCompat="@drawable/ic_schedule" />
-        
+
     </android.support.constraint.ConstraintLayout>
 
 </RelativeLayout>

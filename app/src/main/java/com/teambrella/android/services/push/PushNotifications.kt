@@ -17,9 +17,14 @@ const val NEW_TEAMMATE = 8
 const val NEW_DISCUSSION = 9
 const val TOPIC_MESSAGE_NOTIFICATION = 21
 const val SYNC = 30
+const val PROXY = 32
+const val PROXY_SEED = 33
 const val DEBUG_DB = 101
 const val DEBUG_UPDATE = 102
 const val DEBUG_SYNC = 103
+
+const val FEMALE = "Female"
+const val MALE = "Male"
 
 private const val CMD = "Cmd"
 private const val DEBUG = "Debug"
@@ -48,6 +53,7 @@ private const val CLAIM_PHOTO = "ClaimSmallPhoto"
 private const val TOPIC_NAME = "TopicName"
 private const val DISCUSSION_TOPIC_NAME = "DiscussionTopicName"
 private const val MY_TOPIC = "MyTopic"
+private const val USER_GENDER = "UserGender"
 
 interface INotificationMessage {
 
@@ -77,6 +83,7 @@ interface INotificationMessage {
     var teamName: String?
     var amount: String?
     var debug: Boolean
+    var isMale: Boolean
 }
 
 class FireBaseNotificationMessage(val data: MutableMap<String, String>) : INotificationMessage {
@@ -107,6 +114,8 @@ class FireBaseNotificationMessage(val data: MutableMap<String, String>) : INotif
     override var teamName: String? = data[TEAM_NAME]
     override var amount: String? = data[AMOUNT]
     override var debug: Boolean = data[DEBUG]?.toBoolean() ?: false
+    override var isMale: Boolean = (FEMALE != data[USER_GENDER])
+
 }
 
 
@@ -139,6 +148,7 @@ class BundleNotificationMessage(val data: Bundle) : INotificationMessage {
         teamName = message.teamName
         amount = message.amount
         debug = message.debug
+        isMale = message.isMale
     }
 
     override var cmd: Int
@@ -273,6 +283,12 @@ class BundleNotificationMessage(val data: Bundle) : INotificationMessage {
         set(value) {
             data.putBoolean(DEBUG, value)
         }
+
+    override var isMale: Boolean
+        get() = data.getBoolean(USER_GENDER, true)
+        set(value) {
+            data.putBoolean(USER_GENDER, value)
+        }
 }
 
 
@@ -303,6 +319,7 @@ class SocketNotificationMessage(private val data: JsonObject) : INotificationMes
     override var teamName: String? = data.teamName
     override var amount: String? = data.amountStr
     override var debug: Boolean = false
+    override var isMale: Boolean = data.userGender?.equals(FEMALE) ?: true
 }
 
 

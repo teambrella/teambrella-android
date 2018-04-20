@@ -522,7 +522,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
             case R.id.mute:
             case R.id.unmute:

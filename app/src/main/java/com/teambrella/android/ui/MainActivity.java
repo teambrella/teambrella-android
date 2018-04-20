@@ -77,12 +77,16 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
      */
     public static final String ACTION_SHOW_WALLET = "action_show_wallet";
 
+
+    public static final String ACTION_SHOW_I_AM_PROXY_FOR = "action_show_i_am_proxy_for";
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 102;
 
 
     private static final String USER_ID_EXTRA = "user_id_extra";
     private static final String TEAM_EXTRA = "team_extra";
+    private static final String TEAM_ID_EXTRA = "team_id_extra";
     private static final String EXTRA_SELECTED_ITEM = "selected_item";
     private static final String EXTRA_BACKSTACK = "extra_back_stack";
 
@@ -133,6 +137,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
 
+    public static Intent getLaunchIntent(Context context, String action, int teamId) {
+        return new Intent(context, MainActivity.class)
+                .setAction(action).putExtra(TEAM_ID_EXTRA, teamId);
+    }
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -164,8 +174,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             onNewIntent(intent);
         } else {
             finish();
-            startActivity(new Intent(this, WelcomeActivity.class)
-                    .putExtra(WelcomeActivity.CUSTOM_ACTION, intent.getAction()));
+            startActivity(WelcomeActivity.getLaunchIntent(this, intent.getAction()
+                    , intent.getIntExtra(TEAM_ID_EXTRA, -1)));
         }
 
         TeambrellaUtilService.scheduleWalletSync(this);
@@ -188,21 +198,42 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         mWalletBackupManager = new WalletBackupManager(this);
     }
 
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         String action = intent.getAction();
-
         if (action != null) {
-            switch (action) {
-                case ACTION_SHOW_WALLET:
-                    showWallet();
-                    break;
-                case ACTION_SHOW_FEED:
-                    showFeed();
-                    break;
+            JsonWrapper team = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
+                    .fromJson(intent.getStringExtra(TEAM_EXTRA)
+                            , JsonObject.class)) : null;
+
+            int teamId = team != null ? team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID, intent.getIntExtra(TEAM_ID_EXTRA, -1)) :
+                    intent.getIntExtra(TEAM_ID_EXTRA, -1);
+
+            if (teamId == -1 || teamId == getTeamId()) {
+                switch (action) {
+                    case ACTION_SHOW_WALLET:
+                        showWallet();
+                        break;
+                    case ACTION_SHOW_FEED:
+                        showFeed();
+                        break;
+
+                    case ACTION_SHOW_I_AM_PROXY_FOR:
+                        showIAmProxyFor();
+                        break;
+
+                }
+                load(HOME_DATA_TAG);
+            } else {
+                finish();
+                if (team != null) {
+                    startActivity(intent);
+                } else {
+                    startActivity(WelcomeActivity.getLaunchIntent(this, intent.getAction(), teamId));
+                }
             }
-            load(HOME_DATA_TAG);
         }
 
     }
@@ -659,6 +690,14 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     private void showFeed() {
         onNavigationItemSelected(findViewById(R.id.team), true, true);
+    }
+
+    private void showIAmProxyFor() {
+        onNavigationItemSelected(findViewById(R.id.proxies), true, true);
+        ProxiesFragment userFragment = (ProxiesFragment) getSupportFragmentManager().findFragmentByTag(PROXIES_TAG);
+        if (userFragment != null) {
+            userFragment.showIAmProxyFor();
+        }
     }
 
 

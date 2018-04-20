@@ -325,5 +325,7 @@
     <string name="notification_group_chats">Chats</string>
 
     <string name="swipe_to_vote">Swipe left and right to vote</string>
-
+    <string name="notification_description_new_teammate_joined">%s has joined</string>
+    <string name="notification_description_your_are_proxy_male">Congratulations! %s has appointed you as his proxy.</string>
+    <string name="notification_description_your_are_proxy_female">Congratulations! %s has appointed you as her proxy.</string>
 </resources>
