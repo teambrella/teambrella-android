@@ -440,6 +440,6 @@ public class TeambrellaNotificationManager {
 
     private PendingIntent getMainActivityPendingIntent(String action, int teamId) {
         return PendingIntent.getActivity(mContext, 1
-                , MainActivity.getLaunchIntent(mContext, action, teamId), 0);
+                , MainActivity.getLaunchIntent(mContext, action, teamId), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
