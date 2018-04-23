@@ -203,14 +203,14 @@ public class TeambrellaNotificationManager {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void showNewMessagesSinceLastVisit(int count, String teamName, String teamIcon) {
+    public void showNewMessagesSinceLastVisit(int count, String teamName, String teamIcon, int teamId) {
         notifyUser(TEAM_UPDATES_ID.hashCode()
                 , teamName
                 , mContext.getResources().getQuantityString(R.plurals.new_comments_since_yesterday, count, count)
                 , getTeamIconRequest(teamIcon)
                 , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_SHOW_FEED, -1)
+                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_SHOW_FEED, teamId)
                         , PendingIntent.FLAG_UPDATE_CURRENT)));
     }
 
@@ -263,7 +263,7 @@ public class TeambrellaNotificationManager {
                                 , null).putExtra(ATeambrellaActivity.EXTRA_BACK_PRESSED_INTENT, getMainActivityPendingIntent(MainActivity.ACTION_SHOW_FEED, message.getTeamId())));
                 break;
             case POSTS_SINCE_INTERACTED:
-                showNewMessagesSinceLastVisit(message.getCount(), message.getTeamName(), message.getTeamLogo());
+                showNewMessagesSinceLastVisit(message.getCount(), message.getTeamName(), message.getTeamLogo(), message.getTeamId());
                 break;
             case PRIVATE_MSG:
                 showPrivateMessageNotification(message.getSenderUserId(), message.getSenderUserName(), message.getSenderAvatar(), message.getMessage());
