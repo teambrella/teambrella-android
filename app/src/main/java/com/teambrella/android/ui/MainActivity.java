@@ -34,6 +34,7 @@ import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
+import com.teambrella.android.ui.background.BackgroundRestrictionsActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.ChatBroadCastManager;
@@ -47,6 +48,7 @@ import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
+import com.teambrella.android.util.BackgroundUtils;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
@@ -196,6 +198,23 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
+
+
+        TeambrellaUser user = TeambrellaUser.get(this);
+
+        if (!user.isDemoUser()) {
+            if (user.shallNotifyBackgroundAppRestrictions(BackgroundUtils.VERSION_CODE)) {
+                if (!user.isNotifiedBackgroundAppRestrictions()
+                        && BackgroundUtils.isHuaweiProtectedAppAvailable(this)) {
+
+                    startActivity(new Intent(this, BackgroundRestrictionsActivity.class));
+                    user.setNotifiedBackgroundAppRestrictions();
+
+                } else {
+                    user.setNotifyBackgroundAppRestrictions(BackgroundUtils.VERSION_CODE);
+                }
+            }
+        }
     }
 
 
