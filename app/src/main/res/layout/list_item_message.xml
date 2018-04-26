@@ -43,7 +43,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/chat_bubble_them"
-        android:maxWidth="300dp"
+        android:maxWidth="@dimen/chat_bubble_max_width"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/user_picture"
@@ -66,7 +66,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/vote"
             app:layout_constraintBottom_toTopOf="@id/message"
-            app:layout_constraintHorizontal_chainStyle="spread_inside" />
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_goneMarginTop="4dp" />
 
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -126,6 +127,13 @@
             android:layout_height="wrap_content"
             app:barrierDirection="end"
             app:constraint_referenced_ids="message" />
+
+        <android.support.constraint.Group
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="teammate_name,vote"
+            app:layout_goneMarginTop="4dp" />
 
     </android.support.constraint.ConstraintLayout>
 
