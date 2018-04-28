@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.data.base.IDataPager;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -21,7 +22,8 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
 
     protected final IDataPager<JsonArray> mPager;
-    private final Disposable mDisposal;
+    private final Disposable mDataPagerDisposal;
+    private final Disposable mItemChangedDisposal;
 
 
     private final OnStartActivityListener mStartActivityListener;
@@ -32,13 +34,19 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
     public ATeambrellaDataPagerAdapter(IDataPager<JsonArray> pager, OnStartActivityListener listener) {
         mPager = pager;
-        mDisposal = mPager.getObservable().subscribe(this::onPagerUpdated);
+        mDataPagerDisposal = mPager.getDataObservable().subscribe(this::onPagerUpdated);
+        Observable<Integer> itemChangeObservable = mPager.getItemChangeObservable();
+        mItemChangedDisposal = itemChangeObservable != null ? itemChangeObservable.subscribe(this::onPagerItemChanged) : null;
         mStartActivityListener = listener;
     }
 
     void destroy() {
-        if (mDisposal != null && !mDisposal.isDisposed()) {
-            mDisposal.dispose();
+        if (mDataPagerDisposal != null && !mDataPagerDisposal.isDisposed()) {
+            mDataPagerDisposal.dispose();
+        }
+
+        if (mItemChangedDisposal != null && !mItemChangedDisposal.isDisposed()) {
+            mItemChangedDisposal.dispose();
         }
     }
 
@@ -52,6 +60,11 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
     protected void onPagerUpdated(Notification<JsonObject> notification) {
         notifyDataSetChanged();
     }
+
+    protected void onPagerItemChanged(int item) {
+        //nothing to do
+    }
+
 
     public abstract void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target);
 }

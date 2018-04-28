@@ -3,7 +3,9 @@
 
     <item android:drawable="@color/paleGreyFour" />
     <item>
-        <bitmap android:src="@drawable/chat_background" />
+        <bitmap
+            android:src="@drawable/chat_background"
+            android:tileMode="repeat" />
     </item>
 
 </layer-list>

@@ -183,8 +183,13 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
         }
 
         @Override
-        public Observable<Notification<JsonObject>> getObservable() {
+        public Observable<Notification<JsonObject>> getDataObservable() {
             return Observable.empty();
+        }
+
+        @Override
+        public Observable<Integer> getItemChangeObservable() {
+            return null;
         }
 
         @Override

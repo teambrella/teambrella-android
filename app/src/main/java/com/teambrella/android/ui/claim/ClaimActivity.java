@@ -2,6 +2,7 @@ package com.teambrella.android.ui.claim;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -23,14 +24,15 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
-import com.teambrella.android.ui.chat.ChatBroadCastManager;
-import com.teambrella.android.ui.chat.ChatBroadCastReceiver;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
+import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
 import com.teambrella.android.ui.teammate.TeammateActivity;
 import com.teambrella.android.util.StatisticHelper;
 
@@ -66,7 +68,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
     private Snackbar mSnackBar;
     private String mTopicId;
     private ClaimNotificationClient mNotificationClient;
-    private ChatBroadCastManager mChatBroadCastManager;
+    private TeambrellaBroadcastManager mChatBroadCastManager;
 
 
     public static Intent getLaunchIntent(Context context, int id, String model, int teamId) {
@@ -87,7 +89,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         final Intent intent = getIntent();
         mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, -1);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, -1);
-        mChatBroadCastManager = new ChatBroadCastManager(this);
+        mChatBroadCastManager = new TeambrellaBroadcastManager(this);
         mChatBroadCastManager.registerReceiver(mChatBroadCastReceiver);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_claim);
@@ -143,9 +145,9 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case CLAIM_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(getIntent().getParcelableExtra(EXTRA_URI));
+                return TeambrellaDataFragmentKt.createInstance((Uri) (getIntent().getParcelableExtra(EXTRA_URI)), false, ClaimDataFragment.class);
             case VOTE_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(null);
+                return TeambrellaDataFragmentKt.createInstance();
         }
 
         return null;
@@ -194,6 +196,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
             dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
         }
         StatisticHelper.onClaimVote(this, getTeamId(), getClaimId(), vote);
+        new TeambrellaBroadcastManager(this).notifyClaimVote(getClaimId());
     }
 
 
@@ -301,6 +304,13 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         }
     }
 
+    private void markTopicRead(String topicId) {
+        ClaimDataFragment fragment = (ClaimDataFragment) getSupportFragmentManager().findFragmentByTag(CLAIM_DATA_TAG);
+        if (fragment != null) {
+            fragment.markTopicRead(topicId);
+        }
+    }
+
     private class ClaimNotificationClient extends TeambrellaNotificationServiceClient {
 
         private boolean mResumed;
@@ -336,12 +346,12 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         }
     }
 
-    private ChatBroadCastReceiver mChatBroadCastReceiver = new ChatBroadCastReceiver() {
+    private TeambrellaBroadcastReceiver mChatBroadCastReceiver = new TeambrellaBroadcastReceiver() {
         @Override
         protected void onTopicRead(@NotNull String topicId) {
             super.onTopicRead(topicId);
             if (topicId.equals(mTopicId)) {
-                load(CLAIM_DATA_TAG);
+                markTopicRead(mTopicId);
             }
         }
     };

@@ -108,7 +108,16 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
         public void onBind(JsonWrapper item) {
             super.onBind(item);
             int ratingPosition = item.getInt(TeambrellaModel.ATTR_DATA_POSITION, -1);
-            mRating.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
+            float rank = item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK);
+
+            if (rank < 0.005f) {
+                rank = 0;
+            } else if (rank >= 0.005f && rank < 0.01f) {
+                rank = 0.01f;
+            }
+
+            mRating.setText(itemView.getContext().getString(rank >= 0.1 || rank == 0 ? R.string.float_format_string_1
+                    : R.string.float_format_string_2, rank));
             mPosition.setText(Integer.toString(ratingPosition));
             mSubtitle.setText(item.getString(TeambrellaModel.ATTR_DATA_LOCATION, ""));
             if (mOptToRating != null) {
