@@ -29,6 +29,7 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     private final ConnectableObservable<Notification<JsonObject>> mConnectableObservable;
     private final PublishSubject<Notification<JsonObject>> mPublisher = PublishSubject.create();
+    private final PublishSubject<Integer> mItemChangeObservable = PublishSubject.create();
     private final Uri mUri;
     private final String mProperty;
     protected JsonArray mArray = new JsonArray();
@@ -89,8 +90,13 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
     }
 
     @Override
-    public Observable<Notification<JsonObject>> getObservable() {
+    public Observable<Notification<JsonObject>> getDataObservable() {
         return mConnectableObservable;
+    }
+
+    @Override
+    public Observable<Integer> getItemChangeObservable() {
+        return mItemChangeObservable;
     }
 
     @Override
@@ -206,5 +212,9 @@ public class TeambrellaDataPagerLoader implements IDataPager<JsonArray> {
 
     private void onComplete() {
         // nothing to do
+    }
+
+    protected void notifyItemChange(int item) {
+        mItemChangeObservable.onNext(item);
     }
 }

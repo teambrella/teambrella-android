@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
+import android.support.text.emoji.EmojiCompat;
+import android.support.text.emoji.FontRequestEmojiCompatConfig;
+import android.support.v4.provider.FontRequest;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -56,6 +59,15 @@ public class TeambrellaApplication extends MultiDexApplication implements Applic
         registerActivityLifecycleCallbacks(this);
 
         TeambrellaNotificationManager.recreateNotificationChannels(this);
+        
+        final FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                R.array.com_google_android_gms_fonts_certs);
+        FontRequestEmojiCompatConfig config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+        EmojiCompat.init(config);
+
     }
 
     /**

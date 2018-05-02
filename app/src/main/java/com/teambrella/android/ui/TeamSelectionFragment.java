@@ -60,7 +60,7 @@ public class TeamSelectionFragment extends ATeambrellaDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mDisposable = mDataHost.getPager(MainActivity.TEAMS_DATA).getObservable().subscribe(this::onDataUpdated);
+        mDisposable = mDataHost.getPager(MainActivity.TEAMS_DATA).getDataObservable().subscribe(this::onDataUpdated);
     }
 
     @Override

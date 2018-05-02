@@ -33,8 +33,11 @@ val JsonObject?.data: JsonObject?
 val JsonObject?.status: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_STATUS)
 
-val JsonObject?.uri: String?
+var JsonObject?.uri: String?
     get() = getString(TeambrellaModel.ATTR_STATUS_URI)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_STATUS_URI, value)
+    }
 
 val JsonObject?.stats: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_STATS)
@@ -124,6 +127,15 @@ var JsonObject?.amount: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
     set(value) {
         this?.addProperty(TeambrellaModel.ATTR_DATA_AMOUNT, value)
+    }
+
+val JsonObject?.cards: JsonArray?
+    get() = this?.getAsJsonArray(TeambrellaModel.ATTR_DATA_CARDS)
+
+var JsonObject?.unreadCount: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, value)
     }
 
 val JsonObject?.amountStr: String?
@@ -233,6 +245,9 @@ val JsonObject?.claim: JsonObject?
 
 val JsonObject?.discussion: JsonObject?
     get() = this?.getObject(DISCUSSION)
+
+val JsonObject?.discussionPart: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION)
 
 val JsonObject?.isMyTopic: Boolean?
     get() = this?.getBoolean(IS_MY_TOPIC)

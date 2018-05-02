@@ -14,6 +14,7 @@ import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager
 import com.teambrella.android.ui.widget.PercentageWidget
 import io.reactivex.Notification
 
@@ -60,6 +61,9 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
                         val add = java.lang.Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_ADD))
                         this.setProxy?.text = getString(if (add) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
                         this.setProxy?.tag = add
+                        context?.let {
+                            TeambrellaBroadcastManager(it).notifyProxyListChanged()
+                        }
                     }
                     else -> {
                         val stats = value.data?.stats
@@ -84,13 +88,20 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
                             }
 
                             val weightValue = stats.weight
-                            weightValue.let {
-                                this.weight?.text = getString(R.string.risk_format_string, weightValue)
+                            weightValue?.let {
+                                this.weight?.text = getString(if (it >= 0.1) R.string.float_format_string_1
+                                else R.string.float_format_string_2, it)
                             }
 
                             val proxyRankValue = stats.proxyRank
                             proxyRankValue?.let {
-                                this.proxyRank?.text = getString(R.string.risk_format_string, proxyRankValue)
+                                val rank = when {
+                                    it < 0.005 -> 0f
+                                    it >= 0.005 && it < 0.01 -> 0.1f
+                                    else -> it
+                                }
+                                this.proxyRank?.text = getString(if (rank >= 0.1 || rank == 0f) R.string.float_format_string_1
+                                else R.string.float_format_string_2, rank)
                             }
                         }
                         val basic = value.data?.basic

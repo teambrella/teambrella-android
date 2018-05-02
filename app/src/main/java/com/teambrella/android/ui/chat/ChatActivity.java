@@ -34,6 +34,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationManager;
@@ -41,6 +42,7 @@ import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
@@ -111,7 +113,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private float mVote = -1;
     private long mLastRead = -1L;
 
-    private ChatBroadCastManager mChatBroadCastManager;
+    private TeambrellaBroadcastManager mChatBroadCastManager;
 
 
     public static void startConversationChat(Context context, String userId, String userName, String imageUri) {
@@ -170,7 +172,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
         getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
 
-        mChatBroadCastManager = new ChatBroadCastManager(this);
+        mChatBroadCastManager = new TeambrellaBroadcastManager(this);
 
         mUri = intent.getParcelableExtra(EXTRA_URI);
         mTopicId = intent.getStringExtra(EXTRA_TOPIC_ID);
@@ -294,7 +296,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     protected void onStart() {
         super.onStart();
-        mChatDisposable = getPager(DATA_FRAGMENT_TAG).getObservable()
+        mChatDisposable = getPager(DATA_FRAGMENT_TAG).getDataObservable()
                 .subscribe(this::onDataUpdated);
     }
 
@@ -588,9 +590,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case CLAIM_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
+                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
             case VOTE_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(null);
+                return TeambrellaDataFragmentKt.createInstance();
         }
         return null;
     }
@@ -755,6 +757,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         if (dataFragment != null) {
             dataFragment.load(TeambrellaUris.getClaimVoteUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1), vote));
         }
+        new TeambrellaBroadcastManager(this).notifyClaimVote(getClaimId());
     }
 
     @Override

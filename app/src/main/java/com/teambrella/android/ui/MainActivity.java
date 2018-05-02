@@ -28,6 +28,7 @@ import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.data.base.TeambrellaDataFragment;
+import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
 import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
@@ -37,15 +38,17 @@ import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.background.BackgroundRestrictionsActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
-import com.teambrella.android.ui.chat.ChatBroadCastManager;
-import com.teambrella.android.ui.chat.ChatBroadCastReceiver;
+import com.teambrella.android.ui.base.TeambrellaActivityBroadcastReceiver;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
+import com.teambrella.android.ui.home.HomeDataFragment;
 import com.teambrella.android.ui.home.HomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
+import com.teambrella.android.ui.team.feed.FeedDataPagerFragment;
 import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
+import com.teambrella.android.ui.teammate.TeammateDataFragment;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
 import com.teambrella.android.util.BackgroundUtils;
@@ -125,12 +128,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
     private String mUserCity;
+    private String mUserTopicId;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
 
     private Stack<Integer> mBackStack = new Stack<>();
     private WalletBackupManager mWalletBackupManager;
-    private ChatBroadCastManager mChatBroadCastManager;
 
     public static Intent getLaunchIntent(Context context, String userId, String team) {
         return new Intent(context, MainActivity.class)
@@ -144,7 +147,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 .setAction(action).putExtra(TEAM_ID_EXTRA, teamId);
     }
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -153,10 +155,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
                         , JsonObject.class)) : null;
-
-
-        mChatBroadCastManager = new ChatBroadCastManager(this);
-        mChatBroadCastManager.registerReceiver(mChatBroadCastReceiver);
 
         super.onCreate(savedInstanceState);
 
@@ -358,15 +356,16 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     protected TeambrellaDataFragment getDataFragment(String tag) {
         switch (tag) {
             case HOME_DATA_TAG:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)), true);
+                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)), true,
+                        HomeDataFragment.class);
             case SET_PROXY_POSITION_DATA:
-                return TeambrellaDataFragment.getInstance(null);
+                return TeambrellaDataFragmentKt.createInstance();
             case USER_DATA:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId), true);
+                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId), true, TeammateDataFragment.class);
             case WALLET_DATA:
-                return TeambrellaDataFragment.getInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
+                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
             case VOTE_DATA:
-                return TeambrellaDataFragment.getInstance(null);
+                return TeambrellaDataFragmentKt.createInstance();
 
         }
         return null;
@@ -394,9 +393,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 JsonWrapper response = new JsonWrapper(notification.getValue());
                 JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
                 JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+                JsonWrapper discussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
                 String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
                 String[] locations = location != null ? location.split(",") : null;
                 mUserCity = locations != null ? locations[0] : null;
+                mUserTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
             }
         });
     }
@@ -503,8 +504,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             mClient.disconnect();
             mClient = null;
         }
-
-        mChatBroadCastManager.unregisterReceiver(mChatBroadCastReceiver);
     }
 
     @Override
@@ -514,11 +513,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        getPager(FEED_DATA_TAG).reload();
-        load(HOME_DATA_TAG);
-        getPager(CLAIMS_DATA_TAG).reload();
-        load(USER_DATA);
-        getPager(MY_PROXIES_DATA).reload();
         mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -571,7 +565,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                         null, ClaimsDataPagerFragment.class);
             case FEED_DATA_TAG:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getFeedUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        null, TeambrellaDataPagerFragment.class);
+                        null, FeedDataPagerFragment.class);
             case MY_PROXIES_DATA:
                 return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getMyProxiesUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
                         null, TeambrellaDataPagerFragment.class);
@@ -720,12 +714,33 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
 
+    private void markTopicRead(String topicId) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        FeedDataPagerFragment feedDataFragment = (FeedDataPagerFragment) fragmentManager.findFragmentByTag(FEED_DATA_TAG);
+        if (feedDataFragment != null) {
+            feedDataFragment.markTopicRead(topicId);
+        }
+
+        HomeDataFragment homeDataFragment = (HomeDataFragment) fragmentManager.findFragmentByTag(HOME_DATA_TAG);
+        if (homeDataFragment != null) {
+            homeDataFragment.markTopicRead(topicId);
+        }
+
+
+        TeammateDataFragment teammateDataFragment = (TeammateDataFragment) fragmentManager.findFragmentByTag(USER_DATA);
+        if (teammateDataFragment != null) {
+            teammateDataFragment.markTopicRead(topicId);
+        }
+    }
+
+
     private class MainNotificationClient extends TeambrellaNotificationServiceClient {
 
 
         private boolean mResumed;
         private boolean mPrivateMessageOnResume;
         private boolean mFeedDataOnResume;
+        private boolean mUserDataOnResume;
 
 
         MainNotificationClient(Context context) {
@@ -747,8 +762,16 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                     if (mResumed) {
                         getPager(FEED_DATA_TAG).reload();
                         load(HOME_DATA_TAG);
+                        if (mUserTopicId != null &&
+                                mUserTopicId.equals(message.getTopicId())) {
+                            load(USER_DATA);
+                        }
+                    } else {
+                        if (mUserTopicId != null &&
+                                mUserTopicId.equals(message.getTopicId())) {
+                            mUserDataOnResume = true;
+                        }
                     }
-
                     mFeedDataOnResume = !mResumed;
                     break;
             }
@@ -770,6 +793,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 getPager(FEED_DATA_TAG).reload();
                 mFeedDataOnResume = false;
             }
+
+            if (mUserDataOnResume) {
+                load(USER_DATA);
+                mUserDataOnResume = false;
+            }
         }
 
 
@@ -780,15 +808,44 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     }
 
+    private class MainTeambrellaBroadcastReceiver extends TeambrellaActivityBroadcastReceiver {
+        private boolean mReloadClaims = false;
 
-    private ChatBroadCastReceiver mChatBroadCastReceiver = new ChatBroadCastReceiver() {
         @Override
         protected void onTopicRead(@NotNull String topicId) {
             super.onTopicRead(topicId);
-            getPager(FEED_DATA_TAG).reload();
-            load(HOME_DATA_TAG);
+            markTopicRead(topicId);
         }
-    };
+
+        @Override
+        protected void onProxyListChanged() {
+            getPager(MY_PROXIES_DATA).reload();
+        }
+
+        @Override
+        protected void onClaimVote(int claimId) {
+            if (getStarted()) {
+                getPager(CLAIMS_DATA_TAG).reload();
+            } else {
+                mReloadClaims = true;
+            }
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            if (mReloadClaims) {
+                getPager(CLAIMS_DATA_TAG).reload();
+                mReloadClaims = false;
+            }
+        }
+    }
+
+
+    public MainActivity() {
+        registerLifecycleCallback(new MainTeambrellaBroadcastReceiver());
+    }
+
 }
 
 

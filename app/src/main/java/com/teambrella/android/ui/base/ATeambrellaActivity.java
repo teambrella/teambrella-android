@@ -10,6 +10,8 @@ import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.util.log.Log;
 
+import java.util.LinkedList;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,10 +35,37 @@ public abstract class ATeambrellaActivity extends TeambrellaDataHostActivity {
         return mUser;
     }
 
+    private LinkedList<TeambrellaActivityLifecycle> mLifecycleCallbacks = new LinkedList<>();
+
+
+    public void registerLifecycleCallback(TeambrellaActivityLifecycle lifecycle) {
+        mLifecycleCallbacks.add(lifecycle);
+    }
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getComponent().inject(this);
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onCreate(this, savedInstanceState);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onStart();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onResume();
+        }
     }
 
     protected TeambrellaImageLoader getImageLoader() {
@@ -54,6 +83,30 @@ public abstract class ATeambrellaActivity extends TeambrellaDataHostActivity {
             } catch (PendingIntent.CanceledException e) {
                 Log.e(LOG_TAG, e.toString());
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onPause();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onStop();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
+            lifecycle.onDestroy(this);
         }
     }
 }
