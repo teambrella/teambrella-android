@@ -41,8 +41,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 129
-        versionName "and-0.3.3.129"
+        versionCode 130
+        versionName "and-0.3.4.130"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -138,6 +138,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:support-emoji:27.1.1'
 
     /* Server communication */
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
