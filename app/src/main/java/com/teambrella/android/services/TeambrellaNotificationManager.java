@@ -247,6 +247,15 @@ public class TeambrellaNotificationManager {
         mNotificationManager.cancel(topicId.hashCode());
     }
 
+    /**
+     * Cancel private chat notification
+     *
+     * @param userId user Id
+     */
+    public void cancelPrivateChatNotification(String userId) {
+        mNotificationManager.cancel(UUID.fromString(userId).hashCode());
+    }
+
 
     public void handlePushMessage(INotificationMessage message) {
         switch (message.getCmd()) {

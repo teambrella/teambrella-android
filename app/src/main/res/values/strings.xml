@@ -331,8 +331,8 @@
     <string name="notification_description_your_are_proxy_male">Congratulations! %s has appointed you as his proxy.</string>
     <string name="notification_description_your_are_proxy_female">Congratulations! %s has appointed you as her proxy.</string>
 
-    <string name="huawei_protected_app_title">Protection Required</string>
-    <string name="huawei_protected_app_description">For uninterrupted coverage make sure the app is protected</string>
+    <string name="huawei_protected_app_title">App Protection Required</string>
+    <string name="huawei_protected_app_description">For uninterrupted coverage please make sure the app is protected</string>
     <string name="huawei_protected_app_action">Go to Protected Apps</string>
-    <string name="huawei_protected_app_done">Done</string>
+    <string name="huawei_protected_app_done">Already Done</string>
 </resources>

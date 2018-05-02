@@ -10,19 +10,26 @@ import android.support.v4.content.LocalBroadcastManager
 class TeambrellaBroadcastManager(context: Context) {
 
     companion object {
-        const val ON_MESSAGE_READ_ACTION = "on_message_read_action";
-        const val ON_PROXY_LIST_CHANGED = "on_proxy_added"
+        const val ON_PRIVATE_MESSAGE_READ_ACTION = "on_private_message_read_action"
+        const val ON_PUBLIC_MESSAGE_READ_ACTION = "on_message_read_action"
+        const val ON_PROXY_LIST_CHANGED = "on_proxy_added_action"
+        const val ON_DISCUSSION_STARTED_ACTION = "on_discussion_started_action"
+        const val ON_CLAIM_SUBMITTED_ACTION = "on_claim_submitted_action"
         const val ON_CLAIM_VOTE = "on_claim_vote"
         const val EXTRA_TOPIC_ID = "topicId"
         const val EXTRA_CLAIM_ID = "claimId"
+        const val EXTRA_USER_ID = "userId"
     }
 
     private val broadCastManager = LocalBroadcastManager.getInstance(context)
 
     fun registerReceiver(receiver: TeambrellaBroadcastReceiver) {
-        broadCastManager.registerReceiver(receiver, IntentFilter(ON_MESSAGE_READ_ACTION))
+        broadCastManager.registerReceiver(receiver, IntentFilter(ON_PRIVATE_MESSAGE_READ_ACTION))
+        broadCastManager.registerReceiver(receiver, IntentFilter(ON_PUBLIC_MESSAGE_READ_ACTION))
         broadCastManager.registerReceiver(receiver, IntentFilter(ON_PROXY_LIST_CHANGED))
         broadCastManager.registerReceiver(receiver, IntentFilter(ON_CLAIM_VOTE))
+        broadCastManager.registerReceiver(receiver, IntentFilter(ON_CLAIM_SUBMITTED_ACTION))
+        broadCastManager.registerReceiver(receiver, IntentFilter(ON_DISCUSSION_STARTED_ACTION))
     }
 
     fun unregisterReceiver(receiver: TeambrellaBroadcastReceiver) {
@@ -30,7 +37,7 @@ class TeambrellaBroadcastManager(context: Context) {
     }
 
     fun notifyTopicRead(topicId: String) {
-        broadCastManager.sendBroadcast(Intent(ON_MESSAGE_READ_ACTION)
+        broadCastManager.sendBroadcast(Intent(ON_PUBLIC_MESSAGE_READ_ACTION)
                 .putExtra(EXTRA_TOPIC_ID, topicId))
     }
 
@@ -42,6 +49,20 @@ class TeambrellaBroadcastManager(context: Context) {
         broadCastManager.sendBroadcast(Intent(ON_CLAIM_VOTE)
                 .putExtra(EXTRA_CLAIM_ID, claimId))
     }
+
+    fun notifyPrivateMessageRead(userId: String) {
+        broadCastManager.sendBroadcast(Intent(ON_PRIVATE_MESSAGE_READ_ACTION)
+                .putExtra(EXTRA_USER_ID, userId))
+    }
+
+    fun notifyNewChatStarted() {
+        broadCastManager.sendBroadcast(Intent(ON_DISCUSSION_STARTED_ACTION))
+    }
+
+    fun notifyClaimSubmitted() {
+        broadCastManager.sendBroadcast(Intent(ON_CLAIM_SUBMITTED_ACTION))
+    }
+
 }
 
 open class TeambrellaBroadcastReceiver() : BroadcastReceiver() {
@@ -49,7 +70,7 @@ open class TeambrellaBroadcastReceiver() : BroadcastReceiver() {
         intent?.let { _intent ->
             _intent.action?.let { _action ->
                 when (_action) {
-                    TeambrellaBroadcastManager.ON_MESSAGE_READ_ACTION -> {
+                    TeambrellaBroadcastManager.ON_PUBLIC_MESSAGE_READ_ACTION -> {
                         val topicId = _intent.getStringExtra(TeambrellaBroadcastManager.EXTRA_TOPIC_ID)
                         topicId?.let { _topicId ->
                             onTopicRead(_topicId)
@@ -62,6 +83,14 @@ open class TeambrellaBroadcastReceiver() : BroadcastReceiver() {
                             onClaimVote(claimId)
                         } else Unit
                     }
+                    TeambrellaBroadcastManager.ON_PRIVATE_MESSAGE_READ_ACTION -> {
+                        val userId = _intent.getStringExtra(TeambrellaBroadcastManager.EXTRA_USER_ID)
+                        userId?.let { _userId ->
+                            onPrivateMessageRead(_userId)
+                        }
+                    }
+                    TeambrellaBroadcastManager.ON_DISCUSSION_STARTED_ACTION -> onDiscussionStarted()
+                    TeambrellaBroadcastManager.ON_CLAIM_SUBMITTED_ACTION -> onClaimSubmitted()
                     else -> {
 
                     }
@@ -73,6 +102,9 @@ open class TeambrellaBroadcastReceiver() : BroadcastReceiver() {
     protected open fun onTopicRead(topicId: String) = Unit
     protected open fun onProxyListChanged() = Unit
     protected open fun onClaimVote(claimId: Int) = Unit
+    protected open fun onPrivateMessageRead(userId: String) = Unit
+    protected open fun onDiscussionStarted() = Unit
+    protected open fun onClaimSubmitted() = Unit
 }
 
 open class TeambrellaActivityBroadcastReceiver() : TeambrellaBroadcastReceiver(), TeambrellaActivityLifecycle {

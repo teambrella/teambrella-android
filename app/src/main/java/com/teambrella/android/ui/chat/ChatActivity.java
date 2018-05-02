@@ -465,7 +465,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                             if (mAction != null) {
                                 switch (mAction) {
                                     case SHOW_CONVERSATION_CHAT:
-                                        mChatBroadCastManager.notifyTopicRead(mUserId);
+                                        mChatBroadCastManager.notifyPrivateMessageRead(mUserId);
+                                        mNotificationManager.cancelPrivateChatNotification(mUserId);
                                         break;
                                     default:
                                         mChatBroadCastManager.notifyTopicRead(mTopicId);

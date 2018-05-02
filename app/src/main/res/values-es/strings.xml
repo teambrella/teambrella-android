@@ -313,4 +313,9 @@
     <string name="notification_description_your_are_proxy_male">¡Felicitaciones! %s te ha nombrado como su proxy.</string>
     <string name="notification_description_your_are_proxy_female">¡Felicitaciones! %s te ha nombrado como su proxy.</string>
 
+    <string name="huawei_protected_app_title">Se requiere protección de la aplicación</string>
+    <string name="huawei_protected_app_description">Para mantener la cobertura ininterrumpida, por favor, asegúrese que la aplicación esté protegida</string>
+    <string name="huawei_protected_app_action">Abrir Aplicaciones Protegidas</string>
+    <string name="huawei_protected_app_done">Ya hecho</string>
+
 </resources>

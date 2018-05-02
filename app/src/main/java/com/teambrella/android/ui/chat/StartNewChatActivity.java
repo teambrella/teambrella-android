@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
+import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.util.ConnectivityUtils;
 
@@ -109,6 +110,7 @@ public class StartNewChatActivity extends AppCompatRequestActivity implements Te
     protected void onRequestResult(Notification<JsonObject> response) {
         super.onRequestResult(response);
         if (response.isOnNext()) {
+            new TeambrellaBroadcastManager(this).notifyNewChatStarted();
             setResult(RESULT_OK);
             finish();
         } else {

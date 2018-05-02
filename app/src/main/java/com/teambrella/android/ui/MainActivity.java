@@ -832,6 +832,26 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         }
 
         @Override
+        protected void onPrivateMessageRead(@NotNull String userId) {
+            super.onPrivateMessageRead(userId);
+            load(HOME_DATA_TAG);
+        }
+
+        @Override
+        protected void onClaimSubmitted() {
+            super.onClaimSubmitted();
+            load(HOME_DATA_TAG);
+            getPager(FEED_DATA_TAG).reload();
+        }
+
+        @Override
+        protected void onDiscussionStarted() {
+            super.onDiscussionStarted();
+            load(HOME_DATA_TAG);
+            getPager(FEED_DATA_TAG).reload();
+        }
+
+        @Override
         public void onStart() {
             super.onStart();
             if (mReloadClaims) {
