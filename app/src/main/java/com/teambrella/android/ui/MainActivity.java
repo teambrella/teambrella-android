@@ -42,7 +42,7 @@ import com.teambrella.android.ui.base.TeambrellaActivityBroadcastReceiver;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
 import com.teambrella.android.ui.home.HomeDataFragment;
-import com.teambrella.android.ui.home.HomeFragment;
+import com.teambrella.android.ui.home.KHomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
 import com.teambrella.android.ui.team.feed.FeedDataPagerFragment;
@@ -329,7 +329,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private Fragment createFragmentByTag(String tag) {
         switch (tag) {
             case HOME_TAG:
-                return ADataFragment.getInstance(HOME_DATA_TAG, HomeFragment.class);
+                return ADataFragment.getInstance(HOME_DATA_TAG, KHomeFragment.class);
             case TEAM_TAG:
                 return ADataFragment.getInstance(HOME_DATA_TAG, TeamFragment.class);
             case PROFILE_TAG:

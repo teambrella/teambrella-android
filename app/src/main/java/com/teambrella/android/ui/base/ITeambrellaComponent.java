@@ -8,7 +8,6 @@ import com.teambrella.android.data.base.TeambrellaDataLoader;
 import com.teambrella.android.data.base.TeambrellaDataPagerLoader;
 import com.teambrella.android.ui.chat.ChatDataPagerLoader;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
-import com.teambrella.android.ui.home.HomeCardsFragment;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
 import javax.inject.Singleton;
@@ -37,8 +36,6 @@ public interface ITeambrellaComponent {
     void inject(TeambrellaDataPagerAdapter adapter);
 
     void inject(TeambrellaFragment fragment);
-
-    void inject(HomeCardsFragment.CardsFragment fragment);
 
     void inject(ATeambrellaAdapter adapter);
 

@@ -33,11 +33,38 @@ val JsonObject?.data: JsonObject?
 val JsonObject?.status: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_STATUS)
 
+val JsonObject?.objectPart: JsonObject?
+    get() = getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT)
+
 var JsonObject?.uri: String?
     get() = getString(TeambrellaModel.ATTR_STATUS_URI)
     set(value) {
         this?.addProperty(TeambrellaModel.ATTR_STATUS_URI, value)
     }
+
+val JsonObject?.intId: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_ID)
+
+val JsonObject?.gender: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_GENDER)
+
+val JsonObject?.smallPhotos: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS)?.asJsonArray
+
+val JsonObject?.coverageType: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)
+
+val JsonObject?.claimLimit: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)
+
+val JsonObject?.oneClaimId: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID)
+
+val JsonObject?.claimCount: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_CLAIM_COUNT)
+
+val JsonObject?.totallyPaidAmount: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_TOTALLY_PAID_AMOUNT)
 
 val JsonObject?.stats: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_STATS)
@@ -129,6 +156,9 @@ var JsonObject?.amount: Float?
         this?.addProperty(TeambrellaModel.ATTR_DATA_AMOUNT, value)
     }
 
+val JsonObject?.teamVote: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)
+
 val JsonObject?.cards: JsonArray?
     get() = this?.getAsJsonArray(TeambrellaModel.ATTR_DATA_CARDS)
 
@@ -146,6 +176,9 @@ var JsonObject?.kind: Int?
     set(value) {
         this?.addProperty(TeambrellaModel.ATTR_DATA_KIND, value)
     }
+
+val JsonObject?.averageRisk: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_AVG_RISK)
 
 val JsonObject?.serverTxState: Int?
     get() = this.getInt(TeambrellaModel.ATTR_DATA_SERVER_TX_STATE)
@@ -182,6 +215,51 @@ val JsonObject?.facebookUrl: String?
 
 val JsonObject?.claimAmount: Float?
     get() = this?.getFloat(CLAIM_AMOUNT)
+
+val JsonObject?.itemType: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE)
+
+val JsonObject?.smallPhoto: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)
+
+val JsonObject?.coverage: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)
+
+val JsonObject?.smallPhotoOrAvatar: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO_OR_AVATAR)
+
+val JsonObject?.chatTitle: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_CHAT_TITLE)
+
+val JsonObject?.itemUserName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_NAME)
+
+val JsonObject?.itemUserAvatar: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_AVATAR)
+
+val JsonObject?.isVoting: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_DATA_IS_VOTING)
+
+val JsonObject?.modelOrName: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
+
+val JsonObject?.text: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_TEXT)
+
+val JsonObject?.posterCount: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_POSTER_COUNT)
+
+val JsonObject?.topPosterAvatars: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_TOP_POSTER_AVATARS)?.asJsonArray
+
+val JsonObject?.itemIdInt: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_ITEM_ID)
+
+val JsonObject?.itemDate: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)
+
+val JsonObject?.itemUserId: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID);
 
 val JsonObject?.team: JsonObject?
     get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM)
