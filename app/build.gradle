@@ -41,8 +41,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 130
-        versionName "and-0.3.4.130"
+        versionCode 131
+        versionName "and-0.3.4.131"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -171,10 +171,10 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
 
     implementation 'com.google.android.gms:play-services-gcm:15.0.0'
-    implementation 'com.google.android.gms:play-services-analytics:15.0.0'
+    implementation 'com.google.android.gms:play-services-analytics:15.0.2'
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
-    implementation 'com.google.firebase:firebase-core:15.0.0'
-    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
 
 
