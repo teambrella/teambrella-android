@@ -11,9 +11,9 @@ import java.lang.RuntimeException
 
 class FeedDataPagerFragment : TeambrellaDataPagerFragment() {
 
-    override fun createLoader(args: Bundle?): IDataPager<JsonArray> {
+    override fun createLoader(args: Bundle): IDataPager<JsonArray> {
         var loader: TeambrellaDataPagerLoader? = null
-        args?.getParcelable<Uri>(EXTRA_URI)?.let {
+        args.getParcelable<Uri>(EXTRA_URI)?.let {
             loader = FeedDataPagerLoader(it)
             (context as TeambrellaDataHostActivity).component.inject(loader)
         }

@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.chat;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -93,6 +94,8 @@ class ChatAdapter extends ChatDataPagerAdapter {
         return viewType;
     }
 
+
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);

@@ -8,7 +8,7 @@ import com.teambrella.android.data.base.TeambrellaDataPagerLoader
 /**
  * Wallet transactions Data Pager Loader
  */
-class WalletTransactionsDataPagerLoader(uri: Uri?) : TeambrellaDataPagerLoader(uri, null) {
+class WalletTransactionsDataPagerLoader(uri: Uri) : TeambrellaDataPagerLoader(uri, null) {
 
     override fun onAddNewData(newData: JsonArray) {
         val items = JsonArray()
@@ -29,6 +29,6 @@ class WalletTransactionsDataPagerLoader(uri: Uri?) : TeambrellaDataPagerLoader(u
                 }
             }
         }
-        mArray.addAll(items)
+        array.addAll(items)
     }
 }

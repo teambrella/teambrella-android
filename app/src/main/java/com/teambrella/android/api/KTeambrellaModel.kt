@@ -14,27 +14,50 @@ const val POST_ID = "PostId"
 const val CONTENT = "Content"
 const val BALANCE_CRYPTO = "BalanceCrypto"
 const val BALANCE_FIAT = "BalanceFiat"
-const val MESSAGE = "Message";
-const val TOPIC_NAME = "TopicName";
-const val TEAMMATE = "Teammate";
-const val CLAIM = "Claim";
-const val DISCUSSION = "Discussion";
+const val MESSAGE = "Message"
+const val TOPIC_NAME = "TopicName"
+const val TEAMMATE = "Teammate"
+const val CLAIM = "Claim"
+const val DISCUSSION = "Discussion"
 const val IS_MY_TOPIC = "MyTopic"
 const val USER_GENDER = "UserGender"
+const val IMAGE_INDEX = "ImageIndex"
+const val DATE_PAYMENT_FINISHED = "DatePaymentFinished"
+const val SHARED_URL = "SharedUrl"
+
+
+object ChatItems {
+    const val CHAT_ITEM_MESSAGE = "message"
+    const val CHAT_ITEM_MY_MESSAGE = "my_message"
+    const val CHAT_ITEM_IMAGE = "image"
+    const val CHAT_ITEM_MY_IMAGE = "my_image"
+    const val CHAT_ITEM_DATE = "date"
+    const val CHAT_ITEM_PAID_CLAIM = "paid_claim"
+}
+
 
 /**
  * Teambrella Kotlin Model
  */
 
-val JsonObject?.data: JsonObject?
+var JsonObject?.data: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA)
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_DATA, value)
+    }
 
 
-val JsonObject?.status: JsonObject?
+var JsonObject?.status: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_STATUS)
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_STATUS, value)
+    }
 
 val JsonObject?.objectPart: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT)
+
+val JsonObject?.teamPart: JsonObject?
+    get() = getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM)
 
 var JsonObject?.uri: String?
     get() = getString(TeambrellaModel.ATTR_STATUS_URI)
@@ -45,11 +68,36 @@ var JsonObject?.uri: String?
 val JsonObject?.intId: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_ID)
 
+var JsonObject?.stringId: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ID)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_ID, value)
+    }
+
 val JsonObject?.gender: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_GENDER)
 
 val JsonObject?.smallPhotos: JsonArray?
     get() = this?.get(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS)?.asJsonArray
+
+val JsonObject?.smallImages: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_SMALL_IMAGES)?.asJsonArray
+
+var JsonObject?.localImages: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES)?.asJsonArray
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_DATA_LOCAL_IMAGES, value)
+    }
+
+val JsonObject?.datePaymentFinished: String?
+    get() = this?.getString(DATE_PAYMENT_FINISHED)
+
+val JsonObject?.imageRatios: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS)?.asJsonArray
+
+
+val JsonObject?.images: JsonArray?
+    get() = this?.get(TeambrellaModel.ATTR_DATA_IMAGES)?.takeIf { it.isJsonArray }?.asJsonArray
 
 val JsonObject?.coverageType: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)
@@ -189,6 +237,9 @@ val JsonObject?.riskVoted: Double?
 val JsonObject?.myVote: Float?
     get() = this?.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE)
 
+val JsonObject?.vote: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_VOTE)
+
 val JsonObject?.proxyName: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME)
 
@@ -243,8 +294,11 @@ val JsonObject?.isVoting: Boolean?
 val JsonObject?.modelOrName: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_MODEL_OR_NAME)
 
-val JsonObject?.text: String?
+var JsonObject?.text: String?
     get() = this?.getString(TeambrellaModel.ATTR_DATA_TEXT)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_TEXT, value)
+    }
 
 val JsonObject?.posterCount: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_POSTER_COUNT)
@@ -281,6 +335,18 @@ val JsonObject?.cmd: Int?
 
 val JsonObject?.timeStamp: Long?
     get() = this?.getLong(TeambrellaModel.ATTR_STATUS_TIMESTAMP)
+
+var JsonObject?.created: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_CREATED)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_CREATED, value)
+    }
+
+var JsonObject?.added: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_ADDED)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_ADDED, value)
+    }
 
 val JsonObject?.teamId: Int?
     get() = this?.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
@@ -321,17 +387,151 @@ val JsonObject?.teammate: JsonObject?
 val JsonObject?.claim: JsonObject?
     get() = this?.getObject(CLAIM)
 
+var JsonObject?.chat: JsonArray?
+    get() = this?.getAsJsonArray(TeambrellaModel.ATTR_DATA_CHAT)
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_DATA_CHAT, value)
+    }
+
+val JsonObject?.teamAccessLevel: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL)
+
+val JsonObject?.coverMe: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_COVER_ME)
+
+val JsonObject?.coverThem: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_COVER_THEM)
+
+val JsonObject?.city: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_CITY)
+
+val JsonObject?.dateJoined: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_DATE_JOINED)
+
+val JsonObject?.originalPostText: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ORIGINAL_POST_TEXT)
+
+val JsonObject?.sinceLastPostMinutes: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_POST_MINUTES)
+
+
+val JsonObject?.heCoversMeIf1: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME_IF1)
+
+val JsonObject?.hetCoversMeIf02: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME02)
+
+val JsonObject?.heCoversMeIf499: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_HE_COVERS_ME_IF499)
+
+val JsonObject?.myRisk: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_MY_RISK)
+
+val JsonObject?.teammatePart: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART)
+
+var JsonObject?.chatItemType: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_ITEM_TYPE)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, value)
+    }
+
+var JsonObject?.sharedUrl: String?
+    get() = this?.getString(SHARED_URL)
+    set(value) {
+        this?.addProperty(SHARED_URL, value)
+    }
+
+var JsonObject?.imageIndex: Int?
+    get() = this?.getInt(IMAGE_INDEX)
+    set(value) {
+        this?.addProperty(IMAGE_INDEX, value)
+    }
+
 val JsonObject?.discussion: JsonObject?
     get() = this?.getObject(DISCUSSION)
 
-val JsonObject?.discussionPart: JsonObject?
+var JsonObject?.discussionPart: JsonObject?
     get() = this?.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION)
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION, value)
+    }
 
 val JsonObject?.isMyTopic: Boolean?
     get() = this?.getBoolean(IS_MY_TOPIC)
 
 val JsonObject?.userGender: String?
     get() = this?.getString(USER_GENDER)
+
+
+var JsonObject?.reload: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_METADATA_RELOAD)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_RELOAD, value)
+    }
+
+var JsonObject?.forced: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_METADATA_FORCE)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_FORCE, value)
+    }
+var JsonObject?.direction: String?
+    get() = this?.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_DIRECTION, value)
+    }
+
+var JsonObject?.originalSize: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_ORIGINAL_SIZE, value)
+    }
+
+var JsonObject?.size: Int?
+    get() = this?.getInt(TeambrellaModel.ATTR_METADATA_SIZE)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_SIZE, value)
+    }
+
+var JsonObject?.itemsUpdated: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, value)
+    }
+
+var JsonObject?.metadata: JsonObject?
+    get() = this?.getObject(TeambrellaModel.ATTR_METADATA_)
+    set(value) {
+        this?.add(TeambrellaModel.ATTR_METADATA_, value)
+    }
+
+var JsonObject?.isNextDay: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_IS_NEXT_DAY, value)
+    }
+
+var JsonObject?.messageStatus: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS)
+    set(value) {
+        this?.addProperty(TeambrellaModel.ATTR_DATA_MESSAGE_STATUS, value)
+    }
+
+val JsonObject?.lastRead: Long?
+    get() = this?.getLong(TeambrellaModel.ATTR_DATA_LAST_READ)
+
+
+val JsonObject?.reimbursement: Float?
+    get() = this?.getFloat(TeambrellaModel.ATTR_DATA_REIMBURSEMENT)
+
+val JsonObject?.withdrawalDate: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_WITHDRAWAL_DATE)
+
+val JsonObject?.toAddress: String?
+    get() = this?.getString(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS)
+
+val JsonObject?.isNew: Boolean?
+    get() = this?.getBoolean(TeambrellaModel.ATTR_DATA_IS_NEW)
 
 private fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

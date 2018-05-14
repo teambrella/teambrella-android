@@ -12,7 +12,6 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
-import com.teambrella.android.ui.widget.DividerItemDecoration;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -30,41 +29,35 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
 
-            @Override
-            protected boolean canDrawChild(View view, RecyclerView parent) {
-                int position = parent.getChildAdapterPosition(view);
-                boolean drawDivider = true;
-                switch (parent.getAdapter().getItemViewType(position)) {
-                    case WithdrawalsAdapter.VIEW_TYPE_HISTORY_HEADER:
-                    case WithdrawalsAdapter.VIEW_TYPE_SUBMIT_WITHDRAWAL:
-                    case WithdrawalsAdapter.VIEW_TYPE_IN_PROCESS_HEADER:
-                    case WithdrawalsAdapter.VIEW_TYPE_QUEUED_HEADER:
-                    case WithdrawalsAdapter.VIEW_TYPE_BOTTOM:
-                    case WithdrawalsAdapter.VIEW_TYPE_ERROR:
-                    case WithdrawalsAdapter.VIEW_TYPE_LOADING:
-                    case WithdrawalsAdapter.VIEW_TYPE_EMPTY:
-                        drawDivider = false;
-                }
-
-                if (position + 1 < parent.getAdapter().getItemCount()) {
-                    switch (parent.getAdapter().getItemViewType(position + 1)) {
-                        case WithdrawalsAdapter.VIEW_TYPE_HISTORY_HEADER:
-                        case WithdrawalsAdapter.VIEW_TYPE_SUBMIT_WITHDRAWAL:
-                        case WithdrawalsAdapter.VIEW_TYPE_IN_PROCESS_HEADER:
-                        case WithdrawalsAdapter.VIEW_TYPE_QUEUED_HEADER:
-                        case WithdrawalsAdapter.VIEW_TYPE_BOTTOM:
-                        case WithdrawalsAdapter.VIEW_TYPE_ERROR:
-                        case WithdrawalsAdapter.VIEW_TYPE_LOADING:
-                        case WithdrawalsAdapter.VIEW_TYPE_EMPTY:
-                            drawDivider = false;
+        com.teambrella.android.ui.widget.DividerItemDecoration dividerItemDecoration =
+                new com.teambrella.android.ui.widget.DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
+                    @Override
+                    protected boolean canDrawChild(View view, RecyclerView parent) {
+                        int position = parent.getChildAdapterPosition(view);
+                        boolean drawDivider = canDrawChild(position, parent);
+                        if (drawDivider && ++position < parent.getAdapter().getItemCount()) {
+                            drawDivider = canDrawChild(position, parent);
+                        }
+                        return drawDivider;
                     }
-                }
 
-                return drawDivider;
-            }
-        };
+                    private boolean canDrawChild(int position, RecyclerView parent) {
+                        boolean drawDivider = true;
+                        switch (parent.getAdapter().getItemViewType(position)) {
+                            case WithdrawalsAdapter.VIEW_TYPE_HISTORY_HEADER:
+                            case WithdrawalsAdapter.VIEW_TYPE_SUBMIT_WITHDRAWAL:
+                            case WithdrawalsAdapter.VIEW_TYPE_IN_PROCESS_HEADER:
+                            case WithdrawalsAdapter.VIEW_TYPE_QUEUED_HEADER:
+                            case WithdrawalsAdapter.VIEW_TYPE_BOTTOM:
+                            case WithdrawalsAdapter.VIEW_TYPE_ERROR:
+                            case WithdrawalsAdapter.VIEW_TYPE_LOADING:
+                            case WithdrawalsAdapter.VIEW_TYPE_EMPTY:
+                                drawDivider = false;
+                        }
+                        return drawDivider;
+                    }
+                };
         mList.addItemDecoration(dividerItemDecoration);
     }
 
@@ -79,8 +72,8 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                     .doOnNext(jsonWrapper -> {
                         WithdrawalsAdapter adapter = (WithdrawalsAdapter) mAdapter;
                         adapter.setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
-                        adapter.setBalanceValue(jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
-                                , jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED)
+                        adapter.setBalanceValue(jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
+                                , jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED)
                                 , mDataHost.getCurrency(), mDataHost.getCurrencyRate());
                     }).blockingFirst();
         }

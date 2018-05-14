@@ -11,8 +11,8 @@ import com.teambrella.android.ui.base.TeambrellaDataHostActivity
  */
 class WalletTransactionsDataPagerFragment : TeambrellaDataPagerFragment() {
 
-    override fun createLoader(args: Bundle?): IDataPager<JsonArray> {
-        val loader = WalletTransactionsDataPagerLoader(args?.getParcelable(EXTRA_URI))
+    override fun createLoader(args: Bundle): IDataPager<JsonArray> {
+        val loader = WalletTransactionsDataPagerLoader(args.getParcelable(EXTRA_URI))
         (context as TeambrellaDataHostActivity).component.inject(loader)
         return loader
     }

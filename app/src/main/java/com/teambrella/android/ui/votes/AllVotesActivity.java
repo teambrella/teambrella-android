@@ -108,7 +108,7 @@ public class AllVotesActivity extends ATeambrellaActivity implements IAllVoteAct
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case ALL_VOTES_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(mUri, TeambrellaModel.ATTR_DATA_VOTERS, TeambrellaDataPagerFragment.class);
+                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, TeambrellaModel.ATTR_DATA_VOTERS, TeambrellaDataPagerFragment.class);
         }
 
         return null;

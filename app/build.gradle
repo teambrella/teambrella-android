@@ -161,14 +161,18 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.7.1") {
         exclude group: "com.android.support"
     }
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.7.1") {
+        transitive = false
+    }
+
     kapt 'com.github.bumptech.glide:compiler:4.7.1'
 
     /* *Facebook SDK*/
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
 
-    implementation 'com.google.android.gms:play-services-gcm:15.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
     implementation 'com.google.android.gms:play-services-analytics:15.0.2'
-    implementation 'com.google.android.gms:play-services-auth:15.0.0'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
     implementation 'com.google.firebase:firebase-core:15.0.2'
     implementation 'com.google.firebase:firebase-messaging:15.0.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'

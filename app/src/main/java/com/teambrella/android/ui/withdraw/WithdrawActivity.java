@@ -108,7 +108,7 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case WITHDRAWALS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getWithdrawals(mTeamId),
+                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getWithdrawals(mTeamId),
                         TeambrellaModel.ATTR_DATA_TXS, WithdrawalsDataPagerFragment.class);
         }
 
@@ -166,7 +166,7 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     }
 
     @Override
-    public void requestWithdraw(String address, float amount) {
+    public void requestWithdraw(String address, double amount) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(WITHDRAWALS_DATA_TAG);
         if (dataFragment != null) {

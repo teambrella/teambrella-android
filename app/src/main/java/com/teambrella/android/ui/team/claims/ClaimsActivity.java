@@ -90,7 +90,7 @@ public class ClaimsActivity extends ATeambrellaActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(mUri, null, ClaimsDataPagerFragment.class);
+                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, null, ClaimsDataPagerFragment.class);
         }
         return null;
     }

@@ -102,7 +102,7 @@ public class InboxActivity extends ATeambrellaActivity {
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case INBOX_DATA_TAG:
-                return TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getInbox(), null, TeambrellaDataPagerFragment.class);
+                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getInbox(), TeambrellaDataPagerFragment.class);
         }
         return null;
     }

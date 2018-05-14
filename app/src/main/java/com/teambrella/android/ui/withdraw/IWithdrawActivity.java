@@ -7,7 +7,10 @@ import com.teambrella.android.data.base.IDataHost;
  */
 public interface IWithdrawActivity extends IDataHost {
     void showWithdrawInfo();
-    void requestWithdraw(String address, float amount);
+
+    void requestWithdraw(String address, double amount);
+
     String getCurrency();
+
     float getCurrencyRate();
 }

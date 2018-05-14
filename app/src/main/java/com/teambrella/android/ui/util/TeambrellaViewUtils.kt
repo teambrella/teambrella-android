@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.teambrella.android.R
 import com.teambrella.android.image.glide.GlideApp
@@ -21,14 +22,33 @@ fun ImageView.setAvatar(url: GlideUrl?) {
     url?.let {
         GlideApp.with(this).load(it)
                 .apply(RequestOptions().circleCrop().placeholder(R.drawable.picture_background_circle))
+                .thumbnail(0.5f)
                 .into(this)
     }
 }
 
-fun ImageView.setImage(url: GlideUrl?, @DimenRes radius: Int) {
+fun ImageView.setImage(url: GlideUrl?, @DimenRes radius: Int, crop: Boolean = true) {
     url?.let {
+        val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
+        fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
+            RequestOptions().transform(RoundedCorners(radiusPx))
+
         GlideApp.with(this).load(it)
-                .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(this.context.resources.getDimensionPixelOffset(radius))))
+                .apply(getRequestOptions())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(this)
+    }
+}
+
+fun ImageView.setImage(url: String?, @DimenRes radius: Int, crop: Boolean = true) {
+    url?.let {
+        val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
+        fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
+            RequestOptions().transform(RoundedCorners(radiusPx))
+
+        GlideApp.with(this).load(it)
+                .apply(getRequestOptions())
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(this)
     }
 }
@@ -38,6 +58,7 @@ fun ImageView.setImage(url: GlideUrl?, @DimenRes radius: Int, @DrawableRes place
         GlideApp.with(this).load(it)
                 .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(this.context.resources.getDimensionPixelOffset(radius))))
                 .placeholder(placeholder)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(this)
     }
 }

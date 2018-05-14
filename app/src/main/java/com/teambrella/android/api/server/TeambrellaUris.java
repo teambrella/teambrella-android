@@ -568,14 +568,14 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getNewWithdrawUri(int teamId, float amount, String address) {
+    public static Uri getNewWithdrawUri(int teamId, double amount, String address) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_WALLET)
                 .appendEncodedPath(SEGMENT_NEW_WITHDRAW)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_ADDRESS, address)
-                .appendQueryParameter(KEY_AMOUNT, Float.toString(amount))
+                .appendQueryParameter(KEY_AMOUNT, Double.toString(amount))
                 .build();
     }
 
