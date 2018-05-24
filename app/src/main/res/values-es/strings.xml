@@ -318,4 +318,11 @@
     <string name="huawei_protected_app_action">Abrir Aplicaciones Protegidas</string>
     <string name="huawei_protected_app_done">Ya hecho</string>
 
+
+    <string name="share_with_friends">Compartir con amigos</string>
+    <string name="paid_claim_message">Tu equipo ha pagado la reclamación. ¿Muy\n bien, de verdad? Compártelo con tus amigos!</string>
+    <string name="paid_claim_shareable_collision_deductible">Ayudamos a nuestro compañero a pagar la reparación del auto. ¿Muy bien, de verdad? %s</string>
+    <string name="paid_claim_shareable_pet">Ayudamos a nuestro compañero a pagar la factura veterinaria. ¿Muy bien, de verdad? %s</string>
+    <string name="paid_claim_shareable_bike">Reembolsamos a nuestro compañero la bicicleta robada. ¿Muy bien, de verdad? %s</string>
+
 </resources>

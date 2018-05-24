@@ -26,6 +26,7 @@ import com.teambrella.android.ui.image.ImageViewerActivity
 import com.teambrella.android.ui.teammate.TeammateActivity
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
+import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,7 +60,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
     }
 
     override fun getItemId(position: Int) = position.toLong()
-    
+
     override fun getItemViewType(position: Int): Int {
         var type = super.getItemViewType(position)
         if (type == VIEW_TYPE_REGULAR) {
@@ -190,8 +191,17 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
         fun onBind(item: JsonObject) {
             action?.setOnClickListener {
-                context.startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, item.sharedUrl)
+                val text = when (item.coverageType) {
+                    TeambrellaModel.InsuranceType.CAR_COLLISION_DEDUCTIBLE -> context.getString(R.string.paid_claim_shareable_collision_deductible, item.sharedUrl)
+                    TeambrellaModel.InsuranceType.CAT,
+                    TeambrellaModel.InsuranceType.DOG -> context.getString(R.string.paid_claim_shareable_pet, item.sharedUrl)
+                    TeambrellaModel.InsuranceType.BICYCLE -> context.getString(R.string.paid_claim_shareable_bike, item.sharedUrl)
+                    else -> item.sharedUrl
+                }
+                context.startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, text)
                         .setType("text/plain"), itemView.context.getString(R.string.share_with_friends)))
+
+                StatisticHelper.sharePaidClaim(context, item.claimId ?: 0)
             }
         }
     }

@@ -56,7 +56,8 @@ public class TeambrellaServer {
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
     public static final String AUTHORITY = BuildConfig.AUTHORITY;
-    public static final String SCHEME = "https";
+    @SuppressWarnings("ConstantConditions")
+    public static final String SCHEME = (BuildConfig.APPLICATION_ID.equals("com.surilla.android")) ? "http" : "https";
 
 
     /**

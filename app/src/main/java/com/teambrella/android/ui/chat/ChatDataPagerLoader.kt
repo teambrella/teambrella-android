@@ -88,13 +88,15 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
 
         val data = response.data
         val basic = data?.basic
-        val paymentDateString = basic?.datePaymentFinished
+        val paymentDateString = "2018-05-24 12:34:56"// basic ?. datePaymentFinished
         var paymentDate = if (paymentDateString != null) Calendar.getInstance().apply {
             time = TeambrellaDateUtils.getDate(paymentDateString)
         } else null
 
         val claimId = basic?.claimId
-        val teamId = data?.teamPart?.teamId
+        val team = data?.teamPart
+        val teamId = team?.teamId
+        val teamCoverageType = team?.coverageType
 
 
         response.metadata = JsonObject().apply {
@@ -117,6 +119,8 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
                         .appendPath(teamId.toString())
                         .appendPath(claimId.toString())
                         .build().toString()
+                coverageType = teamCoverageType
+                this.claimId = claimId
             })
         }
 
@@ -172,19 +176,26 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
 
             if (text != null && images != null && images.size() > 0) {
                 text.removeParagraphs().separate(0, images.size())
-                        .forEachIndexed({ index, slice ->
+                        .forEach({ slice ->
                             val newMessage = message.deepCopy()
-                            if (slice == String.format(Locale.US, IMAGE_FORMAT_STRING, index)) {
-                                newMessage.imageIndex = index
-                                newMessage.chatItemType =
-                                        if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_IMAGE
-                                        else ChatItems.CHAT_ITEM_IMAGE
-                            } else {
+
+                            for (index in 0 until images.size()) {
+                                if (slice == String.format(Locale.US, IMAGE_FORMAT_STRING, index)) {
+                                    newMessage.imageIndex = index
+                                    newMessage.chatItemType =
+                                            if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_IMAGE
+                                            else ChatItems.CHAT_ITEM_IMAGE
+                                    break
+                                }
+                            }
+
+                            if (newMessage.imageIndex == null) {
                                 newMessage.chatItemType =
                                         if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_MESSAGE
                                         else ChatItems.CHAT_ITEM_MESSAGE
                                 newMessage.text = slice
                             }
+
                             newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
                             appendDateItem(message)
                             newMessages.add(newMessage)
