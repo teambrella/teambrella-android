@@ -88,7 +88,7 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
 
         val data = response.data
         val basic = data?.basic
-        val paymentDateString = "2018-05-24 12:34:56"// basic ?. datePaymentFinished
+        val paymentDateString = basic?.datePaymentFinished
         var paymentDate = if (paymentDateString != null) Calendar.getInstance().apply {
             time = TeambrellaDateUtils.getDate(paymentDateString)
         } else null
