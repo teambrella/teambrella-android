@@ -8,7 +8,7 @@ import com.teambrella.android.data.base.TeambrellaDataPagerLoader
 class FeedDataPagerLoader(uri: Uri) : TeambrellaDataPagerLoader(uri, null) {
 
     fun markTopicRead(topicId: String) {
-        loadedData?.forEachIndexed { index, item ->
+        loadedData.forEachIndexed { index, item ->
             if (item?.asJsonObject?.topicId == topicId) {
                 item.asJsonObject.unreadCount = 0
                 notifyItemChange(index)

@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingBottom="16dp"
-        android:paddingTop="56dp" />
+        android:paddingTop="64dp" />
 
 
     <FrameLayout
@@ -121,7 +121,7 @@
             app:layout_goneMarginEnd="8dp">
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/your_vote_title"
+                android:id="@+id/vote_title"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

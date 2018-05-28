@@ -335,4 +335,10 @@
     <string name="huawei_protected_app_description">For uninterrupted coverage please make sure the app is protected</string>
     <string name="huawei_protected_app_action">Go to Protected Apps</string>
     <string name="huawei_protected_app_done">Already Done</string>
+
+    <string name="share_with_friends">Share with friends</string>
+    <string name="paid_claim_message">Your team has paid the claim. Pretty\ncool, huh? Share it with your friends!</string>
+    <string name="paid_claim_shareable_collision_deductible">We helped our teammate to pay for the car repair. Pretty cool, huh? %s</string>
+    <string name="paid_claim_shareable_pet">We helped our teammate to pay the vet bill.  Pretty cool, huh? %s</string>
+    <string name="paid_claim_shareable_bike">We reimbursed our teammate for the stolen bike. Pretty cool, huh? %s</string>
 </resources>

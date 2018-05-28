@@ -3,6 +3,7 @@ package com.teambrella.android.backup
 import android.content.Context
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.gcm.*
 import com.google.firebase.iid.FirebaseInstanceId
@@ -73,7 +74,7 @@ class WalletBackUpService : GcmTaskService() {
             val me = server.requestObservable(TeambrellaUris.getMe(), null).blockingFirst()
             me?.data?.let {
                 val googleApiClient = GoogleApiClient.Builder(this)
-                        .addApi(Auth.CREDENTIALS_API)
+                        .addApi(Auth.CREDENTIALS_API, CredentialsOptions.Builder().forceEnableSaveDialog().build())
                         .build()
                 val connectionResult = googleApiClient.blockingConnect()
                 if (connectionResult.isSuccess) {
@@ -87,12 +88,12 @@ class WalletBackUpService : GcmTaskService() {
                         status.isSuccess -> user.isWalletBackedUp = true
                         status.hasResolution() -> user.isWalletBackedUp = false
                         else -> {
-                            Log.reportNonFatal(LOG_TAG, RuntimeException("unable to write wallet " + status))
+                            Log.reportNonFatal(LOG_TAG, RuntimeException("unable to write wallet $status"))
                         }
                     }
                     googleApiClient.disconnect()
                 } else {
-                    Log.e(LOG_TAG, "unable to connect to google API:" + connectionResult)
+                    Log.e(LOG_TAG, "unable to connect to google API:$connectionResult")
                 }
             }
 

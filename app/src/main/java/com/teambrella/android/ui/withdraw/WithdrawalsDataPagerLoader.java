@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.withdraw;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,13 +31,13 @@ class WithdrawalsDataPagerLoader extends TeambrellaDataPagerLoader {
 
 
     WithdrawalsDataPagerLoader(Uri uri, String property) {
-        super(uri, property);
+        super(uri, property, 50);
     }
 
     @Override
-    protected void onAddNewData(JsonArray newData) {
+    protected void onAddNewData(@NonNull JsonArray newData) {
 
-        if (mArray.size() == 0) {
+        if (getArray().size() == 0) {
             if (mQueuedWithdrawals.size() == 0) {
                 mQueuedWithdrawals.add(QUEUED_HEADER_ITEM);
             }
@@ -66,17 +67,17 @@ class WithdrawalsDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mQueuedWithdrawals.size() > 1) {
-            mArray.addAll(mQueuedWithdrawals);
+            getArray().addAll(mQueuedWithdrawals);
             mQueuedWithdrawals = new JsonArray();
         }
 
         if (mInProcessWithdrawals.size() > 1) {
-            mArray.addAll(mInProcessWithdrawals);
+            getArray().addAll(mInProcessWithdrawals);
             mInProcessWithdrawals = new JsonArray();
         }
 
         if (mHistoryWithdrawals.size() > 1) {
-            mArray.addAll(mHistoryWithdrawals);
+            getArray().addAll(mHistoryWithdrawals);
             mHistoryWithdrawals = new JsonArray();
         }
     }

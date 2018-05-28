@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.claim;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,13 +36,13 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
 
 
     ClaimsDataPagerLoader(Uri uri) {
-        super(uri, null);
+        super(uri, null, 50);
     }
 
 
     @Override
-    protected void onAddNewData(JsonArray newData) {
-        if (mArray.size() == 0) {
+    protected void onAddNewData(@NonNull JsonArray newData) {
+        if (getArray().size() == 0) {
             if (mVotingClaims.size() == 0) {
                 //mVotingClaims.add(VOTING_HEADER_ITEM);
             }
@@ -85,7 +86,7 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mVotingClaims.size() > 0) {
-            mArray.addAll(mVotingClaims);
+            getArray().addAll(mVotingClaims);
             mVotingClaims = new JsonArray();
 
         }
@@ -95,12 +96,12 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_VOTED_HEADER:
                     if (mVotedClaims.size() > 1) {
-                        mArray.addAll(mVotedClaims);
+                        getArray().addAll(mVotedClaims);
                         mVotedClaims = new JsonArray();
                     }
                     break;
                 case TeambrellaModel.ClaimsListItemType.ITEM_VOTED:
-                    mArray.addAll(mVotedClaims);
+                    getArray().addAll(mVotedClaims);
                     mVotedClaims = new JsonArray();
                     break;
             }
@@ -112,12 +113,12 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT_HEADER:
                     if (mProcessingClaims.size() > 1) {
-                        mArray.addAll(mProcessingClaims);
+                        getArray().addAll(mProcessingClaims);
                         mProcessingClaims = new JsonArray();
                     }
                     break;
                 case TeambrellaModel.ClaimsListItemType.ITEM_IN_PAYMENT:
-                    mArray.addAll(mProcessingClaims);
+                    getArray().addAll(mProcessingClaims);
                     mProcessingClaims = new JsonArray();
                     break;
             }
@@ -129,12 +130,12 @@ public class ClaimsDataPagerLoader extends TeambrellaDataPagerLoader {
             switch (itemType) {
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED_HEADER:
                     if (mProcessedClaims.size() > 1) {
-                        mArray.addAll(mProcessedClaims);
+                        getArray().addAll(mProcessedClaims);
                         mProcessedClaims = new JsonArray();
                     }
                     break;
                 case TeambrellaModel.ClaimsListItemType.ITEM_PROCESSED:
-                    mArray.addAll(mProcessedClaims);
+                    getArray().addAll(mProcessedClaims);
                     mProcessedClaims = new JsonArray();
                     break;
             }

@@ -1,10 +1,7 @@
 package com.teambrella.android.ui.team.feed;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -12,6 +9,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
+import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
 /**
  * Feed Fragment
@@ -31,46 +29,37 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                LinearLayoutManager.VERTICAL) {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                int position = parent.getChildAdapterPosition(view);
-                boolean drawDivider = true;
-                switch (parent.getAdapter().getItemViewType(position)) {
-                    case FeedAdapter.VIEW_TYPE_HEADER:
-                    case FeedAdapter.VIEW_TYPE_LOADING:
-                    case FeedAdapter.VIEW_TYPE_ERROR:
-                    case FeedAdapter.VIEW_TYPE_BOTTOM:
-                        drawDivider = false;
-                }
-
-                if (position + 1 < parent.getAdapter().getItemCount()) {
-                    switch (parent.getAdapter().getItemViewType(position + 1)) {
-                        case FeedAdapter.VIEW_TYPE_HEADER:
-                        case FeedAdapter.VIEW_TYPE_LOADING:
-                        case FeedAdapter.VIEW_TYPE_ERROR:
-                        case FeedAdapter.VIEW_TYPE_BOTTOM:
-                            drawDivider = false;
+        com.teambrella.android.ui.widget.DividerItemDecoration dividerItemDecoration =
+                new com.teambrella.android.ui.widget.DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
+                    @Override
+                    protected boolean canDrawChild(View view, RecyclerView parent) {
+                        int position = parent.getChildAdapterPosition(view);
+                        boolean drawDivider = canDrawChild(position, parent);
+                        if (drawDivider && ++position < parent.getAdapter().getItemCount()) {
+                            drawDivider = canDrawChild(position, parent);
+                        }
+                        return drawDivider;
                     }
-                }
 
-                if (position != parent.getAdapter().getItemCount() - 1
-                        && drawDivider) {
-                    super.getItemOffsets(outRect, view, parent, state);
-                } else {
-                    outRect.set(0, 0, 0, 0);
-                }
-            }
-        };
+                    private boolean canDrawChild(int position, RecyclerView parent) {
+                        boolean drawDivider = true;
+                        switch (parent.getAdapter().getItemViewType(position)) {
+                            case FeedAdapterKt.VIEW_TYPE_HEADER:
+                            case TeambrellaDataPagerAdapter.VIEW_TYPE_LOADING:
+                            case TeambrellaDataPagerAdapter.VIEW_TYPE_ERROR:
+                            case TeambrellaDataPagerAdapter.VIEW_TYPE_BOTTOM:
+                                drawDivider = false;
+                        }
+                        return drawDivider;
+                    }
+                };
 
-        dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
         mList.addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
     protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new FeedAdapter(mDataHost, mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost::launchActivity);
+        return new KFeedAdapter(mDataHost, getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getPager(mTag), mDataHost::launchActivity);
     }
 }

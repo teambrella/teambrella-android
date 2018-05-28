@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DividerItemDecoration;
@@ -182,6 +183,7 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
             return mData;
         }
 
+        @NonNull
         @Override
         public Observable<Notification<JsonObject>> getDataObservable() {
             return Observable.empty();
@@ -198,12 +200,12 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean getHasNext() {
             return false;
         }
 
         @Override
-        public boolean hasPrevious() {
+        public boolean getHasPrevious() {
             return false;
         }
 
@@ -213,7 +215,7 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
         }
 
         @Override
-        public boolean hasNextError() {
+        public boolean getHasNextError() {
             return false;
         }
 
@@ -223,7 +225,7 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
         }
 
         @Override
-        public boolean hasPreviousError() {
+        public boolean getHasPreviousError() {
             return false;
         }
 
@@ -238,7 +240,7 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
         }
 
         @Override
-        public void reload(Uri uri) {
+        public void reload(@NonNull Uri uri) {
 
         }
     }

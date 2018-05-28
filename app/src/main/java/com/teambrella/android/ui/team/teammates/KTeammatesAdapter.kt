@@ -8,15 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
-import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.teammate.TeammateActivity
+import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.StatisticHelper
@@ -60,7 +59,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var viewHolder:RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
+        var viewHolder: RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
         val inflater = LayoutInflater.from(parent.context)
         if (viewHolder == null)
             viewHolder = when (viewType) {
@@ -92,10 +91,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
 
         open fun onBind(item: JsonObject?) {
             item.avatar?.let {
-                icon?.let {
-                    GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar))
-                            .apply(RequestOptions().circleCrop().placeholder(R.drawable.picture_background_circle)).into(icon)
-                }
+                icon?.setAvatar(imageLoader.getImageUrl(item.avatar))
             }
 
             title?.text = item.name

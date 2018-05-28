@@ -56,7 +56,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
     private val backupWalletButton: View? by ViewHolder(R.id.backup_wallet)
     private val backupWalletMessage: View? by ViewHolder(R.id.wallet_not_backed_up_message)
     private var showBackupInfoOnShow: Boolean = false
-    private var isWalletBackedUp : Boolean? = null
+    private var isWalletBackedUp: Boolean? = null
 
 
     override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -191,6 +191,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             StatisticHelper.onWalletSaved(context, user.userId)
         }
         isWalletBackedUp = true
+        user.isWalletBackedUp = true
     }
 
     override fun onWalletSaveError(code: Int, force: Boolean) {

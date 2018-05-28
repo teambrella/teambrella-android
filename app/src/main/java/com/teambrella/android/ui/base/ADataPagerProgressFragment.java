@@ -97,7 +97,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
-        if (pager.getLoadedData().size() == 0 && pager.hasNext()) {
+        if (pager.getLoadedData().size() == 0 && pager.getHasNext()) {
             pager.reload();
             setContentShown(false);
         } else {

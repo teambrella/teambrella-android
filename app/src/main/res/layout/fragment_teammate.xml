@@ -28,7 +28,7 @@
                     android:layout_height="88dp"
                     android:layout_marginTop="42dp">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/user_picture"
                         style="@style/Teambrella.Teammate.Avatar"
                         android:layout_alignParentTop="true"
@@ -283,7 +283,7 @@
         android:padding="8dp"
         android:visibility="invisible">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/small_teammate_icon"
             android:layout_width="42dp"
             android:layout_height="42dp"

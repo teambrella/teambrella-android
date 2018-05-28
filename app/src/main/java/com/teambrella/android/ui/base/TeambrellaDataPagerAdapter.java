@@ -61,9 +61,9 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         if (count > 0) {
             int size = mPager.getLoadedData().size() + getHeadersCount();
             if (position == size) {
-                if (mPager.hasNextError()) {
+                if (mPager.getHasNextError()) {
                     return VIEW_TYPE_ERROR;
-                } else if (mPager.hasNext()) {
+                } else if (mPager.getHasNext()) {
                     return VIEW_TYPE_LOADING;
                 } else {
                     return VIEW_TYPE_BOTTOM;
@@ -106,7 +106,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (mPager.hasNext() && !mPager.isNextLoading() && !mPager.hasNextError() && position > mPager.getLoadedData().size() - 10) {
+        if (mPager.getHasNext() && !mPager.isNextLoading() && !mPager.getHasNextError() && position > mPager.getLoadedData().size() - 10) {
             mPager.loadNext(false);
         }
 

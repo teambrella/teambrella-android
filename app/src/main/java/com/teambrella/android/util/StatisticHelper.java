@@ -25,6 +25,7 @@ public class StatisticHelper {
     private static final String INVITE_FRIENDS = "invite_friends";
     private static final String WALLET_SYNC = "wallet_sync";
     private static final String PUSH_MESSAGE = "push_message";
+    private static final String SHARE_PAID_CLAIM = "share_paid_claim";
 
 
     private static final String TEAM_ID = "team_id";
@@ -127,6 +128,13 @@ public class StatisticHelper {
         Bundle params = new Bundle();
         params.putString(TEAM_ID, Integer.toString(teamId));
         analytics.logEvent(INVITE_FRIENDS, params);
+    }
+
+    public static void sharePaidClaim(Context context, int claimId) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(CLAIM_ID, Integer.toString(claimId));
+        analytics.logEvent(SHARE_PAID_CLAIM, params);
     }
 
 

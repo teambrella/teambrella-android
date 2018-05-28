@@ -41,8 +41,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 130
-        versionName "and-0.3.4.130"
+        versionCode 132
+        versionName "and-0.3.5.132"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -142,10 +142,10 @@ dependencies {
 
     /* Server communication */
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation 'org.chalup.microorm:microorm:0.8.0'
@@ -156,32 +156,32 @@ dependencies {
     //noinspection GradleDependency
     implementation 'org.ethereum:geth:1.6.7'
 
-    /* Utils */
-    implementation 'com.jakewharton:butterknife:8.5.1'
-    kapt 'com.jakewharton:butterknife-compiler:8.5.1'
-
     /*Image Loader*/
     implementation 'de.hdodenhof:circleimageview:2.1.0'
-    implementation("com.github.bumptech.glide:glide:4.6.1") {
+    implementation("com.github.bumptech.glide:glide:4.7.1") {
         exclude group: "com.android.support"
     }
-    kapt 'com.github.bumptech.glide:compiler:4.6.1'
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.7.1") {
+        transitive = false
+    }
+
+    kapt 'com.github.bumptech.glide:compiler:4.7.1'
 
     /* *Facebook SDK*/
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
 
-    implementation 'com.google.android.gms:play-services-gcm:15.0.0'
-    implementation 'com.google.android.gms:play-services-analytics:15.0.0'
-    implementation 'com.google.android.gms:play-services-auth:15.0.0'
-    implementation 'com.google.firebase:firebase-core:15.0.0'
-    implementation 'com.google.firebase:firebase-messaging:15.0.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
+    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 
 
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
 
-    implementation 'org.java-websocket:Java-WebSocket:1.3.4'
+    implementation 'org.java-websocket:Java-WebSocket:1.3.8'
 
     /* Test */
     testImplementation 'junit:junit:4.12'

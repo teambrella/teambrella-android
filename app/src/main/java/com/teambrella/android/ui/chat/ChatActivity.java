@@ -169,7 +169,6 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Intent intent = getIntent();
-
         getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
 
         mChatBroadCastManager = new TeambrellaBroadcastManager(this);
@@ -213,7 +212,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.container, ChatFragment.getInstance(DATA_FRAGMENT_TAG, ChatFragment.class), UI_FRAGMENT_TAG);
+            transaction.add(R.id.container, KChatFragment.getInstance(DATA_FRAGMENT_TAG, KChatFragment.class), UI_FRAGMENT_TAG);
         }
 
         if (!transaction.isEmpty()) {
@@ -603,7 +602,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
         switch (tag) {
             case DATA_FRAGMENT_TAG:
-                return ChatPagerFragment.getInstance(mUri, null, ChatPagerFragment.class);
+                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, null, ChatPagerFragment.class);
         }
         return null;
     }

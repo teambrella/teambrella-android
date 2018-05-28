@@ -51,7 +51,7 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                     if (addedSize > 0) {
                         switch (metadata.getString(TeambrellaModel.ATTR_METADATA_DIRECTION)) {
                             case TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION:
-                                notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.hasNext() ? 0 : -1) + addedSize);
+                                notifyItemRangeInserted(dataSize - addedSize + shift, (mPager.getHasNext() ? 0 : -1) + addedSize);
                                 break;
 
                             case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
@@ -75,17 +75,17 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
         int size = mPager.getLoadedData().size();
 
         if (position == 0) {
-            if (mPager.hasPreviousError()) {
+            if (mPager.getHasPreviousError()) {
                 return VIEW_TYPE_ERROR;
-            } else if (mPager.hasPrevious() || mPager.isPreviousLoading()) {
+            } else if (mPager.getHasPrevious() || mPager.isPreviousLoading()) {
                 return VIEW_TYPE_LOADING;
             }
 
-        } else if ((position == size) && !mPager.hasPrevious() && !mPager.isPreviousLoading() && !mPager.hasPreviousError()
-                || ((mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious()) && position == size + 1)) {
-            if (mPager.hasNextError()) {
+        } else if ((position == size) && !mPager.getHasPrevious() && !mPager.isPreviousLoading() && !mPager.getHasPreviousError()
+                || ((mPager.getHasPreviousError() || mPager.isPreviousLoading() || mPager.getHasPrevious()) && position == size + 1)) {
+            if (mPager.getHasNextError()) {
                 return VIEW_TYPE_ERROR;
-            } else if (mPager.hasNext() || mPager.isNextLoading()) {
+            } else if (mPager.getHasNext() || mPager.isNextLoading()) {
                 return VIEW_TYPE_LOADING;
             }
         }
@@ -130,11 +130,11 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (mPager.hasNext() && !mPager.isNextLoading() && !mPager.hasNextError() && position > mPager.getLoadedData().size() - 10) {
+        if (mPager.getHasNext() && !mPager.isNextLoading() && !mPager.getHasNextError() && position > mPager.getLoadedData().size() - 10) {
             mPager.loadNext(false);
         }
 
-        if (mPager.hasPrevious() && !mPager.isNextLoading() && !mPager.hasNextError() && position < 10) {
+        if (mPager.getHasPrevious() && !mPager.isNextLoading() && !mPager.getHasNextError() && position < 10) {
             mPager.loadPrevious(false);
         }
 
@@ -154,11 +154,11 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
     }
 
     protected boolean hasHeader() {
-        return mPager.hasPreviousError() || mPager.isPreviousLoading() || mPager.hasPrevious();
+        return mPager.getHasPreviousError() || mPager.isPreviousLoading() || mPager.getHasPrevious();
     }
 
     protected boolean hasFooter() {
-        return mPager.hasNextError() || mPager.isNextLoading() || mPager.hasNext();
+        return mPager.getHasNextError() || mPager.isNextLoading() || mPager.getHasNext();
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {

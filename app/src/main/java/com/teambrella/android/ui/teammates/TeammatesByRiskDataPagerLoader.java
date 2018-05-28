@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.teammates;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,15 +27,16 @@ class TeammatesByRiskDataPagerLoader extends TeambrellaDataPagerLoader {
     }
 
 
+    @NonNull
     @Override
-    protected JsonArray getPageableData(JsonObject src) {
+    protected JsonArray getPageableData(@NonNull JsonObject src) {
         return src.get(TeambrellaModel.ATTR_DATA).getAsJsonObject()
                 .get(TeambrellaModel.ATTR_DATA_TEAMMATES).getAsJsonArray();
     }
 
 
     @Override
-    protected void onAddNewData(JsonArray newData) {
+    protected void onAddNewData(@NonNull JsonArray newData) {
 
         mRiskRanges.clear();
 
@@ -62,7 +64,7 @@ class TeammatesByRiskDataPagerLoader extends TeambrellaDataPagerLoader {
             }
         }
         for (JsonArray section : mRiskRanges) {
-            mArray.addAll(section);
+            getArray().addAll(section);
         }
     }
 }

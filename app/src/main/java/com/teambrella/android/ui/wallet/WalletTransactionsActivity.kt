@@ -25,6 +25,7 @@ fun getLaunchIntent(context: Context, teamId: Int, currency: String, cryptoRate:
 }
 
 
+@Suppress("CAST_NEVER_SUCCEEDS")
 /**
  * Wallet Transactions Activity
  */
@@ -84,7 +85,7 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
 
     override fun getDataPagerFragment(tag: String?): TeambrellaDataPagerFragment? {
         return when (tag) {
-            Tags.DATA_TAG -> TeambrellaDataPagerFragment.getInstance(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0))
+            Tags.DATA_TAG -> TeambrellaDataPagerFragment.createInstance(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0))
                     , null
                     , WalletTransactionsDataPagerFragment::class.java)
             else -> null

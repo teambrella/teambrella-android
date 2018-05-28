@@ -2,6 +2,7 @@ package com.teambrella.android.ui.base;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -10,35 +11,25 @@ import android.view.ViewGroup;
 
 import com.teambrella.android.R;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * Progress Fragment
  */
 public abstract class ProgressFragment extends TeambrellaFragment {
 
-    @BindView(R.id.content)
     ViewGroup mContent;
-    @BindView(R.id.data)
     ViewGroup mData;
-    @BindView(R.id.error)
     ViewGroup mError;
-    @BindView(R.id.refreshable)
     SwipeRefreshLayout mRefreshable;
-
-
-    private Unbinder mUnbinder;
-
-
     private Handler mHandler = new Handler();
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
-        mUnbinder = ButterKnife.bind(this, view);
+        mContent = view.findViewById(R.id.content);
+        mData = view.findViewById(R.id.data);
+        mError = view.findViewById(R.id.error);
+        mRefreshable = view.findViewById(R.id.refreshable);
         mData.addView(onCreateContentView(inflater, container, savedInstanceState));
         mHandler.postDelayed(mPostponedRefreshing, 1000);
         return view;
@@ -90,7 +81,6 @@ public abstract class ProgressFragment extends TeambrellaFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mHandler.removeCallbacks(mPostponedRefreshing);
-        mUnbinder.unbind();
     }
 
 

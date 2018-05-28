@@ -56,7 +56,8 @@ public class TeambrellaServer {
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
     public static final String AUTHORITY = BuildConfig.AUTHORITY;
-    public static final String SCHEME = "https";
+    @SuppressWarnings("ConstantConditions")
+    public static final String SCHEME = (BuildConfig.APPLICATION_ID.equals("com.surilla.android")) ? "http" : "https";
 
 
     /**
@@ -333,7 +334,7 @@ public class TeambrellaServer {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS, uri.getQueryParameter(TeambrellaUris.KEY_ADDRESS));
-                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AMOUNT, Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_AMOUNT)));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AMOUNT, Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_AMOUNT)));
             }
             break;
             case TeambrellaUris.MUTE: {

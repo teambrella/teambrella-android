@@ -2,6 +2,7 @@ package com.teambrella.android.ui.teammates;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.teambrella.android.data.base.IDataPager;
@@ -9,6 +10,7 @@ import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.TeambrellaDataHostActivity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Teammates by Risk Data Pager Fragment
@@ -28,12 +30,13 @@ public class TeammatesByRiskDataPagerFragment extends TeambrellaDataPagerFragmen
         return fragment;
     }
 
+    @NonNull
     @Override
-    protected IDataPager<JsonArray> createLoader(Bundle args) {
-        final Uri uri = args != null ? args.getParcelable(EXTRA_URI) : null;
-        final ArrayList<RiskRange> ranges = args != null ? args.getParcelableArrayList(EXTRA_RANGES) : null;
+    protected IDataPager<JsonArray> createLoader(@NonNull Bundle args) {
+        final Uri uri = args.getParcelable(EXTRA_URI);
+        final ArrayList<RiskRange> ranges = args.getParcelableArrayList(EXTRA_RANGES);
         TeammatesByRiskDataPagerLoader loader = new TeammatesByRiskDataPagerLoader(uri, ranges);
-        ((TeambrellaDataHostActivity) getContext()).getComponent().inject(loader);
+        ((TeambrellaDataHostActivity) Objects.requireNonNull(getContext())).getComponent().inject(loader);
         return loader;
     }
 

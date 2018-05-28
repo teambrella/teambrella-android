@@ -13,4 +13,9 @@ public class TimeUtils {
     public static Date getDateFromTicks(long ticks) {
         return new Date((ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND);
     }
+
+    public static long getTicksFromDate(Date date) {
+        return date.getTime() * TICKS_PER_MILLISECOND + TICKS_AT_EPOCH;
+    }
+
 }

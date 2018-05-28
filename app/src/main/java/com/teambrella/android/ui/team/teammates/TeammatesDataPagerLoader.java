@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.team.teammates;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,21 +29,22 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
     private JsonArray mTeammates;
 
     TeammatesDataPagerLoader(Uri uri) {
-        super(uri, null);
+        super(uri, null, 50);
         mNewMembers = new JsonArray();
         mTeammates = new JsonArray();
     }
 
+    @NonNull
     @Override
-    protected JsonArray getPageableData(JsonObject src) {
+    protected JsonArray getPageableData(@NonNull JsonObject src) {
         return new JsonWrapper(src).getObject(TeambrellaModel.ATTR_DATA).getJsonArray(TeambrellaModel.ATTR_DATA_TEAMMATES);
     }
 
 
     @Override
-    protected void onAddNewData(JsonArray newData) {
+    protected void onAddNewData(@NonNull JsonArray newData) {
 
-        if (mArray.size() == 0) {
+        if (getArray().size() == 0) {
             if (mNewMembers.size() == 0) {
                 mNewMembers.add(NEW_MEMBERS_SECTION);
             }
@@ -63,12 +65,12 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
         }
 
         if (mNewMembers.size() > 1) {
-            mArray.addAll(mNewMembers);
+            getArray().addAll(mNewMembers);
             mNewMembers = new JsonArray();
         }
 
         if (mTeammates.size() > 1) {
-            mArray.addAll(mTeammates);
+            getArray().addAll(mTeammates);
             mTeammates = new JsonArray();
         }
     }

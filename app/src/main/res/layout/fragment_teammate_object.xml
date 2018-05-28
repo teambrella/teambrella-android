@@ -121,9 +121,32 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:text="@string/risk" />
 
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/risk"
-                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/risk"
+                    style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/avg_difference"
+                    android:background="@drawable/avg_risk_difference_background"
+                    android:textSize="9sp"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="4dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    tools:ignore="SmallSp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
