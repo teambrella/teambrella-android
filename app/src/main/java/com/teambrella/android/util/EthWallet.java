@@ -24,6 +24,7 @@ import com.teambrella.android.content.model.Unconfirmed;
 import com.teambrella.android.util.log.Log;
 
 import org.ethereum.geth.Transaction;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-class EthWallet {
+public class EthWallet {
 
     private static final String LOG_TAG = EthWallet.class.getSimpleName();
     private static final String METHOD_ID_M_TEAMID = "8d475461";
@@ -59,12 +60,12 @@ class EthWallet {
     private long mTestClaimGasPrice = -1;
     private long mTestContractGasPrice = -1;
 
-    EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
+    public EthWallet(byte[] privateKey, String keyStorePath, String keyStoreSecret, boolean isTestNet) throws CryptoException {
         mIsTestNet = isTestNet;
         mEtherAcc = new EtherAccount(privateKey, keyStorePath, keyStoreSecret);
     }
 
-    String createOneWallet(Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
+    public String createOneWallet(Multisig m, long gasLimit, long gasPrice) throws CryptoException, RemoteException {
         return createOneWallet(getMyNonce(), m, gasLimit, gasPrice);
     }
 
@@ -104,7 +105,7 @@ class EthWallet {
      * @param m        the given multisig object with original TX hash to check.
      * @return The original multisig object with updated address (when verified successfully), updated error status (if any), or new unconfirmed tx if original TX is outdated.
      */
-    void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
+    public void validateCreationTx(Multisig m, long gasLimit) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
 
@@ -171,7 +172,7 @@ class EthWallet {
         }
     }
 
-    boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
+    public boolean deposit(Multisig multisig) throws CryptoException, RemoteException {
 
         EtherNode blockchain = new EtherNode(mIsTestNet);
         BigDecimal gasWalletAmount = getBalance();
@@ -192,7 +193,7 @@ class EthWallet {
     }
 
 
-    byte[] cosign(Tx tx, TxInput payOrMoveFrom) throws CryptoException {
+    public byte[] cosign(Tx tx, TxInput payOrMoveFrom) throws CryptoException {
         switch (tx.kind) {
             case TeambrellaModel.TX_KIND_MOVE_TO_NEXT_WALLET:
                 return cosignMove(tx, payOrMoveFrom);
@@ -451,7 +452,7 @@ class EthWallet {
         return mClaimGasPrice < 0 ? refreshClaimGasPrice() : mClaimGasPrice;
     }
 
-    long getGasPriceForContractCreation() {
+    public long getGasPriceForContractCreation() {
         if (mIsTestNet) {
             return mTestContractGasPrice < 0 ? refreshContractCreateGasPrice() : mTestContractGasPrice;
         }
@@ -464,7 +465,7 @@ class EthWallet {
         return mNonce = blockchain.checkNonce(mEtherAcc.getDepositAddress());
     }
 
-    long getMyNonce() {
+    public long getMyNonce() {
         return mNonce < 0 ? refreshMyNonce() : mNonce;
     }
 
@@ -473,7 +474,8 @@ class EthWallet {
         return mBalance = blockchain.checkBalance(mEtherAcc.getDepositAddress());
     }
 
-    BigDecimal getBalance() {
+    @NotNull
+    public BigDecimal getBalance() {
         return (mBalance.compareTo(BigDecimal.ZERO) < 0) ? refreshBalance() : mBalance;
     }
 

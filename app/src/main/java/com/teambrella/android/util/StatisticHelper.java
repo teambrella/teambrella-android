@@ -80,7 +80,7 @@ public class StatisticHelper {
         analytics.logEvent(USER_REGISTERED, null);
     }
 
-    static void onWalletSync(Context context, String tag) {
+    public static void onWalletSync(Context context, String tag) {
         Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory(CATEGORY_WALLET)

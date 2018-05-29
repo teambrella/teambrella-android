@@ -129,7 +129,7 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        val card = notification?.takeIf { it.isOnNext }?.value?.data?.cards!![position]?.asJsonObject
+        val card = notification?.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject
         card?.let { _card ->
 
             when (_card.itemType) {
