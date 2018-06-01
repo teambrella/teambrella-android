@@ -51,6 +51,7 @@ import com.teambrella.android.ui.teammate.ITeammateActivity;
 import com.teambrella.android.ui.teammate.TeammateDataFragment;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
+import com.teambrella.android.ui.widget.BottomBarItemView;
 import com.teambrella.android.util.BackgroundUtils;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
@@ -160,7 +161,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
         if (mTeam != null) {
             setContentView(R.layout.activity_main);
-            mAvatar = findViewById(R.id.avatar);
+            mAvatar = ((BottomBarItemView) findViewById(R.id.me)).icon;
             findViewById(R.id.home).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.team).setOnClickListener(this::onNavigationItemSelected);
             findViewById(R.id.proxies).setOnClickListener(this::onNavigationItemSelected);

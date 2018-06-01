@@ -5,4 +5,11 @@
         <attr name="percentageDrawable" format="integer" />
     </declare-styleable>
 
+
+    <declare-styleable name="BottomBarItemView">
+        <attr name="itemIcon" format="reference" />
+        <attr name="itemTitle" format="reference" />
+        <attr name="attention" format="boolean" />
+    </declare-styleable>
+
 </resources>

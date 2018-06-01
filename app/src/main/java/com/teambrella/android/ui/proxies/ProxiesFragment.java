@@ -1,6 +1,8 @@
 package com.teambrella.android.ui.proxies;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.MetricAffectingSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +37,7 @@ public class ProxiesFragment extends AMainLandingFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_proxies, container, false);
         mViewPager = view.findViewById(R.id.pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
@@ -59,11 +64,11 @@ public class ProxiesFragment extends AMainLandingFragment {
             public CharSequence getPageTitle(int position) {
                 switch (position) {
                     case 0:
-                        return getTitle(getString(R.string.my_proxies));
+                        return getTitle(getString(R.string.my_proxies), false);
                     case 1:
-                        return getTitle(getString(R.string.proxy_for));
+                        return getTitle(getString(R.string.proxy_for), false);
                     case 2:
-                        return getTitle(getString(R.string.rating));
+                        return getTitle(getString(R.string.rating), false);
                     default:
                         throw new RuntimeException();
                 }
@@ -110,11 +115,47 @@ public class ProxiesFragment extends AMainLandingFragment {
         setTitle(mDataHost.getTeamName());
     }
 
-    private CharSequence getTitle(String title) {
-        SpannableString s = new SpannableString(title);
+    private CharSequence getTitle(String title, boolean attention) {
+        SpannableString s = new SpannableString(title + (attention ? " •" : ""));
         s.setSpan(new AkkuratBoldTypefaceSpan(getContext()), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+        if (attention) {
+            s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.tealish)), title.length(), s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            s.setSpan(new CurrencyRelativeSizeSpan("1234567890"), title.length(), s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
         return s;
+    }
+
+
+    private static class CurrencyRelativeSizeSpan extends MetricAffectingSpan {
+
+
+        private final String mText;
+
+        CurrencyRelativeSizeSpan(String text) {
+            mText = text;
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            updateAnyState(ds);
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint ds) {
+            updateAnyState(ds);
+        }
+
+        private void updateAnyState(TextPaint ds) {
+            Rect bounds = new Rect();
+            ds.getTextBounds(mText, 0, mText.length(), bounds);
+            int shift = bounds.top - bounds.bottom;
+            ds.setTextSize(ds.getTextSize() * 1.5f);
+            ds.getTextBounds(mText, 0, mText.length(), bounds);
+            shift += (bounds.bottom - bounds.top) / 2;
+            ds.baselineShift += (shift + 2);
+        }
     }
 }
