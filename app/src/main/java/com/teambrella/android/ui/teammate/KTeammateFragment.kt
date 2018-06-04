@@ -324,11 +324,15 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
 
     private val mCoverageUpdate = object : Runnable {
         override fun run() {
-            AmountCurrencyUtil.setAmount(wouldCoverMeView, wouldCoverMeValue ?: 0f, currency)
-            AmountCurrencyUtil.setAmount(coverMeView, wouldCoverMeValue ?: 0f, currency)
-            AmountCurrencyUtil.setAmount(wouldCoverThemView, wouldCoverThemValue ?: 0f, currency)
-            AmountCurrencyUtil.setAmount(coverThemView, wouldCoverThemValue ?: 0f, currency)
-            wouldCoverPanelView?.postDelayed(this, 100)
+            if (wouldCoverPanelView != null) {
+                AmountCurrencyUtil.setAmount(wouldCoverMeView, wouldCoverMeValue ?: 0f, currency)
+                AmountCurrencyUtil.setAmount(coverMeView, wouldCoverMeValue ?: 0f, currency)
+                AmountCurrencyUtil.setAmount(wouldCoverThemView, wouldCoverThemValue
+                        ?: 0f, currency)
+                AmountCurrencyUtil.setAmount(coverThemView, wouldCoverThemValue ?: 0f, currency)
+                wouldCoverPanelView?.postDelayed(this, 100)
+            }
+
         }
     }
 }

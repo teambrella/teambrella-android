@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Pair;
 
 import com.bumptech.glide.load.model.LazyHeaders;
@@ -57,7 +56,7 @@ public class TeambrellaServer {
     private static final String TIMESTAMP_KEY = "timestamp";
     public static final String AUTHORITY = BuildConfig.AUTHORITY;
     @SuppressWarnings("ConstantConditions")
-    public static final String SCHEME = (BuildConfig.APPLICATION_ID.equals("com.surilla.android")) ? "http" : "https";
+    public static final String SCHEME = "https";
 
 
     /**
@@ -82,9 +81,6 @@ public class TeambrellaServer {
     private final String mDeviceToken;
 
     private final int mMask;
-
-    private final boolean mNotificationsEnabled;
-
 
     /**
      * Constructor.
@@ -120,9 +116,6 @@ public class TeambrellaServer {
         mDeviceCode = deviceCode != null ? deviceCode : "";
         mDeviceToken = deviceToken != null ? deviceToken : "";
         mMask = mask;
-
-        mNotificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
-
     }
 
 

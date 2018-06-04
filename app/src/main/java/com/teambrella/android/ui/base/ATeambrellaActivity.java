@@ -4,11 +4,13 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 
 import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.util.log.Log;
+import com.teambrella.android.wallet.TeambrellaWalletRequestFragment;
 
 import java.util.LinkedList;
 
@@ -23,6 +25,8 @@ public abstract class ATeambrellaActivity extends TeambrellaDataHostActivity {
     public static final String EXTRA_BACK_PRESSED_INTENT = "extra_back_pressed_intent";
 
     private static final String LOG_TAG = ATeambrellaActivity.class.getSimpleName();
+
+    private static final String WALLET_DATA_FRAGMENT_TAG = "wallet_data_fragment";
 
     @Named(Dependencies.TEAMBRELLA_USER)
     TeambrellaUser mUser;
@@ -50,6 +54,13 @@ public abstract class ATeambrellaActivity extends TeambrellaDataHostActivity {
         for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
             lifecycle.onCreate(this, savedInstanceState);
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.findFragmentByTag(WALLET_DATA_FRAGMENT_TAG) == null) {
+            fragmentManager.beginTransaction().add(new TeambrellaWalletRequestFragment()
+                    , WALLET_DATA_FRAGMENT_TAG).commit();
+        }
     }
 
     @Override
@@ -58,6 +69,14 @@ public abstract class ATeambrellaActivity extends TeambrellaDataHostActivity {
         for (TeambrellaActivityLifecycle lifecycle : mLifecycleCallbacks) {
             lifecycle.onStart();
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        TeambrellaWalletRequestFragment fragment = (TeambrellaWalletRequestFragment)
+                fragmentManager.findFragmentByTag(WALLET_DATA_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.sync();
+        }
+
     }
 
     @Override
