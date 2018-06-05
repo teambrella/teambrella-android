@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="minutes">
+        <item quantity="one">%d мин.</item>
+        <item quantity="few">%d мин.</item>
+        <item quantity="many">%d мин.</item>
+    </plurals>
+
+    <plurals name="hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+    </plurals>
+
+    <plurals name="days">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дня</item>
+        <item quantity="many">%d дней</item>
+    </plurals>
+
+    <!--<plurals name="new_teammate_notification_description">-->
+    <!--<item quantity="zero">%1$s wants to join your team.</item>-->
+    <!--<item quantity="one">%1$s and one more want to join your team. Say hello to them.</item>-->
+    <!--<item quantity="other">%1$s and %2$d others want to join your team. Say hello to them.</item>-->
+    <!--</plurals>-->
+
+    <plurals name="new_comments_since_yesterday">
+        <item quantity="one">%d новый комментарий со вчерашнего дня</item>
+        <item quantity="few">%d новых комментария со вчерашнего дня</item>
+        <item quantity="many">%d новых комментариев со вчерашнего дня</item>
+    </plurals>
+
+</resources>

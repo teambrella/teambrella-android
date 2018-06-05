@@ -22,10 +22,10 @@
     <string name="team_claims">Claims</string>
 
 
-    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_zero">%s0</string>
-    <string name="risk_format_string">%.1f</string>
+    <string name="teammate_net_format_string_plus" translatable="false"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_minus" translatable="false"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_zero" translatable="false">%s0</string>
+    <string name="risk_format_string" translatable="false">%.1f</string>
     <string name="float_format_string_1" translatable="false">%.1f</string>
     <string name="float_format_string_2" translatable="false">%.2f</string>
     <string name="risk_vote_format_string" translatable="false">%.2f</string>
