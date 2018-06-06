@@ -228,7 +228,6 @@
     <string name="notification_title_your_application">Ваше вступление</string>
     <string name="notification_title_other_claim">"Заявка участника %s"</string>
     <string name="notification_title_other_application">"%s - вступление"</string>
-    <string name="notification_chat_text_format_string" translatable="false">%1$s: %2$s</string>
     <string name="notification_chat_picture_format_string">%1$s отправил изображение</string>
     <string name="image_full_screen_indicator_format_string">%1$d из %2$d</string>
 
@@ -291,7 +290,6 @@
     <string name="proxy_vote_title">Голос Прокси</string>
     <string name="member_since_format_string">Участник с %s</string>
     <string name="contacts">Контакты</string>
-    <string name="facebook" translatable="false">Facebook</string>
     <string name="ended_ago">Зак. %s назад</string>
 
     <string name="available_to_withdraw">Доступно для снятия</string>
@@ -315,7 +313,7 @@
     <string name="huawei_protected_app_done">Уже сделано</string>
 
     <string name="share_with_friends">Поделиться с друзьями</string>
-    <string name="paid_claim_message">Твоя команда оплатила заявку. Неплохо, да? Поделись с друзьями!</string>
+    <string name="paid_claim_message">Твоя команда оплатила заявку.\n Неплохо, да? Поделись с друзьями!</string>
     <string name="paid_claim_shareable_collision_deductible">Мы помогли участнику оплатить ремонт машины. Неплохо, да? %s</string>
     <string name="paid_claim_shareable_pet">Мы помогли участнику оплатить лечение питомца.  Неплохо, да? %s</string>
     <string name="paid_claim_shareable_bike">Мы возместили участнику стоимость украденного велосипеда. Неплохо, да? %s</string>

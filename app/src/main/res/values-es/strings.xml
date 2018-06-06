@@ -12,13 +12,6 @@
     <string name="team_members">Compañeros</string>
     <string name="team_claims">Reclamaciones</string>
 
-
-    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_zero">%s0</string>
-    <string name="risk_format_string">%.1f</string>
-
-
     <string name="teammates">Compañeros</string>
     <string name="new_teammates">Nuevos compañeros</string>
     <string name="net">Net</string>
@@ -155,7 +148,6 @@
     <string name="slogan">No es un seguro. Es mucho mejor.</string>
 
     <!-- New -->
-    <string name="fund_wallet_to_inc">Financie tu monedero para aumentar</string>
     <string name="notification_claim_header">Nueva reclamación en %1$s</string>
     <string name="notification_claim_text">%1$s para %2$s</string>
     <string name="notification_messages_since">%d nuevos mensajes</string>
@@ -179,8 +171,6 @@
     <string name="reserved">Reservado</string>
     <string name="available">Disponible</string>
     <string name="fund_wallet">Financiar monedero</string>
-    <string name="for_max_coverage">Para cobertura máxima(100%)</string>
-    <string name="for_uninterrupted_coverage">Para cobertura ininterrumpida</string>
     <string name="recommended_funding">Financiamiento Recomendado </string>
     <string name="recommended">Recomendado</string>
     <string name="copy_address">Copiar direción </string>
