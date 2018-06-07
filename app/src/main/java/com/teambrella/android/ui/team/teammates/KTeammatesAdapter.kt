@@ -20,6 +20,7 @@ import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TeambrellaDateUtils
+import java.util.*
 
 const val VIEW_TYPE_TEAMMATE = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR
 const val VIEW_TYPE_NEW_MEMBER = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 1
@@ -124,7 +125,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
                     else -> this.net?.text = itemView.context.getString(R.string.teammate_net_format_string_zero, currencySign)
                 }
             }
-            this.risk?.text = itemView.context.getString(R.string.risk_format_string, item.risk)
+            this.risk?.text = String.format(Locale.US, "%.1f", item.risk)
         }
 
         private fun getPositiveNetString(net: Long): String {

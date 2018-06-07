@@ -17,6 +17,7 @@ import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager
 import com.teambrella.android.ui.widget.PercentageWidget
 import io.reactivex.Notification
+import java.util.*
 
 fun getFragmentInstance(tags: Array<String>): KTeammateVotingStatsFragment {
     val fragment = KTeammateVotingStatsFragment()
@@ -89,8 +90,7 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
 
                             val weightValue = stats.weight
                             weightValue?.let {
-                                this.weight?.text = getString(if (it >= 0.1) R.string.float_format_string_1
-                                else R.string.float_format_string_2, it)
+                                this.weight?.text = String.format(Locale.US, if (it >= 0.1) "%.1f" else "%.2f", it)
                             }
 
                             val proxyRankValue = stats.proxyRank
@@ -100,8 +100,7 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
                                     it >= 0.005 && it < 0.01 -> 0.1f
                                     else -> it
                                 }
-                                this.proxyRank?.text = getString(if (rank >= 0.1 || rank == 0f) R.string.float_format_string_1
-                                else R.string.float_format_string_2, rank)
+                                this.proxyRank?.text = String.format(Locale.US, if (rank >= 0.1 || rank == 0f) "%.1f" else "%.2f", rank)
                             }
                         }
                         val basic = value.data?.basic

@@ -68,11 +68,12 @@
         app:layout_constraintTop_toBottomOf="@+id/object_picture">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:dividerPadding="1dp"
             android:gravity="center"
+            android:paddingStart="@dimen/stats_cell_padding"
+            android:paddingEnd="@dimen/stats_cell_padding"
             android:orientation="vertical">
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -111,10 +112,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
+            android:paddingStart="@dimen/stats_cell_padding"
+            android:paddingEnd="@dimen/stats_cell_padding"
             android:orientation="vertical">
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView

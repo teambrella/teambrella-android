@@ -17,6 +17,8 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
+import java.util.Locale;
+
 /**
  * My Proxies Adapter
  */
@@ -112,7 +114,7 @@ public class MyProxiesAdapter extends TeambrellaDataPagerAdapter {
         @SuppressLint("SetTextI18n")
         public void onBind(JsonWrapper item) {
             super.onBind(item);
-            mRank.setText(itemView.getContext().getString(R.string.risk_format_string, item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
+            mRank.setText(String.format(Locale.US, "%.1f", item.getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)));
             String location = item.getString(TeambrellaModel.ATTR_DATA_LOCATION, "");
             mLocation.setText(location);
 
