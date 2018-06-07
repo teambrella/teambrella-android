@@ -141,7 +141,7 @@
     <string name="claim_header_being_paid">В Оплате</string>
     <string name="claim_header_fully_paid">Полностью выплачено</string>
     <string name="claim_vote_format_string">Голос (%d%%)</string>
-    <string name="claim_reimbursed">Reimbursed</string>
+    <string name="claim_reimbursed">Возмещено</string>
     <string name="bike_insurance">Кража</string>
     <string name="something_went_wrong_error">Упс! Что-то пощло не так.</string>
     <string name="no_internet_connection">Нет интернет соединения.</string>
@@ -254,6 +254,8 @@
     <string name="invalid_withdraw_amount_error">Сумма снятия не должна быть больше %.2f mETH</string>
 
     <string name="vote">Голосовать</string>
+    <string name="vote_chat">Голос</string>
+    <string name="card_voting_label">Aктивно</string>
     <string name="notification_settings">Настройки уведомлений</string>
     <string name="notification_option_unmuted_title">Включены</string>
     <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>

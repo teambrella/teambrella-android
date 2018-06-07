@@ -52,7 +52,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
     }
 
     private val timeFormat: SimpleDateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a", Locale.ENGLISH)
-    private val dateFormat = SimpleDateFormat("d LLLL", Locale.ENGLISH)
+    private val dateFormat = SimpleDateFormat("d MMMM", Locale.getDefault())
 
 
     init {

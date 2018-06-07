@@ -63,6 +63,7 @@
     <string name="claim_amount">Claim Amount</string>
     <string name="voting">Voting</string>
     <string name="voting_risk">Voting: Risk</string>
+    <string name="card_voting_label">@string/voting</string>
     <string name="estimated_expenses">Estimated expenses</string>
     <string name="deductible">Deductible</string>
     <string name="coverage">Coverage</string>
@@ -274,6 +275,7 @@
     <string name="invalid_withdraw_amount_error">Withdrawal amount must not be greater than %.2f mETH</string>
 
     <string name="vote">Vote</string>
+    <string name="vote_chat">@string/vote</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="notification_option_unmuted_title">Subscribed</string>
     <string name="notification_option_unmuted_description">You will get a notification of each message.</string>
