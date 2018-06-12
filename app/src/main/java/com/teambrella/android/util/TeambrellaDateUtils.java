@@ -16,8 +16,8 @@ import java.util.TimeZone;
  */
 public class TeambrellaDateUtils {
 
-    public static final String TEAMBRELLA_UI_DATE = "d LLLL yyyy";
-    public static final String TEAMBRELLA_UI_DATE_CHAT_SHORT = "d LLLL";
+    public static final String TEAMBRELLA_UI_DATE = "d MMMM yyyy";
+    public static final String TEAMBRELLA_UI_DATE_CHAT_SHORT = "d MMMM";
     public static final String TEAMBRELLA_UI_DATE_SHORT = "d MMM yyyy";
     private static final String TEAMBRELLA_SERVER_DATE = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat SDF = new SimpleDateFormat(TEAMBRELLA_SERVER_DATE, Locale.US);

@@ -142,7 +142,7 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="4dp"
                         android:paddingTop="2dp"
-                        android:text="@string/voting"
+                        android:text="@string/card_voting_label"
                         android:textAllCaps="true"
                         android:textColor="@android:color/white"
                         android:textSize="10sp" />

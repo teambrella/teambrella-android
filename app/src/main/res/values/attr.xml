@@ -12,4 +12,9 @@
         <attr name="attention" format="boolean" />
     </declare-styleable>
 
+
+    <declare-styleable name="TeammateVoteRisk">
+        <attr name="voteTitle" format="reference" />
+    </declare-styleable>
+
 </resources>

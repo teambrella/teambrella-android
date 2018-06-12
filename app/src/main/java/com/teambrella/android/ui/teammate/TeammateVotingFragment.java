@@ -23,6 +23,7 @@ import com.teambrella.android.ui.votes.AllVotesActivity;
 import com.teambrella.android.ui.widget.CountDownClock;
 import com.teambrella.android.ui.widget.FadeInFadeOutViewController;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
+import com.teambrella.android.ui.widget.TeammateVoteRisk;
 import com.teambrella.android.ui.widget.VoterBar;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
@@ -70,8 +71,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_teammate_voting, container, false);
 
-        mTeamVoteRisk = view.findViewById(R.id.team_vote_risk);
-        mMyVoteRisk = view.findViewById(R.id.your_vote_risk);
         mVoterBar = view.findViewById(R.id.voter_bar);
         mLeftTeammateIcon = view.findViewById(R.id.left_teammate_icon);
         mRightTeammateIcon = view.findViewById(R.id.right_teammate_icon);
@@ -79,8 +78,15 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mLeftTeammateRisk = view.findViewById(R.id.left_teammate_risk);
         mRightTeammateRisk = view.findViewById(R.id.right_teammate_risk);
         mNewTeammateRisk = view.findViewById(R.id.new_teammate_risk);
-        mAVGDifferenceTeamVote = view.findViewById(R.id.team_vote_avg_difference);
-        mAVGDifferenceMyVote = view.findViewById(R.id.your_vote_avg_difference);
+        TeammateVoteRisk teamVoteView = view.findViewById(R.id.team_vote_risk);
+        mAVGDifferenceTeamVote = teamVoteView.avgDifference;
+        mTeamVoteRisk = teamVoteView.risk;
+
+        TeammateVoteRisk yourVoteView = view.findViewById(R.id.your_vote_risk);
+        mAVGDifferenceMyVote = yourVoteView.avgDifference;
+        mMyVoteRisk = yourVoteView.risk;
+        mYourVoteTitle = yourVoteView.title;
+
         mRestVoteButton = view.findViewById(R.id.reset_vote_btn);
         mProxyName = view.findViewById(R.id.proxy_name);
         mProxyAvatar = view.findViewById(R.id.proxy_avatar);
@@ -89,7 +95,6 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mOthersView = view.findViewById(R.id.others);
         mWhen = view.findViewById(R.id.when);
         mClock = view.findViewById(R.id.clock);
-        mYourVoteTitle = view.findViewById(R.id.your_vote_title);
         final View swipeToVoteView = view.findViewById(R.id.swipe_to_vote_foreground);
         swipeToVoteView.setVisibility(TeambrellaUser.get(getContext()).isSwipeToVoteShown() ? View.GONE : View.VISIBLE);
         mSwipeToVoteViewController = new FadeInFadeOutViewController(swipeToVoteView, 250);

@@ -163,8 +163,9 @@ var JsonObject?.claimId: Int?
 val JsonObject?.To: JsonArray?
     get() = getJsonArray(TO)
 
-val JsonObject?.voting: JsonObject?
+var JsonObject?.voting: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_VOTING)
+    set(value) = setObject(TeambrellaModel.ATTR_DATA_ONE_VOTING, value)
 
 val JsonObject?.voted: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_VOTED_PART)

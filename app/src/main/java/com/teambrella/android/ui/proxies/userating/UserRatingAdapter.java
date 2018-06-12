@@ -15,6 +15,8 @@ import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
+import java.util.Locale;
+
 /**
  * User Rating Adapter
  */
@@ -116,8 +118,8 @@ public class UserRatingAdapter extends TeambrellaDataPagerAdapter {
                 rank = 0.01f;
             }
 
-            mRating.setText(itemView.getContext().getString(rank >= 0.1 || rank == 0 ? R.string.float_format_string_1
-                    : R.string.float_format_string_2, rank));
+            mRating.setText(String.format(Locale.US, rank >= 0.1 || rank == 0 ? "%.1f"
+                    : "%.2f", rank));
             mPosition.setText(Integer.toString(ratingPosition));
             mSubtitle.setText(item.getString(TeambrellaModel.ATTR_DATA_LOCATION, ""));
             if (mOptToRating != null) {

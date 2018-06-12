@@ -6,17 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
-import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.claim.ClaimActivity
+import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.withdraw.WithdrawActivity
-import kotlinx.android.synthetic.main.list_item_transaction.view.*
+import java.util.*
 
 
 /**
@@ -42,7 +41,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var holder : RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
+        var holder: RecyclerView.ViewHolder? = super.onCreateViewHolder(parent, viewType)
         if (holder == null) {
             holder = when (viewType) {
                 ViewType.VIEW_TYPE_HEADER -> Header(parent, R.string.to_address, R.string.milli_ethereum, R.drawable.list_item_header_background_top)
@@ -82,7 +81,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
             this.to?.text = item.userName
             val amount = item.amount
             amount?.let {
-                this.amount?.text = itemView.resources.getString(R.string.eth_amount_short_format_string, it * 1000)
+                this.amount?.text = String.format(Locale.US, "%.2f", it * 1000)
             }
 
             val state = item.serverTxState
@@ -104,9 +103,8 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
                 })
             }
 
-            GlideApp.with(itemView).load(imageLoader.getImageUrl(item.avatar)).apply(RequestOptions().circleCrop()
-                    .placeholder(R.drawable.picture_background_circle))
-                    .into(itemView.icon)
+            icon?.setAvatar(imageLoader.getImageUrl(item.avatar))
+            
         }
 
         private fun setStatus(state: Int) {

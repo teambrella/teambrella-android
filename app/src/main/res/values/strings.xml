@@ -22,10 +22,10 @@
     <string name="team_claims">Claims</string>
 
 
-    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_zero">%s0</string>
-    <string name="risk_format_string">%.1f</string>
+    <string name="teammate_net_format_string_plus" translatable="false"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_minus" translatable="false"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
+    <string name="teammate_net_format_string_zero" translatable="false">%s0</string>
+    <string name="risk_format_string" translatable="false">%.1f</string>
     <string name="float_format_string_1" translatable="false">%.1f</string>
     <string name="float_format_string_2" translatable="false">%.2f</string>
     <string name="risk_vote_format_string" translatable="false">%.2f</string>
@@ -63,6 +63,7 @@
     <string name="claim_amount">Claim Amount</string>
     <string name="voting">Voting</string>
     <string name="voting_risk">Voting: Risk</string>
+    <string name="card_voting_label">@string/voting</string>
     <string name="estimated_expenses">Estimated expenses</string>
     <string name="deductible">Deductible</string>
     <string name="coverage">Coverage</string>
@@ -165,10 +166,8 @@
     <string name="something_went_wrong_error">Oops! Something went wrong.</string>
     <string name="no_internet_connection">No Internet Connection.</string>
     <string name="chat_not_voted_yet">Not voted yet</string>
-    <string name="claim_chat_vote">Voted:%d%%</string>
-    <string name="application_chat_vote">Voted:%.2f</string>
+    <string name="chat_voted">Voted</string>
     <string name="slogan">Not insurance. A lot better.</string>
-    <string name="fund_wallet_to_inc">Fund the wallet to increase</string>
     <string name="coverage_explanation_title">How it works</string>
     <string name="coverage_explanation_description">Use the slider to understand how expenses impact your maximum reimbursement.</string>
     <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
@@ -192,8 +191,6 @@
     <string name="reserved">Reserved</string>
     <string name="available">Available</string>
     <string name="fund_wallet">Fund wallet</string>
-    <string name="for_max_coverage">For max coverage (100%)</string>
-    <string name="for_uninterrupted_coverage">For uninterrupted coverage</string>
     <string name="recommended_funding">Recommended Funding</string>
     <string name="recommended">Recommended</string>
     <string name="copy_address">Copy Address</string>
@@ -277,6 +274,7 @@
     <string name="invalid_withdraw_amount_error">Withdrawal amount must not be greater than %.2f mETH</string>
 
     <string name="vote">Vote</string>
+    <string name="vote_chat">@string/vote</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="notification_option_unmuted_title">Subscribed</string>
     <string name="notification_option_unmuted_description">You will get a notification of each message.</string>

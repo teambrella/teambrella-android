@@ -15,6 +15,7 @@ import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
+import com.teambrella.android.ui.widget.TeammateVoteRisk
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
 import java.util.*
@@ -25,10 +26,8 @@ import java.util.*
 
 class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
 
-    protected val teamVoteRisk: TextView? by ViewHolder(R.id.team_vote_risk)
-    protected val myVoteRisk: TextView? by ViewHolder(R.id.your_vote_risk)
-    protected val avgDifferenceTeamVote: TextView? by ViewHolder(R.id.team_vote_avg_difference)
-    protected val avgDifferenceMyVote: TextView? by ViewHolder(R.id.your_vote_avg_difference)
+    protected val teamVoteRisk: TeammateVoteRisk? by ViewHolder(R.id.team_vote_risk)
+    protected val myVoteRisk: TeammateVoteRisk? by ViewHolder(R.id.your_vote_risk)
     protected val proxyName: TextView? by ViewHolder(R.id.proxy_name)
     protected val proxyAvatar: ImageView? by ViewHolder(R.id.proxy_avatar)
     protected val allVotes: View? by ViewHolder(R.id.all_votes)
@@ -114,13 +113,13 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     private fun setMyVote(vote: Double?) {
         if (vote != null) {
             if (vote > 0) {
-                this.myVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
-                this.avgDifferenceMyVote?.visibility = View.VISIBLE
-                this.avgDifferenceMyVote?.text = getAVGDifference(vote, avgRiskValue
+                this.myVoteRisk?.risk?.text = String.format(Locale.US, "%.2f", vote)
+                this.myVoteRisk?.avgDifference?.visibility = View.VISIBLE
+                this.myVoteRisk?.avgDifference?.text = getAVGDifference(vote, avgRiskValue
                         ?: vote)
             } else {
-                this.myVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-                this.avgDifferenceMyVote?.visibility = View.INVISIBLE
+                this.myVoteRisk?.risk?.text = getString(R.string.no_teammate_vote_value)
+                this.myVoteRisk?.avgDifference?.visibility = View.INVISIBLE
             }
         } else {
             setMyVote(-1.0)
@@ -130,13 +129,13 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     private fun setTeamVote(vote: Double?) {
         if (vote != null) {
             if (vote > 0) {
-                this.teamVoteRisk?.text = String.format(Locale.US, "%.2f", vote)
-                this.avgDifferenceTeamVote?.visibility = View.VISIBLE
-                this.avgDifferenceTeamVote?.text = getAVGDifference(vote, avgRiskValue
+                this.teamVoteRisk?.risk?.text = String.format(Locale.US, "%.2f", vote)
+                this.teamVoteRisk?.avgDifference?.visibility = View.VISIBLE
+                this.teamVoteRisk?.avgDifference?.text = getAVGDifference(vote, avgRiskValue
                         ?: vote)
             } else {
-                this.teamVoteRisk?.text = getString(R.string.no_teammate_vote_value)
-                this.avgDifferenceTeamVote?.visibility = View.INVISIBLE
+                this.teamVoteRisk?.risk?.text = getString(R.string.no_teammate_vote_value)
+                this.teamVoteRisk?.avgDifference?.visibility = View.INVISIBLE
             }
         } else {
             setTeamVote(-1.0)

@@ -16,6 +16,8 @@ import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
+import java.util.Locale;
+
 /**
  * Proxy For Adapter
  */
@@ -118,7 +120,7 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
         }
 
         void setCommission(float commission) {
-            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), commission));
+            mCommission.setText(String.format(Locale.US, "%1$s%2$.2f", AmountCurrencyUtil.getCurrencySign(mCurrency), commission));
         }
 
     }
@@ -152,7 +154,7 @@ class ProxyForAdapter extends TeambrellaDataPagerAdapter {
             } catch (Exception e) {
                 mSubtitle.setVisibility(View.INVISIBLE);
             }
-            mCommission.setText(itemView.getContext().getString(R.string.commission_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency)
+            mCommission.setText(String.format(Locale.US, "%1$s%2$.2f", AmountCurrencyUtil.getCurrencySign(mCurrency)
                     , item.getFloat(TeambrellaModel.ATTR_DATA_COMMISSION)));
 
         }

@@ -17,6 +17,7 @@ import com.teambrella.android.ui.util.setAVGDifference
 import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
+import java.util.*
 
 class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
 
@@ -81,7 +82,7 @@ class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
 
         data.basic?.let { _basic ->
             AmountCurrencyUtil.setAmount(net, Math.round(_basic.totallyPaidAmount ?: 0f), currency)
-            risk?.text = getString(R.string.float_format_string_2, _basic.risk ?: 0f)
+            risk?.text = String.format(Locale.US, "%.2f", _basic.risk ?: 0f)
             avgDifference?.setAVGDifference(_basic.risk ?: 0.2f, _basic.averageRisk ?: 1f)
             teamId = _basic.teamId ?: teamId
         }

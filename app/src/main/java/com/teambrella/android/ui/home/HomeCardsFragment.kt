@@ -25,6 +25,7 @@ import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.ui.util.setUnreadCount
 import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
+import java.util.*
 
 class HomeCardsFragment : AKDataFragment<IMainDataHost>() {
 
@@ -137,7 +138,7 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
                     leftTile?.setText(R.string.coverage)
                     icon?.setAvatar(imageLoader.getImageUrl(_card.smallPhotoOrAvatar))
                     title?.text = _card.itemUserName
-                    teamVote?.text = getString(R.string.risk_format_string, _card.teamVote ?: 0f);
+                    teamVote?.text = String.format(Locale.US, "%.1f", _card.teamVote ?: 0f);
                     subtitle?.text = getString(R.string.object_format_string, _card.modelOrName, _card.year)
                     teammatePicture?.visibility = View.GONE
                     subtitle?.layoutParams = (subtitle?.layoutParams as ConstraintLayout.LayoutParams).apply {

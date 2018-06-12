@@ -262,7 +262,7 @@ public class EthWallet {
 
         Multisig myMultisig = tx.getFromMultisig();
         long myNonce = getMyNonce();
-        long gasLimit = 150_000L + 30_000L * tx.txOutputs.size();
+        long gasLimit = 150_000L + 55_000L * tx.txOutputs.size();
         long gasPrice = getGasPriceForClaim();
         String multisigAddress = myMultisig.address;
         String methodId = METHOD_ID_TRANSFER;
@@ -405,10 +405,10 @@ public class EthWallet {
         if (price < 0) {
             Log.reportNonFatal(LOG_TAG, new EtherWalletException("Failed to get the gas price from a server. A default gas price will be used."));
             return 1_000_000_001L;  // 1 Gwei or more is required since Dec, 2017 (1 Gwei = 10^9 wei)
-        } else if (price > 4_000_000_001L) {
+        } else if (price > 10_000_000_001L) {
             Log.reportNonFatal(LOG_TAG, new EtherWalletException("With the current version gas price for a clime is limited. This high price will be supported later (when off-chain payments are implemented) : " + price));
             // The server is kidding with us
-            return 4_000_000_001L;
+            return 10_000_000_001L;
         }
 
         if (mIsTestNet) {

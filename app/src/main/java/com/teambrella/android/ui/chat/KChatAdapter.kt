@@ -52,7 +52,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
     }
 
     private val timeFormat: SimpleDateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a", Locale.ENGLISH)
-    private val dateFormat = SimpleDateFormat("d LLLL", Locale.ENGLISH)
+    private val dateFormat = SimpleDateFormat("d MMMM", Locale.getDefault())
 
 
     init {
@@ -253,12 +253,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
                 MODE_CLAIM -> {
                     vote?.visibility = View.VISIBLE
-                    vote?.text = if (voteValue > 0) context.getString(R.string.claim_chat_vote, Math.round(voteValue * 100)) else
+                    vote?.text = if (voteValue > 0) String.format(Locale.US, "%s:%d%%", context.getString(R.string.chat_voted), Math.round(voteValue * 100)) else
                         context.getString(R.string.chat_not_voted_yet)
                 }
                 MODE_APPLICATION -> {
                     vote?.visibility = View.VISIBLE
-                    vote?.text = if (voteValue > 0) context.getString(R.string.application_chat_vote, voteValue) else
+                    vote?.text = if (voteValue > 0) String.format(Locale.US, "%s:%.2f", context.getString(R.string.chat_voted), voteValue) else
                         context.getString(R.string.chat_not_voted_yet)
                 }
                 MODE_CONVERSATION -> {
