@@ -143,8 +143,7 @@
     <string name="something_went_wrong_error">¡Oops, algo no ha ido bien…</string>
     <string name="no_internet_connection">No hay conexión de Internet</string>
     <string name="chat_not_voted_yet">No votado aún</string>
-    <string name="claim_chat_vote">Votado:%d%%</string>
-    <string name="application_chat_vote">Votado:%.2f</string>
+    <string name="chat_voted">Votado</string>
     <string name="slogan">No es un seguro. Es mucho mejor.</string>
 
     <!-- New -->

@@ -71,6 +71,9 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
 
     }
 
+    private var cachedVotingPart: JsonObject? = null
+
+
     override fun getPageableData(src: JsonObject) = src.data?.discussionPart?.chat ?: JsonArray()
 
     override fun addPageableData(src: JsonObject, item: JsonObject) {
@@ -79,6 +82,9 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
         val discussion = data.discussionPart ?: JsonObject()
         data.discussionPart = discussion
         val chat = discussion.chat ?: JsonArray()
+
+        data.voting = cachedVotingPart
+
         chat.add(item)
     }
 
@@ -93,10 +99,13 @@ class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaCh
             time = TeambrellaDateUtils.getDate(paymentDateString)
         } else null
 
+
         val claimId = basic?.claimId
         val team = data?.teamPart
         val teamId = team?.teamId
         val teamCoverageType = team?.coverageType
+
+        cachedVotingPart = data?.voting
 
 
         response.metadata = JsonObject().apply {

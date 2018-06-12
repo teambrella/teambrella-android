@@ -146,8 +146,7 @@
     <string name="something_went_wrong_error">Упс! Что-то пощло не так.</string>
     <string name="no_internet_connection">Нет интернет соединения.</string>
     <string name="chat_not_voted_yet">Еще нет голоса</string>
-    <string name="claim_chat_vote">Голос:%d%%</string>
-    <string name="application_chat_vote">Голос:%.2f</string>
+    <string name="chat_voted">Голос</string>
     <string name="slogan">Не страховка. А намного лучше.</string>
     <string name="coverage_explanation_title">Как это работает</string>
     <string name="coverage_explanation_description">Используй бегунок, чтобы увидеть, как расходы влияют на максимальное возмещение.</string>
