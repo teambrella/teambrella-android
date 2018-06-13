@@ -127,7 +127,7 @@
             android:layout_marginRight="@dimen/all_votes_margin_end"
             android:background="@drawable/teammate_team_vote_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/your_vote_title"
+            app:layout_constraintEnd_toStartOf="@id/your_vote_risk"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
