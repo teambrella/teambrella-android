@@ -85,9 +85,9 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
                     .subscribe({ qrCodeView?.setImageBitmap(it) }, {})
 
             fundWalletView?.isEnabled = true
-            fundWalletView?.setOnClickListener({ _ -> QRCodeActivity.startQRCode(context, it) })
+            fundWalletView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it) }
             qrCodeView?.visibility = View.VISIBLE
-            qrCodeView?.setOnClickListener({ _ -> QRCodeActivity.startQRCode(context, it) })
+            qrCodeView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it) }
 
         }
 
@@ -165,14 +165,14 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
 
                     })
 
-            cosignersView?.setOnClickListener({
+            cosignersView?.setOnClickListener {
                 CosignersActivity.start(context
                         , data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray?.toString()
                         , mDataHost.teamId)
-            })
+            }
 
-            transactionsView?.setOnClickListener({ startActivity(getLaunchIntent(context!!, mDataHost.teamId, mDataHost.currency, currencyRate)) })
-            withdrawView?.setOnClickListener({ WithdrawActivity.start(context, mDataHost.teamId, mDataHost.currency, currencyRate) })
+            transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, mDataHost.teamId, mDataHost.currency, currencyRate)) }
+            withdrawView?.setOnClickListener { WithdrawActivity.start(context, mDataHost.teamId, mDataHost.currency, currencyRate) }
         }
         setContentShown(true)
     }
@@ -197,7 +197,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
     override fun onWalletSaveError(code: Int, force: Boolean) {
         if (code == WalletBackupManager.IWalletBackupListener.RESOLUTION_REQUIRED) {
             backupWalletMessage?.visibility = View.VISIBLE
-            backupWalletMessage?.setOnClickListener({ mDataHost.backUpWallet(true) })
+            backupWalletMessage?.setOnClickListener { mDataHost.showWalletBackupDialog() }
             isWalletBackedUp = false
             showWalletBackupInfo()
         } else {
