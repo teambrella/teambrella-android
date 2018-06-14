@@ -26,16 +26,16 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/risk"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_default="wrap"
+        app:layout_constrainedWidth="true"
         app:layout_constraintTop_toTopOf="@id/risk" />
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/risk"
         style="@style/Teambrella.Teammate.Section.TextAppearence.VoterRisk"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintHeight_default="wrap"
+        app:layout_constrainedHeight="true"
         android:gravity="center"
         app:autoSizeMaxTextSize="36sp"
         app:autoSizeMinTextSize="23sp"
@@ -46,6 +46,6 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintEnd_toStartOf="@id/avg_difference"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_default="wrap" />
+        app:layout_constrainedWidth="true" />
 
 </merge>
