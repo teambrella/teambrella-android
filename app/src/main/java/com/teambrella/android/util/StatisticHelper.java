@@ -18,6 +18,7 @@ public class StatisticHelper {
     public static final String MESSAGE_TEXT = "text";
     public static final String MESSAGE_IMAGE = "image";
 
+
     private static final String TRY_DEMO = "try_demo";
     private static final String USER_REGISTERED = "user_registered";
     private static final String CHAT_MESSAGE = "chat_message";
@@ -26,6 +27,7 @@ public class StatisticHelper {
     private static final String WALLET_SYNC = "wallet_sync";
     private static final String PUSH_MESSAGE = "push_message";
     private static final String SHARE_PAID_CLAIM = "share_paid_claim";
+    private static final String WALLET_BACKUP_CHECK = "wallet_backup_check";
 
 
     private static final String TEAM_ID = "team_id";
@@ -36,6 +38,7 @@ public class StatisticHelper {
     private static final String TYPE = "type";
     private static final String CMD = "Cmd";
     private static final String SOCKET = "Socket";
+    private static final String STATUS = "status";
 
 
     private static final String CATEGORY_WALLET = "Wallet";
@@ -78,6 +81,13 @@ public class StatisticHelper {
     public static void onUserRegistered(Context context) {
         FirebaseAnalytics analytics = getAnalytics(context);
         analytics.logEvent(USER_REGISTERED, null);
+    }
+
+    public static void onWalletBackUpCheck(Context context, String status) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(STATUS, status);
+        analytics.logEvent(WALLET_BACKUP_CHECK, params);
     }
 
     public static void onWalletSync(Context context, String tag) {

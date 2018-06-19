@@ -92,7 +92,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 SYNC -> {
                     val context = this
                     Observable.create(ObservableOnSubscribe<Void> { emitter ->
-                        TeambrellaWallet(context).syncWallet(TeambrellaWallet.SYNC_USER_PRESENT)
+                        TeambrellaWallet(context).syncWallet(TeambrellaWallet.SYNC_PUSH)
                         emitter.onComplete()
                     }).subscribeOn(Schedulers.io()).subscribe()
                 }

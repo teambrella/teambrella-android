@@ -238,6 +238,18 @@ public class TeambrellaNotificationManager {
     }
 
 
+    public void showWalletNotBackedUpMessage() {
+        notifyUser(WALLET_ID.hashCode()
+                , mContext.getString(R.string.your_wallet_not_backed_up)
+                , mContext.getString(R.string.tap_to_backup_wallet)
+                , (GlideRequest<Bitmap>) null
+                , getBuilder(WALLET_ID).setContentIntent(PendingIntent.getActivity(mContext
+                        , 1
+                        , MainActivity.getLaunchIntent(mContext, MainActivity.ACTION_BACKUP_WALLET, -1)
+                        , PendingIntent.FLAG_UPDATE_CURRENT)));
+    }
+
+
     /**
      * Cancel chat notification
      *

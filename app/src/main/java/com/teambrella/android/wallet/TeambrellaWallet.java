@@ -49,6 +49,7 @@ public class TeambrellaWallet {
 
     public static final String SYNC_UI = "sync_ui";
     public static final String SYNC_JOB = "sync_job";
+    public static final String SYNC_PUSH = "sync_push";
     public static final String SYNC_USER_PRESENT = "syn_user_present";
     private static final String SYNC_NOT_INIT = "sync_not_init";
 

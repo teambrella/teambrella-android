@@ -82,6 +82,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
      * Action to show wallet
      */
     public static final String ACTION_SHOW_WALLET = "action_show_wallet";
+    public static final String ACTION_BACKUP_WALLET = "action_backup_wallet";
 
 
     public static final String ACTION_SHOW_I_AM_PROXY_FOR = "action_show_i_am_proxy_for";
@@ -233,6 +234,10 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 switch (action) {
                     case ACTION_SHOW_WALLET:
                         showWallet();
+                        break;
+                    case ACTION_BACKUP_WALLET:
+                        showWallet();
+                        showWalletBackupDialog();
                         break;
                     case ACTION_SHOW_FEED:
                         showFeed();
