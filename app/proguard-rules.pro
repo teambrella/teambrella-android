@@ -56,6 +56,11 @@
    *;
 }
 
+-keepclassmembers enum * {
+public static **[] values();
+public static ** valueOf(java.lang.String);
+}
+
 
 #Retrofit
 # Platform calls Class.forName on types which do not exist on Android to determine platform.

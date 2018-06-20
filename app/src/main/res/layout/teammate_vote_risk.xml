@@ -16,21 +16,6 @@
         app:layout_constraintHorizontal_bias="0" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-        android:id="@+id/avg_difference"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
-        style="@style/Teambrella.Teammate.Section.TextAppearence.AVGRiskDifference"
-        app:layout_constraintBottom_toBottomOf="@id/risk"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/risk"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintTop_toTopOf="@id/risk" />
-
-
-    <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/risk"
         style="@style/Teambrella.Teammate.Section.TextAppearence.VoterRisk"
         android:layout_width="wrap_content"
@@ -47,5 +32,20 @@
         app:layout_constraintEnd_toStartOf="@id/avg_difference"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constrainedWidth="true" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/avg_difference"
+        android:layout_width="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        style="@style/Teambrella.Teammate.Section.TextAppearence.AVGRiskDifference"
+        app:layout_constraintBottom_toBottomOf="@id/risk"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/risk"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toTopOf="@id/risk" />
+
 
 </merge>
