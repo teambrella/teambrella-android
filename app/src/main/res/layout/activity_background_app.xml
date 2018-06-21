@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:lineSpacingMultiplier="1.1"
         android:text="@string/huawei_protected_app_title"
+        android:gravity="center"
         android:textColor="#3134C1"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/divider"

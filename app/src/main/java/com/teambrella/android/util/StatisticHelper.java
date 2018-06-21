@@ -28,6 +28,7 @@ public class StatisticHelper {
     private static final String PUSH_MESSAGE = "push_message";
     private static final String SHARE_PAID_CLAIM = "share_paid_claim";
     private static final String WALLET_BACKUP_CHECK = "wallet_backup_check";
+    private static final String BACKGROUND_RESTRICTION_ACTION = "background_restriction_action";
 
 
     private static final String TEAM_ID = "team_id";
@@ -39,6 +40,7 @@ public class StatisticHelper {
     private static final String CMD = "Cmd";
     private static final String SOCKET = "Socket";
     private static final String STATUS = "status";
+    private static final String ACTION = "action";
 
 
     private static final String CATEGORY_WALLET = "Wallet";
@@ -81,6 +83,13 @@ public class StatisticHelper {
     public static void onUserRegistered(Context context) {
         FirebaseAnalytics analytics = getAnalytics(context);
         analytics.logEvent(USER_REGISTERED, null);
+    }
+
+    public static void onBackgroundRestrictionScreenAction(Context context, String action) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(ACTION, action);
+        analytics.logEvent(BACKGROUND_RESTRICTION_ACTION, params);
     }
 
     public static void onWalletBackUpCheck(Context context, String status) {
