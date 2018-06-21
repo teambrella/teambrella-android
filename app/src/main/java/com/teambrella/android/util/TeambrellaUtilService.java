@@ -243,7 +243,6 @@ public class TeambrellaUtilService extends GcmTaskService {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG: {
                     if (isForce(taskParams) || canSyncByTime(System.currentTimeMillis())) {
-                        StatisticHelper.onWalletSync(this, tag);
                         if (isDebugLogging(taskParams)) {
                             Log.startDebugging(this);
                         }
