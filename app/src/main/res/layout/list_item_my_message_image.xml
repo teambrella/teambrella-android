@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/chat_bubble_me_img"
-        app:layout_constraintWidth_default="wrap"
+        app:layout_constrainedWidth="true"
         tools:ignore="RtlHardcoded">
 
         <ImageView

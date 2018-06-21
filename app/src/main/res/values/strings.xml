@@ -339,4 +339,5 @@
     <string name="paid_claim_shareable_collision_deductible">We helped our teammate to pay for the car repair. Pretty cool, huh? %s</string>
     <string name="paid_claim_shareable_pet">We helped our teammate to pay the vet bill.  Pretty cool, huh? %s</string>
     <string name="paid_claim_shareable_bike">We reimbursed our teammate for the stolen bike. Pretty cool, huh? %s</string>
+    <string name="paid_title">Paid</string>
 </resources>

@@ -36,7 +36,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_KEY_SLIDE_TO_VOTE_SHOWN = "slide_to_vote_shown";
     private static final String PREFERENCE_KEY_BACKGROUND_APP_ACTIVITY = "background_app_activity_key";
     private static final String PREFERENCE_KEY_IS_NOTIFIED_BACKGROUND_APP_ACTIVITY = "is_notified_background_app_activity_key";
-
+    private static final String PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN = "last_backup_notification_shown";
 
     private static TeambrellaUser sUser;
 
@@ -199,6 +199,18 @@ public class TeambrellaUser {
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean powerSaveMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && powerManager != null && powerManager.isPowerSaveMode();
         return isDemoUser() ? 0 : (isWalletBackedUp() ? 16 : 0) | (notificationsEnabled ? 3 : 1) | (powerSaveMode ? 8 : 0);
+    }
+
+
+    public void updateLastBackupNotificationShown() {
+        mPreferences.edit().putLong(PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN
+                , System.currentTimeMillis()).apply();
+    }
+
+
+    public boolean canShowBackupNotification(long delay) {
+        return Math.abs(mPreferences.getLong(PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN, 0) - System.currentTimeMillis())
+                > delay;
     }
 
 }

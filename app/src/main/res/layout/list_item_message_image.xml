@@ -26,7 +26,7 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/user_picture"
         android:background="@drawable/chat_bubble_them_img"
-        app:layout_constraintWidth_default="wrap">
+        app:layout_constrainedWidth="true">
 
         <ImageView
             android:id="@+id/image"

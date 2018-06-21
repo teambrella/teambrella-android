@@ -24,6 +24,8 @@ const val USER_GENDER = "UserGender"
 const val IMAGE_INDEX = "ImageIndex"
 const val DATE_PAYMENT_FINISHED = "DatePaymentFinished"
 const val SHARED_URL = "SharedUrl"
+const val VOTING_RES_CRYPTO = "VotingRes_Crypto"
+const val PAYMENT_RES_CRYPTO = "PaymentRes_Crypto"
 
 
 object ChatItems {
@@ -484,6 +486,12 @@ val JsonObject?.toAddress: String?
 
 val JsonObject?.isNew: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_NEW)
+
+val JsonObject?.votingResCrypto: Double?
+    get() = getDouble(VOTING_RES_CRYPTO)
+
+val JsonObject?.paymentResCrypto: Double?
+    get() = getDouble(PAYMENT_RES_CRYPTO)
 
 fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

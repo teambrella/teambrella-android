@@ -236,8 +236,18 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
                                 ?: 0f), data.teamPart?.currency ?: ""))
 
                         if (votingPart == null) {
-                            voteTitleView?.setText(R.string.team_vote)
-                            setClaimVoteValue(basicPart.reimbursement ?: -1f)
+                            val votingCrypto = basicPart.votingResCrypto
+                            val paymentCrypto: Double? = basicPart.paymentResCrypto
+
+                            if (votingCrypto != null && paymentCrypto != null && votingCrypto != 0.0) {
+                                voteTitleView?.setText(R.string.paid_title)
+                                setClaimVoteValue(if (paymentCrypto > votingCrypto) 1f else
+                                    (paymentCrypto / votingCrypto).toFloat())
+                            } else {
+                                voteTitleView?.setText(R.string.team_vote)
+                                setClaimVoteValue(basicPart.reimbursement ?: -1f)
+                            }
+
                         }
                     }
                     TeambrellaUris.TEAMMATE_CHAT -> {

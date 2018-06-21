@@ -12,6 +12,35 @@
 
 #Okio
 -dontwarn okio.**
+-dontwarn okhttp3.internal.platform.*
+
+-dontnote org.apache.http.**
+-dontnote android.net.http.**
+-dontnote okhttp3.internal.platform.**
+-dontnote com.google.android.gms.internal.**
+-dontnote com.squareup.okhttp.internal.**
+
+-dontnote com.crashlytics.android.core.CrashlyticsController
+-dontnote com.google.common.util.concurrent.MoreExecutors
+-dontnote com.google.gson.internal.UnsafeAllocator
+-dontnote com.subgraph.orchid.crypto.PRNGFixes
+-dontnote org.bitcoinj.crypto.DRMWorkaround
+-dontnote kotlin.internal.PlatformImplementationsKt
+-dontnote org.chalup.microorm.ClassFactory
+-dontnote io.fabric.sdk.android.FabricKitsFinder
+-dontnote go.LoadJNI
+
+-dontnote org.bitcoinj.**
+-dontnote com.facebook.**
+-dontnote com.google.android.gms.**
+-dontnote com.journeyapps.barcodescanner.**
+-dontnote com.google.firebase.iid.FirebaseInstanceId
+-dontnote com.teambrella.android.ui.widget.VoterBar
+-dontnote com.ortiz.touch.TouchImageView
+-dontnote com.android.vending.billing.IInAppBillingService
+-dontnote com.bumptech.glide.integration.okhttp3.OkHttpGlideModule
+-dontnote com.bumptech.glide.integration.okhttp.OkHttpGlideModule
+
 
 
 #bitcoinj
@@ -23,12 +52,13 @@
 -dontwarn org.slf4j.MarkerFactory
 -dontwarn org.slf4j.MDC
 
--keep class com.facebook.** {
+-keep class org.ethereum.** {
    *;
 }
 
--keep class org.ethereum.** {
-   *;
+-keepclassmembers enum * {
+public static **[] values();
+public static ** valueOf(java.lang.String);
 }
 
 

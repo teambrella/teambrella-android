@@ -17,6 +17,10 @@ import com.teambrella.android.ui.WelcomeActivity
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TeambrellaUtilService
 import com.teambrella.android.util.log.Log
+import com.teambrella.android.wallet.TeambrellaWallet
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Teambrella FireBase Messaging Service
@@ -86,7 +90,11 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
                 SYNC -> {
-                    TeambrellaUtilService.oneoffWalletSync(this, false, true)
+                    val context = this
+                    Observable.create(ObservableOnSubscribe<Void> { emitter ->
+                        TeambrellaWallet(context).syncWallet(TeambrellaWallet.SYNC_PUSH)
+                        emitter.onComplete()
+                    }).subscribeOn(Schedulers.io()).subscribe()
                 }
 
                 DEBUG_DB -> {
