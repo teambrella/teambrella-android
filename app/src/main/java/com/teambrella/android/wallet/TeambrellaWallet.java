@@ -47,10 +47,12 @@ public class TeambrellaWallet {
     private static final String LOG_TAG = TeambrellaWallet.class.getSimpleName();
 
 
+    public static final String SYNC_APP_UPDATED = "sync_app_updated";
     public static final String SYNC_UI = "sync_ui";
     public static final String SYNC_JOB = "sync_job";
     public static final String SYNC_PUSH = "sync_push";
-    public static final String SYNC_USER_PRESENT = "syn_user_present";
+    public static final String SYNC_USER_PRESENT = "sync_user_present";
+    public static final String SYNC_INITIALIZE = "sync_initialize";
     private static final String SYNC_NOT_INIT = "sync_not_init";
 
     private static final Object LOCK = new Object();
@@ -427,7 +429,7 @@ public class TeambrellaWallet {
 
     public void sync(String tag) throws CryptoException, RemoteException, OperationApplicationException {
 
-        Log.d(LOG_TAG, "---> SYNC -> sync() started...");
+        Log.d(LOG_TAG, "---> SYNC -> sync() started... " + tag );
 
         if (!init()) {
             StatisticHelper.onWalletSync(mContext, SYNC_NOT_INIT);

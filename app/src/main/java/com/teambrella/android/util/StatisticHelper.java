@@ -44,8 +44,11 @@ public class StatisticHelper {
 
 
     private static final String CATEGORY_WALLET = "Wallet";
+    private static final String CATEGORY_APP = "App";
     private static final String ACTION_SYNC = "Sync";
     private static final String ACTION_SAVE = "Save";
+    private static final String ACTION_UPDATE = "Update";
+    private static final String ACTION_INITIALIZE = "Initialize";
 
 
     private static final String APPLICATION_VOTE = "application_vote";
@@ -108,7 +111,9 @@ public class StatisticHelper {
                 .build());
 
         FirebaseAnalytics analytics = getAnalytics(context);
-        analytics.logEvent(WALLET_SYNC, null);
+        Bundle params = new Bundle();
+        params.putString(ACTION, tag);
+        analytics.logEvent(WALLET_SYNC, params);
     }
 
     public static void onWalletSaved(Context context, String userId) {
@@ -117,6 +122,24 @@ public class StatisticHelper {
                 .setCategory(CATEGORY_WALLET)
                 .setAction(ACTION_SAVE)
                 .setLabel(userId)
+                .build());
+    }
+
+    public static void onApplicationUpdated(Context context) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_APP)
+                .setAction(ACTION_UPDATE)
+                .setLabel(BuildConfig.VERSION_NAME)
+                .build());
+    }
+
+    public static void onApplicationInitialize(Context context) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_APP)
+                .setAction(ACTION_INITIALIZE)
+                .setLabel(BuildConfig.VERSION_NAME)
                 .build());
     }
 

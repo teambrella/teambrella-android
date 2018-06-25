@@ -173,6 +173,13 @@
             </intent-filter>
         </receiver>
 
+
+        <receiver android:name=".util.PackageReplacedBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
