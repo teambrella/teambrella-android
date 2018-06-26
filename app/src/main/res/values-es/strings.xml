@@ -316,4 +316,5 @@
     <string name="paid_claim_shareable_pet">Ayudamos a nuestro compañero a pagar la factura veterinaria. ¿Muy bien, de verdad? %s</string>
     <string name="paid_claim_shareable_bike">Reembolsamos a nuestro compañero la bicicleta robada. ¿Muy bien, de verdad? %s</string>
     <string name="paid_title">Pagado</string>
+    <string name="copied">Copiado</string>
 </resources>
