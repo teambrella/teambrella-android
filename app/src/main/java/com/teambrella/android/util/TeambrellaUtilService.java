@@ -26,6 +26,10 @@ import com.teambrella.android.wallet.TeambrellaWallet;
 
 import java.io.File;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
+
 import static com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED;
 
 
@@ -220,6 +224,13 @@ public class TeambrellaUtilService extends GcmTaskService {
         scheduleWalletSync(this);
         scheduleCheckingSocket(this);
         WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
+
+        Observable.create((ObservableOnSubscribe<Void>) emitter -> {
+            mTeambrellaWallet.syncWallet(TeambrellaWallet.SYNC_INITIALIZE);
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.io()).subscribe();
+
+        StatisticHelper.onApplicationInitialize(this);
     }
 
     @Override
@@ -243,7 +254,6 @@ public class TeambrellaUtilService extends GcmTaskService {
                 case SYNC_WALLET_TASK_TAG:
                 case SYNC_WALLET_ONCE_TAG: {
                     if (isForce(taskParams) || canSyncByTime(System.currentTimeMillis())) {
-                        StatisticHelper.onWalletSync(this, tag);
                         if (isDebugLogging(taskParams)) {
                             Log.startDebugging(this);
                         }

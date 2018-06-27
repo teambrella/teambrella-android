@@ -34,9 +34,8 @@ public class TeambrellaUser {
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_SCREEN_TIME = "new_version_last_screen_time";
     private static final String PREFERENCE_KEY_NEW_VERSION_LAST_NOTIFICATION_TIME = "new_version_last_notification_time";
     private static final String PREFERENCE_KEY_SLIDE_TO_VOTE_SHOWN = "slide_to_vote_shown";
-    private static final String PREFERENCE_KEY_BACKGROUND_APP_ACTIVITY = "background_app_activity_key";
-    private static final String PREFERENCE_KEY_IS_NOTIFIED_BACKGROUND_APP_ACTIVITY = "is_notified_background_app_activity_key";
     private static final String PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN = "last_backup_notification_shown";
+    private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME = "last_background_restriction_screen_time";
 
     private static TeambrellaUser sUser;
 
@@ -178,20 +177,12 @@ public class TeambrellaUser {
         return mPreferences.getBoolean(PREFERENCE_KEY_SLIDE_TO_VOTE_SHOWN, false);
     }
 
-    public boolean shallNotifyBackgroundAppRestrictions(int versionCode) {
-        return mPreferences.getInt(PREFERENCE_KEY_BACKGROUND_APP_ACTIVITY, 0) < versionCode;
+    public long getLastBackgroundRestrictionScreenTime() {
+        return mPreferences.getLong(PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME, 0L);
     }
 
-    public void setNotifyBackgroundAppRestrictions(int versionCode) {
-        mPreferences.edit().putInt(PREFERENCE_KEY_BACKGROUND_APP_ACTIVITY, versionCode).apply();
-    }
-
-    public boolean isNotifiedBackgroundAppRestrictions() {
-        return mPreferences.getBoolean(PREFERENCE_KEY_IS_NOTIFIED_BACKGROUND_APP_ACTIVITY, false);
-    }
-
-    public void setNotifiedBackgroundAppRestrictions() {
-        mPreferences.edit().putBoolean(PREFERENCE_KEY_IS_NOTIFIED_BACKGROUND_APP_ACTIVITY, true).apply();
+    public void setLastBackgroundRestrictionScreenTime(long value) {
+        mPreferences.edit().putLong(PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME, value).apply();
     }
 
     public int getInfoMask(Context context) {

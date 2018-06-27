@@ -28,6 +28,7 @@ public class StatisticHelper {
     private static final String PUSH_MESSAGE = "push_message";
     private static final String SHARE_PAID_CLAIM = "share_paid_claim";
     private static final String WALLET_BACKUP_CHECK = "wallet_backup_check";
+    private static final String BACKGROUND_RESTRICTION_ACTION = "background_restriction_action";
 
 
     private static final String TEAM_ID = "team_id";
@@ -39,11 +40,15 @@ public class StatisticHelper {
     private static final String CMD = "Cmd";
     private static final String SOCKET = "Socket";
     private static final String STATUS = "status";
+    private static final String ACTION = "action";
 
 
     private static final String CATEGORY_WALLET = "Wallet";
+    private static final String CATEGORY_APP = "App";
     private static final String ACTION_SYNC = "Sync";
     private static final String ACTION_SAVE = "Save";
+    private static final String ACTION_UPDATE = "Update";
+    private static final String ACTION_INITIALIZE = "Initialize";
 
 
     private static final String APPLICATION_VOTE = "application_vote";
@@ -83,6 +88,13 @@ public class StatisticHelper {
         analytics.logEvent(USER_REGISTERED, null);
     }
 
+    public static void onBackgroundRestrictionScreenAction(Context context, String action) {
+        FirebaseAnalytics analytics = getAnalytics(context);
+        Bundle params = new Bundle();
+        params.putString(ACTION, action);
+        analytics.logEvent(BACKGROUND_RESTRICTION_ACTION, params);
+    }
+
     public static void onWalletBackUpCheck(Context context, String status) {
         FirebaseAnalytics analytics = getAnalytics(context);
         Bundle params = new Bundle();
@@ -99,7 +111,9 @@ public class StatisticHelper {
                 .build());
 
         FirebaseAnalytics analytics = getAnalytics(context);
-        analytics.logEvent(WALLET_SYNC, null);
+        Bundle params = new Bundle();
+        params.putString(ACTION, tag);
+        analytics.logEvent(WALLET_SYNC, params);
     }
 
     public static void onWalletSaved(Context context, String userId) {
@@ -108,6 +122,24 @@ public class StatisticHelper {
                 .setCategory(CATEGORY_WALLET)
                 .setAction(ACTION_SAVE)
                 .setLabel(userId)
+                .build());
+    }
+
+    public static void onApplicationUpdated(Context context) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_APP)
+                .setAction(ACTION_UPDATE)
+                .setLabel(BuildConfig.VERSION_NAME)
+                .build());
+    }
+
+    public static void onApplicationInitialize(Context context) {
+        Tracker tracker = ((TeambrellaApplication) context.getApplicationContext()).geTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(CATEGORY_APP)
+                .setAction(ACTION_INITIALIZE)
+                .setLabel(BuildConfig.VERSION_NAME)
                 .build());
     }
 

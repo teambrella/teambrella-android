@@ -7,19 +7,23 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.teambrella.android.R
+import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.startHuaweiProtectApp
 
 class BackgroundRestrictionsActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_DONE = "extra_done"
+        private const val OPEN_SETTINGS = "open_settings"
+        private const val DONE = "done"
+        private const val CANCEL = "cancel"
     }
 
     private var isDone = false
-    private val actionProgress: ProgressBar? by lazy(LazyThreadSafetyMode.NONE, { findViewById<ProgressBar>(R.id.action_progress) })
-    private val backProgress: ProgressBar? by lazy(LazyThreadSafetyMode.NONE, { findViewById<ProgressBar>(R.id.back_progress) })
-    private val action: TextView? by lazy(LazyThreadSafetyMode.NONE, { findViewById<TextView>(R.id.action) })
-    private val back: TextView? by lazy(LazyThreadSafetyMode.NONE, { findViewById<TextView>(R.id.back) })
+    private val actionProgress: ProgressBar? by lazy(LazyThreadSafetyMode.NONE) { findViewById<ProgressBar>(R.id.action_progress) }
+    private val backProgress: ProgressBar? by lazy(LazyThreadSafetyMode.NONE) { findViewById<ProgressBar>(R.id.back_progress) }
+    private val action: TextView? by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.action) }
+    private val back: TextView? by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.back) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,7 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
     }
 
     private fun startBackgroundAppSettings(view: View) {
+        StatisticHelper.onBackgroundRestrictionScreenAction(this, OPEN_SETTINGS)
         isDone = startHuaweiProtectApp()
         if (isDone) {
             when (view.id) {
@@ -61,7 +66,13 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        StatisticHelper.onBackgroundRestrictionScreenAction(this, CANCEL)
+    }
+
     private fun finish(view: View) {
+        StatisticHelper.onBackgroundRestrictionScreenAction(this, DONE)
         finish()
     }
 

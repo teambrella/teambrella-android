@@ -14,6 +14,7 @@ import android.text.SpannableString;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.teambrella.android.R;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -71,6 +72,7 @@ public class QRCodeActivity extends AppCompatActivity {
             if (clipboard != null) {
                 ClipData clip = ClipData.newPlainText(getString(R.string.ethereum_address), address);
                 clipboard.setPrimaryClip(clip);
+                Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show();
             }
         });
 
