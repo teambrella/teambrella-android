@@ -55,8 +55,7 @@ public class TeambrellaServer {
     private static final String SHARED_PREFS_NAME = "teambrella_api";
     private static final String TIMESTAMP_KEY = "timestamp";
     public static final String AUTHORITY = BuildConfig.AUTHORITY;
-    @SuppressWarnings("ConstantConditions")
-    public static final String SCHEME = "https";
+    public static final String SCHEME = BuildConfig.SCHEME;
 
 
     /**

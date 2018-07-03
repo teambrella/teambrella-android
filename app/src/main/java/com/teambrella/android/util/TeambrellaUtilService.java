@@ -19,6 +19,7 @@ import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.backup.WalletBackUpService;
+import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.util.log.Log;
@@ -225,6 +226,8 @@ public class TeambrellaUtilService extends GcmTaskService {
         scheduleCheckingSocket(this);
         WalletBackUpService.Companion.schedulePeriodicBackupCheck(this);
 
+        checkHuaweiBackgroundRestriction(this);
+
         Observable.create((ObservableOnSubscribe<Void>) emitter -> {
             mTeambrellaWallet.syncWallet(TeambrellaWallet.SYNC_INITIALIZE);
             emitter.onComplete();
@@ -302,6 +305,21 @@ public class TeambrellaUtilService extends GcmTaskService {
         }
 
         return GcmNetworkManager.RESULT_SUCCESS;
+    }
+
+
+    private static void checkHuaweiBackgroundRestriction(Context context) {
+        final long minDelay = 1000 * 60 * 60 * 24 * 3;
+        TeambrellaUser user = TeambrellaUser.get(context);
+        if (!user.isDemoUser() && user.getPrivateKey() != null) {
+            if (Math.abs(Math.max(user.getLastSyncTime(), user.getLastBackgroundRestrictionNotificationTime()) - System.currentTimeMillis()) > minDelay) {
+                if (BackgroundUtils.isHuaweiProtectedAppAvailable(context)) {
+                    new TeambrellaNotificationManager(context).showBackgroundRestrictionsNotification();
+                    StatisticHelper.onBackgroundRestrictionNotification(context);
+                }
+                user.setLastBackgroundRestrictionNotificationTime(System.currentTimeMillis());
+            }
+        }
     }
 
     private static boolean isDebugLogging(TaskParams params) {

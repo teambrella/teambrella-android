@@ -36,6 +36,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_KEY_SLIDE_TO_VOTE_SHOWN = "slide_to_vote_shown";
     private static final String PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN = "last_backup_notification_shown";
     private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME = "last_background_restriction_screen_time";
+    private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_NOTIFICATION_TIME = "last_background_restriction_notification_time";
 
     private static TeambrellaUser sUser;
 
@@ -183,6 +184,14 @@ public class TeambrellaUser {
 
     public void setLastBackgroundRestrictionScreenTime(long value) {
         mPreferences.edit().putLong(PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME, value).apply();
+    }
+
+    public long getLastBackgroundRestrictionNotificationTime() {
+        return mPreferences.getLong(PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_NOTIFICATION_TIME, 0L);
+    }
+
+    public void setLastBackgroundRestrictionNotificationTime(long value) {
+        mPreferences.edit().putLong(PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_NOTIFICATION_TIME, value).apply();
     }
 
     public int getInfoMask(Context context) {

@@ -29,6 +29,7 @@ import com.teambrella.android.image.glide.GlideRequest;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.background.BackgroundRestrictionsActivity;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.inbox.InboxActivity;
@@ -63,6 +64,12 @@ public class TeambrellaNotificationManager {
     private static final String WALLET_ID = "wallet";
     private static final String TEAM_UPDATES_ID = "team_updates";
     private static final String CHATS_ID = "chats";
+
+
+    private static final int NEW_TEAMMATES_NOTIFICATION_ID = 23;
+    private static final int NEW_DISCUSSION_NOTIFICATION_ID = 29;
+    private static final int USER_IS_PROXY_NOTIFICATION_ID = 37;
+    private static final int BACKGROUND_RESTRICTION_NOTIFICATION_ID = 43;
 
 
     public enum ChatType {
@@ -159,6 +166,16 @@ public class TeambrellaNotificationManager {
     }
 
 
+    public void showBackgroundRestrictionsNotification() {
+        notifyUser(BACKGROUND_RESTRICTION_NOTIFICATION_ID, mContext.getString(R.string.huawei_protected_app_action), mContext.getString(R.string.huawei_protected_app_description),
+                (Bitmap) null, getBuilder(WALLET_ID).setContentIntent(
+                        PendingIntent.getActivity(mContext
+                                , 1
+                                , BackgroundRestrictionsActivity.Companion.getNotificationIntent(mContext)
+                                , PendingIntent.FLAG_UPDATE_CURRENT)));
+    }
+
+
     private void showNewTeammateJoined(String userId, String userName, String avatar, int teamId, String teamName, String topicId) {
         notifyUser(topicId.hashCode(),
                 teamName,
@@ -179,7 +196,7 @@ public class TeambrellaNotificationManager {
 
 
     private void showUserIsProxyFor(String userName, int teamId, String teamName, String avatar, boolean male) {
-        notifyUser(37
+        notifyUser(USER_IS_PROXY_NOTIFICATION_ID
                 , teamName
                 , mContext.getString(male ? R.string.notification_description_your_are_proxy_male : R.string.notification_description_your_are_proxy_female, userName)
                 , getAvatarRequest(avatar)
@@ -215,7 +232,7 @@ public class TeambrellaNotificationManager {
     }
 
     public void showNewTeammates(String name, int othersCount, String teamName, String teamLogo) {
-        notifyUser(23, teamName
+        notifyUser(NEW_TEAMMATES_NOTIFICATION_ID, teamName
                 , othersCount > 0 ? mContext.getResources().getQuantityString(R.plurals.new_teammate_notification_description, othersCount, name, othersCount)
                         : mContext.getString(R.string.new_teammate_notification_description, name)
                 , getTeamIconRequest(teamLogo)
@@ -226,7 +243,7 @@ public class TeambrellaNotificationManager {
     }
 
     public void showNewDiscussion(String teamName, String userName, String avatar, int teamId, String topicName, String topicId) {
-        notifyUser(29, teamName,
+        notifyUser(NEW_DISCUSSION_NOTIFICATION_ID, teamName,
                 mContext.getString(R.string.new_discussion_notification_description, userName, topicName)
                 , getAvatarRequest(avatar)
                 , getBuilder(null).setContentIntent(PendingIntent.getActivities(mContext
