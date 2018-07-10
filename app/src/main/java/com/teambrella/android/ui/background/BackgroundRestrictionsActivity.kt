@@ -1,14 +1,20 @@
 package com.teambrella.android.ui.background
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.teambrella.android.R
+import com.teambrella.android.image.glide.GlideApp
+import com.teambrella.android.ui.WelcomeActivity
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.startHuaweiProtectApp
+
 
 class BackgroundRestrictionsActivity : AppCompatActivity() {
 
@@ -17,6 +23,12 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
         private const val OPEN_SETTINGS = "open_settings"
         private const val DONE = "done"
         private const val CANCEL = "cancel"
+
+        private const val SOURCE = "source"
+        private const val NOTIFICATION = "notification"
+
+        fun getNotificationIntent(context: Context): Intent = Intent(context, BackgroundRestrictionsActivity::class.java)
+                .putExtra(SOURCE, NOTIFICATION)
     }
 
     private var isDone = false
@@ -24,6 +36,7 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
     private val backProgress: ProgressBar? by lazy(LazyThreadSafetyMode.NONE) { findViewById<ProgressBar>(R.id.back_progress) }
     private val action: TextView? by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.action) }
     private val back: TextView? by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.back) }
+    private val animatedGuide: ImageView? by lazy(LazyThreadSafetyMode.NONE) { findViewById<ImageView>(R.id.animated_guide) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +48,12 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
 
         action?.setOnClickListener(this::startBackgroundAppSettings)
         back?.setOnClickListener(this::finish)
+
+
+        animatedGuide?.let {
+            GlideApp.with(this).asGif().load(R.drawable.protected_app_guide).into(it)
+        }
+
     }
 
     override fun onStart() {
@@ -76,8 +95,18 @@ class BackgroundRestrictionsActivity : AppCompatActivity() {
         finish()
     }
 
+
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
         super.onSaveInstanceState(outState, outPersistentState)
         outState?.putBoolean(EXTRA_DONE, isDone)
+    }
+
+    override fun finish() {
+        super.finish()
+        intent?.let {
+            if (it.getStringExtra(SOURCE) == NOTIFICATION) {
+                startActivity(Intent(this, WelcomeActivity::class.java))
+            }
+        }
     }
 }

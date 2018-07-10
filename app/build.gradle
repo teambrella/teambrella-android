@@ -40,8 +40,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 138
-        versionName "and-0.3.8.138"
+        versionCode 139
+        versionName "and-0.3.9.139"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -87,6 +87,7 @@ android {
             buildConfigField "String", "BASE_URL", config['BaseUrl'].toString()
             buildConfigField "boolean", "isTestNet", config['IsTestNetwork']
             buildConfigField "String", "CP_AUTHORITY", config['ContentProviderAuthority'].toString()
+            buildConfigField "String", "SCHEME", "\"http\""
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/development/res']
             }
@@ -100,6 +101,7 @@ android {
             buildConfigField "String", "BASE_URL", config['BaseUrl'].toString()
             buildConfigField "boolean", "isTestNet", config['IsTestNetwork']
             buildConfigField "String", "CP_AUTHORITY", config['ContentProviderAuthority'].toString()
+            buildConfigField "String", "SCHEME", "\"https\""
             sourceSets {
                 main.res.srcDirs = ['src/main/res', 'src/production/res']
             }
@@ -128,7 +130,7 @@ dependencies {
     })
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.51"
 
     /* Support */
     //noinspection GradleCompatible
@@ -140,7 +142,7 @@ dependencies {
     implementation 'com.android.support:support-emoji:27.1.1'
 
     /* Server communication */
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
@@ -173,7 +175,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.google.firebase:firebase-messaging:17.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
 

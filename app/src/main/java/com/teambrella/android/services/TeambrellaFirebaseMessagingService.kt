@@ -13,6 +13,7 @@ import com.teambrella.android.R
 import com.teambrella.android.TeambrellaApplication
 import com.teambrella.android.backup.WalletBackUpService
 import com.teambrella.android.services.push.*
+import com.teambrella.android.ui.TeambrellaUser
 import com.teambrella.android.ui.WelcomeActivity
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TeambrellaUtilService
@@ -37,7 +38,12 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
-        notificationManager = TeambrellaNotificationManager(this)
+        val user = TeambrellaUser.get(this)
+        if (user.isDemoUser || user.privateKey == null) {
+            stopSelf()
+        } else {
+            notificationManager = TeambrellaNotificationManager(this)
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
