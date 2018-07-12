@@ -1,87 +1,20 @@
 package com.teambrella.android.data.base
 
 import android.net.Uri
-import android.os.Bundle
-import android.support.v4.app.Fragment
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.dagger.Dependencies
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity
 import io.reactivex.Notification
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.observables.ConnectableObservable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
-
-
-private fun <T> Observable<T>.subscribeAutoDispose(onNext: (T) -> Unit, onError: (Throwable) -> Unit,
-                                                   onComplete: () -> Unit) {
-    lateinit var disposable: Disposable
-    fun dispose() {
-        disposable.dispose()
-    }
-    disposable = this.subscribe({
-        dispose()
-        onNext(it)
-    }, {
-        dispose()
-        onError(it)
-    }, {
-        dispose()
-        onComplete()
-    })
-
-}
-
-open class TeambrellaDataPagerFragment : Fragment() {
-
-    companion object {
-        const val EXTRA_URI = "uri"
-        const val EXTRA_PROPERTY = "property"
-
-        @JvmOverloads
-        fun <T> createInstance(uri: Uri? = null, property: String? = null, _class: Class<T>): T
-                where T : TeambrellaDataPagerFragment {
-            val fragment: T = _class.newInstance()
-            fragment.apply {
-                arguments = Bundle().apply {
-                    putParcelable(EXTRA_URI, uri)
-                    putString(EXTRA_PROPERTY, property)
-                }
-            }
-
-            return fragment
-        }
-    }
-
-    private lateinit var _pager: IDataPager<JsonArray>
-
-    val pager: IDataPager<JsonArray>
-        get() = _pager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-        arguments?.let {
-            _pager = createLoader(it)
-        }
-    }
-
-    protected open fun createLoader(args: Bundle): IDataPager<JsonArray> {
-        val uri = args.getParcelable<Uri>(EXTRA_URI)
-        val property = args.getString(EXTRA_PROPERTY)
-        val loader = TeambrellaDataPagerLoader(uri, property)
-        (context as TeambrellaDataHostActivity).component.inject(loader)
-        return loader
-    }
-}
 
 @Suppress("PropertyName")
 abstract class ATeambrellaDataPagerLoader() : IDataPager<JsonArray> {
@@ -136,7 +69,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
             server.requestObservable(TeambrellaUris.appendPagination(uri, _nextIndex, limit), null)
                     .map(this::appendUri)
                     .subscribeOn(Schedulers.io())
-                    .map({
+                    .map {
                         it.metadata = JsonObject().apply {
                             reload = false
                             forced = force
@@ -144,7 +77,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
                             size = getPageableData(it).size()
                         }
                         it
-                    })
+                    }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
             _isNextLoading = true
@@ -159,7 +92,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
         server.requestObservable(TeambrellaUris.appendPagination(uri, 0, limit), null)
                 .map(this::appendUri)
                 .subscribeOn(Schedulers.io())
-                .map({
+                .map {
                     it.metadata = JsonObject().apply {
                         reload = true
                         forced = true
@@ -167,7 +100,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
                         size = getPageableData(it).size()
                     }
                     it
-                })
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext({
                     _nextIndex = 0
@@ -252,7 +185,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
             server.requestObservable(uri, null)
                     .map(this::appendUri)
                     .map { postProcess(it, true) }
-                    .map({
+                    .map {
                         it.metadata = (it.metadata ?: JsonObject()).apply {
                             reload = false
                             forced = force
@@ -260,7 +193,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                             size = getPageableData(it).size()
                         }
                         it
-                    })
+                    }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
@@ -281,7 +214,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
             server.requestObservable(uri, null)
                     .map(this::appendUri)
                     .map { postProcess(it, false) }
-                    .map({
+                    .map {
                         it.metadata = (it.metadata ?: JsonObject()).apply {
                             reload = false
                             forced = force
@@ -289,7 +222,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                             size = getPageableData(it).size()
                         }
                         it
-                    })
+                    }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeAutoDispose(this::onPrevious, this::onError, this::onComplete)
@@ -374,5 +307,3 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
     override fun reload() = reload(chatUri)
     override fun reload(uri: Uri) = Unit
 }
-
-

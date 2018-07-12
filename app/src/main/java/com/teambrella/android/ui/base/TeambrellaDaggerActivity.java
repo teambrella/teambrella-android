@@ -9,7 +9,7 @@ import com.teambrella.android.dagger.TeambrellaImageLoaderModule;
 import com.teambrella.android.dagger.TeambrellaServerModule;
 import com.teambrella.android.dagger.TeambrellaUserModule;
 import com.teambrella.android.image.TeambrellaImageLoader;
-import com.teambrella.android.ui.base.dagger.ADaggerActivity;
+import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,7 +17,7 @@ import javax.inject.Named;
 /**
  * Teambrella Dagger Activity
  */
-public abstract class TeambrellaDaggerActivity extends ADaggerActivity<ITeambrellaComponent> implements ITeambrellaDaggerActivity {
+public abstract class TeambrellaDaggerActivity extends ATeambrellaDaggerActivity<ITeambrellaComponent> implements ITeambrellaDaggerActivity {
 
     @Inject
     @Named(Dependencies.IMAGE_LOADER)

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 
 import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,7 +23,7 @@ public class TeambrellaFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((ITeambrellaDaggerActivity) context).getComponent().inject(this);
+        ((ATeambrellaDaggerActivity) context).getComponent().inject(this);
     }
 
     protected TeambrellaImageLoader getImageLoader() {
@@ -30,6 +31,6 @@ public class TeambrellaFragment extends Fragment {
     }
 
     protected ITeambrellaComponent getComponent() {
-        return ((ITeambrellaDaggerActivity) getContext()).getComponent();
+        return ((ATeambrellaDaggerActivity) getContext()).getComponent();
     }
 }

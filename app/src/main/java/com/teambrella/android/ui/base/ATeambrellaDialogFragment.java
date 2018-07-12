@@ -5,6 +5,7 @@ import android.support.v4.app.DialogFragment;
 
 import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;
+import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,7 +22,7 @@ public class ATeambrellaDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((ITeambrellaDaggerActivity) context).getComponent().inject(this);
+        ((ATeambrellaDaggerActivity) context).getComponent().inject(this);
     }
 
     protected TeambrellaImageLoader getTeambrellaImageLoader() {

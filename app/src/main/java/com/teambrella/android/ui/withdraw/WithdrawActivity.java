@@ -1,9 +1,11 @@
 package com.teambrella.android.ui.withdraw;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -18,11 +20,13 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.util.ConnectivityUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -89,30 +93,31 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
         }
     }
 
+    @NonNull
     @Override
-    protected String[] getDataTags() {
-        return new String[]{};
-    }
-
-    @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{WITHDRAWALS_DATA_TAG};
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
-        return null;
-    }
-
-    @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected <T extends TeambrellaPagerViewModel> Class<T> getPagerViewModelClass(@NotNull String tag) {
         switch (tag) {
             case WITHDRAWALS_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getWithdrawals(mTeamId),
-                        TeambrellaModel.ATTR_DATA_TXS, WithdrawalsDataPagerFragment.class);
+                //noinspection unchecked
+                return (Class<T>) WithdrawalViewModel.class;
         }
+        return super.getPagerViewModelClass(tag);
+    }
 
-        return null;
+    @Nullable
+    @Override
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
+        switch (tag) {
+            case WITHDRAWALS_DATA_TAG:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getWithdrawals(mTeamId), TeambrellaModel.ATTR_DATA_TXS);
+        }
+        return super.getDataPagerConfig(tag);
     }
 
 
@@ -167,13 +172,10 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
 
     @Override
     public void requestWithdraw(String address, double amount) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(WITHDRAWALS_DATA_TAG);
-        if (dataFragment != null) {
-            dataFragment.getPager().reload(TeambrellaUris.getNewWithdrawUri(mTeamId, amount, address));
-        }
-
-        ADataPagerProgressFragment fragment = (ADataPagerProgressFragment) fragmentManager.findFragmentByTag(WITHDRAWALS_UI_TAG);
+        ViewModelProviders.of(this).get(WITHDRAWALS_DATA_TAG, WithdrawalViewModel.class).dataPager
+                .reload(TeambrellaUris.getNewWithdrawUri(mTeamId, amount, address));
+        ADataPagerProgressFragment fragment = (ADataPagerProgressFragment) getSupportFragmentManager()
+                .findFragmentByTag(WITHDRAWALS_UI_TAG);
         if (fragment != null) {
             fragment.setRefreshing(true);
         }

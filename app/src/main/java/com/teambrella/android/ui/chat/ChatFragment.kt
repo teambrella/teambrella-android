@@ -21,7 +21,7 @@ import com.teambrella.android.ui.base.AKDataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter
 import com.teambrella.android.ui.claim.ClaimActivity
 import com.teambrella.android.ui.claim.MODE_CHAT
-import com.teambrella.android.ui.teammate.TeammateActivity
+import com.teambrella.android.ui.teammate.getTeammateIntent
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
 import io.reactivex.Notification
@@ -308,7 +308,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
     private fun onTeammateClickListener(v: View) {
         when (v.id) {
             R.id.voting_panel, R.id.vote ->
-                startActivityForResult(TeammateActivity.getIntent(context, mDataHost.teamId, mDataHost.userId, userName, mDataHost.imageUri), 10)
+                startActivityForResult(getTeammateIntent(context!!, mDataHost.teamId, mDataHost.userId, userName, mDataHost.imageUri), 10)
         }
     }
 

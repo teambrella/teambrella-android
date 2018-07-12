@@ -1,5 +1,7 @@
 package com.teambrella.android.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,9 +29,6 @@ import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationService;
@@ -37,21 +36,23 @@ import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaActivityBroadcastReceiver;
+import com.teambrella.android.ui.base.TeambrellaDataViewModel;
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
-import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
-import com.teambrella.android.ui.home.HomeDataFragment;
+import com.teambrella.android.ui.claim.ClaimsViewModel;
+import com.teambrella.android.ui.home.HomeViewModel;
 import com.teambrella.android.ui.home.KHomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
 import com.teambrella.android.ui.team.TeamFragment;
-import com.teambrella.android.ui.team.feed.FeedDataPagerFragment;
-import com.teambrella.android.ui.team.teammates.TeammatesDataPagerFragment;
+import com.teambrella.android.ui.team.feed.FeedViewModel;
+import com.teambrella.android.ui.team.teammates.TeammatesViewModel;
 import com.teambrella.android.ui.teammate.ITeammateActivity;
-import com.teambrella.android.ui.teammate.TeammateDataFragment;
+import com.teambrella.android.ui.teammate.TeammateViewModel;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
 import com.teambrella.android.ui.widget.BottomBarItemView;
-import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
@@ -328,36 +329,93 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         }
     }
 
+    @NonNull
     @Override
     protected String[] getDataTags() {
         return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA, VOTE_DATA} : new String[]{};
     }
 
+    @NonNull
     @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return mTeam != null ? new String[]{TEAMMATES_DATA_TAG, CLAIMS_DATA_TAG, FEED_DATA_TAG, MY_PROXIES_DATA, PROXIES_FOR_DATA, USER_RATING_DATA, TEAMS_DATA}
                 : new String[]{};
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
+    protected <T extends TeambrellaPagerViewModel> Class<T> getPagerViewModelClass(@NotNull String tag) {
         switch (tag) {
-            case HOME_DATA_TAG:
-                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getHomeUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)), true,
-                        HomeDataFragment.class);
-            case SET_PROXY_POSITION_DATA:
-                return TeambrellaDataFragmentKt.createInstance();
-            case USER_DATA:
-                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getTeammateUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), mUserId), true, TeammateDataFragment.class);
-            case WALLET_DATA:
-                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getWallet(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
-            case VOTE_DATA:
-                return TeambrellaDataFragmentKt.createInstance();
-
+            case TEAMMATES_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) TeammatesViewModel.class;
+            case CLAIMS_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) ClaimsViewModel.class;
+            case FEED_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) FeedViewModel.class;
+            default:
+                return super.getPagerViewModelClass(tag);
         }
-        return null;
     }
 
+    @Nullable
+    @Override
+    protected <T extends TeambrellaDataViewModel> Class<T> getDataViewModelClass(@NotNull String tag) {
+        switch (tag) {
+            case HOME_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) HomeViewModel.class;
+            case USER_DATA:
+                //noinspection unchecked
+                return (Class<T>) TeammateViewModel.class;
+        }
+        return super.getDataViewModelClass(tag);
+    }
+
+    @Nullable
+    @Override
+    protected Bundle getDataConfig(@NotNull String tag) {
+        switch (tag) {
+            case HOME_DATA_TAG:
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getHomeUri(getTeamId()), true);
+            case SET_PROXY_POSITION_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig();
+            case USER_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getTeammateUri(getTeamId(), mUserId), true);
+            case WALLET_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getWallet(getTeamId()));
+            case VOTE_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig();
+            default:
+                return super.getDataConfig(tag);
+
+        }
+    }
+
+    @Nullable
+    @Override
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
+        switch (tag) {
+            case TEAMMATES_DATA_TAG:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getTeamUri(getTeamId()), TeambrellaModel.ATTR_DATA_TEAMMATES);
+            case CLAIMS_DATA_TAG:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getClaimsUri(getTeamId()));
+            case FEED_DATA_TAG:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getFeedUri(getTeamId()));
+            case MY_PROXIES_DATA:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getMyProxiesUri(getTeamId()));
+            case PROXIES_FOR_DATA:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getProxyForUri(getTeamId()), TeambrellaModel.ATTR_DATA_MEMBERS);
+            case USER_RATING_DATA:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getUserRatingUri(getTeamId()), TeambrellaModel.ATTR_DATA_MEMBERS);
+            case TEAMS_DATA:
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getMyTeams(), "MyTeams");
+            default:
+                return super.getDataPagerConfig(tag);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -397,31 +455,21 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void setProxyPosition(String userId, int position) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(SET_PROXY_POSITION_DATA);
-        if (dataFragment != null) {
-            dataFragment.load(TeambrellaUris.getSetProxyPositionUri(position, userId, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)));
-        }
+        TeambrellaDataViewModel model = ViewModelProviders.of(this).get(SET_PROXY_POSITION_DATA, TeambrellaDataViewModel.class);
+        model.load(TeambrellaUris.getSetProxyPositionUri(position, userId, getTeamId()));
     }
 
     @Override
     public void optInToRating(boolean optIn) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataPagerFragment dataFragment = (TeambrellaDataPagerFragment) fragmentManager.findFragmentByTag(USER_RATING_DATA);
-        if (dataFragment != null) {
-            dataFragment.getPager().reload(TeambrellaUris.getUserRatingUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), optIn));
-        }
+        TeambrellaPagerViewModel model = ViewModelProviders.of(this).get(USER_RATING_DATA, TeambrellaPagerViewModel.class);
+        model.dataPager.reload(TeambrellaUris.getUserRatingUri(getTeamId(), optIn));
+
     }
 
     @Override
     public void postVote(double vote) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA);
-        if (dataFragment != null) {
-            dataFragment.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
-        }
-
-        StatisticHelper.onApplicationVote(this, getTeamId(), getTeammateId(), vote);
+        TeambrellaDataViewModel model = ViewModelProviders.of(this).get(VOTE_DATA, TeambrellaDataViewModel.class);
+        model.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
     }
 
     @Override
@@ -540,35 +588,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             mClient.onPause();
         }
     }
-
-    @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
-        switch (tag) {
-            case TEAMMATES_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getTeamUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        TeambrellaModel.ATTR_DATA_TEAMMATES, TeammatesDataPagerFragment.class);
-            case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getClaimsUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        null, ClaimsDataPagerFragment.class);
-            case FEED_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getFeedUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        null, FeedDataPagerFragment.class);
-            case MY_PROXIES_DATA:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getMyProxiesUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        null, TeambrellaDataPagerFragment.class);
-            case PROXIES_FOR_DATA:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getProxyForUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        "Members", TeambrellaDataPagerFragment.class);
-            case USER_RATING_DATA:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getUserRatingUri(mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)),
-                        "Members", TeambrellaDataPagerFragment.class);
-            case TEAMS_DATA:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getMyTeams(),
-                        "MyTeams", TeambrellaDataPagerFragment.class);
-        }
-        return null;
-    }
-
 
     @Override
     public void showSnackBar(@StringRes int text) {
@@ -702,22 +721,10 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
 
     private void markTopicRead(String topicId) {
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        FeedDataPagerFragment feedDataFragment = (FeedDataPagerFragment) fragmentManager.findFragmentByTag(FEED_DATA_TAG);
-        if (feedDataFragment != null) {
-            feedDataFragment.markTopicRead(topicId);
-        }
-
-        HomeDataFragment homeDataFragment = (HomeDataFragment) fragmentManager.findFragmentByTag(HOME_DATA_TAG);
-        if (homeDataFragment != null) {
-            homeDataFragment.markTopicRead(topicId);
-        }
-
-
-        TeammateDataFragment teammateDataFragment = (TeammateDataFragment) fragmentManager.findFragmentByTag(USER_DATA);
-        if (teammateDataFragment != null) {
-            teammateDataFragment.markTopicRead(topicId);
-        }
+        ViewModelProvider viewModelProvider = ViewModelProviders.of(this);
+        viewModelProvider.get(FEED_DATA_TAG, FeedViewModel.class).markTopicRead(topicId);
+        viewModelProvider.get(HOME_DATA_TAG, HomeViewModel.class).markTopicRead(topicId);
+        viewModelProvider.get(USER_DATA, TeammateViewModel.class).markTopicRead(topicId);
     }
 
 

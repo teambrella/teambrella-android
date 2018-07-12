@@ -90,12 +90,12 @@ class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
 
         seeClaims?.isEnabled = claimCount > 0
         seeClaims?.text = getString(R.string.see_claims_format_string, claimCount)
-        seeClaims?.setOnClickListener({
+        seeClaims?.setOnClickListener {
             if (claimId > 0) {
                 ClaimActivity.start(context!!, claimId, model, teamId)
             } else {
                 ClaimsActivity.start(context!!, teamId, teammateId, currency)
             }
-        })
+        }
     }
 }

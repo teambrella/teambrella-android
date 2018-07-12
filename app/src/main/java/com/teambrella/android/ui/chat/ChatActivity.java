@@ -1,10 +1,12 @@
 package com.teambrella.android.ui.chat;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
@@ -33,16 +35,16 @@ import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
+import com.teambrella.android.ui.base.TeambrellaDataViewModel;
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
 import com.teambrella.android.util.ImagePicker;
@@ -344,21 +346,18 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             case R.id.send_text:
                 String text = mMessageView.getText().toString().trim();
                 if (!TextUtils.isEmpty(text)) {
+                    ChatViewModel model = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class);
                     switch (mAction) {
                         case SHOW_CONVERSATION_CHAT: {
                             String uuid = UUID.randomUUID().toString();
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
-                            fragment.addPendingMessage(uuid, text, -1f);
+                            model.addPendingMessage(uuid, text, -1f);
                             request(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
                             StatisticHelper.onPrivateMessage(this);
                         }
                         break;
                         default: {
                             String uuid = UUID.randomUUID().toString();
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
-                            fragment.addPendingMessage(uuid, text, mVote);
+                            model.addPendingMessage(uuid, text, mVote);
                             request(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
                             StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT);
                         }
@@ -542,9 +541,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         if (result != null) {
             result.subscribe(descriptor -> {
                 String uuid = UUID.randomUUID().toString();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                ChatPagerFragment fragment = (ChatPagerFragment) fragmentManager.findFragmentByTag(DATA_FRAGMENT_TAG);
-                fragment.addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
+                ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
                 request(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid));
             }, throwable -> {
 
@@ -570,6 +567,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         return mTeamId;
     }
 
+    @NonNull
     @Override
     protected String[] getDataTags() {
         if (mAction != null) {
@@ -581,30 +579,44 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         return new String[]{};
     }
 
+    @NonNull
     @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{DATA_FRAGMENT_TAG};
     }
 
+
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
+    protected Bundle getDataConfig(@NotNull String tag) {
         switch (tag) {
             case CLAIM_DATA_TAG:
-                return TeambrellaDataFragmentKt.createInstance(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
             case VOTE_DATA_TAG:
-                return TeambrellaDataFragmentKt.createInstance();
+                return ATeambrellaDataHostActivityKt.getDataConfig();
         }
-        return null;
+        return super.getDataConfig(tag);
     }
 
-
+    @Nullable
     @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
         switch (tag) {
             case DATA_FRAGMENT_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, null, ChatPagerFragment.class);
+                return ATeambrellaDataHostActivityKt.getPagerConfig(mUri);
         }
-        return null;
+        return super.getDataPagerConfig(tag);
+    }
+
+    @Nullable
+    @Override
+    protected <T extends TeambrellaPagerViewModel> Class<T> getPagerViewModelClass(@NotNull String tag) {
+        switch (tag) {
+            case DATA_FRAGMENT_TAG:
+                //noinspection unchecked
+                return (Class<T>) ChatViewModel.class;
+        }
+        return super.getPagerViewModelClass(tag);
     }
 
     @Override
@@ -752,11 +764,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
     @Override
     public void postVote(int vote) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
-        if (dataFragment != null) {
-            dataFragment.load(TeambrellaUris.getClaimVoteUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1), vote));
-        }
+        ViewModelProviders.of(this).get(VOTE_DATA_TAG, TeambrellaDataViewModel.class)
+                .load((TeambrellaUris.getClaimVoteUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1), vote)));
         new TeambrellaBroadcastManager(this).notifyClaimVote(getClaimId());
     }
 

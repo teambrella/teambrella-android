@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.teambrella.android.ui.base.ITeambrellaComponent;
+
 /**
  * Teambrella Activity
  */
-public abstract class ADaggerActivity<T> extends AppCompatActivity implements IDaggerActivity<T> {
+public abstract class ATeambrellaDaggerActivity<T extends ITeambrellaComponent> extends AppCompatActivity implements IDaggerActivity<T> {
 
     private T mComponent;
 

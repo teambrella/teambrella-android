@@ -1,29 +1,31 @@
 package com.teambrella.android.ui.chat
 
+import android.content.Context
 import android.os.Bundle
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
-import com.teambrella.android.data.base.IDataPager
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment
 import com.teambrella.android.ui.TeambrellaUser
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel
+import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity
+import com.teambrella.android.ui.base.uri
 import java.util.*
 
-class ChatPagerFragment : TeambrellaDataPagerFragment() {
-    override fun createLoader(args: Bundle): IDataPager<JsonArray> {
-        return KChatDataPagerLoader(args.getParcelable(TeambrellaDataPagerFragment.EXTRA_URI), TeambrellaUser.get(context).userId)
-                .also {
-                    (context as TeambrellaDataHostActivity).component.inject(it)
-                }
+class ChatViewModel : TeambrellaPagerViewModel() {
+
+    override fun init(context: Context, config: Bundle?) {
+        dataPager = KChatDataPagerLoader(config?.uri!!, TeambrellaUser.get(context).userId)
+        (context as ATeambrellaDaggerActivity<*>).component.inject(dataPager as KChatDataPagerLoader)
+        isInit = true
     }
+
 
     fun addPendingMessage(postId: String, message: String, vote: Float) {
 
-        val loader = pager as KChatDataPagerLoader
+        val loader = dataPager as KChatDataPagerLoader
 
         val post = JsonObject().apply {
-            userId = TeambrellaUser.get(context).userId
+            userId = loader.userId
             text = message
             stringId = postId
             messageStatus = TeambrellaModel.PostStatus.POST_PENDING
@@ -51,9 +53,9 @@ class ChatPagerFragment : TeambrellaDataPagerFragment() {
     }
 
     fun addPendingImage(postId: String, fileUri: String, ratio: Float) {
-        val loader = pager as KChatDataPagerLoader
+        val loader = dataPager as KChatDataPagerLoader
         val post = JsonObject().apply {
-            userId = TeambrellaUser.get(context).userId
+            userId = loader.userId
             stringId = postId
             messageStatus = TeambrellaModel.PostStatus.POST_PENDING
             imageIndex = 0

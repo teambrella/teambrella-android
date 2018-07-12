@@ -7,15 +7,15 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.MenuItem
 import com.teambrella.android.R
 import com.teambrella.android.api.server.TeambrellaUris
-import com.teambrella.android.data.base.TeambrellaDataFragment
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment
 import com.teambrella.android.ui.base.ADataPagerProgressFragment
-import com.teambrella.android.ui.base.TeambrellaDataHostActivity
+import com.teambrella.android.ui.base.ATeambrellaActivity
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel
+import com.teambrella.android.ui.base.getPagerConfig
 
 
 private const val TEAM_ID_EXTRA = "team_id"
-private const val CURRENCY_EXTRA = "currency";
-private const val CRYPTO_RATE = "crypto_rate";
+private const val CURRENCY_EXTRA = "currency"
+private const val CRYPTO_RATE = "crypto_rate"
 
 fun getLaunchIntent(context: Context, teamId: Int, currency: String, cryptoRate: Float): Intent {
     return Intent(context, WalletTransactionsActivity::class.java)
@@ -29,7 +29,7 @@ fun getLaunchIntent(context: Context, teamId: Int, currency: String, cryptoRate:
 /**
  * Wallet Transactions Activity
  */
-class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransactionActivity {
+class WalletTransactionsActivity : ATeambrellaActivity(), IWalletTransactionActivity {
 
     private object Tags {
         const val DATA_TAG: String = "data_tag"
@@ -58,17 +58,8 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
         }
     }
 
-    override fun getDataTags(): Array<String> {
-        return arrayOf()
-    }
+    override val dataPagerTags: Array<String> = arrayOf(Tags.DATA_TAG)
 
-    override fun getPagerTags(): Array<String> {
-        return arrayOf(Tags.DATA_TAG)
-    }
-
-    override fun getDataFragment(tag: String?): TeambrellaDataFragment? {
-        return null
-    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
@@ -83,18 +74,20 @@ class WalletTransactionsActivity : TeambrellaDataHostActivity(), IWalletTransact
         return super.onOptionsItemSelected(item)
     }
 
-    override fun getDataPagerFragment(tag: String?): TeambrellaDataPagerFragment? {
-        return when (tag) {
-            Tags.DATA_TAG -> TeambrellaDataPagerFragment.createInstance(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0))
-                    , null
-                    , WalletTransactionsDataPagerFragment::class.java)
-            else -> null
-        }
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : TeambrellaPagerViewModel> getPagerViewModelClass(tag: String): Class<T>? = when (tag) {
+        Tags.DATA_TAG -> WalletTransactionsModel::class.java as Class<T>
+        else -> super.getPagerViewModelClass(tag)
+    }
+
+    override fun getDataPagerConfig(tag: String): Bundle? = when (tag) {
+        Tags.DATA_TAG -> getPagerConfig(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0)))
+        else -> super.getDataPagerConfig(tag)
     }
 
     override fun getTeamId() = intent?.getIntExtra(TEAM_ID_EXTRA, -1) ?: -1
 
-    override fun getCurrency() = intent?.getStringExtra(CURRENCY_EXTRA) ?: "";
+    override fun getCurrency() = intent?.getStringExtra(CURRENCY_EXTRA) ?: ""
 
     override fun getCryptoRate() = intent?.getFloatExtra(CRYPTO_RATE, 0f) ?: 0f
 }

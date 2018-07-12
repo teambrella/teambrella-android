@@ -3,6 +3,7 @@ package com.teambrella.android.ui.chat.inbox;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -10,14 +11,13 @@ import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
+import com.teambrella.android.ui.base.TeambrellaViewModelKt;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -83,26 +83,27 @@ public class InboxActivity extends ATeambrellaActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @NonNull
     @Override
     protected String[] getDataTags() {
         return new String[0];
     }
 
+    @NonNull
     @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{INBOX_DATA_TAG};
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
-        return null;
-    }
-
-    @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
         switch (tag) {
-            case INBOX_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(TeambrellaUris.getInbox(), TeambrellaDataPagerFragment.class);
+            case INBOX_DATA_TAG: {
+                Bundle config = new Bundle();
+                config.putParcelable(TeambrellaViewModelKt.EXTRA_URI, TeambrellaUris.getInbox());
+                return config;
+            }
         }
         return null;
     }

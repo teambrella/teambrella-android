@@ -14,7 +14,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
-import com.teambrella.android.ui.teammate.TeammateActivity
+import com.teambrella.android.ui.teammate.getTeammateIntent
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
@@ -98,10 +98,10 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             title?.text = item.name
             `object`?.text = getObjectString(item.model, item.year)
 
-            itemView.setOnClickListener({
-                startActivity(TeammateActivity.getIntent(itemView.context, mTeamId, item.userId,
+            itemView.setOnClickListener {
+                startActivity(getTeammateIntent(itemView.context, mTeamId, item.userId!!,
                         item.name, item.avatar))
-            })
+            }
         }
 
         private fun getObjectString(model: String?, year: String?): String {

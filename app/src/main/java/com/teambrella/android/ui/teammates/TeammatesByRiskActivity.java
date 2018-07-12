@@ -3,19 +3,22 @@ package com.teambrella.android.ui.teammates;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
+import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.ui.widget.AkkuratBoldTextView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -43,30 +46,42 @@ public class TeammatesByRiskActivity extends ATeambrellaActivity implements ITea
                 .putExtra(EXTRA_SELECTED, selectedValue));
     }
 
+    @NonNull
     @Override
     protected String[] getDataTags() {
         return new String[]{};
     }
 
+    @NonNull
     @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{TEAMMATES_DATA_TAG};
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
-        return null;
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
+        switch (tag) {
+            case TEAMMATES_DATA_TAG: {
+                Bundle config = ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getTeammatesUri(mTeamId, true)
+                        , TeambrellaModel.ATTR_DATA_TEAMMATES);
+                config.putParcelableArrayList(TeammatesByRiskViewModel.EXTRA_RANGES, mRanges);
+                return config;
+            }
+        }
+        return super.getDataPagerConfig(tag);
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected <T extends TeambrellaPagerViewModel> Class<T> getPagerViewModelClass(@NotNull String tag) {
         switch (tag) {
             case TEAMMATES_DATA_TAG:
-                return TeammatesByRiskDataPagerFragment.getInstance(TeambrellaUris.getTeammatesUri(mTeamId, true), mRanges);
+                //noinspection unchecked
+                return (Class<T>) TeammatesByRiskViewModel.class;
         }
-        return null;
+        return super.getPagerViewModelClass(tag);
     }
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +94,7 @@ public class TeammatesByRiskActivity extends ATeambrellaActivity implements ITea
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(AkkuratBoldTextView.getAkkuratBoldText(this, R.string.compare_team_risk));
-            actionBar.setHomeAsUpIndicator(VectorDrawableCompat.create(getResources(), R.drawable.ic_arrow_back, null));
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();

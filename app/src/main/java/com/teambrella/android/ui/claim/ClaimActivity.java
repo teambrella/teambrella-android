@@ -1,9 +1,10 @@
 package com.teambrella.android.ui.claim;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -23,17 +24,16 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataFragmentKt;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.base.ADataProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
-import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.ui.base.TeambrellaDataViewModel;
+import com.teambrella.android.ui.teammate.KTeammateActivityKt;
 import com.teambrella.android.util.StatisticHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -136,21 +136,34 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         }
     }
 
+    @NonNull
     @Override
     protected String[] getDataTags() {
         return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
     }
 
+
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
+    protected Bundle getDataConfig(@NotNull String tag) {
         switch (tag) {
             case CLAIM_DATA_TAG:
-                return TeambrellaDataFragmentKt.createInstance((Uri) (getIntent().getParcelableExtra(EXTRA_URI)), false, ClaimDataFragment.class);
+                return ATeambrellaDataHostActivityKt.getDataConfig((getIntent().getParcelableExtra(EXTRA_URI)));
             case VOTE_DATA_TAG:
-                return TeambrellaDataFragmentKt.createInstance();
+                return ATeambrellaDataHostActivityKt.getDataConfig();
         }
+        return super.getDataConfig(tag);
+    }
 
-        return null;
+    @Nullable
+    @Override
+    protected <T extends TeambrellaDataViewModel> Class<T> getDataViewModelClass(@NotNull String tag) {
+        switch (tag) {
+            case CLAIM_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) ClaimViewModel.class;
+        }
+        return super.getDataViewModelClass(tag);
     }
 
     @Override
@@ -161,16 +174,6 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected String[] getPagerTags() {
-        return new String[]{};
-    }
-
-    @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
-        return null;
     }
 
     @Override
@@ -190,11 +193,8 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
 
     @Override
     public void postVote(int vote) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        TeambrellaDataFragment dataFragment = (TeambrellaDataFragment) fragmentManager.findFragmentByTag(VOTE_DATA_TAG);
-        if (dataFragment != null) {
-            dataFragment.load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
-        }
+        ViewModelProviders.of(this).get(VOTE_DATA_TAG, TeambrellaDataViewModel.class)
+                .load(TeambrellaUris.getClaimVoteUri(mClaimId, vote));
         StatisticHelper.onClaimVote(this, getTeamId(), getClaimId(), vote);
         new TeambrellaBroadcastManager(this).notifyClaimVote(getClaimId());
     }
@@ -283,7 +283,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
                     GlideApp.with(this).load(getImageLoader().getImageUrl(pictureUri))
                             .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mIcon);
                     mIcon.setOnClickListener(v ->
-                            TeammateActivity.start(ClaimActivity.this
+                            KTeammateActivityKt.startTeammateActivity(ClaimActivity.this
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)
@@ -305,10 +305,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
     }
 
     private void markTopicRead(String topicId) {
-        ClaimDataFragment fragment = (ClaimDataFragment) getSupportFragmentManager().findFragmentByTag(CLAIM_DATA_TAG);
-        if (fragment != null) {
-            fragment.markTopicRead(topicId);
-        }
+        ViewModelProviders.of(this).get(CLAIM_DATA_TAG, ClaimViewModel.class).markTopicRead(topicId);
     }
 
     private class ClaimNotificationClient extends TeambrellaNotificationServiceClient {

@@ -23,7 +23,7 @@ import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.ChatDataPagerAdapter
 import com.teambrella.android.ui.image.ImageViewerActivity
-import com.teambrella.android.ui.teammate.TeammateActivity
+import com.teambrella.android.ui.teammate.startTeammateActivity
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.util.StatisticHelper
@@ -218,7 +218,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
                 userPicture?.setOnClickListener {
                     if (teamId > 0) {
-                        TeammateActivity.start(itemView.context, teamId, item.userId, teammate.name, teammate.avatar.toString())
+                        startTeammateActivity(itemView.context, teamId, item.userId!!, teammate.name, teammate.avatar.toString())
                     }
                 }
             }

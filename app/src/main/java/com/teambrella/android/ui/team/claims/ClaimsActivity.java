@@ -4,16 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
-import com.teambrella.android.ui.claim.ClaimsDataPagerFragment;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
+import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
+import com.teambrella.android.ui.claim.ClaimsViewModel;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Claims Activity
@@ -71,27 +74,30 @@ public class ClaimsActivity extends ATeambrellaActivity {
         }
     }
 
+    @NonNull
     @Override
-    protected String[] getDataTags() {
-        return new String[]{};
-    }
-
-    @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{CLAIMS_DATA_TAG};
     }
 
+    @Nullable
     @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
-        return null;
-    }
-
-    @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
         switch (tag) {
             case CLAIMS_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, null, ClaimsDataPagerFragment.class);
+                return ATeambrellaDataHostActivityKt.getPagerConfig(mUri);
         }
-        return null;
+        return super.getDataPagerConfig(tag);
+    }
+
+    @Nullable
+    @Override
+    protected <T extends TeambrellaPagerViewModel> Class<T> getPagerViewModelClass(@NotNull String tag) {
+        switch (tag) {
+            case CLAIMS_DATA_TAG:
+                //noinspection unchecked
+                return (Class<T>) ClaimsViewModel.class;
+        }
+        return super.getPagerViewModelClass(tag);
     }
 }

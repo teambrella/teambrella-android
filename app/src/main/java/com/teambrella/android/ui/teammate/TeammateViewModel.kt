@@ -4,11 +4,11 @@ import com.teambrella.android.api.data
 import com.teambrella.android.api.discussionPart
 import com.teambrella.android.api.topicId
 import com.teambrella.android.api.unreadCount
-import com.teambrella.android.data.base.TeambrellaDataFragment
+import com.teambrella.android.ui.base.TeambrellaDataViewModel
 
-class TeammateDataFragment() : TeambrellaDataFragment() {
+class TeammateViewModel : TeambrellaDataViewModel() {
     fun markTopicRead(topicId: String) {
-        loader?.update {
+        loader.update {
             val discussion = it?.data?.discussionPart
             if (discussion?.topicId == topicId) {
                 discussion.unreadCount = 0

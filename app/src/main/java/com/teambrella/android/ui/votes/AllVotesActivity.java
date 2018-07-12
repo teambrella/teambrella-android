@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.FragmentManager;
@@ -13,10 +14,11 @@ import android.view.MenuItem;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.data.base.TeambrellaDataFragment;
-import com.teambrella.android.data.base.TeambrellaDataPagerFragment;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
+import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * All Votes Activity
@@ -89,29 +91,22 @@ public class AllVotesActivity extends ATeambrellaActivity implements IAllVoteAct
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected String[] getDataTags() {
-        return new String[0];
-    }
 
+    @NonNull
     @Override
-    protected String[] getPagerTags() {
+    protected String[] getDataPagerTags() {
         return new String[]{ALL_VOTES_DATA_TAG};
     }
 
-    @Override
-    protected TeambrellaDataFragment getDataFragment(String tag) {
-        return null;
-    }
 
+    @Nullable
     @Override
-    protected TeambrellaDataPagerFragment getDataPagerFragment(String tag) {
+    protected Bundle getDataPagerConfig(@NotNull String tag) {
         switch (tag) {
             case ALL_VOTES_DATA_TAG:
-                return TeambrellaDataPagerFragment.Companion.createInstance(mUri, TeambrellaModel.ATTR_DATA_VOTERS, TeambrellaDataPagerFragment.class);
+                return ATeambrellaDataHostActivityKt.getPagerConfig(mUri, TeambrellaModel.ATTR_DATA_VOTERS);
         }
-
-        return null;
+        return super.getDataPagerConfig(tag);
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.data.base.IDataHost;
 import com.teambrella.android.data.base.IDataPager;
+import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity;
 import com.teambrella.android.util.log.Log;
 
 import io.reactivex.Notification;
@@ -82,7 +83,7 @@ public abstract class ADataPagerProgressFragment<T extends IDataHost> extends Pr
             }
         });
         mAdapter = getAdapter();
-        ((ITeambrellaDaggerActivity) (getContext())).getComponent().inject(mAdapter);
+        ((ATeambrellaDaggerActivity) (getContext())).getComponent().inject(mAdapter);
         mList.setAdapter(mAdapter);
         return view;
     }

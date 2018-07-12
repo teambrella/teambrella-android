@@ -25,7 +25,7 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
-import com.teambrella.android.ui.teammate.TeammateActivity;
+import com.teambrella.android.ui.teammate.KTeammateActivityKt;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -236,7 +236,7 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                     .blockingFirst().getValue();
             mTitle.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             itemView.setOnClickListener(v -> {
-                Intent intent = TeammateActivity.getIntent(itemView.getContext(), mTeamId,
+                Intent intent = KTeammateActivityKt.getTeammateIntent(itemView.getContext(), mTeamId,
                         item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri);
                 if (!startActivity(intent)) {
                     itemView.getContext().startActivity(intent);

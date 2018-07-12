@@ -10,7 +10,7 @@ import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
 import java.util.*
 
-class KChatDataPagerLoader(uri: Uri, private val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
+class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
 
 
     companion object {
