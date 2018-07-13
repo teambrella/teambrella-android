@@ -3,7 +3,6 @@ package com.teambrella.android.ui.wallet
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.view.MenuItem
 import com.teambrella.android.R
 import com.teambrella.android.api.server.TeambrellaUris
@@ -44,7 +43,7 @@ class WalletTransactionsActivity : ATeambrellaActivity(), IWalletTransactionActi
         actionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setTitle(R.string.transactions)
-            it.setHomeAsUpIndicator(VectorDrawableCompat.create(resources, R.drawable.ic_arrow_back, null))
+            it.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         }
 
         val fragmentManager = supportFragmentManager
