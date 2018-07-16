@@ -21,27 +21,19 @@ import com.teambrella.android.ui.chat.ChatActivity
 import io.reactivex.Notification
 import io.reactivex.disposables.Disposable
 
-private const val TEAMMATE_URI = "teammate_uri"
-private const val TEAMMATE_NAME = "teammate_name"
-private const val TEAMMATE_PICTURE = "teammate_picture"
-private const val TEAMMATE_USER_ID = "teammate_user_id"
-private const val TEAM_ID = "team_id"
-
-
-fun getTeammateIntent(context: Context, teamId: Int, userId: String, name: String?, userPictureUri: String?): Intent {
-    return Intent(context, KTeammateActivity::class.java)
-            .putExtra(TEAMMATE_USER_ID, userId)
-            .putExtra(TEAMMATE_URI, TeambrellaUris.getTeammateUri(teamId, userId))
-            .putExtra(TEAMMATE_NAME, name)
-            .putExtra(TEAM_ID, teamId)
-            .putExtra(TEAMMATE_PICTURE, userPictureUri)
+fun getTeammateIntent(context: Context, teamId: Int, userId: String, name: String?, userPictureUri: String?) = Intent(context, TeammateActivity::class.java).apply {
+    this.userId = userId
+    this.teamId = teamId
+    this.userName = name
+    this.avatar = userPictureUri
+    this.uri = TeambrellaUris.getTeammateUri(teamId, userId)
 }
 
 fun startTeammateActivity(context: Context, teamId: Int, userId: String, name: String?, userPictureUri: String?) {
     context.startActivity(getTeammateIntent(context, teamId, userId, name, userPictureUri))
 }
 
-class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
+class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
 
     companion object {
         private const val TEAMMATE = "teammate"
@@ -53,15 +45,15 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     override val dataTags: Array<String> = arrayOf(TEAMMATE, VOTE, PROXY)
 
     private var userId: String? = null
-        get() = field ?: intent.getStringExtra(TEAMMATE_USER_ID)
+        get() = field ?: intent.userId
 
     private var teammateId: Int? = null
 
     private var userName: String? = null
-        get() = field ?: intent.getStringExtra(TEAMMATE_NAME)
+        get() = field ?: intent.userName
 
     private var avatar: String? = null
-        get() = field ?: intent.getStringExtra(TEAMMATE_PICTURE)
+        get() = field ?: intent.avatar
 
     private var topicId: String? = null
 
@@ -105,15 +97,15 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             }
 
             titleView = customView.findViewById<TextView>(R.id.title).apply {
-                text = intent?.getStringExtra(TEAMMATE_NAME)
+                text = intent?.userName
             }
 
             customView.findViewById<View>(R.id.send_message)?.apply {
-                if (user.userId == intent.getStringExtra(TEAMMATE_USER_ID)) {
+                if (user.userId == intent.userId) {
                     visibility = View.GONE
                 } else {
                     setOnClickListener {
-                        ChatActivity.startConversationChat(this@KTeammateActivity, userId, userName, avatar)
+                        ChatActivity.startConversationChat(this@TeammateActivity, userId, userName, avatar)
                     }
                 }
             }
@@ -131,7 +123,7 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     }
 
     override fun getDataConfig(tag: String): Bundle? = when (tag) {
-        TEAMMATE -> Bundle().apply { this.uri = intent?.getParcelableExtra(TEAMMATE_URI) }
+        TEAMMATE -> Bundle().apply { this.uri = intent?.uri }
         VOTE, PROXY -> Bundle()
         else -> super.getDataConfig(tag)
     }
@@ -224,7 +216,7 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         }
     }
 
-    override fun getTeamId(): Int = intent.getIntExtra(TEAM_ID, 0)
+    override fun getTeamId(): Int = intent.teamId
 
     override fun getTeammateId(): Int = teammateId ?: 0
 
@@ -240,7 +232,7 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
 
         override fun onPushMessage(message: INotificationMessage): Boolean {
             val topicId = message.topicId
-            if (topicId != null && topicId == this@KTeammateActivity.topicId) {
+            if (topicId != null && topicId == this@TeammateActivity.topicId) {
                 if (mResumed) {
                     load(TEAMMATE)
                 } else {
@@ -267,7 +259,7 @@ class KTeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     private val chatBroadCastReceiver = object : TeambrellaBroadcastReceiver() {
         override fun onTopicRead(topicId: String) {
             super.onTopicRead(topicId)
-            ViewModelProviders.of(this@KTeammateActivity)
+            ViewModelProviders.of(this@TeammateActivity)
                     .get(TEAMMATE, TeammateViewModel::class.java)
                     .markTopicRead(topicId)
         }

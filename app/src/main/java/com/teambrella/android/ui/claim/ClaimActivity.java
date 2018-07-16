@@ -33,7 +33,7 @@ import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
 import com.teambrella.android.ui.base.TeambrellaDataViewModel;
-import com.teambrella.android.ui.teammate.KTeammateActivityKt;
+import com.teambrella.android.ui.teammate.TeammateActivityKt;
 import com.teambrella.android.util.StatisticHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -283,7 +283,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
                     GlideApp.with(this).load(getImageLoader().getImageUrl(pictureUri))
                             .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())).into(mIcon);
                     mIcon.setOnClickListener(v ->
-                            KTeammateActivityKt.startTeammateActivity(ClaimActivity.this
+                            TeammateActivityKt.startTeammateActivity(ClaimActivity.this
                                     , getIntent().getIntExtra(EXTRA_TEAM_ID, 0)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                                     , basic.getString(TeambrellaModel.ATTR_DATA_NAME)

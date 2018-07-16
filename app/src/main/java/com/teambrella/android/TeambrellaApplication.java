@@ -2,6 +2,7 @@ package com.teambrella.android;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 import android.support.text.emoji.EmojiCompat;
@@ -16,6 +17,9 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.util.log.Log;
+
+import org.bitcoinj.crypto.MnemonicCode;
 
 import java.util.HashSet;
 
@@ -25,6 +29,8 @@ import io.fabric.sdk.android.Fabric;
  * Teambrella Application
  */
 public class TeambrellaApplication extends MultiDexApplication implements Application.ActivityLifecycleCallbacks {
+
+    private static final String LOG_TAG = TeambrellaApplication.class.getSimpleName();
 
     private static GoogleAnalytics sAnalytics;
     private static Tracker sTracker;
@@ -37,6 +43,8 @@ public class TeambrellaApplication extends MultiDexApplication implements Applic
         super.onCreate();
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
+
+        initMnemonicCodes();
 
         //noinspection ConstantConditions
         if (LeakCanary.isInAnalyzerProcess(this)) {
@@ -59,7 +67,7 @@ public class TeambrellaApplication extends MultiDexApplication implements Applic
         registerActivityLifecycleCallbacks(this);
 
         TeambrellaNotificationManager.recreateNotificationChannels(this);
-        
+
         final FontRequest fontRequest = new FontRequest(
                 "com.google.android.gms.fonts",
                 "com.google.android.gms",
@@ -129,5 +137,15 @@ public class TeambrellaApplication extends MultiDexApplication implements Applic
     @Override
     public void onActivityDestroyed(Activity activity) {
 
+    }
+
+
+    private void initMnemonicCodes() {
+        try {
+            MnemonicCode.INSTANCE = new MnemonicCode(getAssets().open("mnemonic/wordlist/english.txt", AssetManager.ACCESS_STREAMING)
+                    , null);
+        } catch (Exception e) {
+            Log.reportNonFatal(LOG_TAG, e);
+        }
     }
 }

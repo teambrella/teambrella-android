@@ -17,7 +17,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-import com.teambrella.android.ui.teammate.KTeammateActivityKt;
+import com.teambrella.android.ui.teammate.TeammateActivityKt;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -118,7 +118,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
                     .blockingFirst().getValue();
             mTitleView.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
             itemView.setOnClickListener(v -> {
-                Intent intent = KTeammateActivityKt.getTeammateIntent(itemView.getContext(), mTeamId,
+                Intent intent = TeammateActivityKt.getTeammateIntent(itemView.getContext(), mTeamId,
                         item.getString(TeambrellaModel.ATTR_DATA_USER_ID), item.getString(TeambrellaModel.ATTR_DATA_NAME), userPictureUri);
                 if (!startActivity(intent)) {
                     itemView.getContext().startActivity(intent);
