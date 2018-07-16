@@ -65,16 +65,20 @@ abstract class ATeambrellaDataHostActivity : ATeambrellaDaggerActivity<ITeambrel
 
     override fun onStart() {
         super.onStart()
-        ViewModelProviders.of(this).get(TeambrellaRequestViewModel::class.java).apply {
-            observable.subscribe(this@ATeambrellaDataHostActivity::onRequestResult)
-            start()
+        if (isRequestable) {
+            ViewModelProviders.of(this).get(TeambrellaRequestViewModel::class.java).apply {
+                requestDisposable = observable.subscribe(this@ATeambrellaDataHostActivity::onRequestResult)
+                start()
+            }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        requestDisposable?.takeIf { !it.isDisposed }?.dispose()
-        ViewModelProviders.of(this).get(TeambrellaRequestViewModel::class.java).stop()
+        if (isRequestable) {
+            requestDisposable?.takeIf { !it.isDisposed }?.dispose()
+            ViewModelProviders.of(this).get(TeambrellaRequestViewModel::class.java).stop()
+        }
     }
 
     override fun getObservable(tag: String): Observable<Notification<JsonObject>> =
