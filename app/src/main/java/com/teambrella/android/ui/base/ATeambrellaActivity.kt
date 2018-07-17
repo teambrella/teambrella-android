@@ -7,7 +7,8 @@ import com.google.gson.JsonObject
 import com.teambrella.android.BuildConfig
 import com.teambrella.android.api.TeambrellaModel
 import com.teambrella.android.api.TeambrellaServerException
-import com.teambrella.android.api.model.json.JsonWrapper
+import com.teambrella.android.api.recommendedVersion
+import com.teambrella.android.api.status
 import com.teambrella.android.dagger.Dependencies
 import com.teambrella.android.image.TeambrellaImageLoader
 import com.teambrella.android.ui.TeambrellaUser
@@ -27,6 +28,7 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         const val EXTRA_BACK_PRESSED_INTENT = "extra_back_pressed_intent"
         private val LOG_TAG = ATeambrellaActivity::class.java.simpleName
         private const val WALLET_DATA_FRAGMENT_TAG = "wallet_data_fragment"
+        private const val MIN_RECOMMENDED_VERSION_DELAY = (1000 * 60 * 60 * 24 * 3).toLong()
     }
 
     @Inject
@@ -39,7 +41,7 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
 
 
     private val mLifecycleCallbacks = LinkedList<TeambrellaActivityLifecycle>()
-    private val mCheckErrorDisposables = LinkedList<Disposable>()
+    private val serverErrorHandler = ServerErrorHandler()
 
 
     fun registerLifecycleCallback(lifecycle: TeambrellaActivityLifecycle) {
@@ -71,17 +73,7 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         val fragment = fragmentManager.findFragmentByTag(WALLET_DATA_FRAGMENT_TAG) as TeambrellaWalletRequestFragment
         fragment.sync()
 
-        if (dataTags.isNotEmpty()) {
-            for (tag in dataTags) {
-                mCheckErrorDisposables.add(getObservable(tag).subscribe { this.checkServerError(it) })
-            }
-        }
-
-        if (dataPagerTags.isNotEmpty()) {
-            for (tag in dataPagerTags) {
-                mCheckErrorDisposables.add(getPager(tag).dataObservable.subscribe { this.checkServerError(it) })
-            }
-        }
+        serverErrorHandler.onStart()
 
     }
 
@@ -121,14 +113,7 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         for (lifecycle in mLifecycleCallbacks) {
             lifecycle.onStop()
         }
-        val iterator = mCheckErrorDisposables.iterator()
-        while (iterator.hasNext()) {
-            val disposable = iterator.next()
-            if (!disposable.isDisposed) {
-                disposable.dispose()
-                iterator.remove()
-            }
-        }
+        serverErrorHandler.onStop()
     }
 
     override fun onDestroy() {
@@ -138,44 +123,70 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         }
     }
 
+    private inner class ServerErrorHandler {
+        private val mCheckErrorDisposables = LinkedList<Disposable>()
 
-    private fun checkServerError(notification: Notification<JsonObject>) {
-        if (notification.isOnError) {
-            val error = notification.error
-            if (error is TeambrellaServerException) {
-                when (error.errorCode) {
-                    TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH -> {
-                        if (!isFinishing && user.isDemoUser) {
-                            startActivity(Intent(this, NewDemoSessionActivity::class.java)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                            finish()
-                        }
-                        if (!isFinishing) {
-                            AppOutdatedActivity.start(this, true)
-                            finish()
-                        }
-                    }
-                    TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION -> if (!isFinishing) {
-                        AppOutdatedActivity.start(this, true)
-                        finish()
-                    }
+        fun onStart() {
+            if (dataTags.isNotEmpty()) {
+                for (tag in dataTags) {
+                    mCheckErrorDisposables.add(getObservable(tag).subscribe(this::checkServerError))
                 }
             }
-        } else {
-            val response = JsonWrapper(notification.value)
-            val status = response.getObject(TeambrellaModel.ATTR_DATA_STATUS)
-            if (status != null) {
-                val recommendedVersion = status.getInt(TeambrellaModel.ATTR_STATUS_RECOMMENDING_VERSION)
-                if (recommendedVersion > BuildConfig.VERSION_CODE) {
-                    val current = System.currentTimeMillis()
-                    val minDelay = (1000 * 60 * 60 * 24 * 3).toLong()
-                    if (Math.abs(current - user.newVersionLastScreenTime) < minDelay) {
-                        return
+
+            if (dataPagerTags.isNotEmpty()) {
+                for (tag in dataPagerTags) {
+                    mCheckErrorDisposables.add(getPager(tag).dataObservable.subscribe(this::checkServerError))
+                }
+            }
+
+        }
+
+        fun onStop() {
+            mCheckErrorDisposables.iterator().let {
+                while (it.hasNext()) {
+                    it.next().takeIf { !it.isDisposed }?.dispose()
+                    it.remove()
+                }
+            }
+        }
+
+        private fun checkServerError(notification: Notification<JsonObject>) {
+            if (notification.isOnError) {
+                val error = notification.error
+                if (error is TeambrellaServerException) {
+                    when (error.errorCode) {
+                        TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH -> {
+                            if (!isFinishing && user.isDemoUser) {
+                                startActivity(Intent(this@ATeambrellaActivity, NewDemoSessionActivity::class.java)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                                finish()
+                            }
+                            if (!isFinishing) {
+                                AppOutdatedActivity.start(this@ATeambrellaActivity, true)
+                                finish()
+                            }
+                        }
+                        TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION -> if (!isFinishing) {
+                            AppOutdatedActivity.start(this@ATeambrellaActivity, true)
+                            finish()
+                        }
                     }
-                    AppOutdatedActivity.start(this, false)
-                    user.newVersionLastScreenTime = current
+                }
+            } else {
+                notification.value.status?.let { _status ->
+                    val recommendedVersion = _status.recommendedVersion
+                    if (recommendedVersion > BuildConfig.VERSION_CODE) {
+                        val current = System.currentTimeMillis()
+                        if (Math.abs(current - user.newVersionLastScreenTime) < MIN_RECOMMENDED_VERSION_DELAY) {
+                            return
+                        }
+                        AppOutdatedActivity.start(this@ATeambrellaActivity, false)
+                        user.newVersionLastScreenTime = current
+                    }
                 }
             }
         }
     }
+
+    
 }

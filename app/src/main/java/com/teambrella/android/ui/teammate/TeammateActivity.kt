@@ -76,7 +76,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         supportFragmentManager?.apply {
             if (findFragmentByTag(UI) == null) {
                 beginTransaction()
-                        .add(R.id.container, ADataProgressFragment.getInstance(arrayOf(TEAMMATE, VOTE, PROXY), KTeammateFragment::class.java), UI)
+                        .add(R.id.container, ADataProgressFragment.getInstance(arrayOf(TEAMMATE, VOTE, PROXY), TeammateFragment::class.java), UI)
                         .commit()
             }
         }

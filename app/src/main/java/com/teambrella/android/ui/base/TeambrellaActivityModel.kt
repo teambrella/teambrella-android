@@ -9,11 +9,18 @@ private const val USER_ID = "user_id"
 private const val USER_NAME = "user_name"
 private const val AVATAR = "avatar"
 private const val URI = "uri"
+private const val CURRENCY = "currency"
 
 var Intent?.teamId: Int
     get() = this?.getIntExtra(TEAM_ID, 0) ?: 0
     set(value) {
         this?.putExtra(TEAM_ID, value)
+    }
+
+var Intent?.currency: String?
+    get() = this?.getStringExtra(CURRENCY)
+    set(value) {
+        this?.putExtra(CURRENCY, value)
     }
 
 var Intent?.userId: String?

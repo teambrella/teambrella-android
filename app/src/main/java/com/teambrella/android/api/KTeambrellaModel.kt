@@ -26,6 +26,7 @@ const val DATE_PAYMENT_FINISHED = "DatePaymentFinished"
 const val SHARED_URL = "SharedUrl"
 const val VOTING_RES_CRYPTO = "VotingRes_Crypto"
 const val PAYMENT_RES_CRYPTO = "PaymentRes_Crypto"
+const val RECOMMENDING_VERSION = "RecommendedVersion"
 
 
 object ChatItems {
@@ -372,6 +373,9 @@ var JsonObject?.chat: JsonArray?
 
 val JsonObject?.teamAccessLevel: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL)
+
+val JsonObject?.recommendedVersion: Int
+    get() = getInt(RECOMMENDING_VERSION) ?: 0
 
 val JsonObject?.coverMe: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_COVER_ME)

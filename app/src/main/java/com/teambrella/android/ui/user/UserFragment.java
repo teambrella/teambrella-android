@@ -17,7 +17,7 @@ import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.base.ADataFragment;
 import com.teambrella.android.ui.base.ADataProgressFragment;
-import com.teambrella.android.ui.teammate.KTeammateFragment;
+import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
 import com.teambrella.android.ui.user.wallet.KWalletFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
@@ -42,7 +42,7 @@ public class UserFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return ADataProgressFragment.getInstance(new String[]{MainActivity.USER_DATA, MainActivity.VOTE_DATA}, KTeammateFragment.class);
+                        return ADataProgressFragment.getInstance(new String[]{MainActivity.USER_DATA, MainActivity.VOTE_DATA}, TeammateFragment.class);
                     case 1:
                         return ADataFragment.getInstance(MainActivity.WALLET_DATA, CoverageFragment.class);
                     case 2:

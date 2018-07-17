@@ -26,7 +26,7 @@ import com.teambrella.android.util.ConnectivityUtils
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
 
-class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBar.VoterBarListener {
+class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.VoterBarListener {
 
     private companion object {
         private const val OBJECT_FRAGMENT_TAG = "object_tag"
@@ -131,10 +131,13 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
             }
         }
 
-        mDataHost.load(mTags[0])
+        if (savedInstanceState == null) {
+            mDataHost.load(mTags[0])
+        }
+
         setContentShown(false)
 
-        view.findViewById<View>(R.id.discussion_foreground).setOnClickListener { v ->
+        view.findViewById<View>(R.id.discussion_foreground).setOnClickListener {
             mDataHost.launchActivity(ChatActivity.getTeammateChat(context, teamId
                     ?: 0, userId, null, null, topicId, teamAccessLevel))
         }
@@ -192,34 +195,34 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
             val voting = data?.voting
 
             if (voting != null) {
-                votingContainerView?.visibility = View.VISIBLE;
-                objectInfoContainerView?.setBackgroundResource(R.drawable.block);
-                coversMeTitleView?.setText(R.string.would_cover_me);
+                votingContainerView?.visibility = View.VISIBLE
+                objectInfoContainerView?.setBackgroundResource(R.drawable.block)
+                coversMeTitleView?.setText(R.string.would_cover_me)
 
                 when (mGender) {
                     TeambrellaModel.Gender.MALE -> {
-                        coversThemTitleView?.setText(R.string.would_cover_him);
-                        wouldCoverThemTitleView?.setText(R.string.would_cover_him);
+                        coversThemTitleView?.setText(R.string.would_cover_him)
+                        wouldCoverThemTitleView?.setText(R.string.would_cover_him)
                     }
                     TeambrellaModel.Gender.FEMALE -> {
-                        coversThemTitleView?.setText(R.string.would_cover_her);
-                        wouldCoverThemTitleView?.setText(R.string.would_cover_her);
+                        coversThemTitleView?.setText(R.string.would_cover_her)
+                        wouldCoverThemTitleView?.setText(R.string.would_cover_her)
                     }
                     else -> {
-                        coversThemTitleView?.setText(R.string.would_cover_them);
-                        wouldCoverThemTitleView?.setText(R.string.would_cover_them);
+                        coversThemTitleView?.setText(R.string.would_cover_them)
+                        wouldCoverThemTitleView?.setText(R.string.would_cover_them)
                     }
                 }
             } else {
                 when (mGender) {
                     TeambrellaModel.Gender.MALE -> {
-                        coversThemTitleView?.setText(R.string.cover_him);
+                        coversThemTitleView?.setText(R.string.cover_him)
                     }
                     TeambrellaModel.Gender.FEMALE -> {
-                        coversThemTitleView?.setText(R.string.cover_her);
+                        coversThemTitleView?.setText(R.string.cover_her)
                     }
                     else -> {
-                        coversThemTitleView?.setText(R.string.cover_them);
+                        coversThemTitleView?.setText(R.string.cover_them)
                     }
                 }
             }
@@ -233,6 +236,7 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
                 unreadView?.visibility = if (it.unreadCount ?: 0 > 0) View.VISIBLE else View.GONE
 
                 it.originalPostText?.let { _text ->
+                    @Suppress("DEPRECATION")
                     messageView?.text = Html.fromHtml(_text)
                 }
 
@@ -247,8 +251,8 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
 
             }
 
-            coverThemSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE;
-            coverMeSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE;
+            coverThemSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
+            coverMeSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
 
             data?.riskScale?.let {
                 heCoversMeIf1 = it.heCoversMeIf1 ?: heCoversMeIf1
@@ -260,8 +264,8 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
             isShown = true
             setContentShown(true)
         } else {
-            setContentShown(true, !isShown);
-            mDataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(getContext())) R.string.something_went_wrong_error else R.string.no_internet_connection);
+            setContentShown(true, !isShown)
+            mDataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context)) R.string.something_went_wrong_error else R.string.no_internet_connection)
         }
     }
 
@@ -309,7 +313,7 @@ class KTeammateFragment() : AKDataProgressFragment<ITeammateActivity>(), VoterBa
 
 
     private val mHideWouldCoverPanelRunnable = {
-        val animator = ObjectAnimator.ofFloat(wouldCoverPanelView, "translationY", 0f, -(wouldCoverPanelView?.getHeight()?.toFloat()
+        val animator = ObjectAnimator.ofFloat(wouldCoverPanelView, "translationY", 0f, -(wouldCoverPanelView?.height?.toFloat()
                 ?: 0f)).setDuration(300)
 
         animator.addListener(object : AnimatorListenerAdapter() {
