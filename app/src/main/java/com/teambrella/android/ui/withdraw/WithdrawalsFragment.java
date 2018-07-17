@@ -2,6 +2,7 @@ package com.teambrella.android.ui.withdraw;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,13 +22,13 @@ import io.reactivex.Observable;
  */
 public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawActivity> {
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new WithdrawalsAdapter(mDataHost.getPager(mTag), mDataHost);
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new WithdrawalsAdapter(getDataHost().getPager(getTags()[0]), getDataHost());
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         com.teambrella.android.ui.widget.DividerItemDecoration dividerItemDecoration =
@@ -58,23 +59,23 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                         return drawDivider;
                     }
                 };
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
     @SuppressLint("CheckResult")
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
         if (notification.isOnNext()) {
             Observable.just(notification.getValue())
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                     .doOnNext(jsonWrapper -> {
-                        WithdrawalsAdapter adapter = (WithdrawalsAdapter) mAdapter;
+                        WithdrawalsAdapter adapter = (WithdrawalsAdapter) getAdapter();
                         adapter.setDefaultWithdrawAddress(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_DEFAULT_WITHDRAW_ADDRESS));
                         adapter.setBalanceValue(jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
                                 , jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED)
-                                , mDataHost.getCurrency(), mDataHost.getCurrencyRate());
+                                , getDataHost().getCurrency(), getDataHost().getCurrencyRate());
                     }).blockingFirst();
         }
     }

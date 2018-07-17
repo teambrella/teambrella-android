@@ -2,6 +2,7 @@ package com.teambrella.android.ui.teammates;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,13 +29,13 @@ public class TeammatesByRiskFragment extends ADataPagerProgressFragment<ITeammat
     private boolean mFirstUpdate = true;
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new TeammatesByRiskAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId());
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new TeammatesByRiskAdapter(getDataHost().getPager(getTags()[0]), getDataHost().getTeamId());
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 LinearLayoutManager.VERTICAL) {
@@ -70,22 +71,22 @@ public class TeammatesByRiskFragment extends ADataPagerProgressFragment<ITeammat
         };
 
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
         if (notification.isOnNext() && mFirstUpdate) {
-            IDataPager<JsonArray> pager = mDataHost.getPager(mTag);
+            IDataPager<JsonArray> pager = getDataHost().getPager(getTags()[0]);
             for (int i = 0; i < pager.getLoadedData().size(); i++) {
                 JsonWrapper item = new JsonWrapper(pager.getLoadedData().get(i).getAsJsonObject());
                 switch (item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE)) {
                     case TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_RISK:
-                        if (item.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE) <= mDataHost.getSelectedValue()
-                                && item.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE) >= mDataHost.getSelectedValue()) {
-                            LinearLayoutManager manager = (LinearLayoutManager) mList.getLayoutManager();
+                        if (item.getFloat(TeambrellaModel.ATTR_DATA_LEFT_RANGE) <= getDataHost().getSelectedValue()
+                                && item.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE) >= getDataHost().getSelectedValue()) {
+                            LinearLayoutManager manager = (LinearLayoutManager) getList().getLayoutManager();
                             manager.scrollToPositionWithOffset(i, 0);
                             break;
                         }

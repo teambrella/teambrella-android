@@ -18,7 +18,7 @@ import com.teambrella.android.ui.CosignersActivity
 import com.teambrella.android.ui.IMainDataHost
 import com.teambrella.android.ui.QRCodeActivity
 import com.teambrella.android.ui.TeambrellaUser
-import com.teambrella.android.ui.base.AKDataProgressFragment
+import com.teambrella.android.ui.base.ADataProgressFragment
 import com.teambrella.android.ui.wallet.getLaunchIntent
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
 import com.teambrella.android.ui.withdraw.WithdrawActivity
@@ -34,10 +34,10 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 
-class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupManager.IWalletBackupListener {
+class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupManager.IWalletBackupListener {
     companion object {
         val LOG_TAG: String = KWalletFragment::class.java.simpleName
-        val EXTRA_BACKUP = "extra_backup"
+        const val EXTRA_BACKUP = "extra_backup"
     }
 
     private val user: TeambrellaUser by lazy(LazyThreadSafetyMode.NONE, { TeambrellaUser.get(context) })
@@ -59,14 +59,14 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
     private var isWalletBackedUp: Boolean? = null
 
 
-    override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         savedInstanceState?.let {
-            mDataHost.load(mTags[0])
+            dataHost.load(tags[0])
             setContentShown(false)
         }
 
-        return inflater?.inflate(R.layout.fragment_wallet, container, false)
+        return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,10 +75,10 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
         currencyView?.text = getString(R.string.milli_ethereum)
 
         balanceView?.text = context?.getString(R.string.amount_format_string
-                , AmountCurrencyUtil.getCurrencySign(mDataHost.currency)
+                , AmountCurrencyUtil.getCurrencySign(dataHost.currency)
                 , 0)
 
-        mDataHost?.fundAddress?.let {
+        dataHost.fundAddress?.let {
             Observable.just(it).map { QRCodeUtils.createBitmap(it) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -93,9 +93,9 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
 
         AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, 0f)
         uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string
-                , AmountCurrencyUtil.getCurrencySign(mDataHost.currency), 0)
+                , AmountCurrencyUtil.getCurrencySign(dataHost.currency), 0)
 
-        mDataHost?.addWalletBackupListener(this)
+        dataHost.addWalletBackupListener(this)
 
         savedInstanceState?.let {
             if (it.containsKey(EXTRA_BACKUP)) {
@@ -106,13 +106,13 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             }
         }
 
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onReload() {
         super.onReload()
-        mDataHost?.load(mTags[0])
         if (!user.isDemoUser) {
-            mDataHost?.backUpWallet(false)
+            dataHost.backUpWallet(false)
         }
     }
 
@@ -140,18 +140,18 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             }
 
             balanceView?.text = context?.getString(R.string.amount_format_string
-                    , AmountCurrencyUtil.getCurrencySign(mDataHost.currency), Math.round(cryptoBalance * currencyRate))
+                    , AmountCurrencyUtil.getCurrencySign(dataHost.currency), Math.round(cryptoBalance * currencyRate))
 
 
             if (!user.isDemoUser) {
-                mDataHost.backUpWallet(false)
+                dataHost.backUpWallet(false)
             }
 
             val forUninterruptedCoverage = Math.abs(data?.get(TeambrellaModel.ATTR_DATA_RECOMMENDED_CRYPTO)?.asFloat
                     ?: 0f)
 
             AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, forUninterruptedCoverage)
-            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mDataHost.currency), Math.round(forUninterruptedCoverage
+            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(dataHost.currency), Math.round(forUninterruptedCoverage
                     * (data?.currencyRate ?: 0f)))
 
             Observable.just(data)
@@ -168,11 +168,11 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
             cosignersView?.setOnClickListener {
                 CosignersActivity.start(context
                         , data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray?.toString()
-                        , mDataHost.teamId)
+                        , dataHost.teamId)
             }
 
-            transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, mDataHost.teamId, mDataHost.currency, currencyRate)) }
-            withdrawView?.setOnClickListener { WithdrawActivity.start(context, mDataHost.teamId, mDataHost.currency, currencyRate) }
+            transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, currencyRate)) }
+            withdrawView?.setOnClickListener { WithdrawActivity.start(context, dataHost.teamId, dataHost.currency, currencyRate) }
         }
         setContentShown(true)
     }
@@ -180,7 +180,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mDataHost?.removeWalletBackupListener(this)
+        dataHost.removeWalletBackupListener(this)
     }
 
     override fun onWalletSaved(force: Boolean) {
@@ -197,13 +197,13 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
     override fun onWalletSaveError(code: Int, force: Boolean) {
         if (code == WalletBackupManager.IWalletBackupListener.RESOLUTION_REQUIRED) {
             backupWalletMessage?.visibility = View.VISIBLE
-            backupWalletMessage?.setOnClickListener { mDataHost.showWalletBackupDialog() }
+            backupWalletMessage?.setOnClickListener { dataHost.showWalletBackupDialog() }
             isWalletBackedUp = false
             showWalletBackupInfo()
         } else {
             if (code != WalletBackupManager.IWalletBackupListener.CANCELED) {
                 if (force) {
-                    mDataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context))
+                    dataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context))
                         R.string.something_went_wrong_error
                     else
                         R.string.no_internet_connection)
@@ -237,7 +237,7 @@ class KWalletFragment : AKDataProgressFragment<IMainDataHost>(), WalletBackupMan
         if (!user.isDemoUser) {
             showBackupInfoOnShow = if (userVisibleHint) {
                 if (!user.isBackupInfoDialogShown) {
-                    mDataHost.showWalletBackupDialog()
+                    dataHost.showWalletBackupDialog()
                     user.setBackupInfodialogShown(true)
                 }
                 false

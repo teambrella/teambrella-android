@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
@@ -100,7 +100,7 @@ public class TeammatesByRiskActivity extends ATeambrellaActivity implements ITea
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(TEAMMATES_UI_TAG) == null) {
             fragmentManager.beginTransaction().add(R.id.container,
-                    ADataPagerProgressFragment.getInstance(TEAMMATES_DATA_TAG, TeammatesByRiskFragment.class), TEAMMATES_UI_TAG).commit();
+                    ADataFragmentKt.createDataFragment(new String[]{TEAMMATES_DATA_TAG}, TeammatesByRiskFragment.class), TEAMMATES_UI_TAG).commit();
         }
     }
 

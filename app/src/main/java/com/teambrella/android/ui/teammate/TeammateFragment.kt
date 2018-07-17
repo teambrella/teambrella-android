@@ -15,8 +15,8 @@ import android.widget.TextView
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
-import com.teambrella.android.ui.base.ADataFragment
-import com.teambrella.android.ui.base.AKDataProgressFragment
+import com.teambrella.android.ui.base.ADataProgressFragment
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.ui.chat.ChatActivity
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
@@ -26,7 +26,7 @@ import com.teambrella.android.util.ConnectivityUtils
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
 
-class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.VoterBarListener {
+class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.VoterBarListener {
 
     private companion object {
         private const val OBJECT_FRAGMENT_TAG = "object_tag"
@@ -86,41 +86,41 @@ class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.V
     private var mCoverageUpdateStarted: Boolean = false
 
 
-    override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater?.inflate(R.layout.fragment_teammate, container, false)
+    override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+            inflater.inflate(R.layout.fragment_teammate, container, false)
+                    ?: throw RuntimeException()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         childFragmentManager.let {
             val transaction = it.beginTransaction()
 
             if (it.findFragmentByTag(OBJECT_FRAGMENT_TAG) == null) {
                 transaction.add(R.id.object_info_container
-                        , ADataFragment.getInstance(mTags, TeammateObjectFragment::class.java)
+                        , createDataFragment(tags, TeammateObjectFragment::class.java)
                         , OBJECT_FRAGMENT_TAG)
 
                 if (it.findFragmentByTag(VOTING_STATS_FRAGMENT_TAG) == null) {
                     transaction.add(R.id.voting_statistics_container
-                            , getFragmentInstance(mTags)
+                            , getFragmentInstance(tags)
                             , VOTING_STATS_FRAGMENT_TAG)
                 }
 
 
                 if (it.findFragmentByTag(VOTING_TAG) == null) {
                     transaction.add(R.id.voting_container
-                            , ADataFragment.getInstance(mTags, TeammateVotingFragment::class.java)
+                            , createDataFragment(tags, TeammateVotingFragment::class.java)
                             , VOTING_TAG)
                 }
 
                 if (it.findFragmentByTag(VOTING_RESULT_TAG) == null) {
                     transaction.add(R.id.voting_result_container
-                            , ADataFragment.getInstance(mTags, TeammateVotingResultFragment::class.java)
+                            , createDataFragment(tags, TeammateVotingResultFragment::class.java)
                             , VOTING_RESULT_TAG)
                 }
 
                 if (it.findFragmentByTag(CONTACTS_TAG) == null) {
                     transaction.add(R.id.contacts_container
-                            , ADataFragment.getInstance(mTags, TeammateContactsFragment::class.java)
+                            , createDataFragment(tags, TeammateContactsFragment::class.java)
                             , CONTACTS_TAG)
                 }
 
@@ -132,18 +132,18 @@ class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.V
         }
 
         if (savedInstanceState == null) {
-            mDataHost.load(mTags[0])
+            dataHost.load(tags[0])
         }
 
         setContentShown(false)
 
         view.findViewById<View>(R.id.discussion_foreground).setOnClickListener {
-            mDataHost.launchActivity(ChatActivity.getTeammateChat(context, teamId
+            dataHost.launchActivity(ChatActivity.getTeammateChat(context, teamId
                     ?: 0, userId, null, null, topicId, teamAccessLevel))
         }
 
         isShown = false
-
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -251,8 +251,8 @@ class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.V
 
             }
 
-            coverThemSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
-            coverMeSectionView?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
+            coverThemSectionView?.visibility = if (dataHost.isItMe) View.GONE else View.VISIBLE
+            coverMeSectionView?.visibility = if (dataHost.isItMe) View.GONE else View.VISIBLE
 
             data?.riskScale?.let {
                 heCoversMeIf1 = it.heCoversMeIf1 ?: heCoversMeIf1
@@ -265,7 +265,7 @@ class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.V
             setContentShown(true)
         } else {
             setContentShown(true, !isShown)
-            mDataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context)) R.string.something_went_wrong_error else R.string.no_internet_connection)
+            dataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context)) R.string.something_went_wrong_error else R.string.no_internet_connection)
         }
     }
 
@@ -274,7 +274,7 @@ class TeammateFragment : AKDataProgressFragment<ITeammateActivity>(), VoterBar.V
         val scrollBounds = Rect()
         scrollViewView?.getHitRect(scrollBounds)
         if (userPictureView?.getLocalVisibleRect(scrollBounds) == false && wouldCoverPanelView?.visibility == View.INVISIBLE
-                && fromUser && !mDataHost.isItMe) {
+                && fromUser && !dataHost.isItMe) {
             val animator = ObjectAnimator.ofFloat(wouldCoverPanelView, "translationY", -(wouldCoverPanelView?.height?.toFloat()
                     ?: 0f), 0f).setDuration(300)
             animator.addListener(object : AnimatorListenerAdapter() {

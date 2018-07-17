@@ -2,6 +2,7 @@ package com.teambrella.android.ui.team;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -43,11 +44,11 @@ public class TeamFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return FeedFragment.getInstance(MainActivity.FEED_DATA_TAG, mDataHost.getTeamId());
+                        return FeedFragment.getInstance(MainActivity.FEED_DATA_TAG, getDataHost().getTeamId());
                     case 1:
-                        return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, mDataHost.getTeamId());
+                        return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getDataHost().getTeamId());
                     case 2:
-                        return TeamClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, mDataHost.getTeamId(), ((IMainDataHost) getContext()).getCurrency());
+                        return TeamClaimsFragment.getInstance(MainActivity.CLAIMS_DATA_TAG, getDataHost().getTeamId(), ((IMainDataHost) getContext()).getCurrency());
                     default:
                         throw new RuntimeException();
                 }
@@ -79,9 +80,9 @@ public class TeamFragment extends AMainLandingFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(mDataHost.getTeamName());
+        setTitle(getDataHost().getTeamName());
     }
 
     private void setTypeface(ViewGroup viewGroup, Typeface typeface) {

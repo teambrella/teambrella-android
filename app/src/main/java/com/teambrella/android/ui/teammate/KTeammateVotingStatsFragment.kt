@@ -13,24 +13,18 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.ui.base.ADataFragment
-import com.teambrella.android.ui.base.AKDataFragment
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.ui.widget.PercentageWidget
 import io.reactivex.Notification
 import java.util.*
 
-fun getFragmentInstance(tags: Array<String>): KTeammateVotingStatsFragment {
-    val fragment = KTeammateVotingStatsFragment()
-    val bundle = Bundle()
-    bundle.putStringArray(ADataFragment.EXTRA_DATA_FRAGMENT_TAG, tags)
-    fragment.arguments = bundle
-    return fragment
-}
+fun getFragmentInstance(tags: Array<String>) = createDataFragment(tags, KTeammateVotingStatsFragment::class.java)
 
 /**
  * Voting Stats Fragment
  */
-class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
+class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
 
     private val weight: TextView? by ViewHolder(R.id.weight)
     private val proxyRank: TextView? by ViewHolder(R.id.proxy_rank)
@@ -45,70 +39,68 @@ class KTeammateVotingStatsFragment : AKDataFragment<ITeammateActivity>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setProxy?.setOnClickListener({ v -> mDataHost.setAsProxy(!(v?.tag as Boolean)) })
+        setProxy?.setOnClickListener { v -> dataHost.setAsProxy(!(v?.tag as Boolean)) }
         setProxy?.tag = true
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        if (notification != null) {
-            if (notification.isOnNext) {
-                this.setProxy?.visibility = if (mDataHost.isItMe) View.GONE else View.VISIBLE
-                val value = notification.value
-                val uri = Uri.parse(value.status?.uri)
-                val matchId = TeambrellaUris.sUriMatcher.match(uri)
-                when (matchId) {
-                    TeambrellaUris.SET_MY_PROXY -> {
-                        val add = java.lang.Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_ADD))
-                        this.setProxy?.text = getString(if (add) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
-                        this.setProxy?.tag = add
-                        context?.let {
-                            TeambrellaBroadcastManager(it).notifyProxyListChanged()
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        if (notification.isOnNext) {
+            this.setProxy?.visibility = if (dataHost.isItMe) View.GONE else View.VISIBLE
+            val value = notification.value
+            val uri = Uri.parse(value.status?.uri)
+            val matchId = TeambrellaUris.sUriMatcher.match(uri)
+            when (matchId) {
+                TeambrellaUris.SET_MY_PROXY -> {
+                    val add = java.lang.Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_ADD))
+                    this.setProxy?.text = getString(if (add) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
+                    this.setProxy?.tag = add
+                    context?.let {
+                        TeambrellaBroadcastManager(it).notifyProxyListChanged()
+                    }
+                }
+                else -> {
+                    val stats = value.data?.stats
+                    stats?.let {
+
+                        val votingFreq = stats.votingFreq
+                        votingFreq?.let {
+                            this.votingView?.setPercentage(votingFreq)
+                            this.votingView?.setDescription(getString(getVotingStatsString(votingFreq)))
+                        }
+
+                        val decisionFreq = stats.decisionFreq
+                        decisionFreq?.let {
+                            this.decisionView?.setPercentage(decisionFreq)
+                            this.decisionView?.setDescription(getString(getDecisionStatsString(decisionFreq)))
+                        }
+
+                        val discussionFreq = stats.discussionFreq
+                        discussionFreq?.let {
+                            this.discussionView?.setPercentage(discussionFreq)
+                            this.discussionView?.setDescription(getString(getDiscussionStatsString(discussionFreq)))
+                        }
+
+                        val weightValue = stats.weight
+                        weightValue?.let {
+                            this.weight?.text = String.format(Locale.US, if (it >= 0.1) "%.1f" else "%.2f", it)
+                        }
+
+                        val proxyRankValue = stats.proxyRank
+                        proxyRankValue?.let {
+                            val rank = when {
+                                it < 0.005 -> 0f
+                                it >= 0.005 && it < 0.01 -> 0.1f
+                                else -> it
+                            }
+                            this.proxyRank?.text = String.format(Locale.US, if (rank >= 0.1 || rank == 0f) "%.1f" else "%.2f", rank)
                         }
                     }
-                    else -> {
-                        val stats = value.data?.stats
-                        stats?.let {
-
-                            val votingFreq = stats.votingFreq
-                            votingFreq?.let {
-                                this.votingView?.setPercentage(votingFreq)
-                                this.votingView?.setDescription(getString(getVotingStatsString(votingFreq)))
-                            }
-
-                            val decisionFreq = stats.decisionFreq
-                            decisionFreq?.let {
-                                this.decisionView?.setPercentage(decisionFreq)
-                                this.decisionView?.setDescription(getString(getDecisionStatsString(decisionFreq)))
-                            }
-
-                            val discussionFreq = stats.discussionFreq
-                            discussionFreq?.let {
-                                this.discussionView?.setPercentage(discussionFreq)
-                                this.discussionView?.setDescription(getString(getDiscussionStatsString(discussionFreq)))
-                            }
-
-                            val weightValue = stats.weight
-                            weightValue?.let {
-                                this.weight?.text = String.format(Locale.US, if (it >= 0.1) "%.1f" else "%.2f", it)
-                            }
-
-                            val proxyRankValue = stats.proxyRank
-                            proxyRankValue?.let {
-                                val rank = when {
-                                    it < 0.005 -> 0f
-                                    it >= 0.005 && it < 0.01 -> 0.1f
-                                    else -> it
-                                }
-                                this.proxyRank?.text = String.format(Locale.US, if (rank >= 0.1 || rank == 0f) "%.1f" else "%.2f", rank)
-                            }
-                        }
-                        val basic = value.data?.basic
-                        basic?.isMyProxy?.let {
-                            val isMyProxy = (basic.isMyProxy) ?: false
-                            this.setProxy?.text = getString(if (isMyProxy) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
-                            this.setProxy?.tag = isMyProxy
-                        }
+                    val basic = value.data?.basic
+                    basic?.isMyProxy?.let {
+                        val isMyProxy = (basic.isMyProxy) ?: false
+                        this.setProxy?.text = getString(if (isMyProxy) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
+                        this.setProxy?.tag = isMyProxy
                     }
                 }
             }

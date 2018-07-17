@@ -56,7 +56,7 @@ public abstract class ProgressFragment extends TeambrellaFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRefreshable.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         mRefreshable.setOnRefreshListener(this::onReload);

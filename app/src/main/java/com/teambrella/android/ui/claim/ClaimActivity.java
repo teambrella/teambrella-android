@@ -27,7 +27,7 @@ import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
-import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
@@ -39,7 +39,6 @@ import com.teambrella.android.util.StatisticHelper;
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Notification;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Claim Activity
@@ -55,11 +54,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
     private static final String EXTRA_CLAIM_ID = "claimId";
 
     private static final int DEFAULT_REQUEST_CODE = 4;
-
-
-    private Disposable mDisposal;
-
-
+    
     private int mClaimId;
     private int mTeamId;
     private TextView mTitle;
@@ -96,7 +91,7 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(UI_TAG) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, ADataProgressFragment.getInstance(new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG}, ClaimFragment.class), UI_TAG)
+                    .add(R.id.container, ADataFragmentKt.createDataFragment(new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG}, ClaimFragment.class), UI_TAG)
                     .commit();
         }
 
@@ -121,19 +116,10 @@ public class ClaimActivity extends ATeambrellaActivity implements IClaimActivity
         getComponent().inject(this);
     }
 
-
     @Override
-    protected void onStart() {
-        super.onStart();
-        mDisposal = getObservable(CLAIM_DATA_TAG).subscribe(this::onDataUpdated);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mDisposal != null && !mDisposal.isDisposed()) {
-            mDisposal.dispose();
-        }
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getObservable(CLAIM_DATA_TAG).observe(this, this::onDataUpdated);
     }
 
     @NonNull

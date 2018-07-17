@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.base
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.net.Uri
@@ -11,7 +12,6 @@ import com.teambrella.android.data.base.TeambrellaDataPagerLoader
 import com.teambrella.android.data.base.TeambrellaRequestLoader
 import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity
 import io.reactivex.Notification
-import io.reactivex.Observable
 
 const val EXTRA_URI = "uri"
 const val EXTRA_LOAD_ON_CREATE = "load_on_create"
@@ -58,7 +58,7 @@ open class TeambrellaDataViewModel : TeambrellaViewModel() {
     private var uri: Uri? = null
 
 
-    val observable: Observable<Notification<JsonObject>>
+    val observable: LiveData<Notification<JsonObject>>
         get() = loader.observable
 
     override fun init(context: Context, config: Bundle?) {

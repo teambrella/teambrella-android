@@ -12,7 +12,7 @@ import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.image.glide.GlideApp
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
 import com.teambrella.android.ui.widget.TeammateVoteRisk
@@ -24,7 +24,7 @@ import java.util.*
  * Base Teammate Voting Result Fragment
  */
 
-class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
+class TeammateVotingResultFragment : ADataFragment<ITeammateActivity>() {
 
     protected val teamVoteRisk: TeammateVoteRisk? by ViewHolder(R.id.team_vote_risk)
     protected val myVoteRisk: TeammateVoteRisk? by ViewHolder(R.id.your_vote_risk)
@@ -47,10 +47,10 @@ class TeammateVotingResultFragment : AKDataFragment<ITeammateActivity>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        allVotes?.setOnClickListener {
+            AllVotesActivity.startTeammateAllVotes(context, dataHost.teamId, dataHost.teammateId)
+        }
         super.onViewCreated(view, savedInstanceState)
-        allVotes?.setOnClickListener({
-            AllVotesActivity.startTeammateAllVotes(context, mDataHost.teamId, mDataHost.teammateId)
-        })
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {

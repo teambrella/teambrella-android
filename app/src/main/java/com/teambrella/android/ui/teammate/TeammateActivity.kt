@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.teammate
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -19,7 +20,6 @@ import com.teambrella.android.services.push.INotificationMessage
 import com.teambrella.android.ui.base.*
 import com.teambrella.android.ui.chat.ChatActivity
 import io.reactivex.Notification
-import io.reactivex.disposables.Disposable
 
 fun getTeammateIntent(context: Context, teamId: Int, userId: String, name: String?, userPictureUri: String?) = Intent(context, TeammateActivity::class.java).apply {
     this.userId = userId
@@ -59,9 +59,6 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
 
     private var mSnackBar: Snackbar? = null
 
-
-    private var teammateDisposable: Disposable? = null
-
     private lateinit var teambrellaBroadcastManager: TeambrellaBroadcastManager
     private lateinit var titleView: TextView
     private lateinit var notificationClient: TeammateNotificationClient
@@ -76,7 +73,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         supportFragmentManager?.apply {
             if (findFragmentByTag(UI) == null) {
                 beginTransaction()
-                        .add(R.id.container, ADataProgressFragment.getInstance(arrayOf(TEAMMATE, VOTE, PROXY), TeammateFragment::class.java), UI)
+                        .add(R.id.container, createDataFragment(arrayOf(TEAMMATE, VOTE, PROXY), TeammateFragment::class.java), UI)
                         .commit()
             }
         }
@@ -114,6 +111,10 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         notificationClient = TeammateNotificationClient(this)
         notificationClient.connect()
 
+        getObservable(TEAMMATE).observe(this, Observer { notification ->
+            this@TeammateActivity.onDataUpdated(notification ?: throw kotlin.RuntimeException())
+        })
+
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -132,10 +133,6 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         titleView.text = title
     }
 
-    override fun onStart() {
-        super.onStart()
-        teammateDisposable = getObservable(TEAMMATE).subscribe(this::onDataUpdated)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -147,10 +144,6 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         notificationClient.onResume()
     }
 
-    override fun onStop() {
-        super.onStop()
-        teammateDisposable?.takeIf { !it.isDisposed }?.dispose()
-    }
 
     override fun onDestroy() {
         super.onDestroy()

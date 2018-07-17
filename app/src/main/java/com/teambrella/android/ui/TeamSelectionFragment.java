@@ -2,6 +2,7 @@ package com.teambrella.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -60,15 +61,13 @@ public class TeamSelectionFragment extends ATeambrellaDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        mDisposable = mDataHost.getPager(MainActivity.TEAMS_DATA).getDataObservable().subscribe(this::onDataUpdated);
+        mDataHost.getPager(MainActivity.TEAMS_DATA).getDataObservable().observeForever(observer);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-        }
+        mDataHost.getPager(MainActivity.TEAMS_DATA).getDataObservable().removeObserver(observer);
     }
 
     @NonNull
@@ -197,4 +196,6 @@ public class TeamSelectionFragment extends ATeambrellaDialogFragment {
         }
 
     }
+
+    private Observer<Notification<JsonObject>> observer = this::onDataUpdated;
 }

@@ -13,7 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaBroadcastReceiver;
@@ -58,7 +58,7 @@ public class InboxActivity extends ATeambrellaActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(INBOX_UI_TAG) == null) {
             fragmentManager.beginTransaction()
-                    .add(R.id.container, ADataPagerProgressFragment.getInstance(INBOX_DATA_TAG, InboxFragment.class), INBOX_UI_TAG)
+                    .add(R.id.container, ADataFragmentKt.createDataFragment(new String[]{INBOX_DATA_TAG}, InboxFragment.class), INBOX_UI_TAG)
                     .commit();
         }
 

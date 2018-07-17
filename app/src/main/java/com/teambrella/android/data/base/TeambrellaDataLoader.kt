@@ -1,6 +1,7 @@
 package com.teambrella.android.data.base
 
-import android.annotation.SuppressLint
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.net.Uri
 import com.google.gson.JsonObject
 import com.teambrella.android.api.server.TeambrellaServer
@@ -11,29 +12,18 @@ import io.reactivex.Notification
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.observables.ConnectableObservable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 import javax.inject.Named
 
 class TeambrellaDataLoader {
 
-    private val publisher: PublishSubject<Notification<JsonObject>> = PublishSubject.create()
-    private val connectable: ConnectableObservable<Notification<JsonObject>>
-
     @Inject
     @field:Named(Dependencies.TEAMBRELLA_SERVER)
     lateinit var server: TeambrellaServer
 
-    init {
-        connectable = publisher.replay(1)
-        connectable.connect()
-    }
 
-
-    val observable: Observable<Notification<JsonObject>>
-        get() = connectable
+    val observable: LiveData<Notification<JsonObject>> = MutableLiveData()
 
 
     fun load(uri: Uri, data: JsonObject? = null) {
@@ -46,9 +36,8 @@ class TeambrellaDataLoader {
 
     }
 
-    @SuppressLint("CheckResult")
     internal fun update(updater: (JsonObject?) -> Boolean) {
-        observable.doOnNext { _notification ->
+        observable.value?.let { _notification ->
             var updated = false;
             if (_notification.isOnNext) {
                 updated = updater(_notification.value)
@@ -56,15 +45,15 @@ class TeambrellaDataLoader {
             if (updated) {
                 onNext(_notification.value!!)
             }
-        }?.blockingFirst()
+        }
     }
 
     private fun onNext(item: JsonObject) {
-        publisher.onNext(Notification.createOnNext<JsonObject>(item))
+        (observable as MutableLiveData).postValue(Notification.createOnNext<JsonObject>(item))
     }
 
     private fun onError(throwable: Throwable) {
-        publisher.onNext(Notification.createOnError(throwable))
+        (observable as MutableLiveData).postValue(Notification.createOnError(throwable))
     }
 
     private fun onComplete() {
@@ -72,7 +61,6 @@ class TeambrellaDataLoader {
     }
 
 }
-
 
 fun <T> Observable<T>.subscribeAutoDispose(onNext: (T) -> Unit, onError: (Throwable) -> Unit,
                                            onComplete: () -> Unit) {

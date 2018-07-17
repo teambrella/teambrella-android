@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.teammate;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -110,7 +111,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
 
         mRestVoteButton.setOnClickListener(v -> {
-            mDataHost.postVote(-1f);
+            getDataHost().postVote(-1f);
             mCount++;
             setVoting(true);
             mSwipeToVoteViewController.hide();
@@ -120,7 +121,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     }
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
 
         if (mCount > 0) {
             mCount--;
@@ -223,7 +224,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
 
-                mAllVotesView.setOnClickListener(view -> AllVotesActivity.startTeammateAllVotes(getContext(), mDataHost.getTeamId(), mDataHost.getTeammateId()));
+                mAllVotesView.setOnClickListener(view -> AllVotesActivity.startTeammateAllVotes(getContext(), getDataHost().getTeamId(), getDataHost().getTeammateId()));
             }
         } catch (Exception e) {
 
@@ -331,7 +332,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                                     range.getFloat(TeambrellaModel.ATTR_DATA_RIGHT_RANGE)));
                         }
                     }
-                    TeammatesByRiskActivity.start(getContext(), mDataHost.getTeamId(), list, (float) value);
+                    TeammatesByRiskActivity.start(getContext(), getDataHost().getTeamId(), list, (float) value);
                 });
 
                 break;
@@ -348,7 +349,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     @Override
     public void onVoterBarReleased(float vote, boolean fromUser) {
         if (fromUser) {
-            mDataHost.postVote(Math.pow(25, vote) / 5);
+            getDataHost().postVote(Math.pow(25, vote) / 5);
             mCount++;
         }
 

@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaUris;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 
@@ -67,7 +67,7 @@ public class AllVotesActivity extends ATeambrellaActivity implements IAllVoteAct
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(ALL_VOTES_UI_TAG) == null) {
             fragmentManager.beginTransaction().add(R.id.container
-                    , ADataPagerProgressFragment.getInstance(ALL_VOTES_DATA_TAG, AllVotesFragment.class)
+                    , ADataFragmentKt.createDataFragment(new String[]{ALL_VOTES_DATA_TAG}, AllVotesFragment.class)
                     , ALL_VOTES_UI_TAG).commit();
         }
 

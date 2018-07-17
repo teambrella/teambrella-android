@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.ui.AMainLandingFragment
-import com.teambrella.android.ui.base.ADataFragment
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.util.ConnectivityUtils
 import io.reactivex.Notification
 
@@ -31,15 +31,10 @@ class KHomeFragment : AMainLandingFragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         swipeRefreshLayout = view.findViewById(R.id.refreshable)
         swipeRefreshLayout.setColorSchemeColors(resources.getColor(R.color.colorPrimary))
-        swipeRefreshLayout.setOnRefreshListener { mDataHost.load(mTags[0]) }
-        mDataHost.load(mTags[0])
+        swipeRefreshLayout.setOnRefreshListener { dataHost.load(tags[0]) }
         return view
     }
 
-    override fun onStart() {
-        swipeRefreshLayout.postDelayed(refreshingRunnable, 1000)
-        super.onStart()
-    }
 
     override fun onStop() {
         swipeRefreshLayout.removeCallbacks(refreshingRunnable)
@@ -47,16 +42,14 @@ class KHomeFragment : AMainLandingFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         childFragmentManager.beginTransaction().apply {
             if (childFragmentManager.findFragmentByTag(CARDS_FRAGMENT_TAG) == null) {
-                add(R.id.top_container, ADataFragment.getInstance(mTags, HomeCardsFragment::class.java)
+                add(R.id.top_container, createDataFragment(tags, HomeCardsFragment::class.java)
                         , CARDS_FRAGMENT_TAG)
             }
 
             if (childFragmentManager.findFragmentByTag(COVERAGE_FRAGMENT_TAG) == null) {
-                add(R.id.bottom_container, ADataFragment.getInstance(mTags, HomeCoverageAndWalletFragment::class.java)
+                add(R.id.bottom_container, createDataFragment(tags, HomeCoverageAndWalletFragment::class.java)
                         , COVERAGE_FRAGMENT_TAG)
             }
 
@@ -65,14 +58,16 @@ class KHomeFragment : AMainLandingFragment() {
                 it.commit()
             }
         }
+        swipeRefreshLayout.postDelayed(refreshingRunnable, 1000)
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
         super.onDataUpdated(notification)
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.removeCallbacks(refreshingRunnable)
-        if (notification?.isOnError == true) {
-            mDataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context!!))
+        if (notification.isOnError) {
+            dataHost.showSnackBar(if (ConnectivityUtils.isNetworkAvailable(context!!))
                 R.string.something_went_wrong_error else R.string.no_internet_connection)
         }
 

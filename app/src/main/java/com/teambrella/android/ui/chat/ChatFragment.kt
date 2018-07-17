@@ -100,9 +100,9 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
     private var voteDisposable: Disposable? = null
 
 
-    override fun getAdapter(): ATeambrellaDataPagerAdapter {
-        return KChatAdapter(mDataHost.getPager(mTag), context!!, mDataHost.teamId,
-                when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+    override fun createAdapter(): ATeambrellaDataPagerAdapter {
+        return KChatAdapter(dataHost.getPager(tags[0]), context!!, dataHost.teamId,
+                when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
                     TeambrellaUris.CLAIMS_CHAT -> MODE_CLAIM
                     TeambrellaUris.TEAMMATE_CHAT -> MODE_APPLICATION
                     TeambrellaUris.CONVERSATION_CHAT -> MODE_CONVERSATION
@@ -113,13 +113,12 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isRefreshable = false
+        list?.setBackgroundColor(Color.TRANSPARENT)
+        (list?.layoutManager as LinearLayoutManager).stackFromEnd = true
 
-        setRefreshable(false)
-        mList.setBackgroundColor(Color.TRANSPARENT)
-        (mList.layoutManager as LinearLayoutManager).stackFromEnd = true
 
-
-        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+        when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
             TeambrellaUris.CLAIMS_CHAT -> {
                 votingPanelView?.visibility = View.VISIBLE
                 votingPanelView?.setOnClickListener(this::onClaimClickListener)
@@ -134,7 +133,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
                                 .commit()
                     }
                 }
-                mDataHost.load(ChatActivity.CLAIM_DATA_TAG)
+                dataHost.load(ChatActivity.CLAIM_DATA_TAG)
             }
             TeambrellaUris.TEAMMATE_CHAT -> {
                 votingPanelView?.visibility = View.VISIBLE
@@ -144,17 +143,21 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
             }
             TeambrellaUris.CONVERSATION_CHAT -> {
                 votingPanelView?.visibility = View.GONE
-                mList.setPadding(mList.paddingLeft, 0, mList.paddingRight, mList.paddingBottom)
+                list?.apply {
+                    setPadding(paddingLeft, 0, paddingRight, paddingBottom)
+                }
                 votingContainerView?.visibility = View.GONE
             }
             TeambrellaUris.FEED_CHAT -> {
                 votingPanelView?.visibility = View.GONE
-                mList.setPadding(mList.paddingLeft, 0, mList.paddingRight, mList.paddingBottom)
+                list?.apply {
+                    setPadding(paddingLeft, 0, paddingRight, paddingBottom)
+                }
                 votingContainerView?.visibility = View.GONE
             }
         }
 
-        mList.itemAnimator = null
+        list?.itemAnimator = null
 
 
         votingContainerView?.layoutParams = votingContainerView?.layoutParams?.asCoordinatorParams
@@ -169,7 +172,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
     }
 
-    override fun getContentLayout() = R.layout.fragment_chat
+    override val contentLayout = R.layout.fragment_chat
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -192,22 +195,22 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
     override fun onStart() {
         super.onStart()
-        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
-            TeambrellaUris.CLAIMS_CHAT -> voteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
-                    .subscribe(this::onDataUpdated)
-        }
+//        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+//            TeambrellaUris.CLAIMS_CHAT -> voteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
+//                    .subscribe(this::onDataUpdated)
+//        }
     }
 
     override fun onStop() {
         super.onStop()
-        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
-            TeambrellaUris.CLAIMS_CHAT -> voteDisposable?.apply {
-                if (!isDisposed) {
-                    dispose()
-                }
-            }
-        }
-        voteDisposable = null
+//        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+//            TeambrellaUris.CLAIMS_CHAT -> voteDisposable?.apply {
+//                if (!isDisposed) {
+//                    dispose()
+//                }
+//            }
+//        }
+//        voteDisposable = null
     }
 
     private fun onChatDataUpdated(notification: Notification<JsonObject>) {
@@ -215,7 +218,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
             val data = notification.value.data
             val metadata = notification.value.metadata
             if ((metadata?.forced == true || metadata?.reload == true) && metadata.size ?: 0 > 0) {
-                mList.layoutManager.scrollToPosition(mAdapter.itemCount - 1)
+                list?.layoutManager?.scrollToPosition((adapter?.itemCount ?: 0) - 1)
             }
 
             if (lastRead == null) {
@@ -228,7 +231,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
             if (basicPart != null) {
 
-                when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+                when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
                     TeambrellaUris.CLAIMS_CHAT -> {
                         iconView?.setImage(imageLoader.getImageUrl(basicPart.smallPhoto), R.dimen.rounded_corners_4dp, R.drawable.picture_background_round_4dp)
                         titleView?.text = basicPart.model
@@ -266,7 +269,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
             }
 
             if (votingPart != null) {
-                when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
+                when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
                     TeambrellaUris.CLAIMS_CHAT -> setClaimVoteValue(votingPart.myVote ?: -1f)
                     TeambrellaUris.TEAMMATE_CHAT -> {
                         setTeammateVoteValue(votingPart.myVote ?: -1f)
@@ -283,7 +286,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
 
         if (lastRead != null && lastRead!! >= 0L) {
-            val pager = mDataHost.getPager(mTag)
+            val pager = dataHost.getPager(tags[0])
 
             var moveTo = pager.loadedData.size() - 1
             for (i in 0 until pager.loadedData.size()) {
@@ -294,7 +297,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
                     break
                 }
             }
-            val manager = mList.layoutManager as LinearLayoutManager
+            val manager = list?.layoutManager as LinearLayoutManager
             manager.scrollToPositionWithOffset(moveTo, 0)
             lastRead = -1L
         }
@@ -308,14 +311,14 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
     private fun onTeammateClickListener(v: View) {
         when (v.id) {
             R.id.voting_panel, R.id.vote ->
-                startActivityForResult(getTeammateIntent(context!!, mDataHost.teamId, mDataHost.userId, userName, mDataHost.imageUri), 10)
+                startActivityForResult(getTeammateIntent(context!!, dataHost.teamId, dataHost.userId, userName, dataHost.imageUri), 10)
         }
     }
 
     private fun onClaimClickListener(v: View) {
         when (v.id) {
             R.id.voting_panel -> startActivityForResult(
-                    ClaimActivity.getLaunchIntent(context, mDataHost.claimId, mDataHost.objectName, mDataHost.teamId), 10
+                    ClaimActivity.getLaunchIntent(context, dataHost.claimId, dataHost.objectName, dataHost.teamId), 10
             )
             R.id.vote -> votingContainerBehaviour.show(votingContainerView)
             R.id.hide -> votingContainerBehaviour.hide(votingContainerView)

@@ -1,13 +1,14 @@
 package com.teambrella.android.ui.team.feed;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 
@@ -20,14 +21,14 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
     private static final String EXTRA_TEAM_ID = "extra_team_id";
 
     public static FeedFragment getInstance(String tag, int teamId) {
-        FeedFragment fragment = ADataPagerProgressFragment.getInstance(tag, FeedFragment.class);
+        FeedFragment fragment = ADataFragmentKt.createDataFragment(new String[]{tag}, FeedFragment.class);
         fragment.getArguments().putInt(EXTRA_TEAM_ID, teamId);
         return fragment;
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         com.teambrella.android.ui.widget.DividerItemDecoration dividerItemDecoration =
                 new com.teambrella.android.ui.widget.DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
@@ -54,12 +55,12 @@ public class FeedFragment extends AMainDataPagerProgressFragment {
                     }
                 };
 
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new KFeedAdapter(mDataHost, getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getPager(mTag), mDataHost::launchActivity);
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new KFeedAdapter(getDataHost(), getArguments().getInt(EXTRA_TEAM_ID), dataHost.getPager(getTags()[0]), getDataHost()::launchActivity);
     }
 }

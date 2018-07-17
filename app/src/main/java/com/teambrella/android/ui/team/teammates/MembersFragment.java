@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.team.teammates;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,7 +9,7 @@ import android.view.View;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainDataPagerProgressFragment;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
 import com.teambrella.android.ui.widget.DividerItemDecoration;
@@ -24,14 +25,14 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
     private boolean mIsShown;
 
     public static MembersFragment getInstance(String tag, int teamId) {
-        MembersFragment fragment = ADataPagerProgressFragment.getInstance(tag, MembersFragment.class);
+        MembersFragment fragment = ADataFragmentKt.createDataFragment(new String[]{tag}, MembersFragment.class);
         fragment.getArguments().putInt(EXTRA_TEAM_ID, teamId);
         return fragment;
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
@@ -59,26 +60,26 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
                     }
                 };
 
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             mIsShown = true;
             setContentShown(true);
         } else {
             setContentShown(true, !mIsShown);
-            mDataHost.showSnackBar(R.string.something_went_wrong_error);
+            getDataHost().showSnackBar(R.string.something_went_wrong_error);
         }
     }
 
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new KTeammateAdapter(mDataHost.getPager(mTag), getArguments().getInt(EXTRA_TEAM_ID), mDataHost.getCurrency()
-                , mDataHost.getInviteFriendsText()
-                , mDataHost::launchActivity);
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new KTeammateAdapter(getDataHost().getPager(getTags()[0]), getArguments().getInt(EXTRA_TEAM_ID), getDataHost().getCurrency()
+                , getDataHost().getInviteFriendsText()
+                , getDataHost()::launchActivity);
     }
 }

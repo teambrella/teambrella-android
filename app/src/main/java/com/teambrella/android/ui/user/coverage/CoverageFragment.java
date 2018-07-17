@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.user.coverage;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -42,7 +43,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coverage, container, false);
         mCoverageView = view.findViewById(R.id.coverage);
         mCoverageIcon = view.findViewById(R.id.coverage_icon);
@@ -52,7 +53,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
         mCoverageSlider = view.findViewById(R.id.coverage_slider);
         mFundButton = view.findViewById(R.id.fund_wallet);
         mCoverageProgress = view.findViewById(R.id.coverage_progress);
-        mDataHost.load(mTags[0]);
+        getDataHost().load(getTags()[0]);
         mCoverageSlider.setMax(100);
         mCoverageSlider.setProgress(70);
         return view;
@@ -60,7 +61,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
 
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
 
             JsonWrapper data = new JsonWrapper(notification.getValue()).getObject(TeambrellaModel.ATTR_DATA);
@@ -68,9 +69,9 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
 
             float coverage = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE);
             float limit = coveragePart.getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT);
-            AmountCurrencyUtil.setAmount(mMaxExpenses, Math.round(limit), mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit * 0.7f), mDataHost.getCurrency());
-            AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), mDataHost.getCurrency());
+            AmountCurrencyUtil.setAmount(mMaxExpenses, Math.round(limit), getDataHost().getCurrency());
+            AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(limit * 0.7f), getDataHost().getCurrency());
+            AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * limit), getDataHost().getCurrency());
 
 
             updateCoverageView(coverage);
@@ -85,8 +86,8 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             mCoverageSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(i), mDataHost.getCurrency());
-                    AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * i), mDataHost.getCurrency());
+                    AmountCurrencyUtil.setAmount(mPossibleExpenses, Math.round(i), getDataHost().getCurrency());
+                    AmountCurrencyUtil.setAmount(mTeamPay, Math.round(coverage * i), getDataHost().getCurrency());
                     mCoverageProgress.setProgress(i);
                 }
 
@@ -101,7 +102,7 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
                 }
             });
 
-            String fundAddress = mDataHost.getFundAddress();
+            String fundAddress = getDataHost().getFundAddress();
             if (fundAddress != null) {
                 mFundButton.setEnabled(true);
                 mFundButton.setOnClickListener(v -> QRCodeActivity.startQRCode(getContext(), fundAddress));
@@ -112,9 +113,9 @@ public class CoverageFragment extends ADataFragment<IMainDataHost> {
             mIsShown = true;
         } else {
             if (!mIsShown) {
-                AmountCurrencyUtil.setAmount(mMaxExpenses, 0, mDataHost.getCurrency());
-                AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, mDataHost.getCurrency());
-                AmountCurrencyUtil.setAmount(mTeamPay, 0, mDataHost.getCurrency());
+                AmountCurrencyUtil.setAmount(mMaxExpenses, 0, getDataHost().getCurrency());
+                AmountCurrencyUtil.setAmount(mPossibleExpenses, 0, getDataHost().getCurrency());
+                AmountCurrencyUtil.setAmount(mTeamPay, 0, getDataHost().getCurrency());
                 mFundButton.setEnabled(false);
                 updateCoverageView(0);
             }

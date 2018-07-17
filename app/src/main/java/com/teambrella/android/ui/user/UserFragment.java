@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.user;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,8 +16,7 @@ import android.view.ViewGroup;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
-import com.teambrella.android.ui.base.ADataFragment;
-import com.teambrella.android.ui.base.ADataProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
 import com.teambrella.android.ui.user.wallet.KWalletFragment;
@@ -42,11 +42,11 @@ public class UserFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return ADataProgressFragment.getInstance(new String[]{MainActivity.USER_DATA, MainActivity.VOTE_DATA}, TeammateFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.USER_DATA, MainActivity.VOTE_DATA}, TeammateFragment.class);
                     case 1:
-                        return ADataFragment.getInstance(MainActivity.WALLET_DATA, CoverageFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.WALLET_DATA}, CoverageFragment.class);
                     case 2:
-                        return ADataProgressFragment.getInstance(MainActivity.WALLET_DATA, KWalletFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.WALLET_DATA}, KWalletFragment.class);
                     default:
                         throw new RuntimeException();
                 }
@@ -109,9 +109,9 @@ public class UserFragment extends AMainLandingFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(mDataHost.getTeamName());
+        setTitle(getDataHost().getTeamName());
     }
 
     private CharSequence getTitle(String title) {

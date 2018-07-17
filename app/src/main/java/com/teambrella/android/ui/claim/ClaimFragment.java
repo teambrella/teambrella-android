@@ -2,6 +2,7 @@ package com.teambrella.android.ui.claim;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -51,6 +52,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
 
     private int mTeamAccessLevel = TeambrellaModel.TeamAccessLevel.FULL_ACCESS;
 
+    @NonNull
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim, container, false);
@@ -63,7 +65,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
         mWhen = view.findViewById(R.id.when);
         mDiscussionForeground = view.findViewById(R.id.discussion_foreground);
         view.findViewById(R.id.swipe_to_refresh).setEnabled(false);
-        mDataHost.load(mTags[0]);
+        getDataHost().load(getTags()[0]);
         setContentShown(false);
         return view;
     }
@@ -80,15 +82,14 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(DETAILS_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.details_container, ClaimDetailsFragment.getInstance(mTags), DETAILS_FRAGMENT_TAG);
+            transaction.add(R.id.details_container, ClaimDetailsFragment.getInstance(getTags()), DETAILS_FRAGMENT_TAG);
         }
 
         if (fragmentManager.findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.voting_container, KClaimVotingResultFragmentKt.getInstance(mTags, KClaimVotingResultFragmentKt.MODE_CLAIM), VOTING_FRAGMENT_TAG);
+            transaction.add(R.id.voting_container, KClaimVotingResultFragmentKt.getInstance(getTags(), KClaimVotingResultFragmentKt.MODE_CLAIM), VOTING_FRAGMENT_TAG);
         }
 
 
@@ -96,7 +97,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             transaction.commit();
         }
         mIsShown = false;
-
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -157,8 +158,8 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
                 mTeamAccessLevel = team != null ? team.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, mTeamAccessLevel) : mTeamAccessLevel;
 
                 if (uri != null) {
-                    mDiscussionForeground.setOnClickListener(v -> mDataHost.launchActivity(ChatActivity.getClaimChat(getContext()
-                            , mDataHost.getTeamId()
+                    mDiscussionForeground.setOnClickListener(v -> getDataHost().launchActivity(ChatActivity.getClaimChat(getContext()
+                            , getDataHost().getTeamId()
                             , claimId
                             , claimBasic != null ? claimBasic.getString(TeambrellaModel.ATTR_DATA_MODEL) : null
                             , smallPhoto
@@ -171,7 +172,7 @@ public class ClaimFragment extends ADataProgressFragment<IClaimActivity> {
             mIsShown = true;
         } else {
             setContentShown(true, !mIsShown);
-            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
+            getDataHost().showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
         }
     }
 }

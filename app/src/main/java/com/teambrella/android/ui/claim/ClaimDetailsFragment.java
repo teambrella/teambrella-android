@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.claim;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.util.AmountCurrencyUtil;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
@@ -31,12 +33,12 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
 
 
     public static ClaimDetailsFragment getInstance(String[] dataTags) {
-        return ADataFragment.getInstance(dataTags, ClaimDetailsFragment.class);
+        return ADataFragmentKt.createDataFragment(dataTags, ClaimDetailsFragment.class);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_claim_details, container, false);
         mClaimAmount = view.findViewById(R.id.claim_amount);
         mExpenses = view.findViewById(R.id.estimated_expenses);
@@ -47,7 +49,7 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
     }
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());
             JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
@@ -63,7 +65,7 @@ public class ClaimDetailsFragment extends ADataFragment<IClaimActivity> {
                 String date = TeambrellaDateUtils.getDatePresentation(getContext()
                         , TeambrellaDateUtils.TEAMBRELLA_UI_DATE
                         , basic.getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE));
-                mDataHost.setSubtitle(date);
+                getDataHost().setSubtitle(date);
                 mIncidentDate.setText(date);
             }
 

@@ -1,5 +1,6 @@
 package com.teambrella.android.ui;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -34,7 +35,7 @@ import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationService;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
-import com.teambrella.android.ui.base.ADataFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaActivityBroadcastReceiver;
@@ -61,7 +62,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Notification;
 
 import static com.teambrella.android.services.push.KPushNotifications.CREATED_POST;
 import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MSG;
@@ -123,8 +124,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private String mUserName;
     private String mFBName;
     private Uri mUserPicture;
-    private Disposable mHomeDisposable;
-    private Disposable mUserDisposable;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
     private Snackbar mSnackBar;
@@ -199,6 +198,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         mWalletBackupManager = new WalletBackupManager(this);
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getObservable(HOME_DATA_TAG).observe(this, mHomeObserver);
+        getObservable(USER_DATA).observe(this, mUserObserver);
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -317,13 +322,13 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private Fragment createFragmentByTag(String tag) {
         switch (tag) {
             case HOME_TAG:
-                return ADataFragment.getInstance(HOME_DATA_TAG, KHomeFragment.class);
+                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, KHomeFragment.class);
             case TEAM_TAG:
-                return ADataFragment.getInstance(HOME_DATA_TAG, TeamFragment.class);
+                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, TeamFragment.class);
             case PROFILE_TAG:
-                return ADataFragment.getInstance(HOME_DATA_TAG, UserFragment.class);
+                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, UserFragment.class);
             case PROXIES_TAG:
-                return ADataFragment.getInstance(HOME_DATA_TAG, ProxiesFragment.class);
+                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, ProxiesFragment.class);
             default:
                 throw new RuntimeException("unknown tag " + tag);
         }
@@ -416,37 +421,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 return super.getDataPagerConfig(tag);
         }
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mHomeDisposable = getObservable(HOME_DATA_TAG).subscribe(notification -> {
-            if (notification.isOnNext()) {
-                JsonWrapper response = new JsonWrapper(notification.getValue());
-                JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-                GlideApp.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                        .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
-                                .placeholder(R.drawable.picture_background_circle)).into(mAvatar);
-                mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
-                mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
-                mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
-            }
-        });
-
-        mUserDisposable = getObservable(USER_DATA).subscribe(notification -> {
-            if (notification.isOnNext()) {
-                JsonWrapper response = new JsonWrapper(notification.getValue());
-                JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
-                JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
-                JsonWrapper discussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
-                String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
-                String[] locations = location != null ? location.split(",") : null;
-                mUserCity = locations != null ? locations[0] : null;
-                mUserTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
-            }
-        });
-    }
-
+    
     @Override
     public int getTeamId() {
         return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID);
@@ -512,18 +487,6 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     public String getUserCity() {
         return mUserCity;
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mHomeDisposable != null && !mHomeDisposable.isDisposed()) {
-            mHomeDisposable.dispose();
-        }
-        if (mUserDisposable != null && !mUserDisposable.isDisposed()) {
-            mUserDisposable.dispose();
-        }
-    }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -859,6 +822,33 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     public MainActivity() {
         registerLifecycleCallback(new MainTeambrellaBroadcastReceiver());
     }
+
+
+    private Observer<Notification<JsonObject>> mHomeObserver = notification -> {
+        if (notification != null && notification.isOnNext()) {
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            GlideApp.with(this).load(getImageLoader().getImageUrl(data.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                    .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
+                            .placeholder(R.drawable.picture_background_circle)).into(mAvatar);
+            mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
+            mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
+            mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+        }
+    };
+
+    private Observer<Notification<JsonObject>> mUserObserver = notification -> {
+        if (notification != null && notification.isOnNext()) {
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            JsonWrapper basic = data.getObject(TeambrellaModel.ATTR_DATA_ONE_BASIC);
+            JsonWrapper discussion = data.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION);
+            String location = basic.getString(TeambrellaModel.ATTR_DATA_CITY);
+            String[] locations = location != null ? location.split(",") : null;
+            mUserCity = locations != null ? locations[0] : null;
+            mUserTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
+        }
+    };
 
 }
 

@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.base
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModelProviders
 import android.net.Uri
 import android.os.Bundle
@@ -13,7 +14,6 @@ import com.teambrella.android.data.base.IDataHost
 import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.ui.base.dagger.ATeambrellaDaggerActivity
 import io.reactivex.Notification
-import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
 @JvmOverloads
@@ -81,9 +81,16 @@ abstract class ATeambrellaDataHostActivity : ATeambrellaDaggerActivity<ITeambrel
         }
     }
 
-    override fun getObservable(tag: String): Observable<Notification<JsonObject>> =
-            ViewModelProviders.of(this).get(tag, getDataViewModelClass(tag)
-                    ?: TeambrellaDataViewModel::class.java).observable
+    override fun getObservable(tag: String): LiveData<Notification<JsonObject>> =
+            when {
+                dataPagerTags.contains(tag) -> ViewModelProviders.of(this).get(tag, getPagerViewModelClass(tag)
+                        ?: TeambrellaPagerViewModel::class.java).dataPager.dataObservable
+                dataTags.contains(tag) -> ViewModelProviders.of(this).get(tag, getDataViewModelClass(tag)
+                        ?: TeambrellaDataViewModel::
+                        class.java).observable
+
+                else -> throw IllegalArgumentException()
+            }
 
     override fun load(tag: String) = ViewModelProviders.of(this).get(tag, getDataViewModelClass(tag)
             ?: TeambrellaDataViewModel::class.java).load()

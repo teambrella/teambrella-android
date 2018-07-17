@@ -127,27 +127,27 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         private val mCheckErrorDisposables = LinkedList<Disposable>()
 
         fun onStart() {
-            if (dataTags.isNotEmpty()) {
-                for (tag in dataTags) {
-                    mCheckErrorDisposables.add(getObservable(tag).subscribe(this::checkServerError))
-                }
-            }
-
-            if (dataPagerTags.isNotEmpty()) {
-                for (tag in dataPagerTags) {
-                    mCheckErrorDisposables.add(getPager(tag).dataObservable.subscribe(this::checkServerError))
-                }
-            }
+//            if (dataTags.isNotEmpty()) {
+//                for (tag in dataTags) {
+//                    mCheckErrorDisposables.add(getObservable(tag).subscribe(this::checkServerError))
+//                }
+//            }
+//
+//            if (dataPagerTags.isNotEmpty()) {
+//                for (tag in dataPagerTags) {
+//                    mCheckErrorDisposables.add(getPager(tag).dataObservable.subscribe(this::checkServerError))
+//                }
+//            }
 
         }
 
         fun onStop() {
-            mCheckErrorDisposables.iterator().let {
-                while (it.hasNext()) {
-                    it.next().takeIf { !it.isDisposed }?.dispose()
-                    it.remove()
-                }
-            }
+//            mCheckErrorDisposables.iterator().let {
+//                while (it.hasNext()) {
+//                    it.next().takeIf { !it.isDisposed }?.dispose()
+//                    it.remove()
+//                }
+//            }
         }
 
         private fun checkServerError(notification: Notification<JsonObject>) {
@@ -188,5 +188,5 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         }
     }
 
-    
+
 }

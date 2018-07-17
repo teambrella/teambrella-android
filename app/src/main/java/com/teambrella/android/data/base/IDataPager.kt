@@ -1,5 +1,6 @@
 package com.teambrella.android.data.base
 
+import android.arch.lifecycle.LiveData
 import android.net.Uri
 import com.google.gson.JsonObject
 import io.reactivex.Notification
@@ -7,7 +8,7 @@ import io.reactivex.Observable
 
 interface IDataPager<T> {
     val loadedData: T
-    val dataObservable: Observable<Notification<JsonObject>>
+    val dataObservable: LiveData<Notification<JsonObject>>
     val itemChangeObservable: Observable<Int>?
     val hasNext: Boolean
     val hasPrevious: Boolean

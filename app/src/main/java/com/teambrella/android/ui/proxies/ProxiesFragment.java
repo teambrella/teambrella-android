@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
-import com.teambrella.android.ui.base.ADataPagerProgressFragment;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.proxies.myproxies.MyProxiesFragment;
 import com.teambrella.android.ui.proxies.proxyfor.ProxyForFragment;
 import com.teambrella.android.ui.proxies.userating.UserRatingFragment;
@@ -50,11 +50,11 @@ public class ProxiesFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return ADataPagerProgressFragment.getInstance(MainActivity.MY_PROXIES_DATA, MyProxiesFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.MY_PROXIES_DATA}, MyProxiesFragment.class);
                     case 1:
-                        return ADataPagerProgressFragment.getInstance(MainActivity.PROXIES_FOR_DATA, ProxyForFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.PROXIES_FOR_DATA}, ProxyForFragment.class);
                     case 2:
-                        return ADataPagerProgressFragment.getInstance(MainActivity.USER_RATING_DATA, UserRatingFragment.class);
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.USER_RATING_DATA}, UserRatingFragment.class);
                     default:
                         throw new RuntimeException();
                 }
@@ -110,9 +110,9 @@ public class ProxiesFragment extends AMainLandingFragment {
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(mDataHost.getTeamName());
+        setTitle(getDataHost().getTeamName());
     }
 
     private CharSequence getTitle(String title, boolean attention) {

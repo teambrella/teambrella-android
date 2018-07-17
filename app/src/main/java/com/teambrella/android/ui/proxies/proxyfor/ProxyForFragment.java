@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.proxies.proxyfor;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,12 +21,12 @@ import io.reactivex.Notification;
  */
 public class ProxyForFragment extends AMainDataPagerProgressFragment {
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new ProxyForAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new ProxyForAdapter(getDataHost().getPager(getTags()[0]), getDataHost().getTeamId(), getDataHost().getCurrency());
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(getContext().getResources().getDrawable(R.drawable.divder)) {
@@ -54,12 +55,12 @@ public class ProxyForFragment extends AMainDataPagerProgressFragment {
                     }
                 };
 
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
         if (notification.isOnNext()) {
             JsonWrapper response = new JsonWrapper(notification.getValue());

@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.claim.ClaimActivity
 import com.teambrella.android.ui.image.ImageViewerActivity
 import com.teambrella.android.ui.team.claims.ClaimsActivity
@@ -19,7 +19,7 @@ import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
 import java.util.*
 
-class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
+class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
 
     private val objectModel: TextView? by ViewHolder(R.id.model)
     private val objectPicture: ImageView? by ViewHolder(R.id.object_picture)
@@ -44,8 +44,8 @@ class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
         return inflater.inflate(R.layout.fragment_teammate_object, container, false)
     }
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        val data = notification?.takeIf { it.isOnNext }?.value?.data
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        val data = notification.takeIf { it.isOnNext }?.value?.data
         data?.let { _data ->
             teammateId = _data.intId ?: teammateId
             gender = _data.basic?.gender ?: gender
@@ -55,7 +55,7 @@ class TeammateObjectFragment : AKDataFragment<ITeammateActivity>() {
             coverageType?.setText(TeambrellaModel.getInsuranceTypeName(_team.coverageType ?: 0))
             currency = _team.currency ?: currency
             objectTitle?.setText(
-                    if (mDataHost.isItMe)
+                    if (dataHost.isItMe)
                         TeambrellaModel.getMyObjectNamer(_team.coverageType ?: 0)
                     else
                         TeambrellaModel.getObjectNameWithOwner(_team.coverageType ?: 0, gender))

@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.base;
 
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 
@@ -22,7 +23,6 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
 
     protected final IDataPager<JsonArray> mPager;
-    private final Disposable mDataPagerDisposal;
     private final Disposable mItemChangedDisposal;
 
 
@@ -34,17 +34,14 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
     public ATeambrellaDataPagerAdapter(IDataPager<JsonArray> pager, OnStartActivityListener listener) {
         mPager = pager;
-        mDataPagerDisposal = mPager.getDataObservable().subscribe(this::onPagerUpdated);
+        mPager.getDataObservable().observeForever(dataObserver);
         Observable<Integer> itemChangeObservable = mPager.getItemChangeObservable();
         mItemChangedDisposal = itemChangeObservable != null ? itemChangeObservable.subscribe(this::onPagerItemChanged) : null;
         mStartActivityListener = listener;
     }
 
     void destroy() {
-        if (mDataPagerDisposal != null && !mDataPagerDisposal.isDisposed()) {
-            mDataPagerDisposal.dispose();
-        }
-
+        mPager.getDataObservable().removeObserver(dataObserver);
         if (mItemChangedDisposal != null && !mItemChangedDisposal.isDisposed()) {
             mItemChangedDisposal.dispose();
         }
@@ -67,4 +64,7 @@ public abstract class ATeambrellaDataPagerAdapter extends ATeambrellaAdapter {
 
 
     public abstract void exchangeItems(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target);
+
+
+    private Observer<Notification<JsonObject>> dataObserver = this::onPagerUpdated;
 }

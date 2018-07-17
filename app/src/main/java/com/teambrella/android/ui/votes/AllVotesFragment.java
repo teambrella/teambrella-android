@@ -2,6 +2,7 @@ package com.teambrella.android.ui.votes;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,17 +26,17 @@ import io.reactivex.Observable;
 public class AllVotesFragment extends ADataPagerProgressFragment<IAllVoteActivity> {
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
+    protected ATeambrellaDataPagerAdapter createAdapter() {
         int mode = AllVotesAdapter.MODE_CLAIM;
-        switch (TeambrellaUris.sUriMatcher.match(mDataHost.getUri())) {
+        switch (TeambrellaUris.sUriMatcher.match(dataHost.getUri())) {
             case TeambrellaUris.APPLICATION_VOTES:
                 mode = AllVotesAdapter.MODE_APPLICATION;
         }
-        return new AllVotesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mode);
+        return new AllVotesAdapter(dataHost.getPager(getTags()[0]), dataHost.getTeamId(), mode);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 LinearLayoutManager.VERTICAL) {
@@ -72,19 +73,19 @@ public class AllVotesFragment extends ADataPagerProgressFragment<IAllVoteActivit
             }
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         super.onDataUpdated(notification);
         if (notification.isOnNext()) {
             Observable.just(notification.getValue())
                     .map(JsonWrapper::new)
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ME))
-                    .doOnNext(jsonWrapper -> ((AllVotesAdapter) mAdapter).setMyVote(jsonWrapper))
+                    .doOnNext(jsonWrapper -> ((AllVotesAdapter) getAdapter()).setMyVote(jsonWrapper))
                     .blockingFirst();
         }
     }

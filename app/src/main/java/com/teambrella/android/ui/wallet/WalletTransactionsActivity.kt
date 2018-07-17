@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import com.teambrella.android.R
 import com.teambrella.android.api.server.TeambrellaUris
-import com.teambrella.android.ui.base.ADataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaActivity
 import com.teambrella.android.ui.base.TeambrellaPagerViewModel
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.ui.base.getPagerConfig
 
 
@@ -51,7 +51,7 @@ class WalletTransactionsActivity : ATeambrellaActivity(), IWalletTransactionActi
             fragmentManager
                     .beginTransaction()
                     .add(R.id.container
-                            , ADataPagerProgressFragment.getInstance(Tags.DATA_TAG, WalletTransactionsFragment::class.java)
+                            , createDataFragment(arrayOf(Tags.DATA_TAG), WalletTransactionsFragment::class.java)
                             , Tags.UI_TAG)
                     .commit()
         }

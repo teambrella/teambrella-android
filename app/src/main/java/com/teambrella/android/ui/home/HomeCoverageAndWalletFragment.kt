@@ -11,13 +11,13 @@ import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.ui.IMainDataHost
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.claim.ReportClaimActivity
 import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
 
-class HomeCoverageAndWalletFragment : AKDataFragment<IMainDataHost>() {
+class HomeCoverageAndWalletFragment : ADataFragment<IMainDataHost>() {
 
     private val objectImage: ImageView? by ViewHolder(R.id.object_picture)
     private val objectModel: TextView? by ViewHolder(R.id.model)
@@ -30,13 +30,13 @@ class HomeCoverageAndWalletFragment : AKDataFragment<IMainDataHost>() {
             inflater.inflate(R.layout.fragment_home_coverage_and_wallet, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.findViewById<View>(R.id.coverageInfo)?.setOnClickListener { dataHost.showCoverage() }
+        view.findViewById<View>(R.id.walletInfo)?.setOnClickListener { dataHost.showWallet() }
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<View>(R.id.coverageInfo)?.setOnClickListener({ mDataHost.showCoverage() })
-        view.findViewById<View>(R.id.walletInfo)?.setOnClickListener({ mDataHost.showWallet() })
     }
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        val data = notification?.takeIf { it.isOnNext }?.value?.data
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        val data = notification.takeIf { it.isOnNext }?.value?.data
         data?.let { _data ->
             val objectName = _data.objectName
             objectModel?.text = objectName
@@ -45,12 +45,12 @@ class HomeCoverageAndWalletFragment : AKDataFragment<IMainDataHost>() {
             coverage?.text = Html.fromHtml(getString(R.string.coverage_format_string
                     , Math.round((data.coverage ?: 0f) * 100)))
 
-            submitClaim?.visibility = if (mDataHost.isFullTeamAccess) View.VISIBLE else View.INVISIBLE
-            submitClaim?.setOnClickListener({
-                ReportClaimActivity.start(context, _data.smallPhoto, objectName, mDataHost.teamId
-                        , mDataHost.currency, mDataHost.userCity)
-            })
-            coverType?.setText(TeambrellaModel.getInsuranceTypeName(mDataHost.teamType))
+            submitClaim?.visibility = if (dataHost.isFullTeamAccess) View.VISIBLE else View.INVISIBLE
+            submitClaim?.setOnClickListener {
+                ReportClaimActivity.start(context, _data.smallPhoto, objectName, dataHost.teamId
+                        , dataHost.currency, dataHost.userCity)
+            }
+            coverType?.setText(TeambrellaModel.getInsuranceTypeName(dataHost.teamType))
             AmountCurrencyUtil.setCryptoAmount(walletAmount, data.cryptoBalance ?: 0f)
         }
     }

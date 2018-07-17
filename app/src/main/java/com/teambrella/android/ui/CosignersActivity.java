@@ -1,5 +1,7 @@
 package com.teambrella.android.ui;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -185,8 +187,8 @@ public class CosignersActivity extends TeambrellaDaggerActivity {
 
         @NonNull
         @Override
-        public Observable<Notification<JsonObject>> getDataObservable() {
-            return Observable.empty();
+        public LiveData<Notification<JsonObject>> getDataObservable() {
+            return new MutableLiveData<>();
         }
 
         @Override

@@ -16,7 +16,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.ui.base.ADataFragment
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.ui.votes.AllVotesActivity
 import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
@@ -30,16 +30,12 @@ const val MODE_CLAIM = 1
 const val MODE_CHAT = 2
 const val EXTRA_MODE = "mode"
 
-fun getInstance(tags: Array<String>, mode: Int): ClaimVotingResultFragment {
-    val fragment = ClaimVotingResultFragment()
-    val args = Bundle()
-    args.putStringArray(ADataFragment.EXTRA_DATA_FRAGMENT_TAG, tags)
-    args.putInt(EXTRA_MODE, mode)
-    fragment.arguments = args
-    return fragment
-}
+fun getInstance(tags: Array<String>, mode: Int): ClaimVotingResultFragment =
+        createDataFragment(tags, ClaimVotingResultFragment::class.java).apply {
+            arguments?.putInt(EXTRA_MODE, mode)
+        }
 
-class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
+class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
 
 
     protected val teamVotePercents: TextView? by ViewHolder(R.id.team_vote_percent)
@@ -67,17 +63,16 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        allVotes?.setOnClickListener({
-            AllVotesActivity.startClaimAllVotes(context, mDataHost.teamId, mDataHost.claimId)
-        })
+        allVotes?.setOnClickListener {
+            AllVotesActivity.startClaimAllVotes(context, dataHost.teamId, dataHost.claimId)
+        }
 
-        resetVoteButton?.setOnClickListener({
+        resetVoteButton?.setOnClickListener {
             yourVotePercents?.alpha = 0.3f
             yourVoteCurrency?.alpha = 0.3f
             resetVoteButton?.alpha = 0.3f
-            mDataHost.postVote(-1)
-        })
+            dataHost.postVote(-1)
+        }
 
         component.inject(avatarWidget)
 
@@ -112,9 +107,10 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                mDataHost.postVote(seekBar?.progress ?: -1)
+                dataHost.postVote(seekBar?.progress ?: -1)
             }
         })
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -146,11 +142,11 @@ class ClaimVotingResultFragment : AKDataFragment<IClaimActivity>() {
         val proxyAvatar = voteData.proxyAvatar
 
         setTeamVote(teamVote, currency ?: "", claimAmount)
-        setMyVote(myVote?.toFloat(), currency ?: "", claimAmount)
+        setMyVote(myVote, currency ?: "", claimAmount)
 
         val vote: Float = myVote
                 ?: if (teamVote != null) (if (teamVote == 1f) teamVote * 0.90f else teamVote) else 0f
-        this.votingControl?.progress = Math.round(vote * 100).toInt()
+        this.votingControl?.progress = Math.round(vote * 100)
 
         if (proxyName != null && proxyAvatar != null) {
             this.proxyName?.let {

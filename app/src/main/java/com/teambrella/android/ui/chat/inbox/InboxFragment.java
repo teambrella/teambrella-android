@@ -2,6 +2,7 @@ package com.teambrella.android.ui.chat.inbox;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,13 +20,13 @@ import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 public class InboxFragment extends ADataPagerProgressFragment<IDataHost> {
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new InboxAdapter(mDataHost.getPager(InboxActivity.INBOX_DATA_TAG),
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new InboxAdapter(getDataHost().getPager(InboxActivity.INBOX_DATA_TAG),
                 intent -> getActivity().startActivityForResult(intent, InboxActivity.CONVERSATION_REQUEST_CODE));
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 LinearLayoutManager.VERTICAL) {
@@ -58,7 +59,7 @@ public class InboxFragment extends ADataPagerProgressFragment<IDataHost> {
             }
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 }
 

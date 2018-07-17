@@ -2,6 +2,7 @@ package com.teambrella.android.ui.proxies.userating;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,13 +19,13 @@ import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 public class UserRatingFragment extends AMainDataPagerProgressFragment {
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new UserRatingAdapter(mDataHost, mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost.getCurrency());
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new UserRatingAdapter(getDataHost(), getDataHost().getPager(getTags()[0]), getDataHost().getTeamId(), getDataHost().getCurrency());
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 LinearLayoutManager.VERTICAL) {
@@ -61,6 +62,6 @@ public class UserRatingFragment extends AMainDataPagerProgressFragment {
             }
         };
         dividerItemDecoration.setDrawable(getContext().getResources().getDrawable(R.drawable.divder));
-        mList.addItemDecoration(dividerItemDecoration);
+        getList().addItemDecoration(dividerItemDecoration);
     }
 }

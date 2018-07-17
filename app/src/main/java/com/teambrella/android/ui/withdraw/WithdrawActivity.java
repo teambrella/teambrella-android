@@ -19,6 +19,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
@@ -76,7 +77,7 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (fragmentManager.findFragmentByTag(WITHDRAWALS_UI_TAG) == null) {
             transaction.add(R.id.container
-                    , ADataPagerProgressFragment.getInstance(WITHDRAWALS_DATA_TAG, WithdrawalsFragment.class)
+                    , ADataFragmentKt.createDataFragment(new String[]{WITHDRAWALS_DATA_TAG}, WithdrawalsFragment.class)
                     , WITHDRAWALS_UI_TAG);
         }
 
@@ -90,6 +91,12 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
         }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getPager(WITHDRAWALS_DATA_TAG).getDataObservable().observe(this, this::onDataUpdated);
     }
 
     @NonNull
@@ -117,22 +124,6 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
                 return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getWithdrawals(mTeamId), TeambrellaModel.ATTR_DATA_TXS);
         }
         return super.getDataPagerConfig(tag);
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mWithdrawalsDisposable = getPager(WITHDRAWALS_DATA_TAG).getDataObservable().subscribe(this::onDataUpdated);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mWithdrawalsDisposable != null && !mWithdrawalsDisposable.isDisposed()) {
-            mWithdrawalsDisposable.dispose();
-            mWithdrawalsDisposable = null;
-        }
     }
 
     @Override

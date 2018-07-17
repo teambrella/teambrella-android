@@ -40,6 +40,7 @@ import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
@@ -60,7 +61,6 @@ import java.util.UUID;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 
 import static com.teambrella.android.services.push.KPushNotifications.CREATED_POST;
 import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MSG;
@@ -102,7 +102,6 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private String mUserId;
     private int mTeamId;
 
-    private Disposable mChatDisposable;
     private TextView mMessageView;
     private ImagePicker mImagePicker;
     private TextView mTitle;
@@ -214,7 +213,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if (fragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) == null) {
-            transaction.add(R.id.container, KChatFragment.getInstance(DATA_FRAGMENT_TAG, KChatFragment.class), UI_FRAGMENT_TAG);
+            transaction.add(R.id.container, ADataFragmentKt.createDataFragment(new String[]{DATA_FRAGMENT_TAG}, KChatFragment.class), UI_FRAGMENT_TAG);
         }
 
         if (!transaction.isEmpty()) {
@@ -295,22 +294,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mChatDisposable = getPager(DATA_FRAGMENT_TAG).getDataObservable()
-                .subscribe(this::onDataUpdated);
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getPager(DATA_FRAGMENT_TAG).getDataObservable()
+                .observe(this, this::onDataUpdated);
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mChatDisposable != null && !mChatDisposable.isDisposed()) {
-            mChatDisposable.dispose();
-        }
-
-        mChatDisposable = null;
-    }
-
 
     @Override
     protected void onDestroy() {

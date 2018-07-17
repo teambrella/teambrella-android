@@ -18,7 +18,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.ui.IMainDataHost
 import com.teambrella.android.ui.base.ADataFragment
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.createDataFragment
 import com.teambrella.android.ui.chat.ChatActivity
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
@@ -27,7 +27,7 @@ import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
 import java.util.*
 
-class HomeCardsFragment : AKDataFragment<IMainDataHost>() {
+class HomeCardsFragment : ADataFragment<IMainDataHost>() {
 
     private val header: TextView? by ViewHolder(R.id.home_header)
     private val subHeader: TextView? by ViewHolder(R.id.home_sub_header)
@@ -39,12 +39,12 @@ class HomeCardsFragment : AKDataFragment<IMainDataHost>() {
             inflater.inflate(R.layout.fragment_home_cards, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         cardsPager?.pageMargin = 20
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        val data = notification?.takeIf { it.isOnNext }?.value?.data
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        val data = notification.takeIf { it.isOnNext }?.value?.data
         data?.let { _data ->
             header?.text = getString(R.string.welcome_user_format_string, _data.name?.trim()?.split(" ".toRegex())!![0])
             subHeader?.visibility = View.VISIBLE
@@ -88,7 +88,7 @@ class HomeCardsFragment : AKDataFragment<IMainDataHost>() {
     }
 
     inner class CardsAdapter(val size: Int) : FragmentStatePagerAdapter(childFragmentManager) {
-        override fun getItem(position: Int): Fragment = createCardFragment(position, mTags)
+        override fun getItem(position: Int): Fragment = createCardFragment(position, tags)
         override fun getCount() = size
         override fun getItemPosition(`object`: Any) = PagerAdapter.POSITION_UNCHANGED
     }
@@ -96,16 +96,11 @@ class HomeCardsFragment : AKDataFragment<IMainDataHost>() {
 
 private const val EXTRA_POSITION = "position"
 
-private fun createCardFragment(position: Int, tags: Array<String>): KCardFragment {
-    return KCardFragment().apply {
-        arguments = Bundle().apply {
-            putInt(EXTRA_POSITION, position)
-            putStringArray(ADataFragment.EXTRA_DATA_FRAGMENT_TAG, tags)
-        }
-    }
+private fun createCardFragment(position: Int, tags: Array<String>) = createDataFragment(tags, KCardFragment::class.java).apply {
+    arguments?.putInt(EXTRA_POSITION, position)
 }
 
-class KCardFragment : AKDataFragment<IMainDataHost>() {
+class KCardFragment : ADataFragment<IMainDataHost>() {
 
     private val icon: ImageView? by ViewHolder(R.id.icon)
     private val teammatePicture: ImageView? by ViewHolder(R.id.teammate_picture)
@@ -129,8 +124,8 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
             inflater.inflate(R.layout.home_card_claim, container, false)
 
 
-    override fun onDataUpdated(notification: Notification<JsonObject>?) {
-        val card = notification?.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        val card = notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject
         card?.let { _card ->
 
             when (_card.itemType) {
@@ -138,7 +133,7 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
                     leftTile?.setText(R.string.coverage)
                     icon?.setAvatar(imageLoader.getImageUrl(_card.smallPhotoOrAvatar))
                     title?.text = _card.itemUserName
-                    teamVote?.text = String.format(Locale.US, "%.1f", _card.teamVote ?: 0f);
+                    teamVote?.text = String.format(Locale.US, "%.1f", _card.teamVote ?: 0f)
                     subtitle?.text = getString(R.string.object_format_string, _card.modelOrName, _card.year)
                     teammatePicture?.visibility = View.GONE
                     subtitle?.layoutParams = (subtitle?.layoutParams as ConstraintLayout.LayoutParams).apply {
@@ -150,7 +145,7 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
                     icon?.setImage(imageLoader.getImageUrl(_card.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
                     title?.text = _card.modelOrName
                     teamVote?.text = Html.fromHtml(getString(R.string.home_team_vote_format_string, Math.round((_card.teamVote
-                            ?: 0f) * 100)));
+                            ?: 0f) * 100)))
                     subtitle?.text = _card.itemUserName
                     teammatePicture?.visibility = View.VISIBLE
                     teammatePicture?.setAvatar(imageLoader.getImageUrl(_card.itemUserAvatar))
@@ -161,34 +156,34 @@ class KCardFragment : AKDataFragment<IMainDataHost>() {
             }
 
             message?.text = Html.fromHtml(_card.text)
-            message?.post({ message?.maxLines = if ((message?.length() ?: 0) > 64) 2 else 1 });
+            message?.post { message?.maxLines = if ((message?.length() ?: 0) > 64) 2 else 1 }
 
 
             unread?.setUnreadCount(_card.unreadCount ?: 0)
 
-            AmountCurrencyUtil.setAmount(amountWidget, _card.amount ?: 0f, mDataHost.currency);
+            AmountCurrencyUtil.setAmount(amountWidget, _card.amount ?: 0f, dataHost.currency)
 
-            votingLabel?.visibility = if (_card.isVoting == true) View.VISIBLE else View.GONE;
+            votingLabel?.visibility = if (_card.isVoting == true) View.VISIBLE else View.GONE
 
             view?.setOnClickListener {
                 when (_card.itemType) {
                     TeambrellaModel.FEED_ITEM_CLAIM -> {
                         startActivity(ChatActivity.getClaimChat(context
-                                , mDataHost.teamId
+                                , dataHost.teamId
                                 , _card.itemIdInt ?: 0
                                 , _card.modelOrName
                                 , _card.smallPhotoOrAvatar
                                 , _card.topicId
-                                , mDataHost.teamAccessLevel
+                                , dataHost.teamAccessLevel
                                 , _card.itemDate))
                     }
                     else -> {
-                        startActivity(ChatActivity.getTeammateChat(context, mDataHost.teamId
+                        startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
                                 , _card.itemUserId
                                 , _card.itemUserName
                                 , _card.smallPhotoOrAvatar
                                 , _card.topicId
-                                , mDataHost.teamAccessLevel))
+                                , dataHost.teamAccessLevel))
                     }
                 }
             }

@@ -1,5 +1,7 @@
 package com.teambrella.android.data.base
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.net.Uri
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -10,7 +12,6 @@ import com.teambrella.android.dagger.Dependencies
 import io.reactivex.Notification
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observables.ConnectableObservable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -19,8 +20,7 @@ import javax.inject.Named
 @Suppress("PropertyName")
 abstract class ATeambrellaDataPagerLoader() : IDataPager<JsonArray> {
 
-    private val connectableObservable: ConnectableObservable<Notification<JsonObject>>
-    protected val publisher = PublishSubject.create<Notification<JsonObject>>()
+    protected val _observable: MutableLiveData<Notification<JsonObject>> = MutableLiveData()
     protected var array = JsonArray()
     protected var _hasNextError = false
     protected var _isNextLoading = false
@@ -31,15 +31,10 @@ abstract class ATeambrellaDataPagerLoader() : IDataPager<JsonArray> {
     protected var _nextIndex = 0
     protected var _previousIndex = 0
 
-    init {
-        connectableObservable = publisher.publish()
-        connectableObservable.connect()
-    }
-
     override val loadedData: JsonArray
         get() = array
-    override val dataObservable: Observable<Notification<JsonObject>>
-        get() = connectableObservable
+    override val dataObservable: LiveData<Notification<JsonObject>>
+        get() = _observable
     override val hasNext: Boolean
         get() = _hasNext
     override val hasPrevious: Boolean
@@ -102,10 +97,10 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
                     it
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext({
+                .doOnNext {
                     _nextIndex = 0
                     array = JsonArray()
-                })
+                }
                 .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
         _isNextLoading = true
         _hasNextError = false
@@ -118,7 +113,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
         _hasNext = newData.size() == limit
         _nextIndex += newData.size()
         _isNextLoading = false
-        publisher.onNext(Notification.createOnNext(data))
+        _observable.postValue(Notification.createOnNext(data))
     }
 
     protected open fun getPageableData(src: JsonObject): JsonArray {
@@ -141,7 +136,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
     }
 
     private fun onError(throwable: Throwable) {
-        publisher.onNext(Notification.createOnError<JsonObject>(throwable))
+        _observable.postValue(Notification.createOnError<JsonObject>(throwable))
         _hasNextError = true
         _isNextLoading = false
     }
@@ -244,7 +239,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
             loadPrevious(true)
             return
         } else {
-            publisher.onNext(Notification.createOnNext(response))
+            _observable.postValue(Notification.createOnNext(response))
         }
     }
 
@@ -256,11 +251,11 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         _previousIndex -= size
         array = newData
         _isPreviousLoading = false
-        publisher.onNext(Notification.createOnNext(response))
+        _observable.postValue(Notification.createOnNext(response))
     }
 
     private fun onError(error: Throwable) {
-        publisher.onNext(Notification.createOnError(error))
+        _observable.postValue(Notification.createOnError(error))
         _hasNextError = true
         _isNextLoading = false
     }
@@ -300,7 +295,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         }
         addPageableData(response, item)
         array.add(item)
-        publisher.onNext(Notification.createOnNext(response))
+        _observable.postValue(Notification.createOnNext(response))
     }
 
 

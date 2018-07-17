@@ -13,8 +13,8 @@ import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter;
 public class MyProxiesFragment extends AMainDataPagerProgressFragment {
 
     @Override
-    protected ATeambrellaDataPagerAdapter getAdapter() {
-        return new MyProxiesAdapter(mDataHost.getPager(mTag), mDataHost.getTeamId(), mDataHost::launchActivity, mItemTouchHelper);
+    protected ATeambrellaDataPagerAdapter createAdapter() {
+        return new MyProxiesAdapter(getDataHost().getPager(getTags()[0]), getDataHost().getTeamId(), getDataHost()::launchActivity, getItemTouchHelper());
     }
 
     @Override
@@ -28,8 +28,8 @@ public class MyProxiesFragment extends AMainDataPagerProgressFragment {
         super.onDraggingFinished(viewHolder);
         int position = viewHolder.getAdapterPosition();
         if (position >= 0) {
-            JsonWrapper item = new JsonWrapper(mDataHost.getPager(mTag).getLoadedData().get(position).getAsJsonObject());
-            mDataHost.setProxyPosition(item.getString(TeambrellaModel.ATTR_DATA_USER_ID), position);
+            JsonWrapper item = new JsonWrapper(getDataHost().getPager(getTags()[0]).getLoadedData().get(position).getAsJsonObject());
+            getDataHost().setProxyPosition(item.getString(TeambrellaModel.ATTR_DATA_USER_ID), position);
         }
     }
 }

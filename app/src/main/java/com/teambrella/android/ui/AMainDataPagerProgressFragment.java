@@ -1,5 +1,7 @@
 package com.teambrella.android.ui;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.base.ADataPagerProgressFragment;
@@ -15,13 +17,13 @@ public abstract class AMainDataPagerProgressFragment extends ADataPagerProgressF
     private boolean mIsShown;
 
     @Override
-    protected void onDataUpdated(Notification<JsonObject> notification) {
+    protected void onDataUpdated(@NonNull Notification<JsonObject> notification) {
         if (notification.isOnNext()) {
             mIsShown = true;
             setContentShown(true);
         } else {
             setContentShown(true, !mIsShown);
-            mDataHost.showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
+            getDataHost().showSnackBar(ConnectivityUtils.isNetworkAvailable(getContext()) ? R.string.something_went_wrong_error : R.string.no_internet_connection);
         }
     }
 }
