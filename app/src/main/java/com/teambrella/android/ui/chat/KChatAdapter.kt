@@ -81,7 +81,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context);
+        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_MESSAGE_ME -> ChatMessageViewHolder(inflater.inflate(R.layout.list_item_my_message, parent, false))
             VIEW_TYPE_MESSAGE_THEM -> ChatMessageViewHolder(inflater.inflate(R.layout.list_item_message, parent, false))
@@ -143,9 +143,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
     override fun getPreloadRequestBuilder(item: JsonObject): RequestBuilder<*>? {
 
-        var smallImages = item.localImages?.mapTo(ArrayList(), { FILE_PREFIX + it.asString })
+        var smallImages = item.localImages?.mapTo(ArrayList()) { FILE_PREFIX + it.asString }
         if (smallImages == null) {
-            smallImages = item.smallImages?.mapTo(ArrayList(), { it.asString })
+            smallImages = item.smallImages?.mapTo(ArrayList()) { it.asString }
         }
 
         var requestBuilder: RequestBuilder<*>? = null
@@ -279,9 +279,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
         override fun onBind(item: JsonObject) {
             super.onBind(item)
-            var smallImages = item.localImages?.mapTo(ArrayList(), { FILE_PREFIX + it.asString })
+            var smallImages = item.localImages?.mapTo(ArrayList()) { FILE_PREFIX + it.asString }
             if (smallImages == null) {
-                smallImages = item.smallImages?.mapTo(ArrayList(), { it.asString })
+                smallImages = item.smallImages?.mapTo(ArrayList()) { it.asString }
             }
 
             smallImages?.let { _smallImages ->
@@ -301,14 +301,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
 
                     if (item.messageStatus != TeambrellaModel.PostStatus.POST_PENDING) {
-                        item.images?.mapTo(ArrayList(), { it.asString })?.let { _images ->
-                            image?.setOnClickListener({
+                        item.images?.mapTo(ArrayList()) { it.asString }?.let { _images ->
+                            image?.setOnClickListener {
                                 context.startActivity(ImageViewerActivity.getLaunchIntent(context, _images, _index))
-                            })
+                            }
                         }
-
                     }
-
                 }
             }
         }

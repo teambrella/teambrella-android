@@ -75,7 +75,7 @@ class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
             }
             if (photos.size > 0) {
                 objectPicture?.setImage(imageLoader.getImageUrl(photos[0]), R.dimen.rounded_corners_4dp, R.drawable.picture_background_round_4dp)
-                objectPicture?.setOnClickListener({ startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)) })
+                objectPicture?.setOnClickListener { startActivity(ImageViewerActivity.getLaunchIntent(context, photos, 0)) }
             }
 
         }
@@ -92,9 +92,9 @@ class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
         seeClaims?.text = getString(R.string.see_claims_format_string, claimCount)
         seeClaims?.setOnClickListener {
             if (claimId > 0) {
-                ClaimActivity.start(context!!, claimId, model, teamId)
+                ClaimActivity.start(it.context, claimId, model, teamId)
             } else {
-                ClaimsActivity.start(context!!, teamId, teammateId, currency)
+                ClaimsActivity.start(it.context, teamId, teammateId, currency)
             }
         }
     }

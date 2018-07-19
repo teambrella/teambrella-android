@@ -280,11 +280,11 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             if (mViewToVote != null) {
                 mViewToVote.setOnClickListener(v -> startActivity(
-                        ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                        ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                                 item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             } else {
                 itemView.setOnClickListener(v -> startActivity(
-                        ClaimActivity.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                        ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
                                 item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
             }
 

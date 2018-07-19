@@ -91,20 +91,20 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>
 
             claimId?.let {
                 this.type?.text = itemView.resources.getString(R.string.claim_title_format_string, claimId)
-                itemView.setOnClickListener({
+                itemView.setOnClickListener {
                     startActivity(ClaimActivity.getLaunchIntent(itemView.context, claimId, null, teamId))
-                })
+                }
             }
 
             if (claimId == null) {
                 this.type?.text = itemView.resources.getString(R.string.withdrawal)
-                itemView.setOnClickListener({
+                itemView.setOnClickListener {
                     startActivity(WithdrawActivity.getIntent(itemView.context, teamId, currency, cryptoRate))
-                })
+                }
             }
 
             icon?.setAvatar(imageLoader.getImageUrl(item.avatar))
-            
+
         }
 
         private fun setStatus(state: Int) {

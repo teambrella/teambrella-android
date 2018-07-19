@@ -17,7 +17,6 @@ import com.teambrella.android.ui.demo.NewDemoSessionActivity
 import com.teambrella.android.util.log.Log
 import com.teambrella.android.wallet.TeambrellaWalletRequestFragment
 import io.reactivex.Notification
-import io.reactivex.disposables.Disposable
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -41,8 +40,6 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
 
 
     private val mLifecycleCallbacks = LinkedList<TeambrellaActivityLifecycle>()
-    private val serverErrorHandler = ServerErrorHandler()
-
 
     fun registerLifecycleCallback(lifecycle: TeambrellaActivityLifecycle) {
         mLifecycleCallbacks.add(lifecycle)
@@ -63,6 +60,21 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         }
     }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        dataPagerTags.forEach {
+            getObservable(it).observe(this, android.arch.lifecycle.Observer {
+                it?.let { checkServerError(it) }
+            })
+        }
+
+        dataTags.forEach {
+            getObservable(it).observe(this, android.arch.lifecycle.Observer {
+                it?.let { checkServerError(it) }
+            })
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         for (lifecycle in mLifecycleCallbacks) {
@@ -72,9 +84,6 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         val fragmentManager = supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(WALLET_DATA_FRAGMENT_TAG) as TeambrellaWalletRequestFragment
         fragment.sync()
-
-        serverErrorHandler.onStart()
-
     }
 
     override fun onResume() {
@@ -113,7 +122,44 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
         for (lifecycle in mLifecycleCallbacks) {
             lifecycle.onStop()
         }
-        serverErrorHandler.onStop()
+    }
+
+
+    private fun checkServerError(notification: Notification<JsonObject>) {
+        if (notification.isOnError) {
+            val error = notification.error
+            if (error is TeambrellaServerException) {
+                when (error.errorCode) {
+                    TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH -> {
+                        if (!isFinishing && user.isDemoUser) {
+                            startActivity(Intent(this@ATeambrellaActivity, NewDemoSessionActivity::class.java)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                            finish()
+                        }
+                        if (!isFinishing) {
+                            AppOutdatedActivity.start(this@ATeambrellaActivity, true)
+                            finish()
+                        }
+                    }
+                    TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION -> if (!isFinishing) {
+                        AppOutdatedActivity.start(this@ATeambrellaActivity, true)
+                        finish()
+                    }
+                }
+            }
+        } else {
+            notification.value.status?.let { _status ->
+                val recommendedVersion = _status.recommendedVersion
+                if (recommendedVersion > BuildConfig.VERSION_CODE) {
+                    val current = System.currentTimeMillis()
+                    if (Math.abs(current - user.newVersionLastScreenTime) < MIN_RECOMMENDED_VERSION_DELAY) {
+                        return
+                    }
+                    AppOutdatedActivity.start(this@ATeambrellaActivity, false)
+                    user.newVersionLastScreenTime = current
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -122,71 +168,5 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
             lifecycle.onDestroy(this)
         }
     }
-
-    private inner class ServerErrorHandler {
-        private val mCheckErrorDisposables = LinkedList<Disposable>()
-
-        fun onStart() {
-//            if (dataTags.isNotEmpty()) {
-//                for (tag in dataTags) {
-//                    mCheckErrorDisposables.add(getObservable(tag).subscribe(this::checkServerError))
-//                }
-//            }
-//
-//            if (dataPagerTags.isNotEmpty()) {
-//                for (tag in dataPagerTags) {
-//                    mCheckErrorDisposables.add(getPager(tag).dataObservable.subscribe(this::checkServerError))
-//                }
-//            }
-
-        }
-
-        fun onStop() {
-//            mCheckErrorDisposables.iterator().let {
-//                while (it.hasNext()) {
-//                    it.next().takeIf { !it.isDisposed }?.dispose()
-//                    it.remove()
-//                }
-//            }
-        }
-
-        private fun checkServerError(notification: Notification<JsonObject>) {
-            if (notification.isOnError) {
-                val error = notification.error
-                if (error is TeambrellaServerException) {
-                    when (error.errorCode) {
-                        TeambrellaModel.VALUE_STATUS_RESULT_CODE_AUTH -> {
-                            if (!isFinishing && user.isDemoUser) {
-                                startActivity(Intent(this@ATeambrellaActivity, NewDemoSessionActivity::class.java)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                                finish()
-                            }
-                            if (!isFinishing) {
-                                AppOutdatedActivity.start(this@ATeambrellaActivity, true)
-                                finish()
-                            }
-                        }
-                        TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION -> if (!isFinishing) {
-                            AppOutdatedActivity.start(this@ATeambrellaActivity, true)
-                            finish()
-                        }
-                    }
-                }
-            } else {
-                notification.value.status?.let { _status ->
-                    val recommendedVersion = _status.recommendedVersion
-                    if (recommendedVersion > BuildConfig.VERSION_CODE) {
-                        val current = System.currentTimeMillis()
-                        if (Math.abs(current - user.newVersionLastScreenTime) < MIN_RECOMMENDED_VERSION_DELAY) {
-                            return
-                        }
-                        AppOutdatedActivity.start(this@ATeambrellaActivity, false)
-                        user.newVersionLastScreenTime = current
-                    }
-                }
-            }
-        }
-    }
-
 
 }

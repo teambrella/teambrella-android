@@ -48,7 +48,7 @@ class TeammateVotingResultFragment : ADataFragment<ITeammateActivity>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         allVotes?.setOnClickListener {
-            AllVotesActivity.startTeammateAllVotes(context, dataHost.teamId, dataHost.teammateId)
+            AllVotesActivity.startTeammateAllVotes(it.context, dataHost.teamId, dataHost.teammateId)
         }
         super.onViewCreated(view, savedInstanceState)
     }

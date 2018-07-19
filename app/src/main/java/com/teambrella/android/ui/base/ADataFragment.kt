@@ -1,9 +1,6 @@
 package com.teambrella.android.ui.base
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.*
 import android.content.Context
 import android.os.Bundle
 import android.view.View
@@ -35,9 +32,6 @@ abstract class ADataFragment<T : IDataHost> : TeambrellaFragment() {
         arguments?.getStringArray(EXTRA_DATA_TAGS)
                 ?: throw IllegalArgumentException("No data tags provided")
     }
-
-
-    private val viewHolders = mutableListOf<ViewHolder<*>>()
 
     protected val lifecycleOwner = FragmentViewLifecycleOwner()
 
@@ -78,7 +72,6 @@ abstract class ADataFragment<T : IDataHost> : TeambrellaFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         lifecycleOwner.onDestroyView()
-        viewHolders.forEach { it.reset() }
     }
 
     private val observer = Observer<Notification<JsonObject>> { _notification ->
@@ -91,10 +84,10 @@ abstract class ADataFragment<T : IDataHost> : TeambrellaFragment() {
     protected abstract fun onDataUpdated(notification: Notification<JsonObject>)
 
 
-    protected inner class ViewHolder<T : View>(private val id: Int) {
+    protected inner class ViewHolder<T : View>(private val id: Int) : LifecycleObserver {
 
         init {
-            viewHolders.add(this)
+            lifecycleOwner.lifecycle.addObserver(this)
         }
 
         private var _value: T? = null
@@ -110,6 +103,7 @@ abstract class ADataFragment<T : IDataHost> : TeambrellaFragment() {
 
         }
 
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun reset() {
             _value = null
         }

@@ -17,7 +17,7 @@ import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
-import com.teambrella.android.ui.base.AKDataPagerProgressFragment
+import com.teambrella.android.ui.base.ADataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter
 import com.teambrella.android.ui.claim.ClaimActivity
 import com.teambrella.android.ui.claim.MODE_CHAT
@@ -25,10 +25,9 @@ import com.teambrella.android.ui.teammate.getTeammateIntent
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
 import io.reactivex.Notification
-import io.reactivex.disposables.Disposable
 import java.util.*
 
-class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
+class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
 
 
     private companion object {
@@ -97,8 +96,6 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
     private var userName: String? = null
     private var lastRead: Long? = null
 
-    private var voteDisposable: Disposable? = null
-
 
     override fun createAdapter(): ATeambrellaDataPagerAdapter {
         return KChatAdapter(dataHost.getPager(tags[0]), context!!, dataHost.teamId,
@@ -112,6 +109,13 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
+            TeambrellaUris.CLAIMS_CHAT ->
+                dataHost.getObservable(ChatActivity.VOTE_DATA_TAG).observe(lifecycleOwner,
+                        android.arch.lifecycle.Observer { it?.let { onChatDataUpdated(it) } })
+        }
+
         super.onViewCreated(view, savedInstanceState)
         isRefreshable = false
         list?.setBackgroundColor(Color.TRANSPARENT)
@@ -170,6 +174,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
                     behavior = votingPanelBehaviour
                 }
 
+
     }
 
     override val contentLayout = R.layout.fragment_chat
@@ -191,26 +196,6 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
-//            TeambrellaUris.CLAIMS_CHAT -> voteDisposable = mDataHost.getObservable(ChatActivity.VOTE_DATA_TAG)
-//                    .subscribe(this::onDataUpdated)
-//        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-//        when (TeambrellaUris.sUriMatcher.match(mDataHost.chatUri)) {
-//            TeambrellaUris.CLAIMS_CHAT -> voteDisposable?.apply {
-//                if (!isDisposed) {
-//                    dispose()
-//                }
-//            }
-//        }
-//        voteDisposable = null
     }
 
     private fun onChatDataUpdated(notification: Notification<JsonObject>) {
@@ -318,7 +303,7 @@ class KChatFragment : AKDataPagerProgressFragment<IChatActivity>() {
     private fun onClaimClickListener(v: View) {
         when (v.id) {
             R.id.voting_panel -> startActivityForResult(
-                    ClaimActivity.getLaunchIntent(context, dataHost.claimId, dataHost.objectName, dataHost.teamId), 10
+                    ClaimActivity.getLaunchIntent(v.context, dataHost.claimId, dataHost.objectName, dataHost.teamId), 10
             )
             R.id.vote -> votingContainerBehaviour.show(votingContainerView)
             R.id.hide -> votingContainerBehaviour.hide(votingContainerView)

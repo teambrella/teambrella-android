@@ -325,7 +325,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
                         int claimId = Observable.just(response.getValue()).map(JsonWrapper::new)
                                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                                 .map(jsonWrapper -> jsonWrapper.getInt(TeambrellaModel.ATTR_DATA_ID)).blockingFirst();
-                        startActivity(ClaimActivity.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
+                        startActivity(ClaimActivity.Companion.getLaunchIntent(this, claimId, getIntent().getStringExtra(EXTRA_NAME), mTeamId));
                         new TeambrellaBroadcastManager(this).notifyClaimSubmitted();
                         finish();
                         break;

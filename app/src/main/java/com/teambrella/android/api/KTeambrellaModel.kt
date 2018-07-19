@@ -27,6 +27,10 @@ const val SHARED_URL = "SharedUrl"
 const val VOTING_RES_CRYPTO = "VotingRes_Crypto"
 const val PAYMENT_RES_CRYPTO = "PaymentRes_Crypto"
 const val RECOMMENDING_VERSION = "RecommendedVersion"
+const val ME = "Me"
+const val ESTIMATED_EXPENSES = "EstimatedExpenses"
+const val DEDUCTIBLE = "Deductible"
+const val INCIDENT_DATE = "IncidentDate"
 
 
 object ChatItems {
@@ -73,6 +77,9 @@ val JsonObject?.gender: Int?
 
 val JsonObject?.smallPhotos: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS)
+
+val JsonObject?.bigPhotos: JsonArray?
+    get() = getJsonArray(TeambrellaModel.ATTR_DATA_BIG_PHOTOS)
 
 val JsonObject?.smallImages: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_IMAGES)
@@ -172,6 +179,9 @@ var JsonObject?.voting: JsonObject?
 
 val JsonObject?.voted: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_VOTED_PART)
+
+val JsonObject?.me: JsonObject?
+    get() = getObject(ME)
 
 val JsonObject?.remainedMinutes: Long?
     get() = getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
@@ -496,6 +506,15 @@ val JsonObject?.votingResCrypto: Double?
 
 val JsonObject?.paymentResCrypto: Double?
     get() = getDouble(PAYMENT_RES_CRYPTO)
+
+val JsonObject?.estimatedExpenses: Double?
+    get() = getDouble(ESTIMATED_EXPENSES)
+
+val JsonObject?.deductible: Double?
+    get() = getDouble(DEDUCTIBLE)
+
+val JsonObject?.incidentDate: String?
+    get() = getString(INCIDENT_DATE)
 
 fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

@@ -10,6 +10,9 @@ private const val USER_NAME = "user_name"
 private const val AVATAR = "avatar"
 private const val URI = "uri"
 private const val CURRENCY = "currency"
+private const val CLAIM_ID = "claimId"
+private const val TEAMMATE_ID = "teammateId"
+private const val MODEL = "model"
 
 var Intent?.teamId: Int
     get() = this?.getIntExtra(TEAM_ID, 0) ?: 0
@@ -45,5 +48,23 @@ var Intent?.uri: Uri?
     get() = this?.getParcelableExtra(URI)
     set(value) {
         this?.putExtra(URI, value)
+    }
+
+var Intent?.claimId: Int
+    get() = this?.getIntExtra(CLAIM_ID, 0) ?: 0
+    set(value) {
+        this?.putExtra(CLAIM_ID, value)
+    }
+
+var Intent?.teammateId: Int
+    get() = this?.getIntExtra(TEAMMATE_ID, 0) ?: 0
+    set(value) {
+        this?.putExtra(TEAMMATE_ID, value)
+    }
+
+var Intent?.model: String?
+    get() = this?.getStringExtra(MODEL)
+    set(value) {
+        this?.putExtra(MODEL, value)
     }
 

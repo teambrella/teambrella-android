@@ -224,7 +224,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
 
-                mAllVotesView.setOnClickListener(view -> AllVotesActivity.startTeammateAllVotes(getContext(), getDataHost().getTeamId(), getDataHost().getTeammateId()));
+                mAllVotesView.setOnClickListener(view -> AllVotesActivity.Companion.startTeammateAllVotes(getContext(), getDataHost().getTeamId(), getDataHost().getTeammateId()));
             }
         } catch (Exception e) {
 

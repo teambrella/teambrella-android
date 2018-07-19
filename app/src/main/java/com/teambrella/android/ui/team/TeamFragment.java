@@ -19,6 +19,7 @@ import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.IMainDataHost;
 import com.teambrella.android.ui.MainActivity;
+import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.team.claims.TeamClaimsFragment;
 import com.teambrella.android.ui.team.feed.FeedFragment;
 import com.teambrella.android.ui.team.teammates.MembersFragment;
@@ -44,7 +45,7 @@ public class TeamFragment extends AMainLandingFragment {
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return FeedFragment.getInstance(MainActivity.FEED_DATA_TAG, getDataHost().getTeamId());
+                        return ADataFragmentKt.createDataFragment(new String[]{MainActivity.FEED_DATA_TAG}, FeedFragment.class);
                     case 1:
                         return MembersFragment.getInstance(MainActivity.TEAMMATES_DATA_TAG, getDataHost().getTeamId());
                     case 2:

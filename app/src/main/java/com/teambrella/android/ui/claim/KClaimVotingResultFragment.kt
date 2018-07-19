@@ -64,7 +64,9 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         allVotes?.setOnClickListener {
-            AllVotesActivity.startClaimAllVotes(context, dataHost.teamId, dataHost.claimId)
+            context?.let {
+                AllVotesActivity.startClaimAllVotes(it, dataHost.teamId, dataHost.claimId)
+            }
         }
 
         resetVoteButton?.setOnClickListener {
