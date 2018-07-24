@@ -175,7 +175,7 @@ public interface TeambrellaAPI {
 
 
     @Headers("Content-Type: application/json")
-    @POST("demo/getPetTeams/{language}")
+    @POST("demo/getTeams/{language}")
     Observable<Response<JsonObject>> getDemoTeams(@Path("language") String language);
 
 

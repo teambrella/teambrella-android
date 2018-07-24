@@ -89,10 +89,6 @@ public class TeambrellaNotificationManager {
 
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
-                for (NotificationChannel channel : notificationManager.getNotificationChannels()) {
-                    notificationManager.deleteNotificationChannel(channel.getId());
-                }
-
                 List<NotificationChannel> list = new LinkedList<>();
                 NotificationChannelGroup chatGroup = new NotificationChannelGroup(CHATS_ID, context.getString(R.string.notification_group_chats));
 
@@ -145,11 +141,12 @@ public class TeambrellaNotificationManager {
 
     @SuppressWarnings("ConstantConditions")
     public void showPrivateMessageNotification(String userId, String userName, String avatar, String text) {
-        notifyUser(UUID.fromString(userId).hashCode()
+        final int id = UUID.fromString(userId).hashCode();
+        notifyUser(id
                 , userName
                 , text
                 , getAvatarRequest(avatar)
-                , getBuilder(PRIVATE_CHATS_ID).setContentIntent(getChatPendingIntent(userId, userName, avatar)));
+                , getBuilder(PRIVATE_CHATS_ID).setContentIntent(getChatPendingIntent(id, userId, userName, avatar)));
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -429,12 +426,12 @@ public class TeambrellaNotificationManager {
     }
 
 
-    private PendingIntent getChatPendingIntent(String userId, String userName, String avatar) {
-        return PendingIntent.getActivities(mContext, 1, new Intent[]
+    private PendingIntent getChatPendingIntent(int requestCode, String userId, String userName, String avatar) {
+        return PendingIntent.getActivities(mContext, requestCode, new Intent[]
                 {new Intent(mContext, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         , new Intent(mContext, InboxActivity.class)
                         , ChatActivity.getConversationChat(mContext, userId, userName, avatar)
-                }, PendingIntent.FLAG_UPDATE_CURRENT);
+                }, 0);
     }
 
 

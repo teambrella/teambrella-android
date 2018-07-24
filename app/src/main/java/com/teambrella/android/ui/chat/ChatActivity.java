@@ -83,6 +83,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_DATE = "date";
     private static final String EXTRA_LAST_READ = "las_read";
+    private static final String EXTRA_ACTION = "chat_action";
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
@@ -127,7 +128,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
                 .putExtra(EXTRA_USER_NAME, userName)
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
-                .setAction(SHOW_CONVERSATION_CHAT);
+                .putExtra(EXTRA_ACTION, SHOW_CONVERSATION_CHAT)
+                .setAction(SHOW_CONVERSATION_CHAT + userId);
     }
 
     public static Intent getClaimChat(Context context, int teamId, int claimId, String objectName, String imageUri, String topicId, int accessLevel, String date) {
@@ -140,7 +142,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .putExtra(EXTRA_URI, TeambrellaUris.getClaimChatUri(claimId))
                 .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
                 .putExtra(EXTRA_DATE, date)
-                .setAction(SHOW_CLAIM_CHAT_ACTION);
+                .putExtra(EXTRA_ACTION, SHOW_CLAIM_CHAT_ACTION)
+                .setAction(SHOW_CLAIM_CHAT_ACTION + topicId);
     }
 
     public static Intent getTeammateChat(Context context, int teamId, String userId, String userName, String imageUri, String topicId, int accessLevel) {
@@ -152,7 +155,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .putExtra(EXTRA_TOPIC_ID, topicId)
                 .putExtra(EXTRA_URI, TeambrellaUris.getTeammateChatUri(teamId, userId))
                 .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
-                .setAction(SHOW_TEAMMATE_CHAT_ACTION);
+                .putExtra(EXTRA_ACTION, SHOW_TEAMMATE_CHAT_ACTION)
+                .setAction(SHOW_TEAMMATE_CHAT_ACTION + topicId);
     }
 
 
@@ -163,7 +167,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_URI, TeambrellaUris.getFeedChatUri(topicId))
                 .putExtra(EXTRA_TEAM_ACCESS_LEVEL, accessLevel)
-                .setAction(SHOW_FEED_CHAT_ACTION);
+                .putExtra(EXTRA_ACTION, SHOW_FEED_CHAT_ACTION)
+                .setAction(SHOW_FEED_CHAT_ACTION + topicId);
     }
 
 
@@ -179,7 +184,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         mUserId = intent.getStringExtra(EXTRA_USER_ID);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
         int mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
-        mAction = intent.getAction();
+        mAction = intent.getStringExtra(EXTRA_ACTION);
 
         mLastRead = savedInstanceState != null ? savedInstanceState.getLong(EXTRA_LAST_READ, -1) : -1;
 

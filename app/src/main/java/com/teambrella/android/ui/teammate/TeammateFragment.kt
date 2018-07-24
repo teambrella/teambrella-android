@@ -177,8 +177,11 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
                 mGender = _basic.gender ?: mGender
 
                 cityView?.text = _basic.city
-                memberSinceView?.text = getString(R.string.member_since_format_string
-                        , TeambrellaDateUtils.getDatePresentation(context, TeambrellaDateUtils.TEAMBRELLA_UI_DATE, _basic.dateJoined))
+
+                _basic.dateJoined?.let {
+                    memberSinceView?.text = getString(R.string.member_since_format_string
+                            , TeambrellaDateUtils.getDatePresentation(context, TeambrellaDateUtils.TEAMBRELLA_UI_DATE, it))
+                }
 
 
                 val avatarString = _basic.avatar
