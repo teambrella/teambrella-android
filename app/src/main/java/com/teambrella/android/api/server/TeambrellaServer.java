@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -77,8 +79,6 @@ public class TeambrellaServer {
 
     private final String mDeviceCode;
 
-    private final String mDeviceToken;
-
     private final int mMask;
 
     /**
@@ -86,7 +86,7 @@ public class TeambrellaServer {
      *
      * @param context to use
      */
-    public TeambrellaServer(Context context, String password, String deviceCode, String deviceToken, int mask) {
+    public TeambrellaServer(Context context, String password, String deviceCode, int mask) {
 
 
         mPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -113,7 +113,6 @@ public class TeambrellaServer {
         DumpedPrivateKey dpk = DumpedPrivateKey.fromBase58(null, password);
         mKey = dpk.getKey();
         mDeviceCode = deviceCode != null ? deviceCode : "";
-        mDeviceToken = deviceToken != null ? deviceToken : "";
         mMask = mask;
     }
 
@@ -148,7 +147,7 @@ public class TeambrellaServer {
                 .addHeader("sig", () -> mKey.signMessage(Long.toString(timestamp)))
                 .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                 .addHeader("deviceId", mDeviceCode)
-                .addHeader("deviceToken", mDeviceToken)
+                .addHeader("deviceToken", FirebaseInstanceId.getInstance().getToken())
                 .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL)
                 .build();
     }
@@ -345,6 +344,7 @@ public class TeambrellaServer {
             case TeambrellaUris.NEW_FILE:
             case TeambrellaUris.INBOX:
             case TeambrellaUris.DEMO_TEAMS:
+            case TeambrellaUris.GET_DEMO_TEAMS_SUR:
             case TeambrellaUris.DEBUG_DB:
             case TeambrellaUris.DEBUG_LOG:
             case TeambrellaUris.GET_ME:
@@ -425,6 +425,8 @@ public class TeambrellaServer {
                 return mAPI.getWallet(requestBody);
             case TeambrellaUris.DEMO_TEAMS:
                 return mAPI.getDemoTeams(uri.getQueryParameter(TeambrellaUris.KEY_LANGUAGE));
+            case TeambrellaUris.GET_DEMO_TEAMS_SUR:
+                return mAPI.getDemoTeamsSur(Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_STATUS)));
             case TeambrellaUris.WITHDRAWALS:
                 return mAPI.getWithdrawls(requestBody);
             case TeambrellaUris.NEW_WITHDRAW:
@@ -477,7 +479,7 @@ public class TeambrellaServer {
 
     private class HeaderInterceptor implements Interceptor {
         @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
+        public okhttp3.Response intercept(@NonNull Chain chain) throws IOException {
             Long timestamp = mPreferences.getLong(TIMESTAMP_KEY, 0L);
             String publicKey = Utils.HEX.encode(ECKey.compressPoint(mKey.getPubKeyPoint()).getEncoded());
             String signature = mKey.signMessage(Long.toString(timestamp));
@@ -487,7 +489,7 @@ public class TeambrellaServer {
                     .addHeader("sig", signature)
                     .addHeader("clientVersion", BuildConfig.VERSION_NAME)
                     .addHeader("deviceId", mDeviceCode)
-                    .addHeader("deviceToken", mDeviceToken)
+                    .addHeader("deviceToken", FirebaseInstanceId.getInstance().getToken())
                     .addHeader("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL)
                     .build();
             return chain.proceed(newRequest);
@@ -505,7 +507,7 @@ public class TeambrellaServer {
         headers.put("sig", signature);
         headers.put("clientVersion", BuildConfig.VERSION_NAME);
         headers.put("deviceId", mDeviceCode);
-        headers.put("deviceToken", mDeviceToken);
+        headers.put("deviceToken", FirebaseInstanceId.getInstance().getToken());
         headers.put("info", Integer.toString(mMask) + ";" + Build.VERSION.RELEASE + ";" + Build.MANUFACTURER + " " + Build.MODEL);
         return new TeambrellaSocketClient(uri, headers, listener, lastNotificationTimeStamp);
     }

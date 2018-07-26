@@ -6,7 +6,6 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.gcm.*
-import com.google.firebase.iid.FirebaseInstanceId
 import com.teambrella.android.api.avatar
 import com.teambrella.android.api.data
 import com.teambrella.android.api.fbName
@@ -82,7 +81,7 @@ class WalletBackUpService : GcmTaskService() {
     private fun onCheckBackUp() {
         val user = TeambrellaUser.get(this)
         if (!user.isDemoUser) {
-            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, FirebaseInstanceId.getInstance().token, user.getInfoMask(this))
+            val server = TeambrellaServer(this, user.privateKey, user.deviceCode, user.getInfoMask(this))
             val me = server.requestObservable(TeambrellaUris.getMe(), null).blockingFirst()
             me?.data?.let {
                 val googleApiClient = GoogleApiClient.Builder(this)

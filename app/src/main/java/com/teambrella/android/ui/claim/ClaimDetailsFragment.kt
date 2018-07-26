@@ -12,6 +12,7 @@ import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.TeambrellaDateUtils
 import io.reactivex.Notification
+import java.text.DecimalFormat
 
 /**
  * Claims Details Fragment
@@ -23,6 +24,7 @@ class ClaimDetailsFragment : ADataFragment<IClaimActivity>() {
     private val deductibleView: TextView? by ViewHolder(R.id.deductible)
     private val coverageView: TextView? by ViewHolder(R.id.coverage)
     private val incidentDateView: TextView? by ViewHolder(R.id.incident_date)
+    private val decimalFormat = DecimalFormat.getInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
             inflater.inflate(R.layout.fragment_claim_details, container, false)
@@ -35,11 +37,11 @@ class ClaimDetailsFragment : ADataFragment<IClaimActivity>() {
 
             if (basic != null && sign != null) {
                 claimAmountView?.text = getString(R.string.amount_format_string, sign
-                        , Math.round(basic.claimAmount ?: 0f))
+                        , decimalFormat.format(Math.round(basic.claimAmount ?: 0f)))
                 expensesView?.text = getString(R.string.amount_format_string, sign
-                        , Math.round(basic.estimatedExpenses ?: 0.0))
-                deductibleView!!.text = getString(R.string.amount_format_string, sign
-                        , Math.round(basic.deductible ?: 0.0))
+                        , decimalFormat.format(Math.round(basic.estimatedExpenses ?: 0.0)))
+                deductibleView?.text = getString(R.string.amount_format_string, sign
+                        , decimalFormat.format(Math.round(basic.deductible ?: 0.0)))
                 coverageView?.text = getString(R.string.percentage_format_string
                         , Math.round((basic.coverage ?: 0f) * 100))
 

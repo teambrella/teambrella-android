@@ -31,6 +31,9 @@ const val ME = "Me"
 const val ESTIMATED_EXPENSES = "EstimatedExpenses"
 const val DEDUCTIBLE = "Deductible"
 const val INCIDENT_DATE = "IncidentDate"
+const val DATE_PAY_TO_JOIN = "DatePayToJoin"
+const val SUBTITLE = "SubTitle"
+
 
 
 object ChatItems {
@@ -40,6 +43,7 @@ object ChatItems {
     const val CHAT_ITEM_MY_IMAGE = "my_image"
     const val CHAT_ITEM_DATE = "date"
     const val CHAT_ITEM_PAID_CLAIM = "paid_claim"
+    const val CHAT_ITEM_PAY_TO_JOIN = "pay_to_join"
 }
 
 
@@ -90,6 +94,10 @@ var JsonObject?.localImages: JsonArray?
 
 val JsonObject?.datePaymentFinished: String?
     get() = this?.getString(DATE_PAYMENT_FINISHED)
+
+val JsonObject?.datePayToJoin: String?
+    get() = this?.getString(DATE_PAY_TO_JOIN)
+
 
 val JsonObject?.imageRatios: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS)
@@ -179,6 +187,9 @@ var JsonObject?.voting: JsonObject?
 
 val JsonObject?.voted: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_VOTED_PART)
+
+val JsonObject?.canVote: Boolean
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_CAN_VOTE) ?: true
 
 val JsonObject?.me: JsonObject?
     get() = getObject(ME)
@@ -421,6 +432,9 @@ val JsonObject?.myRisk: Float?
 val JsonObject?.teammatePart: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_TEAMMATE_PART)
 
+val JsonObject?.coveragePart: JsonObject?
+    get() = getObject(TeambrellaModel.ATTR_DATA_ONE_COVERAGE)
+
 var JsonObject?.chatItemType: String?
     get() = getString(TeambrellaModel.ATTR_DATA_ITEM_TYPE)
     set(value) = setString(TeambrellaModel.ATTR_DATA_ITEM_TYPE, value)
@@ -515,6 +529,9 @@ val JsonObject?.deductible: Double?
 
 val JsonObject?.incidentDate: String?
     get() = getString(INCIDENT_DATE)
+
+val JsonObject?.subTitle:String?
+    get() = getString(SUBTITLE)
 
 fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

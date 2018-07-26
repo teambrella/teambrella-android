@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
@@ -102,10 +101,9 @@ public class TeambrellaWallet {
         if (mKey != null) return true;
         TeambrellaUser user = TeambrellaUser.get(mContext);
         String privateKey = !user.isDemoUser() ? user.getPrivateKey() : null;
-        String deviceToken = !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null;
         if (privateKey != null) {
             mKey = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
-            mServer = new TeambrellaServer(mContext, privateKey, user.getDeviceCode(), deviceToken, user.getInfoMask(mContext));
+            mServer = new TeambrellaServer(mContext, privateKey, user.getDeviceCode(), user.getInfoMask(mContext));
             mClient = mContext.getContentResolver().acquireContentProviderClient(TeambrellaRepository.AUTHORITY);
             mTeambrellaClient = new TeambrellaContentProviderClient(mClient);
             mWallet = getWallet();
@@ -429,7 +427,7 @@ public class TeambrellaWallet {
 
     public void sync(String tag) throws CryptoException, RemoteException, OperationApplicationException {
 
-        Log.d(LOG_TAG, "---> SYNC -> sync() started... " + tag );
+        Log.d(LOG_TAG, "---> SYNC -> sync() started... " + tag);
 
         if (!init()) {
             StatisticHelper.onWalletSync(mContext, SYNC_NOT_INIT);

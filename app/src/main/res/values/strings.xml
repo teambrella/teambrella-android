@@ -1,6 +1,12 @@
 <resources>
     <string name="ethereum" translatable="false">ETH</string>
     <string name="plus_count" translatable="false">+%d</string>
+    <string name="currency_usd" translatable="false">USD</string>
+    <string name="currency_pen" translatable="false">PEN</string>
+    <string name="currency_ars" translatable="false">ARS</string>
+    <string name="currency_eur" translatable="false">EUR</string>
+    <string name="currency_rub">RUB</string>
+
     <string name="milli_ethereum" translatable="false">mETH</string>
     <string name="drop_down_icon" translatable="false">&#x25BC;</string>
     <string name="eth_amount_format_string" translatable="false">%f</string>
@@ -22,9 +28,9 @@
     <string name="team_claims">Claims</string>
 
 
-    <string name="teammate_net_format_string_plus" translatable="false"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_minus" translatable="false"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_zero" translatable="false">%s0</string>
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_zero">%s0</string>
     <string name="risk_format_string" translatable="false">%.1f</string>
     <string name="float_format_string_1" translatable="false">%.1f</string>
     <string name="float_format_string_2" translatable="false">%.2f</string>
@@ -54,6 +60,7 @@
     <string name="decisions">Decisions</string>
     <string name="discussions">Discussions</string>
     <string name="voting_frequency">Voting Freq.</string>
+    <string name="voting_frequency_short">@string/voting_frequency</string>
     <string name="add_to_my_proxies">Add to my proxy voters</string>
 
 
@@ -69,7 +76,7 @@
     <string name="coverage">Coverage</string>
     <string name="incident_date">Incident date</string>
 
-    <string name="amount_format_string" formatted="false">%1$s%2$d</string>
+    <string name="amount_format_string" formatted="false">%1$s%2$s</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -202,6 +209,7 @@
     <string name="object_cat">Cat</string>
     <string name="object_bike">Bike</string>
     <string name="object_pet">Pet</string>
+    <string name="object_car">Car</string>
     <string name="team_avg">Team \n AVG</string>
     <string name="no_coverage_for_the_date">You had 0% coverage on the date of the incident</string>
     <string name="we_are_invite_only_title">"We're invite only!"</string>
@@ -225,12 +233,15 @@
     <string name="my_dog">My Dog</string>
     <string name="my_pet">My Pet</string>
     <string name="my_bike">My Bike</string>
+    <string name="his_car">Car</string>
+    <string name="her_car">Car</string>
+    <string name="my_car">My Car</string>
     <string name="object_dog">Dog</string>
     <string name="cover_him">Cover Him</string>
     <string name="cover_her">Cover Her</string>
     <string name="would_cover_him">Would Cover Him</string>
     <string name="would_cover_her">Would Cover Her</string>
-    <string name="others">Others</string>
+    <string name="compare">Compare</string>
 
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>No claims in your team so far.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>No Messages.</font>]]></string>
@@ -280,7 +291,7 @@
     <string name="notification_option_unmuted_description">You will get a notification of each message.</string>
     <string name="notification_option_muted_title">No Notifications</string>
     <string name="notification_option_muted_description">Notifications will be disabled for this chat.</string>
-    <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">You now receive notifications for this discussion.</string>
     <string name="message">Message</string>
 
@@ -341,4 +352,6 @@
     <string name="paid_claim_shareable_bike">We reimbursed our teammate for the stolen bike. Pretty cool, huh? %s</string>
     <string name="paid_title">Paid</string>
     <string name="copied">Copied</string>
+    <string name="application_approved_notification_description" translatable="false">Your application has been approved</string>
+    <string name="application_started_notification_description" translatable="false">Your application has been started</string>
 </resources>

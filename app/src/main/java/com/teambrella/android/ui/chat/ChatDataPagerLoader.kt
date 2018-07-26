@@ -6,8 +6,10 @@ import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.data.base.KTeambrellaChatDataPagerLoader
+import com.teambrella.android.services.LOG_TAG
 import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
+import com.teambrella.android.util.log.Log
 import java.util.*
 
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
@@ -95,10 +97,17 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         val data = response.data
         val basic = data?.basic
         val paymentDateString = basic?.datePaymentFinished
+
         var paymentDate = if (paymentDateString != null) Calendar.getInstance().apply {
             time = TeambrellaDateUtils.getDate(paymentDateString)
         } else null
 
+
+        var payToJoinDate = basic?.datePayToJoin?.let { _date->
+            Calendar.getInstance().apply {
+                time = TeambrellaDateUtils.getDate(_date)
+            }
+        }
 
         val claimId = basic?.claimId
         val team = data?.teamPart
@@ -144,8 +153,6 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             return false
         }
 
-
-
         while (iterator.hasNext()) {
             val message = iterator.next()!!.asJsonObject
             var text = message.text
@@ -161,6 +168,10 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 }
                 if (item.chatItemType == ChatItems.CHAT_ITEM_PAID_CLAIM) {
                     paymentDate = null
+                }
+
+                if (item.chatItemType == ChatItems.CHAT_ITEM_PAY_TO_JOIN) {
+                    payToJoinDate = null
                 }
             }
 
@@ -185,7 +196,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
 
             if (text != null && images != null && images.size() > 0) {
                 text.removeParagraphs().separate(0, images.size())
-                        .forEach({ slice ->
+                        .forEach { slice ->
                             val newMessage = message.deepCopy()
 
                             for (index in 0 until images.size()) {
@@ -208,7 +219,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                             newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
                             appendDateItem(message)
                             newMessages.add(newMessage)
-                        })
+                        }
 
             } else if (text != null && text.isNotEmpty()) {
                 text = text.removeParagraphs()
@@ -222,7 +233,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 }
             }
 
-            paymentDate?.let {
+            lastTime = paymentDate?.let {
                 if (!iterator.hasNext() && it > time) {
                     appendDateItem(JsonObject().apply {
                         created = TimeUtils.getTicksFromDate(it.time)
@@ -230,16 +241,31 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                     })
                     appendPaidClaimItem()
                     paymentDate = null
+                    it
+                } else {
+                    time
                 }
-            }
-
-            lastTime = time
+            }?:time
         }
 
-        if (!next && array.size() > 0 && lastTime != null) {
+        if (!next && array.size() > 0) {
             val first = array.get(0).asJsonObject
+            lastTime = lastTime?: Calendar.getInstance().apply {
+                 time = Date(0)
+            }
             first.isNextDay = isNextDay(lastTime as Calendar, getDate(first))
             appendDateItem(first)
+        }
+
+        if (next && data.size != LIMIT && payToJoinDate != null) {
+
+            val payToJoinObject = JsonObject().apply {
+                chatItemType = ChatItems.CHAT_ITEM_PAY_TO_JOIN
+                created = TimeUtils.getTicksFromDate(payToJoinDate.time)
+                isNextDay = isNextDay(lastTime as Calendar, payToJoinDate)
+            }
+            appendDateItem(payToJoinObject)
+            newMessages.add(payToJoinObject)
         }
 
         response.data?.discussionPart?.chat = newMessages

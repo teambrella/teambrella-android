@@ -283,6 +283,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
                 findViewById(R.id.input).setVisibility(View.VISIBLE);
                 break;
+            case TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH:
+                findViewById(R.id.input).setVisibility(View.GONE);
+                break;
             default:
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
                     findViewById(R.id.input).setVisibility(View.VISIBLE);

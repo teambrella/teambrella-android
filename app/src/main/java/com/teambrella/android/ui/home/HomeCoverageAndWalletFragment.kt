@@ -45,7 +45,8 @@ class HomeCoverageAndWalletFragment : ADataFragment<IMainDataHost>() {
             coverage?.text = Html.fromHtml(getString(R.string.coverage_format_string
                     , Math.round((data.coverage ?: 0f) * 100)))
 
-            submitClaim?.visibility = if (dataHost.isFullTeamAccess) View.VISIBLE else View.INVISIBLE
+            submitClaim?.visibility = View.VISIBLE
+            submitClaim?.isEnabled = dataHost.isFullTeamAccess
             submitClaim?.setOnClickListener {
                 ReportClaimActivity.start(context, _data.smallPhoto, objectName, dataHost.teamId
                         , dataHost.currency, dataHost.userCity)

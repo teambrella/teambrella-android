@@ -1,5 +1,6 @@
 <resources>
     <string name="locale">es</string>
+    <string name="currency_rub">RUB</string>
 
     <!-- Bottom navigation bar -->
     <string name="bottom_navigation_home">Inicio</string>
@@ -29,11 +30,17 @@
     <string name="weight">Peso</string>
 
 
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_zero">%s0</string>
+
+
     <string name="proxy_rank">Rango de Proxy</string>
 
     <string name="decisions">Decisiones</string>
     <string name="discussions">Discusiones</string>
     <string name="voting_frequency">Frec. de Votación</string>
+    <string name="voting_frequency_short">@string/voting_frequency</string>
     <string name="add_to_my_proxies">Añadir a Mis Proxies</string>
 
 
@@ -48,7 +55,7 @@
     <string name="coverage">Cobertura</string>
     <string name="incident_date">Fecha del Incidente</string>
 
-    <string name="amount_format_string"> %1$s%2$d</string>
+    <string name="amount_format_string"> %1$s%2$s</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -181,6 +188,7 @@
     <string name="object_cat">Gato</string>
     <string name="object_bike">Bicicleta</string>
     <string name="object_pet">Mascota</string>
+    <string name="object_car">Сoche</string>
     <string name="team_avg">EQUIPO: \n PROMEDIO</string>
     <string name="no_coverage_for_the_date">Has tenido 0% cobertura en el día del incidente</string>
     <string name="we_are_invite_only_title">"Funcionamos solo con invitación"</string>
@@ -204,6 +212,9 @@
     <string name="my_dog">Mi Perro</string>
     <string name="my_pet">Mi Mascota</string>
     <string name="my_bike">Mi Bicicleta</string>
+    <string name="his_car">Su Сoche</string>
+    <string name="her_car">Su Сoche</string>
+    <string name="my_car">Mi Сoche</string>
     <string name="object_dog">Perro</string>
 
     <string name="cover_him">Le cubro</string>
@@ -211,7 +222,7 @@
     <string name="would_cover_him">Le cubriría</string>
     <string name="would_cover_her">Le cubriría</string>
 
-    <string name="others">Otros</string>
+    <string name="compare">Comparar</string>
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Hasta el momento no hay reclamaciones en tu equipo.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>No hay mensajes privados.</font>]]></string>
     <string name="new_teammate_notification_description">%s quiere unirse a tu equipo. Dile hola!</string>
@@ -257,7 +268,7 @@
     <string name="notification_option_unmuted_description">Recibirás notificación de cada mensaje.</string>
     <string name="notification_option_muted_title">Sin notificaciones</string>
     <string name="notification_option_muted_description">Notificaciones de este chat se desactivarán.</string>
-    <string name="claim_amount_format_string"><![CDATA[CANTIDAD RECLAMADA - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[CANTIDAD RECLAMADA - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">Ahora recibes notificaciones de este discusión.</string>
     <string name="notification_chat_picture_format_string">%1$s ha enviado una imagen</string>
     <string name="message">Mensaje</string>

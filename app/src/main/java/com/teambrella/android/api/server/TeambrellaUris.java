@@ -26,6 +26,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_CHAT = "chat";
     private static final String SEGMENT_NEW_POST = "newPost";
     private static final String SEGMENT_TEAMS = "teams";
+    private static final String SEGMENT_TEAMS_SUR = "teamsur";
     private static final String SEGMENT_VOTE = "vote";
     private static final String SEGMENT_TEAMMATE = "teammate";
     private static final String SEGMENT_FEED = "feed";
@@ -78,6 +79,7 @@ public class TeambrellaUris {
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_MUTED = "muted";
     public static final String KEY_POST_ID = "postId";
+    public static final String KEY_STATUS = "status";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -119,6 +121,7 @@ public class TeambrellaUris {
     public static final int MUTE = 36;
     public static final int WALLET_TRANSACTIONS = 37;
     public static final int GET_ME = 38;
+    public static final int GET_DEMO_TEAMS_SUR = 39;
 
 
     static {
@@ -153,6 +156,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS_SUR, GET_DEMO_TEAMS_SUR);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_DB, DEBUG_DB);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_LOG, DEBUG_LOG);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_WITHDRAWALS, WITHDRAWALS);
@@ -371,6 +375,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_DEMO)
                 .appendEncodedPath(SEGMENT_TEAMS)
                 .appendQueryParameter(KEY_LANGUAGE, language)
+                .build();
+    }
+
+
+    public static Uri getDemoTeams(int status) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_DEMO)
+                .appendEncodedPath(SEGMENT_TEAMS_SUR)
+                .appendQueryParameter(KEY_STATUS, Integer.toString(status))
                 .build();
     }
 

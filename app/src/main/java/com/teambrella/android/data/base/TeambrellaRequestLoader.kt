@@ -54,7 +54,7 @@ class TeambrellaRequestLoader {
 
     fun request(context: Context, privateKey: String, uri: Uri) {
         val user = TeambrellaUser.get(context)
-        request(TeambrellaServer(context, privateKey, user.deviceCode, null, user.getInfoMask(context)), uri)
+        request(TeambrellaServer(context, privateKey, user.deviceCode, user.getInfoMask(context)), uri)
     }
 
 
