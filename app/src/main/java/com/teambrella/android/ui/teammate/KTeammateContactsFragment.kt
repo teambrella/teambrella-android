@@ -34,23 +34,23 @@ class TeammateContactsFragment : AKDataFragment<ITeammateActivity>() {
             val data = notification.value?.data?.basic
             data?.let { basic ->
                 basic.facebookUrl?.let { str ->
-
                     var uri: Uri? = null
                     try {
                         uri = Uri.parse(str)
                     } catch (e: Exception) {
                         Log.e(LOG_TAG, e.toString())
                     }
-                    Uri.parse(str)
                     val view = this.view?.findViewById<View>(R.id.contacts_panel)
-                    facebookLink?.text = "fb.com/" + ((uri?.lastPathSegment) ?: "")
-                    view?.setOnClickListener({
+                    facebookLink?.text = "https://m.facebook.com"
+                    view?.setOnClickListener {
                         try {
-                            startActivity(Intent(Intent.ACTION_VIEW).setData(uri))
+                            uri?.let {
+                                startActivity(Intent(Intent.ACTION_VIEW).setData(uri))
+                            }
                         } catch (e: Exception) {
                             Log.e(LOG_TAG, e.toString())
                         }
-                    })
+                    }
                 }
             }
         }
