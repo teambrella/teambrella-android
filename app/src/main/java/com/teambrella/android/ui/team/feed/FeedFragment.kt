@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.team.feed
 
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.teambrella.android.R
 import com.teambrella.android.ui.AMainDataPagerProgressFragment

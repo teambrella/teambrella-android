@@ -1,6 +1,6 @@
 package com.teambrella.android.api;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

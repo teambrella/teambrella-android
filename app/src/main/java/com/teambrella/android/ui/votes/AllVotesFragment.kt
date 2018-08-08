@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.votes
 
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.google.gson.JsonObject
 import com.teambrella.android.R

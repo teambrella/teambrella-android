@@ -1,6 +1,6 @@
 package com.teambrella.android.ui.base
 
-import android.arch.lifecycle.*
+import androidx.lifecycle.*
 import android.content.Context
 import android.os.Bundle
 import android.view.View

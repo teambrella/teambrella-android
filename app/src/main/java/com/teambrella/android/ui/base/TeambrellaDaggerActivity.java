@@ -1,7 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.teambrella.android.dagger.ContextModule;
 import com.teambrella.android.dagger.Dependencies;

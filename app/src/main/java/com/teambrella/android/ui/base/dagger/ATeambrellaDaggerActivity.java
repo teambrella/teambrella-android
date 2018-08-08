@@ -1,8 +1,8 @@
 package com.teambrella.android.ui.base.dagger;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.teambrella.android.ui.base.ITeambrellaComponent;
 

@@ -35,14 +35,14 @@ def getProps(path) {
 def keystoreProperties = getProps(rootProject.file("keystore.properties"))
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 141
         versionName "and-0.3.10.141"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
@@ -125,21 +125,23 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.51"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.60"
 
     /* Support */
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:support-emoji:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0-rc01'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-rc01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0-rc01'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.google.android.material:material:1.0.0-rc01'
+    implementation 'androidx.emoji:emoji:1.0.0-rc01'
 
     /* Server communication */
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
@@ -153,7 +155,7 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
 
     /* Ethereum */
-    implementation 'org.bitcoinj:bitcoinj-core:0.14.4'
+    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
     //noinspection GradleDependency
     implementation 'org.ethereum:geth:1.6.7'
 

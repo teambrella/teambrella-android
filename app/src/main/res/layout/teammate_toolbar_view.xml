@@ -16,7 +16,7 @@
         android:textSize="17sp" />
 
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/send_message"
         android:layout_width="42dp"
         android:layout_height="42dp"

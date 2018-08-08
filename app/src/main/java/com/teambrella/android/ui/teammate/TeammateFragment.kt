@@ -5,7 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.v4.widget.NestedScrollView
+import androidx.core.widget.NestedScrollView
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View

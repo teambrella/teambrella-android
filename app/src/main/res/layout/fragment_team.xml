@@ -20,7 +20,7 @@
     </FrameLayout>
 
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,15 +33,15 @@
         app:tabTextAppearance="@style/Teambrella.TextAppearence.Tab"
         app:tabTextColor="@color/lightPeriwinkle">
 
-        <android.support.design.widget.TabItem android:text="@string/team_feed" />
+        <com.google.android.material.tabs.TabItem android:text="@string/team_feed" />
 
-        <android.support.design.widget.TabItem android:text="@string/team_members" />
+        <com.google.android.material.tabs.TabItem android:text="@string/team_members" />
 
-        <android.support.design.widget.TabItem android:text="@string/team_claims" />
+        <com.google.android.material.tabs.TabItem android:text="@string/team_claims" />
 
-    </android.support.design.widget.TabLayout>
+    </com.google.android.material.tabs.TabLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

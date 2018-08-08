@@ -6,8 +6,6 @@ import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.view.View
 import android.view.ViewGroup
@@ -113,7 +111,7 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
         when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
             TeambrellaUris.CLAIMS_CHAT ->
                 dataHost.getObservable(ChatActivity.VOTE_DATA_TAG).observe(lifecycleOwner,
-                        android.arch.lifecycle.Observer { it?.let { onChatDataUpdated(it) } })
+                        androidx.lifecycle.Observer { it?.let { onChatDataUpdated(it) } })
         }
 
         super.onViewCreated(view, savedInstanceState)

@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.withdraw
 
 import android.annotation.SuppressLint
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View

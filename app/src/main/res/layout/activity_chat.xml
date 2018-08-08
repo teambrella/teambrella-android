@@ -14,7 +14,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/paleGreyFour">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/send_image"
             android:layout_width="42dp"
             android:layout_height="42dp"
@@ -23,7 +23,7 @@
             android:scaleType="center"
             app:srcCompat="@drawable/ic_attachment" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/send_text"
             android:layout_width="42dp"
             android:layout_height="42dp"
@@ -56,7 +56,7 @@
     </RelativeLayout>
 
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/input">
@@ -68,7 +68,7 @@
             app:layout_behavior="com.teambrella.android.ui.chat.MoveUpBehaviour" />
 
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     <RelativeLayout
@@ -81,7 +81,7 @@
         android:paddingStart="8dp"
         android:visibility="gone">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="16dp"
             android:layout_alignParentEnd="true"

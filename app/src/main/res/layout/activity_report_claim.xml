@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/section_background">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="true"
@@ -238,7 +238,7 @@
                 app:layout_constraintTop_toBottomOf="@id/description" />
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/photos"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -277,7 +277,7 @@
                 app:layout_constraintTop_toBottomOf="@id/address_title" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 

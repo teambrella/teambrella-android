@@ -1,8 +1,8 @@
 package com.teambrella.android.ui.util
 
 import android.os.Build
-import android.support.annotation.DimenRes
-import android.support.annotation.DrawableRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.ImageView

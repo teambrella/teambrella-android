@@ -35,7 +35,7 @@
             android:layout_height="1dp"
             android:background="@color/paleGrey" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -57,7 +57,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="20dp"

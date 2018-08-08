@@ -2,9 +2,9 @@ package com.teambrella.android.ui.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.StringRes;
-import android.support.text.emoji.widget.EmojiTextViewHelper;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.annotation.StringRes;
+import androidx.emoji.widget.EmojiTextViewHelper;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableString;

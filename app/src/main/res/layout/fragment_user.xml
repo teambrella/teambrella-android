@@ -19,7 +19,7 @@
     </FrameLayout>
 
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,17 +32,17 @@
         app:tabTextAppearance="@style/Teambrella.TextAppearence.Tab"
         app:tabTextColor="@color/lightPeriwinkle">
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:text="@string/profile"
             android:textSize="15sp" />
 
-        <android.support.design.widget.TabItem android:text="@string/coverage" />
+        <com.google.android.material.tabs.TabItem android:text="@string/coverage" />
 
-        <android.support.design.widget.TabItem android:text="@string/wallet" />
+        <com.google.android.material.tabs.TabItem android:text="@string/wallet" />
 
-    </android.support.design.widget.TabLayout>
+    </com.google.android.material.tabs.TabLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

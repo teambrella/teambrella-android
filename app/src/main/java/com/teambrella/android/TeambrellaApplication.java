@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.support.multidex.MultiDexApplication;
-import android.support.text.emoji.EmojiCompat;
-import android.support.text.emoji.FontRequestEmojiCompatConfig;
-import android.support.v4.provider.FontRequest;
+import androidx.multidex.MultiDexApplication;
+import androidx.emoji.text.EmojiCompat;
+import androidx.emoji.text.FontRequestEmojiCompatConfig;
+import androidx.core.provider.FontRequest;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;

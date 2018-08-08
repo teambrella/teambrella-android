@@ -1,6 +1,6 @@
 package com.teambrella.android.ui;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;

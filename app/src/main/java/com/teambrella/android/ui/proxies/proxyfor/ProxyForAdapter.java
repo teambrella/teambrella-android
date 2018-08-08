@@ -1,6 +1,6 @@
 package com.teambrella.android.ui.proxies.proxyfor;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;

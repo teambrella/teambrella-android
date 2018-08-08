@@ -1,6 +1,6 @@
 package com.teambrella.android.data.base
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import android.net.Uri
 import com.google.gson.JsonObject
 import io.reactivex.Notification

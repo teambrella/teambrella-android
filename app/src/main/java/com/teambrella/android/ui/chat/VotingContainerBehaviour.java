@@ -1,9 +1,9 @@
 package com.teambrella.android.ui.chat;
 
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
 import android.view.MotionEvent;
 import android.view.View;
 

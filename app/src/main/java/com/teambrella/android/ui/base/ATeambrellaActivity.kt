@@ -63,13 +63,13 @@ abstract class ATeambrellaActivity : ATeambrellaDataHostActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         dataPagerTags.forEach {
-            getObservable(it).observe(this, android.arch.lifecycle.Observer {
+            getObservable(it).observe(this, androidx.lifecycle.Observer {
                 it?.let { checkServerError(it) }
             })
         }
 
         dataTags.forEach {
-            getObservable(it).observe(this, android.arch.lifecycle.Observer {
+            getObservable(it).observe(this, androidx.lifecycle.Observer {
                 it?.let { checkServerError(it) }
             })
         }

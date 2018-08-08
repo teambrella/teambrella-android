@@ -1,7 +1,7 @@
 package com.teambrella.android.ui.base;
 
 import android.content.Context;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 
 import com.teambrella.android.dagger.Dependencies;
 import com.teambrella.android.image.TeambrellaImageLoader;

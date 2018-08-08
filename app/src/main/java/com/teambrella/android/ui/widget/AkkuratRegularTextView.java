@@ -2,15 +2,15 @@ package com.teambrella.android.ui.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.Nullable;
-import android.support.text.emoji.widget.EmojiTextViewHelper;
+import androidx.annotation.Nullable;
+import androidx.emoji.widget.EmojiTextViewHelper;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 
 /**
  * Akkurat Regular Text View
  */
-public class AkkuratRegularTextView extends android.support.v7.widget.AppCompatTextView {
+public class AkkuratRegularTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private EmojiTextViewHelper mEmojiHelper;
 

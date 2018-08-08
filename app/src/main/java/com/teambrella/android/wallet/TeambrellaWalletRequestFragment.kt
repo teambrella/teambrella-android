@@ -2,10 +2,8 @@ package com.teambrella.android.wallet
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import com.teambrella.android.ui.TeambrellaUser
 import com.teambrella.android.ui.background.BackgroundRestrictionsActivity
-import com.teambrella.android.util.isHuaweiProtectedAppAvailable
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers

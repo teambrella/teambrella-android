@@ -1,7 +1,7 @@
 package com.teambrella.android.ui.base
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProviders
 import android.net.Uri
 import android.os.Bundle
 import com.google.gson.JsonArray

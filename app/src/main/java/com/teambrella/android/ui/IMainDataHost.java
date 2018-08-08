@@ -1,7 +1,7 @@
 package com.teambrella.android.ui;
 
 import android.content.Intent;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.data.base.IDataHost;

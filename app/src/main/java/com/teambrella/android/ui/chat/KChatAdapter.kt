@@ -2,8 +2,6 @@ package com.teambrella.android.ui.chat
 
 import android.content.Context
 import android.content.Intent
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
