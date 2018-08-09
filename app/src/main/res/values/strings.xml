@@ -202,6 +202,7 @@
     <string name="object_cat">Cat</string>
     <string name="object_bike">Bike</string>
     <string name="object_pet">Pet</string>
+    <string name="object_car">Car</string>
     <string name="team_avg">Team \n AVG</string>
     <string name="no_coverage_for_the_date">You had 0% coverage on the date of the incident</string>
     <string name="we_are_invite_only_title">"We're invite only!"</string>
@@ -225,6 +226,9 @@
     <string name="my_dog">My Dog</string>
     <string name="my_pet">My Pet</string>
     <string name="my_bike">My Bike</string>
+    <string name="his_car">Car</string>
+    <string name="her_car">Car</string>
+    <string name="my_car">My Car</string>
     <string name="object_dog">Dog</string>
     <string name="cover_him">Cover Him</string>
     <string name="cover_her">Cover Her</string>

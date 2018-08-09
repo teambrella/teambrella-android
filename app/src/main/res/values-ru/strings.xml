@@ -22,7 +22,7 @@
 
     <string name="object">Объект</string>
     <string name="coverage_type">Защита</string>
-    <string name="collision_deductible_insurance">Франшиза</string>
+    <string name="collision_deductible_insurance">Ущерб</string>
 
     <string name="limit">Лимит</string>
     <string name="see_claims_format_string">Смотреть заявки (%d)</string>
@@ -182,6 +182,7 @@
     <string name="object_cat">Кошка</string>
     <string name="object_bike">Велосипед</string>
     <string name="object_pet">Питомец</string>
+    <string name="object_car">Машина</string>
     <string name="team_avg">СРЕДН.\nКоманды</string>
     <string name="no_coverage_for_the_date">0% защиты на этот день</string>
     <string name="we_are_invite_only_title">"Только про приглашениям!"</string>
@@ -205,6 +206,9 @@
     <string name="my_dog">Собака</string>
     <string name="my_pet">Питомец</string>
     <string name="my_bike">Велосипед</string>
+    <string name="his_car">Машина</string>
+    <string name="her_car">Машина</string>
+    <string name="my_car">Моя Машина</string>
     <string name="object_dog">Собака</string>
     <string name="cover_him">Зашищаю Его</string>
     <string name="cover_her">Защишаю Ее</string>

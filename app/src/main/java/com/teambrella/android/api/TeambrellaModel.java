@@ -477,6 +477,11 @@ public class TeambrellaModel {
                 return R.string.object_pet;
             case InsuranceType.BICYCLE:
                 return R.string.object_bike;
+            case InsuranceType.CAR_COLLISION:
+            case InsuranceType.CAR_COLLISION_AND_COMPREHENSIVE:
+            case InsuranceType.CAR_COLLISION_DEDUCTIBLE:
+            case InsuranceType.CAR_COMPREHENSIVE:
+                return R.string.object_car;
             default:
                 return R.string.object;
         }
@@ -514,6 +519,18 @@ public class TeambrellaModel {
                     default:
                         return R.string.object_dog;
                 }
+            case InsuranceType.CAR_COLLISION:
+            case InsuranceType.CAR_COLLISION_AND_COMPREHENSIVE:
+            case InsuranceType.CAR_COLLISION_DEDUCTIBLE:
+            case InsuranceType.CAR_COMPREHENSIVE:
+                switch (gender) {
+                    case Gender.MALE:
+                        return R.string.his_car;
+                    case Gender.FEMALE:
+                        return R.string.her_car;
+                    default:
+                        return R.string.object_car;
+                }
             default:
                 return R.string.object;
         }
@@ -529,6 +546,11 @@ public class TeambrellaModel {
                 return R.string.my_cat;
             case InsuranceType.DOG:
                 return R.string.my_dog;
+            case InsuranceType.CAR_COLLISION:
+            case InsuranceType.CAR_COLLISION_AND_COMPREHENSIVE:
+            case InsuranceType.CAR_COLLISION_DEDUCTIBLE:
+            case InsuranceType.CAR_COMPREHENSIVE:
+                return R.string.my_car;
             default:
                 return R.string.object;
         }

@@ -13,14 +13,14 @@ import com.teambrella.android.R
 import com.teambrella.android.api.basic
 import com.teambrella.android.api.data
 import com.teambrella.android.api.facebookUrl
-import com.teambrella.android.ui.base.AKDataFragment
+import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.util.log.Log
 import io.reactivex.Notification
 
 
 private const val LOG_TAG: String = "TeammateContactsFragment"
 
-class TeammateContactsFragment : AKDataFragment<ITeammateActivity>() {
+class TeammateContactsFragment : ADataFragment<ITeammateActivity>() {
 
     private val facebookLink: TextView? by ViewHolder(R.id.facebook_link)
 
