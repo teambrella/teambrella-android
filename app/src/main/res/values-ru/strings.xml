@@ -1,6 +1,7 @@
 <resources>
 
     <string name="locale">ru</string>
+    <string name="currency_rub">РУБ</string>
     <!-- Bottom navigation bar -->
     <string name="bottom_navigation_home">Домой</string>
     <string name="bottom_navigation_team">Команда</string>
@@ -35,6 +36,7 @@
     <string name="decisions">Решения</string>
     <string name="discussions">Обсуждения</string>
     <string name="voting_frequency">Част. голосования</string>
+    <string name="voting_frequency_short">Част. голос.</string>
     <string name="add_to_my_proxies">Сделать моим прокси</string>
 
 
@@ -80,7 +82,7 @@
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
     <string name="proxy_vote">Голос прокси</string>
-    <string name="my_proxies">Мои прокси</string>
+    <string name="my_proxies">Мои Прокси</string>
     <string name="proxy_for">Я Прокси Для</string>
     <string name="user_index">User Index</string>
     <string name="remove_from_my_proxies">Убрать из моих прокси</string>
@@ -89,7 +91,7 @@
     <string name="i_am_proxy_for">Для кого ты прокси</string>
     <string name="last_voted_format_string">Последний голос: %s</string>
     <string name="you">Ты</string>
-    <string name="opt_into_rating">Войти в рейтинг</string>
+    <string name="opt_into_rating">Вступить в рейтинг</string>
     <string name="opt_out_of_rating">Выйти из рейтинга</string>
     <string name="profile">Профиль</string>
     :ы
@@ -143,7 +145,7 @@
     <string name="claim_vote_format_string">Голос (%d%%)</string>
     <string name="claim_reimbursed">Возмещено</string>
     <string name="bike_insurance">Кража</string>
-    <string name="something_went_wrong_error">Упс! Что-то пощло не так.</string>
+    <string name="something_went_wrong_error">Упс! Что-то пошло не так.</string>
     <string name="no_internet_connection">Нет интернет соединения.</string>
     <string name="chat_not_voted_yet">Еще нет голоса</string>
     <string name="chat_voted">Голос</string>
@@ -161,7 +163,7 @@
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У тебя ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выбери кого-то, кому доверяешь, чтобы он стал твоим прокси.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
     <string name="private_conversation">Private Chat</string>
-    <string name="ends_in">Зак. через %s</string>
+    <string name="ends_in">Осталось %s</string>
     <string name="declined">Отменена</string>
     <string name="all_votes">Все голоса</string>
     <string name="weight_format_string"><![CDATA[Вес <b>%.1f</b>]]></string>
@@ -214,7 +216,7 @@
     <string name="cover_her">Защишаю Ее</string>
     <string name="would_cover_him">Защищал Бы Его</string>
     <string name="would_cover_her">Защищал Бы Ее</string>
-    <string name="others">Другие</string>
+    <string name="compare">Сравнить</string>
 
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Еще нет заявок в команде.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>Нет сообщений.</font>]]></string>

@@ -3,6 +3,7 @@ package com.teambrella.android.util;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -10,7 +11,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
 import android.widget.TextView;
 
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 
 import java.util.Locale;
@@ -31,6 +31,7 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, int amount, String currency) {
         final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
         final SpannableString text = new SpannableString(Integer.toString(amount) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
@@ -41,6 +42,7 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, float amount, String currency) {
         final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
         final SpannableString text = amount < 100f ? new SpannableString(String.format(Locale.US, "%.2f", amount) + " " + currency)
                 : new SpannableString(String.format(Locale.US, "%d", Math.round(amount)) + " " + currency);
         int start = text.length() - currency.length() - 1;
@@ -52,6 +54,7 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, String source, String currency) {
         final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
         final SpannableString text = new SpannableString(source);
         int index = 0;
         while (index != -1) {
@@ -97,6 +100,23 @@ public class AmountCurrencyUtil {
         }
     }
 
+    public static String getLocalizedCurrency(Context context, String code){
+        switch (code) {
+            case USD:
+                return context.getString(R.string.currency_usd);
+            case PEN:
+                return context.getString(R.string.currency_pen);
+            case ARS:
+                return context.getString(R.string.currency_ars);
+            case EUR:
+                return context.getString(R.string.currency_eur);
+            case RUB:
+                return context.getString(R.string.currency_rub);
+            default:
+                return code;
+        }
+    }
+
 
     private static class CurrencyRelativeSizeSpan extends MetricAffectingSpan {
 
@@ -113,7 +133,7 @@ public class AmountCurrencyUtil {
         }
 
         @Override
-        public void updateMeasureState(TextPaint ds) {
+        public void updateMeasureState(@NonNull TextPaint ds) {
             updateAnyState(ds);
         }
 

@@ -1,5 +1,6 @@
 <resources>
     <string name="locale">es</string>
+    <string name="currency_rub">RUB</string>
 
     <!-- Bottom navigation bar -->
     <string name="bottom_navigation_home">Inicio</string>
@@ -34,6 +35,7 @@
     <string name="decisions">Decisiones</string>
     <string name="discussions">Discusiones</string>
     <string name="voting_frequency">Frec. de Votación</string>
+    <string name="voting_frequency_short">@string/voting_frequency</string>
     <string name="add_to_my_proxies">Añadir a Mis Proxies</string>
 
 
@@ -215,7 +217,7 @@
     <string name="would_cover_him">Le cubriría</string>
     <string name="would_cover_her">Le cubriría</string>
 
-    <string name="others">Otros</string>
+    <string name="compare">Comparar</string>
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Hasta el momento no hay reclamaciones en tu equipo.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>No hay mensajes privados.</font>]]></string>
     <string name="new_teammate_notification_description">%s quiere unirse a tu equipo. Dile hola!</string>

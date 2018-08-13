@@ -24,6 +24,7 @@ import com.teambrella.android.ui.claim.MODE_CHAT
 import com.teambrella.android.ui.teammate.getTeammateIntent
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
+import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
 import java.util.*
 
@@ -221,7 +222,7 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                         iconView?.setImage(imageLoader.getImageUrl(basicPart.smallPhoto), R.dimen.rounded_corners_4dp, R.drawable.picture_background_round_4dp)
                         titleView?.text = basicPart.model
                         subtitleView?.text = Html.fromHtml(getString(R.string.claim_amount_format_string, Math.round(basicPart.claimAmount
-                                ?: 0f), data.teamPart?.currency ?: ""))
+                                ?: 0f), AmountCurrencyUtil.getLocalizedCurrency(context, data.teamPart?.currency ?: "")))
 
                         if (votingPart == null) {
                             val votingCrypto = basicPart.votingResCrypto

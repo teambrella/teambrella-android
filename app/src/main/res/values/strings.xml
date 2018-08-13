@@ -1,6 +1,12 @@
 <resources>
     <string name="ethereum" translatable="false">ETH</string>
     <string name="plus_count" translatable="false">+%d</string>
+    <string name="currency_usd" translatable="false">USD</string>
+    <string name="currency_pen" translatable="false">PEN</string>
+    <string name="currency_ars" translatable="false">ARS</string>
+    <string name="currency_eur" translatable="false">EUR</string>
+    <string name="currency_rub">RUB</string>
+
     <string name="milli_ethereum" translatable="false">mETH</string>
     <string name="drop_down_icon" translatable="false">&#x25BC;</string>
     <string name="eth_amount_format_string" translatable="false">%f</string>
@@ -54,6 +60,7 @@
     <string name="decisions">Decisions</string>
     <string name="discussions">Discussions</string>
     <string name="voting_frequency">Voting Freq.</string>
+    <string name="voting_frequency_short">@string/voting_frequency</string>
     <string name="add_to_my_proxies">Add to my proxy voters</string>
 
 
@@ -234,7 +241,7 @@
     <string name="cover_her">Cover Her</string>
     <string name="would_cover_him">Would Cover Him</string>
     <string name="would_cover_her">Would Cover Her</string>
-    <string name="others">Others</string>
+    <string name="compare">Compare</string>
 
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>No claims in your team so far.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>No Messages.</font>]]></string>

@@ -320,7 +320,7 @@
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
             android:paddingTop="12dp"
-            android:text="@string/others"
+            android:text="@string/compare"
             android:textColor="@color/blueWithAHintOfPurple"
             android:textSize="15sp"
             app:layout_constraintBaseline_toBaselineOf="parent"
