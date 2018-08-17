@@ -11,7 +11,7 @@
     <!-- Team's tab -->
     <string name="team_feed">Лента</string>
     <string name="team_members">Участники</string>
-    <string name="team_claims">Заявки</string>
+    <string name="team_claims">Выплаты</string>
 
 
     <string name="teammates">Участники</string>
@@ -26,7 +26,7 @@
     <string name="collision_deductible_insurance">Ущерб</string>
 
     <string name="limit">Лимит</string>
-    <string name="see_claims_format_string">Смотреть заявки (%d)</string>
+    <string name="see_claims_format_string">Заявки на Выплату(%d)</string>
     <string name="voting_stats">Статистика</string>
     <string name="weight">Вес</string>
 
@@ -43,13 +43,13 @@
     <string name="claim_title_format_string">Заявка %d</string>
     <string name="claim_title_date_format_string">Заявка - %s</string>
     <string name="claim_details">Детали заявки</string>
-    <string name="claim_amount">Сумма заявки</string>
+    <string name="claim_amount">Сумма выплаты</string>
     <string name="voting">Голосование</string>
     <string name="voting_risk">Голосование: Риск</string>
     <string name="estimated_expenses">Предполагаемые расходы</string>
-    <string name="deductible">Подлежит вычету</string>
+    <string name="deductible">Франшиза</string>
     <string name="coverage">Защита</string>
-    <string name="incident_date">Дата</string>
+    <string name="incident_date">Дата происшествия</string>
 
     <string name="amount_format_string" formatted="false">%1$s%2$d</string>
     <string name="percentage_format_string">%d%%</string>
@@ -66,7 +66,7 @@
     <string name="no_teammate_vote_value">. . .</string>
 
     <string name="wallet">Кошелек</string>
-    <string name="submit_another_claim">Подать Заявку</string>
+    <string name="submit_another_claim">Заявка на Выплату</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
     <string name="your_claim">Твоя заявка</string>
@@ -78,7 +78,7 @@
     <string name="claim">Заявка</string>
     <string name="application_discussion">Обсуждение</string>
 
-    <string name="here_whats_new">Свежие новости для тебя</string>
+    <string name="here_whats_new">Вот новости для тебя</string>
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
     <string name="proxy_vote">Голос прокси</string>
@@ -123,7 +123,7 @@
     <string name="report_claim">Подать заявку</string>
     <string name="report">Заявка</string>
     <string name="expenses">Расходы</string>
-    <string name="describe_your_case">Опиши случай</string>
+    <string name="describe_your_case">Опиши свою ситуацию</string>
     <string name="photos">Фото</string>
     <string name="add_photos">Добавить фото</string>
     <string name="reimburse_to">Перечислить на</string>
@@ -178,7 +178,7 @@
     <string name="copy_address">Скопировать адрес</string>
     <string name="ethereum_address">Адрес Ethereum</string>
     <string name="qr_code">QR-код</string>
-    <string name="cosigners">Сопоручители</string>
+    <string name="cosigners">Со-подписчики</string>
     <string name="now">Сейчас</string>
     <string name="unable_to_connect_try_later">Ой, невозможно связаться с Teambrella. Сохраняй спокойствие и попробуй позже.</string>
     <string name="object_cat">Кошка</string>
@@ -266,7 +266,7 @@
     <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>
     <string name="notification_option_muted_title">Выключены</string>
     <string name="notification_option_muted_description">Уведомления выключены для чата.</string>
-    <string name="claim_amount_format_string"><![CDATA[СУММА ЗАЯВКИ - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[СУММА ВЫПЛАТЫ - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">Теперь ты получаешь уведомления о новых сообщениях в чате.</string>
     <string name="message">Сообщение</string>
 
@@ -304,7 +304,7 @@
 
     <string name="notification_channel_private_chats">Приватные чаты</string>
     <string name="notification_channel_subscribed_chats">Чаты по подписке</string>
-    <string name="notification_channel_new_claims">Новые заявки</string>
+    <string name="notification_channel_new_claims">Новые выплаты</string>
     <string name="notification_channel_wallet">Кошелек</string>
     <string name="notification_channel_team_updates">Обновления в команде</string>
     <string name="notification_group_chats">Чаты</string>
