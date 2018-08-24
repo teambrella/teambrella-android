@@ -96,7 +96,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             VIEW_TYPE_IMAGE_THEM -> ChatImageViewHolder(inflater.inflate(R.layout.list_item_message_image, parent, false))
             VIEW_TYPE_DATE -> ChatDateViewHolder(inflater.inflate(R.layout.list_item_date, parent, false))
             VIEW_TYPE_PAID_CLAIM -> ChatPaidClaimViewHolder(inflater.inflate(R.layout.list_item_chat_paid_claim, parent, false))
-            VIEW_TYPE_PAY_TO_JOIN -> PayToJoinViewHolder(inflater.inflate(R.layout.list_item_message_fund_wallet2, parent, false))
+            VIEW_TYPE_PAY_TO_JOIN -> PayToJoinViewHolder(inflater.inflate(R.layout.list_item_message_fund_wallet, parent, false))
             VIEW_TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             else -> super.onCreateViewHolder(parent, viewType)
         }
