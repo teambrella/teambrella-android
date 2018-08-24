@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.teambrella.android.R;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
@@ -28,11 +31,21 @@ public class AmountCurrencyUtil {
     private static final String EUR = "EUR";
     private static final String RUB = "RUB";
 
+    private static DecimalFormat sDecimalFormat = (DecimalFormat)DecimalFormat.getInstance();
+
+
+    static {
+        DecimalFormatSymbols symbols = sDecimalFormat.getDecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        sDecimalFormat.setGroupingUsed(true);
+        sDecimalFormat.setDecimalFormatSymbols(symbols);
+    }
+
 
     public static void setAmount(TextView textView, int amount, String currency) {
         final Context context = textView.getContext();
         currency = getLocalizedCurrency(context, currency);
-        final SpannableString text = new SpannableString(Integer.toString(amount) + " " + currency);
+        final SpannableString text = new SpannableString(sDecimalFormat.format(amount) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -44,7 +57,7 @@ public class AmountCurrencyUtil {
         final Context context = textView.getContext();
         currency = getLocalizedCurrency(context, currency);
         final SpannableString text = amount < 100f ? new SpannableString(String.format(Locale.US, "%.2f", amount) + " " + currency)
-                : new SpannableString(String.format(Locale.US, "%d", Math.round(amount)) + " " + currency);
+                : new SpannableString(sDecimalFormat.format(Math.round(amount)) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

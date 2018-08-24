@@ -34,6 +34,7 @@ import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.services.TeambrellaLoginService;
 import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.util.ConnectivityUtils;
@@ -128,14 +129,20 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        String facebookAccessToken = getFaceBookAccessToken();
         if (mUser.getPrivateKey() != null) {
             if (mUser.isDemoUser()) {
                 getDemoTeams(mUser.getPrivateKey());
             } else {
+                logOut();
                 getTeams(mUser.getPrivateKey());
             }
+        } else if (facebookAccessToken != null) {
+            String privateKey = mUser.getPendingPrivateKey();
+            ECKey key = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
+            setState(State.INIT);
+            registerUser(facebookAccessToken, privateKey, key.getPublicKeyAsHex());
         } else {
-
             Intent intent = getIntent();
             Uri uri = intent.getData();
             if (uri != null) {
@@ -214,7 +221,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void getDemoTeams(String privateKey) {
         setState(State.LOADING);
-        request(TeambrellaUris.getDemoTeams(Locale.getDefault().getLanguage()), privateKey);
+        request(TeambrellaUris.getDemoTeams(-10), privateKey);
     }
 
 
@@ -238,7 +245,6 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 }
                 ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
                 registerUser(token.getToken(), backUpKey, key.getPublicKeyAsHex());
-                LoginManager.getInstance().logOut();
             }
 
             @Override
@@ -360,7 +366,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             if (uri != null) {
                 switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
                     case TeambrellaUris.MY_TEAMS:
-                    case TeambrellaUris.DEMO_TEAMS: {
+                    case TeambrellaUris.GET_DEMO_TEAMS_SUR: {
                         Intent intent = getIntent();
 
                         final int selectedTeam = intent != null ? intent.getIntExtra(TEAM_ID_EXTRA, TeambrellaUser.get(this).getTeamId())
@@ -408,6 +414,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
                         mUser.setPrivateKey(privateKey);
 
+                        logOut();
+
                         if (mFacebookId != null) {
                             mBackupData.setValue(Integer.toString(mFacebookId.hashCode()), privateKey);
                             mFacebookId = null;
@@ -443,6 +451,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         setState(State.INIT);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICATION_STARTED:
                         setState(State.PENDING_APPLICATION);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION:
@@ -454,6 +463,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         break;
                 }
                 mFacebookId = null;
+                TeambrellaLoginService.Companion.schedulePeriodicAutoLoginTask(this);
             } else if (error instanceof TeambrellaClientException) {
                 Throwable cause = error.getCause();
                 if (cause instanceof SocketTimeoutException
@@ -463,8 +473,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     mFacebookId = null;
                     tryAgainLater(error);
                 }
+
+                logOut();
             } else {
                 tryAgainLater(error);
+                logOut();
                 mFacebookId = null;
             }
         }
@@ -482,6 +495,17 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationDescription.setMovementMethod(LinkMovementMethod.getInstance());
         mInvitationDescription.setText(text);
     }
+
+
+    private static String getFaceBookAccessToken() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null ? accessToken.getToken() : null;
+    }
+
+    private static void logOut() {
+        LoginManager.getInstance().logOut();
+    }
+
 
     private WalletBackupManager.IWalletBackupListener mWalletBackupListener = new WalletBackupManager.IWalletBackupListener() {
         @Override

@@ -80,6 +80,8 @@ public class TeambrellaModel {
         public static final int READ_ONLY = 2;
         public static final int READ_ALL_AND_EDIT_MINE = 3;
         public static final int FULL_ACCESS = 4;
+        public static final int HIDDEN_DETAILS_AND_STEALTH = -10;
+        public static final int READ_ONLY_ALL_AND_STEALTH = -20;
     }
 
 
@@ -219,6 +221,7 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING = 8;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED = 9;
     public static final int VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION = 12;
+    public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICATION_STARTED = 13;
 
 
     /*Data*/
@@ -351,6 +354,7 @@ public class TeambrellaModel {
 
     public static final String ATTR_DATA_RATIO_VOTED = "RatioVoted";
     public static final String ATTR_DATA_MY_VOTE = "MyVote";
+    public static final String ATTR_DATA_CAN_VOTE = "CanVote";
 
     public static final String ATTR_DATA_MY_TEAMS = "MyTeams";
 
@@ -419,6 +423,8 @@ public class TeambrellaModel {
     public static final int FEED_ITEM_RULE = 2;
     public static final int FEED_ITEM_TEAM_CHAT = 3;
     public static final int FEED_ITEM_TEAM_NOTIFICATION = 100;
+    public static final int FEED_ITEM_PAY_TO_JOIN = 200;
+    public static final int FEED_ITEM_UPDATE_PROFILE = 210;
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;

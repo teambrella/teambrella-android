@@ -30,8 +30,12 @@
     <string name="voting_stats">Статистика</string>
     <string name="weight">Вес</string>
 
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %2$s %1$s]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %2$s %1$s]]></string>
+    <string name="teammate_net_format_string_zero">0 %s</string>
 
-    <string name="proxy_rank">Прокси Рейтинг</string>
+
+    <string name="proxy_rank">Рейтинг</string>
 
     <string name="decisions">Решения</string>
     <string name="discussions">Обсуждения</string>
@@ -51,7 +55,7 @@
     <string name="coverage">Защита</string>
     <string name="incident_date">Дата происшествия</string>
 
-    <string name="amount_format_string" formatted="false">%1$s%2$d</string>
+    <string name="amount_format_string" formatted="false">%2$s %1$s</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -77,8 +81,7 @@
     <string name="pet_insurance">Здоровье Питомца</string>
     <string name="claim">Заявка</string>
     <string name="application_discussion">Обсуждение</string>
-
-    <string name="here_whats_new">Вот новости для тебя</string>
+    <string name="here_whats_new">Вот новости для тебя:</string>
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
     <string name="proxy_vote">Голос прокси</string>
@@ -169,11 +172,11 @@
     <string name="weight_format_string"><![CDATA[Вес <b>%.1f</b>]]></string>
     <string name="votes">Голоса</string>
     <string name="private_message_notification_title">%s (новое сообщение)</string>
-    <string name="withdraw">Снять</string>
+    <string name="withdraw">Вывести</string>
     <string name="reserved">Зарезервировано</string>
     <string name="available">Доступно</string>
     <string name="fund_wallet">Пополнить кошелек</string>
-    <string name="recommended_funding">Рекомендовано внести</string>
+    <string name="recommended_funding">Рекомендовано пополнить</string>
     <string name="recommended">Рекомендовано</string>
     <string name="copy_address">Скопировать адрес</string>
     <string name="ethereum_address">Адрес Ethereum</string>
@@ -266,7 +269,7 @@
     <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>
     <string name="notification_option_muted_title">Выключены</string>
     <string name="notification_option_muted_description">Уведомления выключены для чата.</string>
-    <string name="claim_amount_format_string"><![CDATA[СУММА ВЫПЛАТЫ - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[ЗАЯВКA - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">Теперь ты получаешь уведомления о новых сообщениях в чате.</string>
     <string name="message">Сообщение</string>
 

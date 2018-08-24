@@ -34,7 +34,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
 
 
     private var notificationManager: TeambrellaNotificationManager? = null
-    private val handler = Handler();
+    private val handler = Handler()
 
     override fun onCreate() {
         super.onCreate()
@@ -84,6 +84,7 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 NEW_TEAMMATE,
                 NEW_DISCUSSION,
                 TOPIC_MESSAGE_NOTIFICATION,
+                APPLICATION_STARTED,
                 PROXY,
                 PROXY_SEED -> {
                     if (isForeground) {
@@ -96,11 +97,18 @@ class TeambrellaFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
                 SYNC -> {
-                    val context = this
                     Observable.create(ObservableOnSubscribe<Void> { emitter ->
-                        TeambrellaWallet(context).syncWallet(TeambrellaWallet.SYNC_PUSH)
+                        TeambrellaWallet(this@TeambrellaFirebaseMessagingService).syncWallet(TeambrellaWallet.SYNC_PUSH)
                         emitter.onComplete()
                     }).subscribeOn(Schedulers.io()).subscribe()
+                }
+
+                APPLICATION_APPROVED -> {
+                    try {
+                        TeambrellaLoginService.autoLogin(this, pushMessage.teamName, pushMessage.teamLogo)
+                    } catch (e: Exception) {
+                        Log.reportNonFatal(LOG_TAG, e)
+                    }
                 }
 
                 DEBUG_DB -> {
