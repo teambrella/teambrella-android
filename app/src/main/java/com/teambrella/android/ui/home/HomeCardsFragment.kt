@@ -85,9 +85,14 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
 
         override fun getItem(position: Int): Fragment =
                 when (cards?.get(position)?.asJsonObject.itemType) {
-                    TeambrellaModel.FEED_ITEM_PAY_TO_JOIN -> createCardFragment(PayToJoinCardsFragment::class.java, position
+                    TeambrellaModel.FEED_ITEM_PAY_TO_JOIN -> createCardFragment(PayToJoinCardFragment::class.java, position
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
+
+                    TeambrellaModel.FEED_ITEM_UPDATE_PROFILE -> createCardFragment(UpdateProfileCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+
                     else -> createCardFragment(ClaimCardFragment::class.java, position
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
@@ -130,7 +135,7 @@ abstract class CardFragment : ADataFragment<IMainDataHost>() {
     }
 }
 
-class PayToJoinCardsFragment : CardFragment() {
+class PayToJoinCardFragment : CardFragment() {
 
     private val titleView: TextView? by ViewHolder(R.id.title)
     private val textView: TextView? by ViewHolder(R.id.text)
@@ -154,6 +159,38 @@ class PayToJoinCardsFragment : CardFragment() {
             textView?.text = it.text
             subtitle?.text= it.subTitle
             icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+        }
+    }
+}
+
+
+class UpdateProfileCardFragment : CardFragment() {
+
+    private val titleView: TextView? by ViewHolder(R.id.title)
+    private val textView: TextView? by ViewHolder(R.id.text)
+    private val subtitle: TextView? by ViewHolder(R.id.subtitle)
+    private val icon: ImageView? by ViewHolder(R.id.icon)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.home_cards_action, container, false)
+
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+            titleView?.text = it.chatTitle
+            textView?.text = it.text
+            subtitle?.text= it.subTitle
+            icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+
+
+            view?.setOnClickListener {_->
+                startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
+                        , it.itemUserId
+                        , it.itemUserName
+                        , null
+                        , it.topicId
+                        , dataHost.teamAccessLevel))
+            }
         }
     }
 }
