@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -52,6 +51,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private const val VIEW_TYPE_DATE = VIEW_TYPE_REGULAR + 5
         private const val VIEW_TYPE_PAID_CLAIM = VIEW_TYPE_REGULAR + 6
         private const val VIEW_TYPE_PAY_TO_JOIN = VIEW_TYPE_REGULAR + 7
+        private const val VIEW_TYPE_SYSTEM_MESSAGE = VIEW_TYPE_REGULAR + 8
         private const val FILE_PREFIX = "file:"
 
     }
@@ -78,6 +78,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 ChatItems.CHAT_ITEM_DATE -> VIEW_TYPE_DATE
                 ChatItems.CHAT_ITEM_PAID_CLAIM -> VIEW_TYPE_PAID_CLAIM
                 ChatItems.CHAT_ITEM_PAY_TO_JOIN -> VIEW_TYPE_PAY_TO_JOIN
+                ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN, ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN -> VIEW_TYPE_SYSTEM_MESSAGE
                 else -> VIEW_TYPE_REGULAR
             }
         }
@@ -96,6 +97,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             VIEW_TYPE_DATE -> ChatDateViewHolder(inflater.inflate(R.layout.list_item_date, parent, false))
             VIEW_TYPE_PAID_CLAIM -> ChatPaidClaimViewHolder(inflater.inflate(R.layout.list_item_chat_paid_claim, parent, false))
             VIEW_TYPE_PAY_TO_JOIN -> PayToJoinViewHolder(inflater.inflate(R.layout.list_item_message_fund_wallet2, parent, false))
+            VIEW_TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             else -> super.onCreateViewHolder(parent, viewType)
         }
     }
@@ -124,6 +126,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         }
 
         if (holder is PayToJoinViewHolder) {
+            mPager.loadedData[position]?.asJsonObject?.let {
+                holder.onBind(it)
+            }
+        }
+
+        if (holder is SystemMessageViewHolder) {
             mPager.loadedData[position]?.asJsonObject?.let {
                 holder.onBind(it)
             }
@@ -220,15 +228,26 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         }
     }
 
-    private inner class PayToJoinViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    private inner class PayToJoinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val fundWallet: View? = itemView.findViewById(R.id.fund_wallet)
+        private val message: TextView? = itemView.findViewById(R.id.message)
 
         fun onBind(item: JsonObject) {
+            message?.text = item.text
             fundWallet?.setOnClickListener {
                 QRCodeActivity.startQRCode(context, EtherAccount(TeambrellaUser.get(context).privateKey, context)
                         .depositAddress)
             }
         }
+    }
+
+    private inner class SystemMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val message: TextView? = itemView.findViewById(R.id.message)
+
+        fun onBind(item: JsonObject) {
+            message?.text = item.text
+        }
+
     }
 
 

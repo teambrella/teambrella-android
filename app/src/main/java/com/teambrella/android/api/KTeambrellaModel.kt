@@ -33,7 +33,7 @@ const val DEDUCTIBLE = "Deductible"
 const val INCIDENT_DATE = "IncidentDate"
 const val DATE_PAY_TO_JOIN = "DatePayToJoin"
 const val SUBTITLE = "SubTitle"
-
+const val SYSTEM_TYPE = "SystemType"
 
 
 object ChatItems {
@@ -44,6 +44,14 @@ object ChatItems {
     const val CHAT_ITEM_DATE = "date"
     const val CHAT_ITEM_PAID_CLAIM = "paid_claim"
     const val CHAT_ITEM_PAY_TO_JOIN = "pay_to_join"
+    const val CHAT_ITEM_ADD_PHOTO_TO_JOIN = "add_photo_to_join"
+    const val CHAT_ITEM_ADD_MESSAGE_TO_JOIN = "add_message_to_join"
+}
+
+object ChatSystemMessages {
+    const val FIRST_PHOTO_MISSING = 800
+    const val FIRST_MESSAGE_MISSING = 810
+    const val NEEDS_FUNDING = 900
 }
 
 
@@ -98,6 +106,8 @@ val JsonObject?.datePaymentFinished: String?
 val JsonObject?.datePayToJoin: String?
     get() = this?.getString(DATE_PAY_TO_JOIN)
 
+val JsonObject?.systemType: Int?
+    get() = this?.getInt(SYSTEM_TYPE)
 
 val JsonObject?.imageRatios: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS)
@@ -530,7 +540,7 @@ val JsonObject?.deductible: Double?
 val JsonObject?.incidentDate: String?
     get() = getString(INCIDENT_DATE)
 
-val JsonObject?.subTitle:String?
+val JsonObject?.subTitle: String?
     get() = getString(SUBTITLE)
 
 fun JsonObject?.getFloat(key: String): Float? {

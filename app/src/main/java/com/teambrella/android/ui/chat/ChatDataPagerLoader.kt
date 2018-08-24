@@ -6,10 +6,8 @@ import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.data.base.KTeambrellaChatDataPagerLoader
-import com.teambrella.android.services.LOG_TAG
 import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
-import com.teambrella.android.util.log.Log
 import java.util.*
 
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
@@ -103,12 +101,6 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         } else null
 
 
-        var payToJoinDate = basic?.datePayToJoin?.let { _date->
-            Calendar.getInstance().apply {
-                time = TeambrellaDateUtils.getDate(_date)
-            }
-        }
-
         val claimId = basic?.claimId
         val team = data?.teamPart
         val teamId = team?.teamId
@@ -169,10 +161,6 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 if (item.chatItemType == ChatItems.CHAT_ITEM_PAID_CLAIM) {
                     paymentDate = null
                 }
-
-                if (item.chatItemType == ChatItems.CHAT_ITEM_PAY_TO_JOIN) {
-                    payToJoinDate = null
-                }
             }
 
             val time = getDate(message)
@@ -227,7 +215,16 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                     val newMessage = message.deepCopy()
                     newMessage.text = text
                     newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
-                    newMessage.chatItemType = if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_MESSAGE else ChatItems.CHAT_ITEM_MESSAGE
+                    newMessage.chatItemType =
+                            when (newMessage.systemType) {
+                                ChatSystemMessages.FIRST_MESSAGE_MISSING -> ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN
+                                ChatSystemMessages.FIRST_PHOTO_MISSING -> ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN
+                                ChatSystemMessages.NEEDS_FUNDING -> ChatItems.CHAT_ITEM_PAY_TO_JOIN
+                                else -> {
+                                    if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_MESSAGE
+                                    else ChatItems.CHAT_ITEM_MESSAGE
+                                }
+                            }
                     appendDateItem(message)
                     newMessages.add(newMessage)
                 }
@@ -245,27 +242,16 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 } else {
                     time
                 }
-            }?:time
+            } ?: time
         }
 
         if (!next && array.size() > 0) {
             val first = array.get(0).asJsonObject
-            lastTime = lastTime?: Calendar.getInstance().apply {
-                 time = Date(0)
+            lastTime = lastTime ?: Calendar.getInstance().apply {
+                time = Date(0)
             }
             first.isNextDay = isNextDay(lastTime as Calendar, getDate(first))
             appendDateItem(first)
-        }
-
-        if (next && data.size != LIMIT && payToJoinDate != null) {
-
-            val payToJoinObject = JsonObject().apply {
-                chatItemType = ChatItems.CHAT_ITEM_PAY_TO_JOIN
-                created = TimeUtils.getTicksFromDate(payToJoinDate.time)
-                isNextDay = isNextDay(lastTime as Calendar, payToJoinDate)
-            }
-            appendDateItem(payToJoinObject)
-            newMessages.add(payToJoinObject)
         }
 
         response.data?.discussionPart?.chat = newMessages
