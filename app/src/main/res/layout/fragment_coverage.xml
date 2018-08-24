@@ -19,7 +19,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/fund_wallet"
-                style="@style/Teambrella.TextAppearence.SectionButton"
+                style="@style/Teambrella.TextAppearance.SectionButton"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:layout_marginBottom="24dp"

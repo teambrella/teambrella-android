@@ -37,7 +37,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/teammate_name"
-            style="@style/Teambrella.TextAppearence.MessageTitle"
+            style="@style/Teambrella.TextAppearance.MessageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"

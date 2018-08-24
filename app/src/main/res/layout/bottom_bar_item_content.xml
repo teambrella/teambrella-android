@@ -19,7 +19,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/title"
-        style="@style/Teambrella.TextAppearence.BottomBarText"
+        style="@style/Teambrella.TextAppearance.BottomBarText"
         android:text="@string/bottom_navigation_proxies"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

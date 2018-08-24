@@ -119,6 +119,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
 
+        <activity android:name=".ui.registration.RegistrationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Welcome"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
         <provider
             android:name=".content.TeambrellaContentProvider"
             android:authorities="@string/content_provider_authority"

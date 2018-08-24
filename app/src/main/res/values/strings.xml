@@ -352,4 +352,11 @@
     <string name="paid_claim_shareable_bike">We reimbursed our teammate for the stolen bike. Pretty cool, huh? %s</string>
     <string name="paid_title">Paid</string>
     <string name="copied">Copied</string>
+
+    <string name="personal_info" translatable="false">Personal Info</string>
+    <string name="my_name_is_title" translatable="false">My Name Is</string>
+    <string name="birthday_title" translatable="false">Birthday</string>
+    <string name="gender_title" translatable="false">Gender</string>
+    <string name="location_title" translatable="false">Location</string>
+    <string name="next" translatable="false">Next</string>
 </resources>

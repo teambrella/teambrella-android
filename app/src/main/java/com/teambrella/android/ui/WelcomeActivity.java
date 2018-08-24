@@ -36,6 +36,8 @@ import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
+import com.teambrella.android.ui.registration.RegistrationActivity;
+import com.teambrella.android.ui.registration.RegistrationActivityKt;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.log.Log;
@@ -336,9 +338,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
 
     private void onTryDemo(@SuppressWarnings("unused") View v) {
-        mUser.setDemoUser();
-        getDemoTeams(mUser.getPrivateKey());
-        StatisticHelper.onTryDemo(this);
+//        mUser.setDemoUser();
+//        getDemoTeams(mUser.getPrivateKey());
+//        StatisticHelper.onTryDemo(this);
+        RegistrationActivityKt.startRegistration(this);
+        finish();
     }
 
     @Override

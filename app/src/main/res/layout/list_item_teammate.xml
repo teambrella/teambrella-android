@@ -13,7 +13,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/indicator"
-        style="@style/Teambrella.TextAppearence.ListItem.Indicator"
+        style="@style/Teambrella.TextAppearance.ListItem.Indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/icon"
@@ -25,7 +25,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/net"
-        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        style="@style/Teambrella.TextAppearance.ListItem.Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -44,12 +44,12 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/teammate"
-            style="@style/Teambrella.TextAppearence.ListItem.Title"
+            style="@style/Teambrella.TextAppearance.ListItem.Title"
             android:gravity="start|center_vertical" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/object"
-            style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+            style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
             android:layout_marginTop="4dp" />
     </LinearLayout>
 </RelativeLayout>

@@ -11,7 +11,7 @@
 
     <com.teambrella.android.ui.widget.CountDownClock
         android:id="@+id/clock"
-        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        style="@style/Teambrella.TextAppearance.ListItem.Value"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentEnd="true"
@@ -40,13 +40,13 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/teammate"
-            style="@style/Teambrella.TextAppearence.ListItem.Title"
+            style="@style/Teambrella.TextAppearance.ListItem.Title"
             android:gravity="start|center_vertical"
             android:lineSpacingExtra="2dp" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/object"
-            style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+            style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
             android:layout_marginTop="4dp" />
     </LinearLayout>
 </RelativeLayout>

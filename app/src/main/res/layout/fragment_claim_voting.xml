@@ -163,7 +163,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/proxy_name"
-                style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+                style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 

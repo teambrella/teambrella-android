@@ -17,7 +17,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/to"
-        style="@style/Teambrella.TextAppearence.ListItem.Title"
+        style="@style/Teambrella.TextAppearance.ListItem.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -32,7 +32,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/type"
-        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -54,12 +54,12 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/amount"
-            style="@style/Teambrella.TextAppearence.ListItem.Value"
+            style="@style/Teambrella.TextAppearance.ListItem.Value"
             android:layout_height="wrap_content" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/status"
-            style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+            style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
             android:visibility="gone"
             tools:text="@string/transaction_pending" />
 

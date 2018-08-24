@@ -64,7 +64,7 @@
 
                         <com.teambrella.android.ui.widget.AkkuratBoldTextView
                             android:id="@+id/message_title"
-                            style="@style/Teambrella.TextAppearence.MessageTitle"
+                            style="@style/Teambrella.TextAppearance.MessageTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"

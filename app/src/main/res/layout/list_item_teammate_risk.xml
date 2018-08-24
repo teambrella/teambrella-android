@@ -18,7 +18,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/title"
-        style="@style/Teambrella.TextAppearence.ListItem.Title"
+        style="@style/Teambrella.TextAppearance.ListItem.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -31,7 +31,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/object"
-        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="@id/title"
         app:layout_constraintTop_toBottomOf="@id/title" />
@@ -39,7 +39,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/risk"
-        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        style="@style/Teambrella.TextAppearance.ListItem.Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

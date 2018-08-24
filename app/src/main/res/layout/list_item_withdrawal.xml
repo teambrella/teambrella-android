@@ -9,14 +9,14 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/date"
-        style="@style/Teambrella.TextAppearence.ListItem.Title"
+        style="@style/Teambrella.TextAppearance.ListItem.Title"
         android:gravity="start|center_vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/address"
-        style="@style/Teambrella.TextAppearence.ListItem.Subtitle"
+        style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
         android:layout_width="0dp"
         android:ellipsize="end"
         android:lines="1"
@@ -29,7 +29,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/amount"
-        style="@style/Teambrella.TextAppearence.ListItem.Value"
+        style="@style/Teambrella.TextAppearance.ListItem.Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
