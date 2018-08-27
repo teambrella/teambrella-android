@@ -34,12 +34,13 @@ def keystoreProperties = getProps(rootProject.file("keystore.properties"))
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
     defaultConfig {
         minSdkVersion 19
+        //noinspection OldTargetApi
         targetSdkVersion 27
-        versionCode 146
-        versionName "and-0.3.12.146"
+        versionCode 147
+        versionName "and-0.3.13.147"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
