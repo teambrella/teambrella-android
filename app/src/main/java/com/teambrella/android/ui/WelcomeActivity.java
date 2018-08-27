@@ -221,7 +221,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void getDemoTeams(String privateKey) {
         setState(State.LOADING);
-        request(TeambrellaUris.getDemoTeams(-10), privateKey);
+        request(TeambrellaUris.getDemoTeams(Locale.getDefault().getLanguage()), privateKey);
     }
 
 
@@ -366,7 +366,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             if (uri != null) {
                 switch (TeambrellaUris.sUriMatcher.match(Uri.parse(uriString))) {
                     case TeambrellaUris.MY_TEAMS:
-                    case TeambrellaUris.GET_DEMO_TEAMS_SUR: {
+                    case TeambrellaUris.DEMO_TEAMS: {
                         Intent intent = getIntent();
 
                         final int selectedTeam = intent != null ? intent.getIntExtra(TEAM_ID_EXTRA, TeambrellaUser.get(this).getTeamId())
