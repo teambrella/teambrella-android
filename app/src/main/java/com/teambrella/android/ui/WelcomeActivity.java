@@ -1,9 +1,11 @@
 package com.teambrella.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -12,7 +14,12 @@ import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.provider.AuthCallback;
+import com.auth0.android.provider.WebAuthProvider;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
@@ -76,6 +83,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
+    private View mVkLoginButton;
     private View mTryDemoButton;
     private View mTryDemoInvite;
     private View mMarginView;
@@ -86,6 +94,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private String mFacebookId;
     private TeambrellaBackupData mBackupData;
     private WalletBackupManager mWalletBackupManager;
+    private Auth0 mAuth0;
 
 
     public static Intent getLaunchIntent(Context context, String action, int teamId) {
@@ -112,9 +121,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationOnlyView = findViewById(R.id.invitation_only);
         mTryDemoButton = findViewById(R.id.try_demo);
         mFacebookLoginButton = findViewById(R.id.facebook_login);
+        mVkLoginButton = findViewById(R.id.vk_login);
         mInvitationDescription = findViewById(R.id.invitation_description);
         mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
+        mVkLoginButton.setOnClickListener(this::onVkLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         mTryDemoInvite = findViewById(R.id.try_demo_invite);
         mMarginView = findViewById(R.id.margin);
@@ -124,6 +135,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mWalletBackupManager = new WalletBackupManager(this);
         mWalletBackupManager.addBackupListener(mWalletBackupListener);
+        mAuth0 = new Auth0(this);
+        mAuth0.setOIDCConformant(true);
     }
 
     @Override
@@ -164,6 +177,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         switch (state) {
             case INIT:
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
+                mVkLoginButton.setVisibility(View.VISIBLE);
                 mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mTryDemoInvite.setVisibility(View.VISIBLE);
@@ -171,12 +185,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case LOADING:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mMarginView.setVisibility(View.GONE);
                 break;
             case INVITE_ONLY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.we_are_invite_only_title);
@@ -185,6 +201,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case ALMOST_READY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.almost_ready_title);
@@ -193,6 +210,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case ACCESS_DENIED:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.access_denied_title);
@@ -202,6 +220,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case PENDING_APPLICATION:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.pending_application_title);
@@ -228,6 +247,34 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private void onFacebookLogin(@SuppressWarnings("unused") View v) {
         setState(State.LOADING);
         mWalletBackupManager.readWallet(true);
+    }
+
+
+    private void onVkLogin(@SuppressWarnings("unused") View v) {
+        setState(State.LOADING);
+        WebAuthProvider.init(mAuth0)
+                .withScheme("app")
+                .withConnection("vkontakte")
+                .start(WelcomeActivity.this, new AuthCallback() {
+                    @Override
+                    public void onFailure(@NonNull Dialog dialog) {
+                        runOnUiThread(() -> Toast.makeText(WelcomeActivity.this, "failure", Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void onFailure(AuthenticationException exception) {
+                        runOnUiThread(() -> Toast.makeText(WelcomeActivity.this, "failure", Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull com.auth0.android.result.Credentials credentials) {
+                        runOnUiThread(() -> {
+                            String backUpKey = mUser.getPendingPrivateKey();
+                            ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
+                            registerAuth0User(credentials.getAccessToken(), backUpKey, key.getPublicKeyAsHex());
+                        });
+                    }
+                });
     }
 
 
@@ -299,6 +346,18 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
         }
         request(TeambrellaUris.getRegisterUri(token, publicKeySignature), privateKey);
+    }
+
+    private void registerAuth0User(String token, final String privateKey, String publicKeyHex) {
+        findViewById(R.id.facebook_login).setVisibility(View.GONE);
+        findViewById(R.id.try_demo).setVisibility(View.GONE);
+        String publicKeySignature = null;
+        try {
+            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext(), publicKeyHex);
+        } catch (CryptoException e) {
+            Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
+        }
+        request(TeambrellaUris.getRegisterAuth0Uri(token, publicKeySignature), privateKey);
     }
 
 
@@ -404,7 +463,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         finish();
                     }
                     break;
-                    case TeambrellaUris.ME_REGISTER_KEY:
+                    case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
 
                         String privateKey = mFacebookId != null ? mBackupData.getValue(Integer.toString(mFacebookId.hashCode())) : null;
 
@@ -421,6 +480,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                             mFacebookId = null;
                         }
 
+                        StatisticHelper.onUserRegistered(this);
+                        if (!BuildConfig.DEBUG) {
+                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        }
+                        getTeams(mUser.getPrivateKey());
+                        break;
+
+                    case TeambrellaUris.ME_REGISTER_AUTH0_KEY:
+                        mUser.setPrivateKey(mUser.getPendingPrivateKey());
                         StatisticHelper.onUserRegistered(this);
                         if (!BuildConfig.DEBUG) {
                             Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));

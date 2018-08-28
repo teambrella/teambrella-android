@@ -45,6 +45,10 @@ public interface TeambrellaAPI {
     @POST("me/registerKey")
     Observable<Response<JsonObject>> registerKey(@Query("facebookToken") String facebookToken, @Query("sigOfPublicKey") String sigOfPublicKey);
 
+    @Headers("Content-Type: application/json")
+    @POST("me/registerKey")
+    Observable<Response<JsonObject>> registerAuth0Key(@Query("auth0Token") String auth0Token, @Query("sigOfPublicKey") String sigOfPublicKey);
+
 
     @Headers("Content-Type: application/json")
     @POST("claim/getChat")

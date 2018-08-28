@@ -339,7 +339,8 @@ public class TeambrellaServer {
             }
             break;
             case TeambrellaUris.ME_UPDATES:
-            case TeambrellaUris.ME_REGISTER_KEY:
+            case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
+            case TeambrellaUris.ME_REGISTER_AUTH0_KEY:
             case TeambrellaUris.MY_TEAMS:
             case TeambrellaUris.NEW_FILE:
             case TeambrellaUris.INBOX:
@@ -363,10 +364,16 @@ public class TeambrellaServer {
                 return mAPI.getTeammateOne(requestBody);
             case TeambrellaUris.ME_UPDATES:
                 return mAPI.getUpdates(requestBody);
-            case TeambrellaUris.ME_REGISTER_KEY:
+            case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
                 String facebookToken = uri.getQueryParameter(TeambrellaUris.KEY_FACEBOOK_TOKEN);
                 String sigOfPublicKey = uri.getQueryParameter(TeambrellaUris.KEY_SIG_OF_PUBLIC_KEY);
                 return mAPI.registerKey(facebookToken, sigOfPublicKey);
+
+            case TeambrellaUris.ME_REGISTER_AUTH0_KEY: {
+                String auth0Token = uri.getQueryParameter(TeambrellaUris.KEY_AUTH0_TOKEN);
+                String signature = uri.getQueryParameter(TeambrellaUris.KEY_SIG_OF_PUBLIC_KEY);
+                return mAPI.registerAuth0Key(auth0Token, signature);
+            }
             case TeambrellaUris.CLAIMS_LIST:
                 return mAPI.getClaimsList(requestBody);
             case TeambrellaUris.CLAIMS_ONE:

@@ -106,6 +106,7 @@
     <string name="here_whats_new">"Here what's new for you"</string>
     <string name="try_demo">Try the Demo</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="continue_with_vk" translatable="false">Continue with VK</string>
     <string name="proxy_vote">Proxy Vote</string>
     <string name="my_proxies">My Proxies</string>
     <string name="proxy_for">Proxy For</string>
