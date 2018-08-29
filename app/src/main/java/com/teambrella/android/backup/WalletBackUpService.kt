@@ -94,7 +94,7 @@ class WalletBackUpService : GcmTaskService() {
                 if (connectionResult.isSuccess) {
                     val socialName = it.socialName
                     val login = if (socialName?.startsWith(VKONTAKTE) == true)
-                        String.format("vk.com/%s", socialName.substring(10, socialName.length))
+                        String.format("vk.com/id%s", socialName.substring(10, socialName.length))
                     else
                         String.format("fb.com/%s", socialName)
 

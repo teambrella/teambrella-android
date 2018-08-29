@@ -99,7 +99,7 @@ public class WalletBackupManager {
             return;
         }
 
-        String login = id.startsWith(VKONTAKTE) ? String.format("vk.com/%s", id.substring(10, id.length()))
+        String login = id.startsWith(VKONTAKTE) ? String.format("vk.com/id%s", id.substring(10, id.length()))
                 : String.format("fb.com/%s", id);
 
 

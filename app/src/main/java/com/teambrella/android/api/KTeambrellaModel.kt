@@ -34,6 +34,7 @@ const val INCIDENT_DATE = "IncidentDate"
 const val DATE_PAY_TO_JOIN = "DatePayToJoin"
 const val SUBTITLE = "SubTitle"
 const val SYSTEM_TYPE = "SystemType"
+const val VK_URL = "VkUrl"
 
 
 object ChatItems {
@@ -282,6 +283,9 @@ val JsonObject?.socialName: String?
 
 val JsonObject?.facebookUrl: String?
     get() = getString(FACEBOOK_URL)
+
+val JsonObject?.vkUrl: String?
+    get() = getString(VK_URL)
 
 val JsonObject?.claimAmount: Float?
     get() = getFloat(CLAIM_AMOUNT)

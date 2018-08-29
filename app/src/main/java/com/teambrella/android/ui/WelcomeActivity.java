@@ -78,6 +78,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         PENDING_APPLICATION
     }
 
+    private enum PendingLoginState {
+        FACEBOOK,
+        VKONTAKTE
+    }
+
 
     private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
@@ -95,6 +100,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private TeambrellaBackupData mBackupData;
     private WalletBackupManager mWalletBackupManager;
     private Auth0 mAuth0;
+    private PendingLoginState mPendingLoginState = null;
 
 
     public static Intent getLaunchIntent(Context context, String action, int teamId) {
@@ -246,11 +252,18 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void onFacebookLogin(@SuppressWarnings("unused") View v) {
         setState(State.LOADING);
+        mPendingLoginState = PendingLoginState.FACEBOOK;
         mWalletBackupManager.readWallet(true);
     }
 
 
     private void onVkLogin(@SuppressWarnings("unused") View v) {
+        mPendingLoginState = PendingLoginState.VKONTAKTE;
+        mWalletBackupManager.readWallet(true);
+    }
+
+
+    private void loginByVK() {
         WebAuthProvider.init(mAuth0)
                 .withScheme("app")
                 .withConnection("vkontakte")
@@ -296,7 +309,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
             @Override
             public void onCancel() {
-                setState(State.INVITE_ONLY);
+                setState(State.INIT);
             }
 
             @Override
@@ -588,6 +601,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         @Override
         public void onWalletRead(String key, boolean force) {
+            mPendingLoginState = null;
             mUser.setPrivateKey(key);
             getTeams(mUser.getPrivateKey());
         }
@@ -595,10 +609,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         @Override
         public void onWalletReadError(int code, boolean force) {
             if (force) {
-                loginByFacebook();
+                if (mPendingLoginState == PendingLoginState.VKONTAKTE) {
+                    loginByVK();
+                } else {
+                    loginByFacebook();
+                }
             } else {
                 setState(State.INIT);
             }
+            mPendingLoginState = null;
         }
     };
 }
