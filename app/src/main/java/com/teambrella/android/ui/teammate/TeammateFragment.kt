@@ -231,7 +231,13 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
             }
 
             data?.voted?.let {
-                votingResultContainerView?.visibility = View.VISIBLE
+                votingResultContainerView?.visibility = when (teamAccessLevel) {
+                    TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH,
+                    TeambrellaModel.TeamAccessLevel.HIDDEN_DETAILS_AND_STEALTH -> {
+                        if (dataHost.isItMe) View.GONE else View.VISIBLE
+                    }
+                    else -> View.VISIBLE
+                }
             }
 
             data?.discussionPart?.let { _discussionPart ->
