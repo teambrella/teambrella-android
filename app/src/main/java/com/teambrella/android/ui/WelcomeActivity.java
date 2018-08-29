@@ -271,25 +271,42 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 .start(WelcomeActivity.this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull Dialog dialog) {
+                        runOnUiThread(() -> {
+                            mWaitVkLoginResponse = false;
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+                        });
                     }
 
                     @Override
                     public void onFailure(AuthenticationException exception) {
-
+                        runOnUiThread(() -> {
+                            mWaitVkLoginResponse = false;
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+                        });
                     }
 
                     @Override
                     public void onSuccess(@NonNull com.auth0.android.result.Credentials credentials) {
                         runOnUiThread(() -> {
-                            setState(State.LOADING);
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
                             String backUpKey = mUser.getPendingPrivateKey();
                             ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
                             registerAuth0User(credentials.getAccessToken(), backUpKey, key.getPublicKeyAsHex());
                         });
                     }
                 });
+        setState(State.LOADING);
+        mWaitVkLoginResponse = true;
     }
-
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mWaitVkLoginResponse) {
+            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+            mVkLoginButton.postDelayed(mVkLoginTimeOut, 3000);
+        }
+    }
 
     private void loginByFacebook() {
         LoginManager loginManager = LoginManager.getInstance();
@@ -619,5 +636,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             }
             mPendingLoginState = null;
         }
+    };
+
+
+    private boolean mWaitVkLoginResponse = false;
+    private Runnable mVkLoginTimeOut = () -> {
+        mWaitVkLoginResponse = false;
+        setState(State.INIT);
     };
 }
