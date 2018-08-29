@@ -122,7 +122,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private int mSelectedItemId = -1;
     private String mUserId;
     private String mUserName;
-    private String mFBName;
+    private String mSocialName;
     private Uri mUserPicture;
     private ImageView mAvatar;
     private JsonWrapper mTeam;
@@ -421,7 +421,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 return super.getDataPagerConfig(tag);
         }
     }
-    
+
     @Override
     public int getTeamId() {
         return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID);
@@ -626,8 +626,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void backUpWallet(boolean force) {
-        if (mUserName != null && mUserPicture != null && mFBName != null) {
-            mWalletBackupManager.saveWallet(mFBName,
+        if (mUserName != null && mUserPicture != null && mSocialName != null) {
+            mWalletBackupManager.saveWallet(mSocialName,
                     mUserName,
                     mUserPicture,
                     TeambrellaUser.get(this).getPrivateKey()
@@ -832,7 +832,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                     .apply(new RequestOptions().transforms(new CenterCrop(), new CircleCrop())
                             .placeholder(R.drawable.picture_background_circle)).into(mAvatar);
             mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
-            mFBName = data.getString(TeambrellaModel.ATTR_DATA_FB_NAME);
+            mSocialName = data.getString(TeambrellaModel.ATTR_DATA_SOCIAL_NAME);
             mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
         }
     };

@@ -277,6 +277,9 @@ val JsonObject?.otherCount: Int?
 val JsonObject?.fbName: String?
     get() = getString(TeambrellaModel.ATTR_DATA_FB_NAME)
 
+val JsonObject?.socialName: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_SOCIAL_NAME)
+
 val JsonObject?.facebookUrl: String?
     get() = getString(FACEBOOK_URL)
 

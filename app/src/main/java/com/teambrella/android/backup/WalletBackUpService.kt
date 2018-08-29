@@ -8,10 +8,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.gcm.*
 import com.teambrella.android.api.avatar
 import com.teambrella.android.api.data
-import com.teambrella.android.api.fbName
 import com.teambrella.android.api.name
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.api.server.TeambrellaUris
+import com.teambrella.android.api.socialName
 import com.teambrella.android.image.TeambrellaImageLoader
 import com.teambrella.android.services.TeambrellaNotificationManager
 import com.teambrella.android.ui.TeambrellaUser
@@ -34,6 +34,9 @@ class WalletBackUpService : GcmTaskService() {
         private const val BACKUP_STATUS_NO = "not_backed_up"
         private const val BACKUP_STATUS_NOTIFICATION = "notification"
         private const val BACKUP_STATUS_ERROR = "error";
+
+
+        private const val VKONTAKTE = "vkontakte"
 
 
         fun schedulePeriodicBackupCheck(context: Context) {
@@ -89,7 +92,14 @@ class WalletBackUpService : GcmTaskService() {
                         .build()
                 val connectionResult = googleApiClient.blockingConnect()
                 if (connectionResult.isSuccess) {
-                    val credential = Credential.Builder(String.format("fb.com/%s", it.fbName))
+                    val socialName = it.socialName
+                    val login = if (socialName?.startsWith(VKONTAKTE) == true)
+                        String.format("vk.com/%s", socialName.substring(10, socialName.length))
+                    else
+                        String.format("fb.com/%s", socialName)
+
+
+                    val credential = Credential.Builder(login)
                             .setName(it.name)
                             .setPassword(user.privateKey)
                             .setProfilePictureUri(TeambrellaImageLoader.getImageUri(it.avatar))

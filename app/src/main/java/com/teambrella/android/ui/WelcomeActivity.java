@@ -14,11 +14,11 @@ import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.provider.AuthCallback;
+import com.auth0.android.provider.CustomTabsOptions;
 import com.auth0.android.provider.WebAuthProvider;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -251,24 +251,24 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
 
     private void onVkLogin(@SuppressWarnings("unused") View v) {
-        setState(State.LOADING);
         WebAuthProvider.init(mAuth0)
                 .withScheme("app")
                 .withConnection("vkontakte")
+                .withCustomTabsOptions(CustomTabsOptions.newBuilder().withToolbarColor(R.color.colorPrimary).showTitle(true).build())
                 .start(WelcomeActivity.this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull Dialog dialog) {
-                        runOnUiThread(() -> Toast.makeText(WelcomeActivity.this, "failure", Toast.LENGTH_SHORT).show());
                     }
 
                     @Override
                     public void onFailure(AuthenticationException exception) {
-                        runOnUiThread(() -> Toast.makeText(WelcomeActivity.this, "failure", Toast.LENGTH_SHORT).show());
+
                     }
 
                     @Override
                     public void onSuccess(@NonNull com.auth0.android.result.Credentials credentials) {
                         runOnUiThread(() -> {
+                            setState(State.LOADING);
                             String backUpKey = mUser.getPendingPrivateKey();
                             ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
                             registerAuth0User(credentials.getAccessToken(), backUpKey, key.getPublicKeyAsHex());

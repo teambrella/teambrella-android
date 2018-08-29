@@ -241,6 +241,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_WEIGHT_COMBINED = "WeightCombined";
     public static final String ATTR_DATA_WEIGHT = "Weight";
     public static final String ATTR_DATA_FB_NAME = "FBName";
+    public static final String ATTR_DATA_SOCIAL_NAME = "SocialName";
     public static final String ATTR_DATA_MODEL = "Model";
     public static final String ATTR_DATA_OBJECT_NAME = "ObjectName";
     public static final String ATTR_DATA_ORIGINAL_POST_TEXT = "OriginalPostText";
