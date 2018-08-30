@@ -142,7 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_facebook"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="9dp"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true" />
 
@@ -177,7 +177,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_vk"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="9dp"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true" />
 
