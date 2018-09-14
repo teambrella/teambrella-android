@@ -298,7 +298,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         setState(State.LOADING);
         mWaitVkLoginResponse = true;
     }
-    
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -322,6 +322,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 }
                 ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
                 registerUser(token.getToken(), backUpKey, key.getPublicKeyAsHex());
+                logOut();
             }
 
             @Override
@@ -502,8 +503,6 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         }
 
                         mUser.setPrivateKey(privateKey);
-
-                        logOut();
 
                         if (mFacebookId != null) {
                             mBackupData.setValue(Integer.toString(mFacebookId.hashCode()), privateKey);

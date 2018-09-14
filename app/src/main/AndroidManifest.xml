@@ -23,8 +23,7 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Welcome"
-            tools:node="replace">
+            android:theme="@style/AppTheme.NoActionBar.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

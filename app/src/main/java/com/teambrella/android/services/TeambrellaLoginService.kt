@@ -4,7 +4,9 @@ import android.content.Context
 import com.facebook.AccessToken
 import com.facebook.Profile
 import com.facebook.login.LoginManager
-import com.google.android.gms.gcm.*
+import com.google.android.gms.gcm.GcmNetworkManager
+import com.google.android.gms.gcm.GcmTaskService
+import com.google.android.gms.gcm.TaskParams
 import com.teambrella.android.api.TeambrellaServerException
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.api.server.TeambrellaUris
@@ -19,18 +21,18 @@ class TeambrellaLoginService : GcmTaskService() {
 
         private const val LOG_TAG = "LOG_TAG"
         private const val CHECK_APPLICATION_STATUS_TAG = "CheckApplicationStatus"
-        private const val PERIOD: Long = 60
+        private const val PERIOD: Long = 60 * 60 * 6
 
         fun schedulePeriodicAutoLoginTask(context: Context) {
-            val task = PeriodicTask.Builder()
-                    .setService(TeambrellaLoginService::class.java)
-                    .setTag(CHECK_APPLICATION_STATUS_TAG)
-                    .setPersisted(true)
-                    .setPeriod(PERIOD)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setUpdateCurrent(true)
-                    .build()
-            GcmNetworkManager.getInstance(context).schedule(task)
+//            val task = PeriodicTask.Builder()
+//                    .setService(TeambrellaLoginService::class.java)
+//                    .setTag(CHECK_APPLICATION_STATUS_TAG)
+//                    .setPersisted(true)
+//                    .setPeriod(PERIOD)
+//                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+//                    .setUpdateCurrent(true)
+//                    .build()
+//            GcmNetworkManager.getInstance(context).schedule(task)
         }
 
 
@@ -71,13 +73,13 @@ class TeambrellaLoginService : GcmTaskService() {
     }
 
 
-    override fun onInitializeTasks() {
-        super.onInitializeTasks()
-        val accessToken = AccessToken.getCurrentAccessToken()
-        accessToken?.let {
-            schedulePeriodicAutoLoginTask(this)
-        }
-    }
+//    override fun onInitializeTasks() {
+//        super.onInitializeTasks()
+//        val accessToken = AccessToken.getCurrentAccessToken()
+//        accessToken?.let {
+//            schedulePeriodicAutoLoginTask(this)
+//        }
+//    }
 
     override fun onRunTask(params: TaskParams?): Int {
         when (params?.tag) {
