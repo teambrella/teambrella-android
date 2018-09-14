@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.61'
+    ext.kotlin_version = '1.2.70'
     repositories {
         google()
         jcenter()
@@ -8,7 +8,7 @@ buildscript {
         //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:3.2.0-rc03'
         classpath 'com.google.gms:google-services:3.2.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.61"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70"
     }
 }
 
