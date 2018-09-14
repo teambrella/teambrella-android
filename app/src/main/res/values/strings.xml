@@ -28,9 +28,9 @@
     <string name="team_claims">Claims</string>
 
 
-    <string name="teammate_net_format_string_plus" translatable="false"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_minus" translatable="false"><![CDATA[<font color="#dc2459">-</font> %1$s%2$d]]></string>
-    <string name="teammate_net_format_string_zero" translatable="false">%s0</string>
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %1$s%2$s]]></string>
+    <string name="teammate_net_format_string_zero">%s0</string>
     <string name="risk_format_string" translatable="false">%.1f</string>
     <string name="float_format_string_1" translatable="false">%.1f</string>
     <string name="float_format_string_2" translatable="false">%.2f</string>
@@ -76,7 +76,7 @@
     <string name="coverage">Coverage</string>
     <string name="incident_date">Incident date</string>
 
-    <string name="amount_format_string" formatted="false">%1$s%2$d</string>
+    <string name="amount_format_string" formatted="false">%1$s%2$s</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -106,6 +106,7 @@
     <string name="here_whats_new">"Here what's new for you"</string>
     <string name="try_demo">Try the Demo</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="continue_with_vk">Continue with VK</string>
     <string name="proxy_vote">Proxy Vote</string>
     <string name="my_proxies">My Proxies</string>
     <string name="proxy_for">Proxy For</string>
@@ -291,7 +292,7 @@
     <string name="notification_option_unmuted_description">You will get a notification of each message.</string>
     <string name="notification_option_muted_title">No Notifications</string>
     <string name="notification_option_muted_description">Notifications will be disabled for this chat.</string>
-    <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[CLAIM AMOUNT - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">You now receive notifications for this discussion.</string>
     <string name="message">Message</string>
 
@@ -323,6 +324,7 @@
     <string name="member_since_format_string">Member since %s</string>
     <string name="contacts">Contact</string>
     <string name="facebook" translatable="false">Facebook</string>
+    <string name="vkontakte" translatable="false">VKontakte</string>
     <string name="ended_ago">Ended %s ago</string>
 
     <string name="available_to_withdraw">Available to withdraw</string>
@@ -353,10 +355,14 @@
     <string name="paid_title">Paid</string>
     <string name="copied">Copied</string>
 
+    <string name="application_approved_notification_description" translatable="false">Your application has been approved</string>
+    <string name="application_started_notification_description" translatable="false">Your application has been started</string>
+
     <string name="personal_info" translatable="false">Personal Info</string>
     <string name="my_name_is_title" translatable="false">My Name Is</string>
     <string name="birthday_title" translatable="false">Birthday</string>
     <string name="gender_title" translatable="false">Gender</string>
     <string name="location_title" translatable="false">Location</string>
     <string name="next" translatable="false">Next</string>
+
 </resources>

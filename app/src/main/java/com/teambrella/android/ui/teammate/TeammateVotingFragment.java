@@ -63,6 +63,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
     private TextView mYourVoteTitle;
     private TextView mWhen;
     private CountDownClock mClock;
+    private View mVotingPanel;
     private FadeInFadeOutViewController mSwipeToVoteViewController;
 
     private int mCount;
@@ -79,6 +80,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
         mLeftTeammateRisk = view.findViewById(R.id.left_teammate_risk);
         mRightTeammateRisk = view.findViewById(R.id.right_teammate_risk);
         mNewTeammateRisk = view.findViewById(R.id.new_teammate_risk);
+        mVotingPanel = view.findViewById(R.id.voting_panel);
         TeammateVoteRisk teamVoteView = view.findViewById(R.id.team_vote_risk);
         mAVGDifferenceTeamVote = teamVoteView.avgDifference;
         mTeamVoteRisk = teamVoteView.risk;
@@ -158,7 +160,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     double myVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
                     String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
                     String proxyAvatar = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR);
-
+                    boolean canVote = voting.getBoolean(TeambrellaModel.ATTR_DATA_CAN_VOTE, true);
 
                     if (teamVote > 0) {
                         mTeamVoteRisk.setText(String.format(Locale.US, "%.2f", teamVote));
@@ -193,7 +195,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     } else {
                         mProxyName.setVisibility(View.INVISIBLE);
                         mProxyAvatar.setVisibility(View.INVISIBLE);
-                        mRestVoteButton.setVisibility(myVote > 0 ? View.VISIBLE : View.INVISIBLE);
+                        mRestVoteButton.setVisibility((canVote && myVote > 0) ? View.VISIBLE : View.INVISIBLE);
                         mYourVoteTitle.setText(R.string.your_vote);
                     }
 
@@ -213,6 +215,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                             .subscribe(uris -> mAvatarWidgets.setAvatars(getImageLoader(), uris, otherCount));
 
                     setVoting(false);
+                    mVotingPanel.setVisibility(canVote ? View.VISIBLE : View.GONE);
                 }
 
 

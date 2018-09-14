@@ -1,9 +1,11 @@
 package com.teambrella.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -13,6 +15,11 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.provider.AuthCallback;
+import com.auth0.android.provider.CustomTabsOptions;
+import com.auth0.android.provider.WebAuthProvider;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
@@ -34,6 +41,7 @@ import com.teambrella.android.backup.TeambrellaBackupData;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.services.TeambrellaLoginService;
 import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
 import com.teambrella.android.ui.registration.RegistrationActivity;
@@ -72,11 +80,17 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         PENDING_APPLICATION
     }
 
+    private enum PendingLoginState {
+        FACEBOOK,
+        VKONTAKTE
+    }
+
 
     private static final String LOG_TAG = WelcomeActivity.class.getSimpleName();
     private CallbackManager mCallBackManager = CallbackManager.Factory.create();
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
+    private View mVkLoginButton;
     private View mTryDemoButton;
     private View mTryDemoInvite;
     private View mMarginView;
@@ -87,6 +101,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private String mFacebookId;
     private TeambrellaBackupData mBackupData;
     private WalletBackupManager mWalletBackupManager;
+    private Auth0 mAuth0;
+    private PendingLoginState mPendingLoginState = null;
 
 
     public static Intent getLaunchIntent(Context context, String action, int teamId) {
@@ -113,9 +129,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationOnlyView = findViewById(R.id.invitation_only);
         mTryDemoButton = findViewById(R.id.try_demo);
         mFacebookLoginButton = findViewById(R.id.facebook_login);
+        mVkLoginButton = findViewById(R.id.vk_login);
         mInvitationDescription = findViewById(R.id.invitation_description);
         mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
+        mVkLoginButton.setOnClickListener(this::onVkLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         mTryDemoInvite = findViewById(R.id.try_demo_invite);
         mMarginView = findViewById(R.id.margin);
@@ -125,19 +143,27 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mWalletBackupManager = new WalletBackupManager(this);
         mWalletBackupManager.addBackupListener(mWalletBackupListener);
+        mAuth0 = new Auth0(this);
+        mAuth0.setOIDCConformant(true);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        String facebookAccessToken = getFaceBookAccessToken();
         if (mUser.getPrivateKey() != null) {
             if (mUser.isDemoUser()) {
                 getDemoTeams(mUser.getPrivateKey());
             } else {
+                logOut();
                 getTeams(mUser.getPrivateKey());
             }
+        } else if (facebookAccessToken != null) {
+            String privateKey = mUser.getPendingPrivateKey();
+            ECKey key = DumpedPrivateKey.fromBase58(null, privateKey).getKey();
+            setState(State.INIT);
+            registerUser(facebookAccessToken, privateKey, key.getPublicKeyAsHex());
         } else {
-
             Intent intent = getIntent();
             Uri uri = intent.getData();
             if (uri != null) {
@@ -159,6 +185,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         switch (state) {
             case INIT:
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
+                mVkLoginButton.setVisibility(View.VISIBLE);
                 mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mTryDemoInvite.setVisibility(View.VISIBLE);
@@ -166,12 +193,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case LOADING:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mMarginView.setVisibility(View.GONE);
                 break;
             case INVITE_ONLY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.we_are_invite_only_title);
@@ -180,6 +209,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case ALMOST_READY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.almost_ready_title);
@@ -188,6 +218,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case ACCESS_DENIED:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.access_denied_title);
@@ -197,6 +228,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 break;
             case PENDING_APPLICATION:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
+                mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.pending_application_title);
@@ -222,9 +254,61 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void onFacebookLogin(@SuppressWarnings("unused") View v) {
         setState(State.LOADING);
+        mPendingLoginState = PendingLoginState.FACEBOOK;
         mWalletBackupManager.readWallet(true);
     }
 
+
+    private void onVkLogin(@SuppressWarnings("unused") View v) {
+        mPendingLoginState = PendingLoginState.VKONTAKTE;
+        mWalletBackupManager.readWallet(true);
+    }
+
+
+    private void loginByVK() {
+        WebAuthProvider.init(mAuth0)
+                .withScheme("app")
+                .withConnection("vkontakte")
+                .withCustomTabsOptions(CustomTabsOptions.newBuilder().withToolbarColor(R.color.colorPrimary).showTitle(true).build())
+                .start(WelcomeActivity.this, new AuthCallback() {
+                    @Override
+                    public void onFailure(@NonNull Dialog dialog) {
+                        runOnUiThread(() -> {
+                            mWaitVkLoginResponse = false;
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(AuthenticationException exception) {
+                        runOnUiThread(() -> {
+                            mWaitVkLoginResponse = false;
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+                        });
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull com.auth0.android.result.Credentials credentials) {
+                        runOnUiThread(() -> {
+                            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+                            String backUpKey = mUser.getPendingPrivateKey();
+                            ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
+                            registerAuth0User(credentials.getAccessToken(), backUpKey, key.getPublicKeyAsHex());
+                        });
+                    }
+                });
+        setState(State.LOADING);
+        mWaitVkLoginResponse = true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mWaitVkLoginResponse) {
+            mVkLoginButton.removeCallbacks(mVkLoginTimeOut);
+            mVkLoginButton.postDelayed(mVkLoginTimeOut, 3000);
+        }
+    }
 
     private void loginByFacebook() {
         LoginManager loginManager = LoginManager.getInstance();
@@ -240,12 +324,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 }
                 ECKey key = DumpedPrivateKey.fromBase58(null, backUpKey).getKey();
                 registerUser(token.getToken(), backUpKey, key.getPublicKeyAsHex());
-                LoginManager.getInstance().logOut();
+                logOut();
             }
 
             @Override
             public void onCancel() {
-                setState(State.INVITE_ONLY);
+                setState(State.INIT);
             }
 
             @Override
@@ -295,6 +379,18 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
         }
         request(TeambrellaUris.getRegisterUri(token, publicKeySignature), privateKey);
+    }
+
+    private void registerAuth0User(String token, final String privateKey, String publicKeyHex) {
+        findViewById(R.id.facebook_login).setVisibility(View.GONE);
+        findViewById(R.id.try_demo).setVisibility(View.GONE);
+        String publicKeySignature = null;
+        try {
+            publicKeySignature = EtherAccount.toPublicKeySignature(privateKey, getApplicationContext(), publicKeyHex);
+        } catch (CryptoException e) {
+            Log.e(LOG_TAG, "Was unnable to generate eth address from the private key. Only public key will be registered on the server. The error was: " + e.getMessage(), e);
+        }
+        request(TeambrellaUris.getRegisterAuth0Uri(token, publicKeySignature), privateKey);
     }
 
 
@@ -402,7 +498,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         finish();
                     }
                     break;
-                    case TeambrellaUris.ME_REGISTER_KEY:
+                    case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
 
                         String privateKey = mFacebookId != null ? mBackupData.getValue(Integer.toString(mFacebookId.hashCode())) : null;
 
@@ -417,6 +513,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                             mFacebookId = null;
                         }
 
+                        StatisticHelper.onUserRegistered(this);
+                        if (!BuildConfig.DEBUG) {
+                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        }
+                        getTeams(mUser.getPrivateKey());
+                        break;
+
+                    case TeambrellaUris.ME_REGISTER_AUTH0_KEY:
+                        mUser.setPrivateKey(mUser.getPendingPrivateKey());
                         StatisticHelper.onUserRegistered(this);
                         if (!BuildConfig.DEBUG) {
                             Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
@@ -447,6 +552,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         setState(State.INIT);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_PENDING:
+                    case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICATION_STARTED:
                         setState(State.PENDING_APPLICATION);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION:
@@ -458,6 +564,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         break;
                 }
                 mFacebookId = null;
+                TeambrellaLoginService.Companion.schedulePeriodicAutoLoginTask(this);
             } else if (error instanceof TeambrellaClientException) {
                 Throwable cause = error.getCause();
                 if (cause instanceof SocketTimeoutException
@@ -467,8 +574,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                     mFacebookId = null;
                     tryAgainLater(error);
                 }
+
+                logOut();
             } else {
                 tryAgainLater(error);
+                logOut();
                 mFacebookId = null;
             }
         }
@@ -487,6 +597,17 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationDescription.setText(text);
     }
 
+
+    private static String getFaceBookAccessToken() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null ? accessToken.getToken() : null;
+    }
+
+    private static void logOut() {
+        LoginManager.getInstance().logOut();
+    }
+
+
     private WalletBackupManager.IWalletBackupListener mWalletBackupListener = new WalletBackupManager.IWalletBackupListener() {
         @Override
         public void onWalletSaved(boolean force) {
@@ -500,6 +621,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         @Override
         public void onWalletRead(String key, boolean force) {
+            mPendingLoginState = null;
             mUser.setPrivateKey(key);
             getTeams(mUser.getPrivateKey());
         }
@@ -507,10 +629,22 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         @Override
         public void onWalletReadError(int code, boolean force) {
             if (force) {
-                loginByFacebook();
+                if (mPendingLoginState == PendingLoginState.VKONTAKTE) {
+                    loginByVK();
+                } else {
+                    loginByFacebook();
+                }
             } else {
                 setState(State.INIT);
             }
+            mPendingLoginState = null;
         }
+    };
+
+
+    private boolean mWaitVkLoginResponse = false;
+    private Runnable mVkLoginTimeOut = () -> {
+        mWaitVkLoginResponse = false;
+        setState(State.INIT);
     };
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/contacts_panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,7 +18,7 @@
 
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/facebook_logo"
+        android:id="@+id/social_logo"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="16dp"
@@ -29,23 +28,22 @@
         app:srcCompat="@drawable/facebook" />
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-        android:id="@+id/facebook_title"
+        android:id="@+id/social_title"
         style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
         android:layout_marginStart="20dp"
         android:includeFontPadding="false"
         android:text="@string/facebook"
-        app:layout_constraintStart_toEndOf="@id/facebook_logo"
-        app:layout_constraintTop_toTopOf="@id/facebook_logo" />
+        app:layout_constraintStart_toEndOf="@id/social_logo"
+        app:layout_constraintTop_toTopOf="@id/social_logo" />
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
-        android:id="@+id/facebook_link"
+        android:id="@+id/social_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/charcoalGrey"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/facebook_title"
-        app:layout_constraintTop_toBottomOf="@id/facebook_title"
-        tools:text="facebook.com/demo" />
+        app:layout_constraintStart_toStartOf="@id/social_title"
+        app:layout_constraintTop_toBottomOf="@id/social_title" />
 
 
 </android.support.constraint.ConstraintLayout>

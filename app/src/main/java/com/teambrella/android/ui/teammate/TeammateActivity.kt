@@ -98,13 +98,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             }
 
             customView.findViewById<View>(R.id.send_message)?.apply {
-                if (user.userId == intent.userId) {
                     visibility = View.GONE
-                } else {
-                    setOnClickListener {
-                        ChatActivity.startConversationChat(this@TeammateActivity, userId, userName, avatar)
-                    }
-                }
             }
         }
 
@@ -170,10 +164,31 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
                     userName = _basic.userName
                     avatar = _basic.avatar
                 }
+
+
+                _data.team?.let { _team->
+                    supportActionBar?.customView?.findViewById<View>(R.id.send_message)?.apply {
+                        when{
+                            user.userId == intent.userId ||
+                            _team.teamAccessLevel == TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH
+                                -> {
+                                visibility = View.GONE
+                            }
+                            else -> {
+                                visibility = View.VISIBLE
+                                setOnClickListener {
+                                    ChatActivity.startConversationChat(this@TeammateActivity, userId, userName, avatar)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 _data.discussionPart?.let { _discussion ->
                     topicId = _discussion.topicId
                 }
             }
+
         }
     }
 

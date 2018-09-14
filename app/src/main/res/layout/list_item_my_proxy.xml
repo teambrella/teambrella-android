@@ -55,7 +55,7 @@
             android:layout_marginStart="12dp"
             android:ellipsize="end"
             app:layout_constraintLeft_toRightOf="@id/icon"
-            app:layout_constraintRight_toLeftOf="@+id/proxy_rank"
+            app:layout_constraintRight_toLeftOf="@+id/rank"
             app:layout_constraintTop_toTopOf="@id/icon" />
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView

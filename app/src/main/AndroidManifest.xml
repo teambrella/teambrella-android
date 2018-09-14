@@ -23,8 +23,7 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Welcome"
-            tools:node="replace">
+            android:theme="@style/AppTheme.NoActionBar.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -148,11 +147,6 @@
             </intent-filter>
         </service>
 
-        <service android:name=".services.TeambrellaFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
         <service
             android:name=".backup.WalletBackUpService"
             android:exported="true"
@@ -161,6 +155,17 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
+
+
+        <service
+            android:name=".services.TeambrellaLoginService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+
 
         <receiver android:name=".util.UserPresentBroadCastReceiver">
             <intent-filter>

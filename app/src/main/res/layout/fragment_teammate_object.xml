@@ -83,7 +83,7 @@
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/limit"
                 style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -105,7 +105,7 @@
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/net"
                 style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -135,7 +135,7 @@
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/risk"
                     style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                    android:textSize="20sp"/>
+                    android:textSize="18sp"/>
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/avg_difference"

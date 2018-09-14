@@ -158,7 +158,7 @@ open class TeambrellaDataPagerLoader(private val uri: Uri, private val property:
 open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrellaDataPagerLoader() {
 
     companion object {
-        private const val LIMIT = 200
+        const val LIMIT = 200
     }
 
     override val itemChangeObservable: Observable<Int>? = null

@@ -31,6 +31,7 @@ import io.reactivex.Notification
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
 import java.util.*
 
 
@@ -55,6 +56,7 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
     private val uninterruptedCoverageCurrencyValue: TextView? by ViewHolder(R.id.for_uninterrupted_coverage_currency_value)
     private val backupWalletButton: View? by ViewHolder(R.id.backup_wallet)
     private val backupWalletMessage: View? by ViewHolder(R.id.wallet_not_backed_up_message)
+    private val decimalFormat = DecimalFormat.getInstance()
     private var showBackupInfoOnShow: Boolean = false
     private var isWalletBackedUp: Boolean? = null
 
@@ -76,7 +78,7 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
 
         balanceView?.text = context?.getString(R.string.amount_format_string
                 , AmountCurrencyUtil.getCurrencySign(dataHost.currency)
-                , 0)
+                , decimalFormat.format(0))
 
         dataHost.fundAddress?.let {
             Observable.just(it).map { QRCodeUtils.createBitmap(it) }
@@ -93,7 +95,7 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
 
         AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, 0f)
         uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string
-                , AmountCurrencyUtil.getCurrencySign(dataHost.currency), 0)
+                , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(0))
 
         dataHost.addWalletBackupListener(this)
 
@@ -140,19 +142,14 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             }
 
             balanceView?.text = context?.getString(R.string.amount_format_string
-                    , AmountCurrencyUtil.getCurrencySign(dataHost.currency), Math.round(cryptoBalance * currencyRate))
-
-
-            if (!user.isDemoUser) {
-                dataHost.backUpWallet(false)
-            }
+                    , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(Math.round(cryptoBalance * currencyRate)))
 
             val forUninterruptedCoverage = Math.abs(data?.get(TeambrellaModel.ATTR_DATA_RECOMMENDED_CRYPTO)?.asFloat
                     ?: 0f)
 
             AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, forUninterruptedCoverage)
-            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(dataHost.currency), Math.round(forUninterruptedCoverage
-                    * (data?.currencyRate ?: 0f)))
+            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(Math.round(forUninterruptedCoverage
+                    * (data?.currencyRate ?: 0f))))
 
             Observable.just(data)
                     .flatMap { Observable.fromIterable(data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray) }
@@ -163,8 +160,9 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
                         cosignersCountView?.text = it.size.toString()
                     }, {
 
-                    })
+                    })?.takeIf { it.isDisposed }?.dispose()
 
+            cosignersView?.visibility = View.VISIBLE
             cosignersView?.setOnClickListener {
                 CosignersActivity.start(context
                         , data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray?.toString()
@@ -172,8 +170,21 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             }
 
             transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, currencyRate)) }
+            withdrawView?.isEnabled = true
             withdrawView?.setOnClickListener { WithdrawActivity.start(context, dataHost.teamId, dataHost.currency, currencyRate) }
+        } else {
+            cryptoBalanceView?.text = String.format(Locale.US, "%d", 0)
+            balanceView?.text = context?.getString(R.string.amount_format_string
+                    , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(0))
+            cosignersView?.visibility = View.GONE
+            withdrawView?.isEnabled = false
+            transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, 0f)) }
         }
+
+        if (!user.isDemoUser) {
+            dataHost.backUpWallet(false)
+        }
+
         setContentShown(true)
     }
 

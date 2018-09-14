@@ -22,10 +22,12 @@ public class TeambrellaUris {
     private static final String SEGMENT_LIST = "list";
     private static final String SEGMENT_ONE = "one";
     private static final String SEGMENT_UPDATES = "updates";
-    private static final String SEGMENT_REGISTER = "registerKey";
+    private static final String SEGMENT_REGISTER_FACEBOOK = "facebookRegisterKey";
+    private static final String SEGMENT_REGISTER_AUTH0 = "auth0RegisterKey";
     private static final String SEGMENT_CHAT = "chat";
     private static final String SEGMENT_NEW_POST = "newPost";
     private static final String SEGMENT_TEAMS = "teams";
+    private static final String SEGMENT_TEAMS_SUR = "teamsur";
     private static final String SEGMENT_VOTE = "vote";
     private static final String SEGMENT_TEAMMATE = "teammate";
     private static final String SEGMENT_FEED = "feed";
@@ -54,6 +56,7 @@ public class TeambrellaUris {
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
+    public static final String KEY_AUTH0_TOKEN = "auth0Token";
     public static final String KEY_SIG_OF_PUBLIC_KEY = "sigOfPublicKey";
     public static final String KEY_OFFSET = "Offset";
     public static final String KEY_LIMIT = "Limit";
@@ -78,13 +81,14 @@ public class TeambrellaUris {
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_MUTED = "muted";
     public static final String KEY_POST_ID = "postId";
+    public static final String KEY_STATUS = "status";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     public static final int TEAMMATES_LIST = 1;
     public static final int TEAMMATES_ONE = 2;
     public static final int ME_UPDATES = 3;
-    public static final int ME_REGISTER_KEY = 4;
+    public static final int ME_REGISTER_FACEBOOK_KEY = 4;
     public static final int CLAIMS_LIST = 5;
     public static final int CLAIMS_ONE = 6;
     public static final int CLAIMS_CHAT = 7;
@@ -119,13 +123,16 @@ public class TeambrellaUris {
     public static final int MUTE = 36;
     public static final int WALLET_TRANSACTIONS = 37;
     public static final int GET_ME = 38;
+    public static final int GET_DEMO_TEAMS_SUR = 39;
+    public static final int ME_REGISTER_AUTH0_KEY = 40;
 
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_ONE + "/*", TEAMMATES_ONE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_UPDATES, ME_UPDATES);
-        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER, ME_REGISTER_KEY);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER_FACEBOOK, ME_REGISTER_FACEBOOK_KEY);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER_AUTH0, ME_REGISTER_AUTH0_KEY);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_TEAMS, MY_TEAMS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_LIST, CLAIMS_LIST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_ONE, CLAIMS_ONE);
@@ -153,6 +160,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS_SUR, GET_DEMO_TEAMS_SUR);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_DB, DEBUG_DB);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_DEBUG_LOG, DEBUG_LOG);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_WITHDRAWALS, WITHDRAWALS);
@@ -375,6 +383,16 @@ public class TeambrellaUris {
     }
 
 
+    public static Uri getDemoTeams(int status) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_DEMO)
+                .appendEncodedPath(SEGMENT_TEAMS_SUR)
+                .appendQueryParameter(KEY_STATUS, Integer.toString(status))
+                .build();
+    }
+
+
     public static Uri getNewChatUri(int teamId, String title, String message) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
@@ -428,8 +446,17 @@ public class TeambrellaUris {
     public static Uri getRegisterUri(String facebookToken, String sigOfPublicKey) {
         return new Uri.Builder().authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_ME)
-                .appendEncodedPath(SEGMENT_REGISTER)
+                .appendEncodedPath(SEGMENT_REGISTER_FACEBOOK)
                 .appendQueryParameter(KEY_FACEBOOK_TOKEN, facebookToken)
+                .appendQueryParameter(KEY_SIG_OF_PUBLIC_KEY, sigOfPublicKey)
+                .build();
+    }
+
+    public static Uri getRegisterAuth0Uri(String auth0Token, String sigOfPublicKey) {
+        return new Uri.Builder().authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_REGISTER_AUTH0)
+                .appendQueryParameter(KEY_AUTH0_TOKEN, auth0Token)
                 .appendQueryParameter(KEY_SIG_OF_PUBLIC_KEY, sigOfPublicKey)
                 .build();
     }

@@ -45,6 +45,10 @@ public interface TeambrellaAPI {
     @POST("me/registerKey")
     Observable<Response<JsonObject>> registerKey(@Query("facebookToken") String facebookToken, @Query("sigOfPublicKey") String sigOfPublicKey);
 
+    @Headers("Content-Type: application/json")
+    @POST("me/registerKey")
+    Observable<Response<JsonObject>> registerAuth0Key(@Query("auth0Token") String auth0Token, @Query("sigOfPublicKey") String sigOfPublicKey);
+
 
     @Headers("Content-Type: application/json")
     @POST("claim/getChat")
@@ -177,6 +181,11 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("demo/getTeams/{language}")
     Observable<Response<JsonObject>> getDemoTeams(@Path("language") String language);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("demo/getTeamsSur/{status}")
+    Observable<Response<JsonObject>> getDemoTeamsSur(@Path("status") int language);
 
 
     @SuppressWarnings("SpellCheckingInspection")
