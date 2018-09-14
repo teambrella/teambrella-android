@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
@@ -22,7 +24,9 @@ import com.teambrella.android.ui.claim.MODE_CHAT
 import com.teambrella.android.ui.teammate.getTeammateIntent
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
+import com.teambrella.android.util.AmountCurrencyUtil
 import io.reactivex.Notification
+import java.text.DecimalFormat
 import java.util.*
 
 class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
@@ -61,7 +65,7 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
     private val titleView: TextView? by ViewHolder(R.id.title)
     private val subtitleView: TextView? by ViewHolder(R.id.subtitle)
     private val voteValueView: TextView? by ViewHolder(R.id.vote_value)
-    private val voteButtonView: TextView? by ViewHolder(R.id.vote)
+    private val voteButtonView: View? by ViewHolder(R.id.vote)
     private val voteAction: View? by ViewHolder(R.id.vote_action)
     private val voteTitleView: TextView? by ViewHolder(R.id.vote_title)
     private val iconView: ImageView? by ViewHolder(R.id.image)
@@ -69,6 +73,8 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
     private val votingSectionView: View? by ViewHolder(R.id.voting_section)
     private val dividerView: View? by ViewHolder(R.id.divider)
     private val hideButtonView: View? by ViewHolder(R.id.hide)
+
+    private val decimalFormat = DecimalFormat.getInstance()
 
 
     private val votingContainerBehaviour = VotingContainerBehaviour(object : AVotingViewBehaviour.OnHideShowListener {
@@ -218,8 +224,11 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                     TeambrellaUris.CLAIMS_CHAT -> {
                         iconView?.setImage(imageLoader.getImageUrl(basicPart.smallPhoto), R.dimen.rounded_corners_4dp, R.drawable.picture_background_round_4dp)
                         titleView?.text = basicPart.model
-                        subtitleView?.text = Html.fromHtml(getString(R.string.claim_amount_format_string, Math.round(basicPart.claimAmount
-                                ?: 0f), data.teamPart?.currency ?: ""))
+
+                        subtitleView?.text = Html.fromHtml(getString(R.string.claim_amount_format_string, decimalFormat.format(Math.round(basicPart.claimAmount
+                                ?: 0f)), AmountCurrencyUtil.getLocalizedCurrency(context, data.teamPart?.currency
+                                ?: "")))
+
 
                         if (votingPart == null) {
                             val votingCrypto = basicPart.votingResCrypto
@@ -253,15 +262,24 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
 
             if (votingPart != null) {
                 when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
-                    TeambrellaUris.CLAIMS_CHAT -> setClaimVoteValue(votingPart.myVote ?: -1f)
+                    TeambrellaUris.CLAIMS_CHAT -> setClaimVoteValue(votingPart.myVote
+                            ?: votingPart.ratioVoted?.takeIf { !votingPart.canVote } ?: -1f)
                     TeambrellaUris.TEAMMATE_CHAT -> {
-                        setTeammateVoteValue(votingPart.myVote ?: -1f)
+                        setTeammateVoteValue(votingPart.myVote
+                                ?: votingPart.ratioVoted.takeIf { !votingPart.canVote } ?: -1f)
                     }
                 }
 
-                val poxyName = votingPart.proxyName
-                voteTitleView?.setText(if (poxyName != null) R.string.proxy_vote_title else R.string.your_vote)
-                voteAction?.visibility = View.VISIBLE
+                val proxyName = votingPart.proxyName
+
+                if (votingPart.canVote) {
+                    voteTitleView?.setText(if (proxyName != null) R.string.proxy_vote_title else R.string.your_vote)
+                    voteAction?.visibility = View.VISIBLE
+                } else {
+                    voteTitleView?.setText(if (proxyName != null) R.string.proxy_vote_title else R.string.team_vote)
+                    voteAction?.visibility = View.GONE
+                }
+
             } else {
                 voteAction?.visibility = View.GONE
             }

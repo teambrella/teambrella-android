@@ -14,7 +14,6 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.api.server.TeambrellaServer;
 import com.teambrella.android.api.server.TeambrellaUris;
@@ -337,8 +336,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     private static void debugDB(Context context) {
         try {
             TeambrellaUser user = TeambrellaUser.get(context);
-            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
-                    , user.getInfoMask(context));
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), user.getInfoMask(context));
             server.requestObservable(TeambrellaUris.getDebugDbUri(context.getDatabasePath("teambrella").getAbsolutePath()), null)
                     .blockingFirst();
         } catch (Exception e) {
@@ -350,8 +348,7 @@ public class TeambrellaUtilService extends GcmTaskService {
     private static void debugLog(Context context, String logPath) {
         try {
             TeambrellaUser user = TeambrellaUser.get(context);
-            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), !user.isDemoUser() ? FirebaseInstanceId.getInstance().getToken() : null
-                    , user.getInfoMask(context));
+            TeambrellaServer server = new TeambrellaServer(context, user.getPrivateKey(), user.getDeviceCode(), user.getInfoMask(context));
             server.requestObservable(TeambrellaUris.getDebugLogUri(logPath), null)
                     .blockingFirst();
 

@@ -1,18 +1,13 @@
 package com.teambrella.android.ui.user;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
 import com.teambrella.android.R;
 import com.teambrella.android.ui.AMainLandingFragment;
 import com.teambrella.android.ui.MainActivity;
@@ -21,6 +16,12 @@ import com.teambrella.android.ui.teammate.TeammateFragment;
 import com.teambrella.android.ui.user.coverage.CoverageFragment;
 import com.teambrella.android.ui.user.wallet.KWalletFragment;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * User Fragment

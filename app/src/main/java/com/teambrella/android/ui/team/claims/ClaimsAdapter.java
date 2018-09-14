@@ -28,6 +28,9 @@ import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.util.AmountCurrencyUtil;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 /**
  * Claims Adapter
  */
@@ -54,6 +57,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     private String mObjectImageUri;
     private String mObjectName;
     private String mLocation;
+    private NumberFormat mDecimalFormat = DecimalFormat.getInstance();
 
 
     /**
@@ -264,7 +268,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
 
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT))));
+            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), mDecimalFormat.format(Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)))));
 
 
             if (mVote != null) {
@@ -351,9 +355,20 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     }
 
     private class NoClaimsViewHolder extends SubmitClaimViewHolder {
+        private View submitPanelView;
+
         NoClaimsViewHolder(View itemView) {
             super(itemView);
+            submitPanelView = itemView.findViewById(R.id.submit_claim_panel);
             ((TextView) itemView.findViewById(R.id.prompt)).setText(Html.fromHtml(itemView.getContext().getString(R.string.no_claims)));
+        }
+
+        @Override
+        public void onBind() {
+            super.onBind();
+            if (submitPanelView != null) {
+                submitPanelView.setVisibility(mSubmitClaim ? View.VISIBLE : View.GONE);
+            }
         }
     }
 }

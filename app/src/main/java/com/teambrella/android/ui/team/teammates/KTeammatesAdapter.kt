@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
@@ -19,6 +20,7 @@ import com.teambrella.android.ui.widget.CountDownClock
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TeambrellaDateUtils
+import java.text.DecimalFormat
 import java.util.*
 
 const val VIEW_TYPE_TEAMMATE = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR
@@ -36,6 +38,11 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
     val mTeamId = teamId
     val mCurrency = currency
     val mInviteText = inviteText
+
+
+    companion object {
+        private val decimalFormat = DecimalFormat.getInstance()
+    }
 
 
     override fun getItemViewType(position: Int): Int {
@@ -128,11 +135,11 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         }
 
         private fun getPositiveNetString(net: Long): String {
-            return itemView.context.getString(R.string.teammate_net_format_string_plus, currencySign, Math.abs(net))
+            return itemView.context.getString(R.string.teammate_net_format_string_plus, currencySign, decimalFormat.format(Math.abs(net)))
         }
 
         private fun getNegativeNetString(net: Long): String {
-            return itemView.context.getString(R.string.teammate_net_format_string_minus, currencySign, Math.abs(net))
+            return itemView.context.getString(R.string.teammate_net_format_string_minus, currencySign, decimalFormat.format(Math.abs(net)))
         }
     }
 
@@ -154,11 +161,11 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         private val inviteButton: View? = view.findViewById(R.id.invite_friends)
 
         init {
-            inviteButton?.setOnClickListener({
+            inviteButton?.setOnClickListener {
                 startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, mInviteText)
                         .setType("text/plain"), itemView.context.getString(R.string.invite_friends)))
                 StatisticHelper.onInviteFriends(itemView.context, mTeamId)
-            })
+            }
         }
     }
 

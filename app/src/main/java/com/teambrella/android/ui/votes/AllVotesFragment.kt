@@ -2,6 +2,7 @@ package com.teambrella.android.ui.votes
 
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.data
@@ -33,7 +34,7 @@ class AllVotesFragment : ADataPagerProgressFragment<IAllVoteActivity>() {
             override fun canDrawChild(view: View, parent: RecyclerView): Boolean {
                 var position = parent.getChildAdapterPosition(view)
                 var drawDivider = canDrawChild(position, parent)
-                if (drawDivider && ++position < parent.adapter.itemCount) {
+                if (drawDivider && ++position < parent.adapter?.itemCount ?: 0) {
                     drawDivider = canDrawChild(position, parent)
                 }
                 return drawDivider
@@ -41,7 +42,7 @@ class AllVotesFragment : ADataPagerProgressFragment<IAllVoteActivity>() {
 
             private fun canDrawChild(position: Int, parent: RecyclerView): Boolean {
                 var drawDivider = true
-                when (parent.adapter.getItemViewType(position)) {
+                when (parent.adapter?.getItemViewType(position)) {
                     AllVotesAdapter.VIEW_TYPE_HEADER,
                     AllVotesAdapter.VIEW_TYPE_ME,
                     TeambrellaDataPagerAdapter.VIEW_TYPE_BOTTOM,

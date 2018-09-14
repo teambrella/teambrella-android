@@ -10,10 +10,13 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
 import android.widget.TextView;
 
-import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
 
 /**
  * Amount currency util
@@ -28,10 +31,21 @@ public class AmountCurrencyUtil {
     private static final String EUR = "EUR";
     private static final String RUB = "RUB";
 
+    private static DecimalFormat sDecimalFormat = (DecimalFormat) DecimalFormat.getInstance();
+
+
+    static {
+        DecimalFormatSymbols symbols = sDecimalFormat.getDecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        sDecimalFormat.setGroupingUsed(true);
+        sDecimalFormat.setDecimalFormatSymbols(symbols);
+    }
+
 
     public static void setAmount(TextView textView, int amount, String currency) {
         final Context context = textView.getContext();
-        final SpannableString text = new SpannableString(Integer.toString(amount) + " " + currency);
+        currency = getLocalizedCurrency(context, currency);
+        final SpannableString text = new SpannableString(sDecimalFormat.format(amount) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -41,8 +55,9 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, float amount, String currency) {
         final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
         final SpannableString text = amount < 100f ? new SpannableString(String.format(Locale.US, "%.2f", amount) + " " + currency)
-                : new SpannableString(String.format(Locale.US, "%d", Math.round(amount)) + " " + currency);
+                : new SpannableString(sDecimalFormat.format(Math.round(amount)) + " " + currency);
         int start = text.length() - currency.length() - 1;
         int end = text.length();
         text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -52,6 +67,7 @@ public class AmountCurrencyUtil {
 
     public static void setAmount(TextView textView, String source, String currency) {
         final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
         final SpannableString text = new SpannableString(source);
         int index = 0;
         while (index != -1) {
@@ -90,10 +106,27 @@ public class AmountCurrencyUtil {
         } else if (EUR.equalsIgnoreCase(currency)) {
             return "€";
         } else if (RUB.equalsIgnoreCase(currency) && Build.VERSION.SDK_INT
-                >= Build.VERSION_CODES.M){
+                >= Build.VERSION_CODES.M) {
             return "\u20BD";
         } else {
             return currency;
+        }
+    }
+
+    public static String getLocalizedCurrency(Context context, String code) {
+        switch (code) {
+            case USD:
+                return context.getString(R.string.currency_usd);
+            case PEN:
+                return context.getString(R.string.currency_pen);
+            case ARS:
+                return context.getString(R.string.currency_ars);
+            case EUR:
+                return context.getString(R.string.currency_eur);
+            case RUB:
+                return context.getString(R.string.currency_rub);
+            default:
+                return code;
         }
     }
 
@@ -113,7 +146,7 @@ public class AmountCurrencyUtil {
         }
 
         @Override
-        public void updateMeasureState(TextPaint ds) {
+        public void updateMeasureState(@NonNull TextPaint ds) {
             updateAnyState(ds);
         }
 

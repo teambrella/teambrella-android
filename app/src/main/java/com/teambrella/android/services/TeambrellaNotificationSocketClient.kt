@@ -2,7 +2,6 @@ package com.teambrella.android.services
 
 import android.content.Context
 import android.net.Uri
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.teambrella.android.api.cmd
@@ -54,7 +53,6 @@ class TeambrellaNotificationSocketClient(val context: Context) : TeambrellaServe
 
         val server = TeambrellaServer(context, user.privateKey
                 , user.deviceCode
-                , FirebaseInstanceId.getInstance().token
                 , user.getInfoMask(context))
         socketClient = server.createSocketClient(uri, this, user.notificationTimeStamp)
         socketClient?.connect()

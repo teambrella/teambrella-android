@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -80,7 +81,8 @@ public class TeamClaimsFragment extends AMainDataPagerProgressFragment {
             String[] locations = location != null ? location.split(",") : null;
             JsonWrapper object = data.getObject(TeambrellaModel.ATTR_DATA_ONE_OBJECT);
             final String objectName = object.getString(TeambrellaModel.ATTR_DATA_MODEL);
-            final String objectImageUri = object.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS).get(0).getAsString();
+            final JsonArray photos = object.getJsonArray(TeambrellaModel.ATTR_DATA_SMALL_PHOTOS);
+            final String objectImageUri = (photos != null && photos.size() > 0) ? photos.get(0).getAsString(): null;
             ((ClaimsAdapter) getAdapter()).setObjectDetails(objectImageUri, objectName, locations != null ? locations[0] : null);
         }
     }

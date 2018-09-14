@@ -2,6 +2,7 @@ package com.teambrella.android.ui.wallet
 
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.teambrella.android.R
 import com.teambrella.android.ui.base.ADataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter
@@ -26,7 +27,7 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
             override fun canDrawChild(view: View, parent: RecyclerView): Boolean {
                 var position = parent.getChildAdapterPosition(view)
                 var drawDivider = canDrawChild(position, parent)
-                if (drawDivider && ++position < parent.adapter.itemCount) {
+                if (drawDivider && ++position < parent.adapter?.itemCount ?: 0) {
                     drawDivider = canDrawChild(position, parent)
                 }
                 return drawDivider
@@ -34,7 +35,7 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
 
             private fun canDrawChild(position: Int, parent: RecyclerView): Boolean {
                 var drawDivider = true
-                when (parent.adapter.getItemViewType(position)) {
+                when (parent.adapter?.getItemViewType(position)) {
                     WalletTransactionsAdapter.ViewType.VIEW_TYPE_HEADER,
                     TeambrellaDataPagerAdapter.VIEW_TYPE_LOADING,
                     TeambrellaDataPagerAdapter.VIEW_TYPE_ERROR,

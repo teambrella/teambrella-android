@@ -126,7 +126,7 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
             currency = team?.currency ?: currency
 
             voting?.let {
-                setVotes(it, true)
+                setVotes(it, it.canVote)
             }
 
             data?.voted?.let {

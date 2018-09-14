@@ -6,6 +6,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
@@ -93,13 +98,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             }
 
             customView.findViewById<View>(R.id.send_message)?.apply {
-                if (user.userId == intent.userId) {
-                    visibility = View.GONE
-                } else {
-                    setOnClickListener {
-                        ChatActivity.startConversationChat(this@TeammateActivity, userId, userName, avatar)
-                    }
-                }
+                visibility = View.GONE
             }
         }
 
@@ -165,10 +164,31 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
                     userName = _basic.userName
                     avatar = _basic.avatar
                 }
+
+
+                _data.team?.let { _team ->
+                    supportActionBar?.customView?.findViewById<View>(R.id.send_message)?.apply {
+                        when {
+                            user.userId == intent.userId ||
+                                    _team.teamAccessLevel == TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH
+                            -> {
+                                visibility = View.GONE
+                            }
+                            else -> {
+                                visibility = View.VISIBLE
+                                setOnClickListener {
+                                    ChatActivity.startConversationChat(this@TeammateActivity, userId, userName, avatar)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 _data.discussionPart?.let { _discussion ->
                     topicId = _discussion.topicId
                 }
             }
+
         }
     }
 

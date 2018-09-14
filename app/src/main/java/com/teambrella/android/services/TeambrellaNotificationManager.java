@@ -19,7 +19,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.server.TeambrellaServer;
@@ -29,6 +28,7 @@ import com.teambrella.android.image.glide.GlideRequest;
 import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.WelcomeActivity;
 import com.teambrella.android.ui.background.BackgroundRestrictionsActivity;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
 import com.teambrella.android.ui.chat.ChatActivity;
@@ -38,6 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.teambrella.android.services.push.KPushNotifications.APPLICATION_STARTED;
 import static com.teambrella.android.services.push.KPushNotifications.NEW_CLAIM;
 import static com.teambrella.android.services.push.KPushNotifications.NEW_DISCUSSION;
 import static com.teambrella.android.services.push.KPushNotifications.NEW_TEAMMATE;
@@ -70,6 +71,8 @@ public class TeambrellaNotificationManager {
     private static final int NEW_DISCUSSION_NOTIFICATION_ID = 29;
     private static final int USER_IS_PROXY_NOTIFICATION_ID = 37;
     private static final int BACKGROUND_RESTRICTION_NOTIFICATION_ID = 43;
+    private static final int APPLICATION_APPROVED_ID = 47;
+    private static final int APPLICATION_STARTED_ID = 53;
 
 
     public enum ChatType {
@@ -133,8 +136,7 @@ public class TeambrellaNotificationManager {
         mContext = context;
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mUser = TeambrellaUser.get(mContext);
-        TeambrellaServer mServer = new TeambrellaServer(mContext, mUser.getPrivateKey(), mUser.getDeviceCode()
-                , FirebaseInstanceId.getInstance().getToken(), mUser.getInfoMask(mContext));
+        TeambrellaServer mServer = new TeambrellaServer(mContext, mUser.getPrivateKey(), mUser.getDeviceCode(), mUser.getInfoMask(mContext));
         mImageLoader = new TeambrellaImageLoader(mServer);
         recreateNotificationChannels(context);
     }
@@ -160,6 +162,31 @@ public class TeambrellaNotificationManager {
                                 , 1
                                 , intent
                                 , PendingIntent.FLAG_UPDATE_CURRENT)));
+    }
+
+
+    public void showApplicationApprovedNotification(@Nullable String teamName, @Nullable String teamIcon) {
+        if (teamName != null && teamIcon != null) {
+            notifyUser(APPLICATION_APPROVED_ID, teamName, mContext.getString(R.string.application_approved_notification_description), getTeamIconRequest(teamIcon)
+                    , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext, 1
+                            , new Intent(mContext, WelcomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK), PendingIntent.FLAG_UPDATE_CURRENT)));
+        } else {
+            notifyUser(APPLICATION_APPROVED_ID, mContext.getString(R.string.app_name), mContext.getString(R.string.application_approved_notification_description), (Bitmap) null
+                    , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext, 1
+                            , new Intent(mContext, WelcomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK), PendingIntent.FLAG_UPDATE_CURRENT)));
+        }
+    }
+
+    public void showApplicationStartedNotification(@Nullable String teamName, @Nullable String teamIcon) {
+        if (teamName != null && teamIcon != null) {
+            notifyUser(APPLICATION_STARTED_ID, teamName, mContext.getString(R.string.application_started_notification_description), getTeamIconRequest(teamIcon)
+                    , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext, 1
+                            , new Intent(mContext, WelcomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK), PendingIntent.FLAG_UPDATE_CURRENT)));
+        } else {
+            notifyUser(APPLICATION_STARTED_ID, mContext.getString(R.string.app_name), mContext.getString(R.string.application_started_notification_description), (Bitmap) null
+                    , getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext, 1
+                            , new Intent(mContext, WelcomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK), PendingIntent.FLAG_UPDATE_CURRENT)));
+        }
     }
 
 
@@ -320,6 +347,9 @@ public class TeambrellaNotificationManager {
             case PROXY:
                 showUserIsProxyFor(message.getSenderUserName(), message.getTeamId()
                         , message.getTeamName(), message.getSenderAvatar(), message.isMale());
+                break;
+            case APPLICATION_STARTED:
+                showApplicationStartedNotification(message.getTeamName(), message.getTeamLogo());
                 break;
             case TOPIC_MESSAGE_NOTIFICATION:
                 String senderUserId = message.getSenderUserId();

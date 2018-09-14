@@ -231,24 +231,30 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
             }
 
             data?.voted?.let {
-                votingResultContainerView?.visibility = View.VISIBLE
+                votingResultContainerView?.visibility = when (teamAccessLevel) {
+                    TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH,
+                    TeambrellaModel.TeamAccessLevel.HIDDEN_DETAILS_AND_STEALTH -> {
+                        if (dataHost.isItMe) View.GONE else View.VISIBLE
+                    }
+                    else -> View.VISIBLE
+                }
             }
 
-            data?.discussionPart?.let {
-                unreadView?.text = it.unreadCount?.toString()
-                unreadView?.visibility = if (it.unreadCount ?: 0 > 0) View.VISIBLE else View.GONE
+            data?.discussionPart?.let { _discussionPart ->
+                unreadView?.text = _discussionPart.unreadCount?.toString()
+                unreadView?.visibility = if (_discussionPart.unreadCount ?: 0 > 0) View.VISIBLE else View.GONE
 
-                it.originalPostText?.let { _text ->
+                _discussionPart.originalPostText?.let { _text ->
                     @Suppress("DEPRECATION")
                     messageView?.text = Html.fromHtml(_text)
                 }
 
-                topicId = it.topicId ?: topicId
-                whenView?.text = TeambrellaDateUtils.getRelativeTime(-(it.sinceLastPostMinutes
+                topicId = _discussionPart.topicId ?: topicId
+                whenView?.text = TeambrellaDateUtils.getRelativeTime(-(_discussionPart.sinceLastPostMinutes
                         ?: 0L))
 
-                val posterCount = it.posterCount ?: 0
-                it.topPosterAvatars?.map { it.asString }?.let {
+                val posterCount = _discussionPart.posterCount ?: 0
+                _discussionPart.topPosterAvatars?.map { it.asString }?.let {
                     avatarsView?.setAvatars(imageLoader, it, posterCount)
                 }
 

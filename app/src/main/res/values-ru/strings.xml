@@ -1,6 +1,7 @@
 <resources>
 
     <string name="locale">ru</string>
+    <string name="currency_rub">РУБ</string>
     <!-- Bottom navigation bar -->
     <string name="bottom_navigation_home">Домой</string>
     <string name="bottom_navigation_team">Команда</string>
@@ -10,7 +11,7 @@
     <!-- Team's tab -->
     <string name="team_feed">Лента</string>
     <string name="team_members">Участники</string>
-    <string name="team_claims">Заявки</string>
+    <string name="team_claims">Выплаты</string>
 
 
     <string name="teammates">Участники</string>
@@ -22,34 +23,39 @@
 
     <string name="object">Объект</string>
     <string name="coverage_type">Защита</string>
-    <string name="collision_deductible_insurance">Франшиза</string>
+    <string name="collision_deductible_insurance">Ущерб</string>
 
     <string name="limit">Лимит</string>
-    <string name="see_claims_format_string">Смотреть заявки (%d)</string>
+    <string name="see_claims_format_string">Заявки на Выплату(%d)</string>
     <string name="voting_stats">Статистика</string>
     <string name="weight">Вес</string>
 
+    <string name="teammate_net_format_string_plus"><![CDATA[<font color="#1fc0b6">+</font> %2$s %1$s]]></string>
+    <string name="teammate_net_format_string_minus"><![CDATA[<font color="#dc2459">-</font> %2$s %1$s]]></string>
+    <string name="teammate_net_format_string_zero">0 %s</string>
 
-    <string name="proxy_rank">Прокси Рейтинг</string>
+
+    <string name="proxy_rank">Рейтинг</string>
 
     <string name="decisions">Решения</string>
     <string name="discussions">Обсуждения</string>
     <string name="voting_frequency">Част. голосования</string>
+    <string name="voting_frequency_short">Част. голос.</string>
     <string name="add_to_my_proxies">Сделать моим прокси</string>
 
 
     <string name="claim_title_format_string">Заявка %d</string>
     <string name="claim_title_date_format_string">Заявка - %s</string>
     <string name="claim_details">Детали заявки</string>
-    <string name="claim_amount">Сумма заявки</string>
+    <string name="claim_amount">Сумма выплаты</string>
     <string name="voting">Голосование</string>
     <string name="voting_risk">Голосование: Риск</string>
     <string name="estimated_expenses">Предполагаемые расходы</string>
-    <string name="deductible">Подлежит вычету</string>
+    <string name="deductible">Франшиза</string>
     <string name="coverage">Защита</string>
-    <string name="incident_date">Дата</string>
+    <string name="incident_date">Дата происшествия</string>
 
-    <string name="amount_format_string" formatted="false">%1$s%2$d</string>
+    <string name="amount_format_string" formatted="false">%2$s %1$s</string>
     <string name="percentage_format_string">%d%%</string>
 
 
@@ -64,7 +70,7 @@
     <string name="no_teammate_vote_value">. . .</string>
 
     <string name="wallet">Кошелек</string>
-    <string name="submit_another_claim">Подать Заявку</string>
+    <string name="submit_another_claim">Заявка на Выплату</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
     <string name="your_claim">Твоя заявка</string>
@@ -75,12 +81,12 @@
     <string name="pet_insurance">Здоровье Питомца</string>
     <string name="claim">Заявка</string>
     <string name="application_discussion">Обсуждение</string>
-
-    <string name="here_whats_new">Свежие новости для тебя</string>
+    <string name="here_whats_new">Вот новости для тебя:</string>
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
+    <string name="continue_with_vk">Продолжить с VK</string>
     <string name="proxy_vote">Голос прокси</string>
-    <string name="my_proxies">Мои прокси</string>
+    <string name="my_proxies">Мои Прокси</string>
     <string name="proxy_for">Я Прокси Для</string>
     <string name="user_index">User Index</string>
     <string name="remove_from_my_proxies">Убрать из моих прокси</string>
@@ -89,7 +95,7 @@
     <string name="i_am_proxy_for">Для кого ты прокси</string>
     <string name="last_voted_format_string">Последний голос: %s</string>
     <string name="you">Ты</string>
-    <string name="opt_into_rating">Войти в рейтинг</string>
+    <string name="opt_into_rating">Вступить в рейтинг</string>
     <string name="opt_out_of_rating">Выйти из рейтинга</string>
     <string name="profile">Профиль</string>
     :ы
@@ -121,7 +127,7 @@
     <string name="report_claim">Подать заявку</string>
     <string name="report">Заявка</string>
     <string name="expenses">Расходы</string>
-    <string name="describe_your_case">Опиши случай</string>
+    <string name="describe_your_case">Опиши свою ситуацию</string>
     <string name="photos">Фото</string>
     <string name="add_photos">Добавить фото</string>
     <string name="reimburse_to">Перечислить на</string>
@@ -143,7 +149,7 @@
     <string name="claim_vote_format_string">Голос (%d%%)</string>
     <string name="claim_reimbursed">Возмещено</string>
     <string name="bike_insurance">Кража</string>
-    <string name="something_went_wrong_error">Упс! Что-то пощло не так.</string>
+    <string name="something_went_wrong_error">Упс! Что-то пошло не так.</string>
     <string name="no_internet_connection">Нет интернет соединения.</string>
     <string name="chat_not_voted_yet">Еще нет голоса</string>
     <string name="chat_voted">Голос</string>
@@ -161,27 +167,28 @@
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У тебя ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выбери кого-то, кому доверяешь, чтобы он стал твоим прокси.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
     <string name="private_conversation">Private Chat</string>
-    <string name="ends_in">Зак. через %s</string>
+    <string name="ends_in">Осталось %s</string>
     <string name="declined">Отменена</string>
     <string name="all_votes">Все голоса</string>
     <string name="weight_format_string"><![CDATA[Вес <b>%.1f</b>]]></string>
     <string name="votes">Голоса</string>
     <string name="private_message_notification_title">%s (новое сообщение)</string>
-    <string name="withdraw">Снять</string>
+    <string name="withdraw">Вывести</string>
     <string name="reserved">Зарезервировано</string>
     <string name="available">Доступно</string>
     <string name="fund_wallet">Пополнить кошелек</string>
-    <string name="recommended_funding">Рекомендовано внести</string>
+    <string name="recommended_funding">Рекомендовано пополнить</string>
     <string name="recommended">Рекомендовано</string>
     <string name="copy_address">Скопировать адрес</string>
     <string name="ethereum_address">Адрес Ethereum</string>
     <string name="qr_code">QR-код</string>
-    <string name="cosigners">Сопоручители</string>
+    <string name="cosigners">Со-подписчики</string>
     <string name="now">Сейчас</string>
     <string name="unable_to_connect_try_later">Ой, невозможно связаться с Teambrella. Сохраняй спокойствие и попробуй позже.</string>
     <string name="object_cat">Кошка</string>
     <string name="object_bike">Велосипед</string>
     <string name="object_pet">Питомец</string>
+    <string name="object_car">Машина</string>
     <string name="team_avg">СРЕДН.\nКоманды</string>
     <string name="no_coverage_for_the_date">0% защиты на этот день</string>
     <string name="we_are_invite_only_title">"Только про приглашениям!"</string>
@@ -205,12 +212,15 @@
     <string name="my_dog">Собака</string>
     <string name="my_pet">Питомец</string>
     <string name="my_bike">Велосипед</string>
+    <string name="his_car">Машина</string>
+    <string name="her_car">Машина</string>
+    <string name="my_car">Моя Машина</string>
     <string name="object_dog">Собака</string>
     <string name="cover_him">Зашищаю Его</string>
     <string name="cover_her">Защишаю Ее</string>
     <string name="would_cover_him">Защищал Бы Его</string>
     <string name="would_cover_her">Защищал Бы Ее</string>
-    <string name="others">Другие</string>
+    <string name="compare">Сравнить</string>
 
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Еще нет заявок в команде.</font>]]></string>
     <string name="no_messages"><![CDATA[<font color=\'#3c4753\'>Нет сообщений.</font>]]></string>
@@ -260,7 +270,7 @@
     <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>
     <string name="notification_option_muted_title">Выключены</string>
     <string name="notification_option_muted_description">Уведомления выключены для чата.</string>
-    <string name="claim_amount_format_string"><![CDATA[СУММА ЗАЯВКИ - %1$d <font color=\'#35abd9\'>%2$s</font>]]></string>
+    <string name="claim_amount_format_string"><![CDATA[ЗАЯВКA - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
     <string name="mute_unmute_notification_help">Теперь ты получаешь уведомления о новых сообщениях в чате.</string>
     <string name="message">Сообщение</string>
 
@@ -298,7 +308,7 @@
 
     <string name="notification_channel_private_chats">Приватные чаты</string>
     <string name="notification_channel_subscribed_chats">Чаты по подписке</string>
-    <string name="notification_channel_new_claims">Новые заявки</string>
+    <string name="notification_channel_new_claims">Новые выплаты</string>
     <string name="notification_channel_wallet">Кошелек</string>
     <string name="notification_channel_team_updates">Обновления в команде</string>
     <string name="notification_group_chats">Чаты</string>

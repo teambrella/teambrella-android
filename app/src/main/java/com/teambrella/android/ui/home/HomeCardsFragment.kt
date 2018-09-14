@@ -8,6 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
@@ -27,7 +34,7 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
     private val header: TextView? by ViewHolder(R.id.home_header)
     private val subHeader: TextView? by ViewHolder(R.id.home_sub_header)
     private val cardsPager: ViewPager? by ViewHolder(R.id.cards_pager)
-    private var adapter: CardsAdapter? = null
+    private var pagerAdapter: CardsAdapter? = null
     private val pagerIndicator: LinearLayout? by ViewHolder(R.id.page_indicator)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -35,7 +42,11 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         cardsPager?.pageMargin = 20
+        val adapter = CardsAdapter()
+        cardsPager?.adapter = adapter
+        pagerAdapter = adapter
         super.onViewCreated(view, savedInstanceState)
+        dataHost.getObservable(tags[0]).observe(this, adapter)
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -43,59 +54,149 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
         data?.let { _data ->
             header?.text = getString(R.string.welcome_user_format_string, _data.name?.trim()?.split(" ".toRegex())!![0])
             subHeader?.visibility = View.VISIBLE
+            val inflater = LayoutInflater.from(context)
+            pagerIndicator?.removeAllViews()
+            _data.cards?.forEachIndexed { index, _ ->
+                val view = inflater.inflate(R.layout.home_card_pager_indicator, pagerIndicator, false)
+                view.isSelected = cardsPager?.currentItem ?: 0 == index
+                pagerIndicator?.addView(view)
+            }
 
-            if (adapter == null) {
-
-                adapter = CardsAdapter(_data.cards?.size() ?: 0)
-                cardsPager?.adapter = adapter
-
-                val inflater = LayoutInflater.from(context)
-                _data.cards?.forEachIndexed { index, _ ->
-                    val view = inflater.inflate(R.layout.home_card_pager_indicator, pagerIndicator, false)
-                    view.isSelected = cardsPager?.currentItem ?: 0 == index
-                    pagerIndicator?.addView(view)
+            cardsPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {
+                    (parentFragment as KHomeFragment).refreshingEnabled = state == ViewPager.SCROLL_STATE_IDLE
                 }
 
-                cardsPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                    override fun onPageScrollStateChanged(state: Int) {
-                        (parentFragment as KHomeFragment).refreshingEnabled = state == ViewPager.SCROLL_STATE_IDLE
-                    }
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
 
-                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
-
-                    override fun onPageSelected(position: Int) {
-                        for (i in 0..(pagerIndicator?.childCount ?: 0)) {
-                            pagerIndicator?.getChildAt(i)?.isSelected =
-                                    (i == position)
-                        }
+                override fun onPageSelected(position: Int) {
+                    for (i in 0..(pagerIndicator?.childCount ?: 0)) {
+                        pagerIndicator?.getChildAt(i)?.isSelected =
+                                (i == position)
                     }
-                })
-            } else {
-                adapter?.notifyDataSetChanged()
-            }
+                }
+            })
         }
     }
 
+    inner class CardsAdapter : FragmentStatePagerAdapter(childFragmentManager), Observer<Notification<JsonObject>> {
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        adapter = null
-    }
+        private var cards: JsonArray? = null
 
-    inner class CardsAdapter(val size: Int) : FragmentStatePagerAdapter(childFragmentManager) {
-        override fun getItem(position: Int): Fragment = createCardFragment(position, tags)
-        override fun getCount() = size
-        override fun getItemPosition(`object`: Any) = PagerAdapter.POSITION_UNCHANGED
+        override fun getItem(position: Int): Fragment =
+                when (cards?.get(position)?.asJsonObject.itemType) {
+                    TeambrellaModel.FEED_ITEM_PAY_TO_JOIN -> createCardFragment(PayToJoinCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+
+                    TeambrellaModel.FEED_ITEM_UPDATE_PROFILE -> createCardFragment(UpdateProfileCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+
+                    else -> createCardFragment(ClaimCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+                }
+
+
+        override fun getCount() = cards?.size() ?: 0
+        override fun getItemPosition(fragment: Any): Int {
+            if (fragment is CardFragment) {
+                return if (fragment.type == cards?.get(fragment.position)?.asJsonObject?.itemType) PagerAdapter.POSITION_UNCHANGED else
+                    PagerAdapter.POSITION_NONE
+            }
+            return PagerAdapter.POSITION_NONE
+        }
+
+        override fun onChanged(notification: Notification<JsonObject>?) {
+            if (notification?.isOnNext == true) {
+                cards = notification.value?.data?.cards
+                notifyDataSetChanged()
+            }
+        }
     }
 }
 
 private const val EXTRA_POSITION = "position"
+private const val EXTRA_TYPE = "type"
 
-private fun createCardFragment(position: Int, tags: Array<String>) = createDataFragment(tags, KCardFragment::class.java).apply {
+private fun <T : CardFragment> createCardFragment(clazz: Class<T>, position: Int, type: Int, tags: Array<String>) = createDataFragment(tags, clazz).apply {
     arguments?.putInt(EXTRA_POSITION, position)
+    arguments?.putInt(EXTRA_TYPE, type)
 }
 
-class KCardFragment : ADataFragment<IMainDataHost>() {
+
+abstract class CardFragment : ADataFragment<IMainDataHost>() {
+    val position: Int by lazy(LazyThreadSafetyMode.NONE) {
+        arguments?.getInt(EXTRA_POSITION, 0) ?: 0
+    }
+    val type: Int by lazy(LazyThreadSafetyMode.NONE) {
+        arguments?.getInt(EXTRA_TYPE, 0) ?: 0
+    }
+}
+
+class PayToJoinCardFragment : CardFragment() {
+
+    private val titleView: TextView? by ViewHolder(R.id.title)
+    private val textView: TextView? by ViewHolder(R.id.text)
+    private val subtitle: TextView? by ViewHolder(R.id.subtitle)
+    private val icon: ImageView? by ViewHolder(R.id.icon)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.home_cards_action, container, false)
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.setOnClickListener { _ ->
+            dataHost.showWallet()
+        }
+    }
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+            titleView?.text = it.chatTitle
+            textView?.text = it.text
+            subtitle?.text = it.subTitle
+            icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+        }
+    }
+}
+
+
+class UpdateProfileCardFragment : CardFragment() {
+
+    private val titleView: TextView? by ViewHolder(R.id.title)
+    private val textView: TextView? by ViewHolder(R.id.text)
+    private val subtitle: TextView? by ViewHolder(R.id.subtitle)
+    private val icon: ImageView? by ViewHolder(R.id.icon)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.home_cards_action, container, false)
+
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+            titleView?.text = it.chatTitle
+            textView?.text = it.text
+            subtitle?.text = it.subTitle
+            icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+
+
+            view?.setOnClickListener { _ ->
+                startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
+                        , it.itemUserId
+                        , it.itemUserName
+                        , null
+                        , it.topicId
+                        , dataHost.teamAccessLevel))
+            }
+        }
+    }
+}
+
+
+class ClaimCardFragment : CardFragment() {
 
     private val icon: ImageView? by ViewHolder(R.id.icon)
     private val teammatePicture: ImageView? by ViewHolder(R.id.teammate_picture)
@@ -107,13 +208,6 @@ class KCardFragment : ADataFragment<IMainDataHost>() {
     private val leftTile: TextView? by ViewHolder(R.id.left_title)
     private val votingLabel: TextView? by ViewHolder(R.id.voting_label)
     private val message: TextView? by ViewHolder(R.id.message_text)
-    private var position: Int = 0
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        position = arguments?.getInt(EXTRA_POSITION, 0) ?: 0
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.home_card_claim, container, false)
@@ -122,7 +216,6 @@ class KCardFragment : ADataFragment<IMainDataHost>() {
     override fun onDataUpdated(notification: Notification<JsonObject>) {
         val card = notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject
         card?.let { _card ->
-
             when (_card.itemType) {
                 TeambrellaModel.FEED_ITEM_TEAMMATE -> {
                     leftTile?.setText(R.string.coverage)
