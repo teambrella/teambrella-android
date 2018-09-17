@@ -358,10 +358,15 @@
     <string name="application_approved_notification_description" translatable="false">Your application has been approved</string>
     <string name="application_started_notification_description" translatable="false">Your application has been started</string>
 
+    <string name="registration" translatable="false">Registration</string>
+    <string name="model" translatable="false">Model</string>
+    <string name="year" translatable="false">Year</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="agree" translatable="false">Agree</string>
+
     <string name="personal_info" translatable="false">Personal Info</string>
     <string name="my_name_is_title" translatable="false">My Name Is</string>
     <string name="birthday_title" translatable="false">Birthday</string>
-    <string name="gender_title" translatable="false">Gender</string>
     <string name="location_title" translatable="false">Location</string>
     <string name="next" translatable="false">Next</string>
 
