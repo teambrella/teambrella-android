@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.registration
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.net.Uri
@@ -17,10 +19,26 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
+data class RegistrationInfo(val initObject: RegistrationInfo? = null,
+                            val teamIcon: String? = initObject?.teamIcon,
+                            val teamName: String? = initObject?.teamName,
+                            val teamCountry: String? = initObject?.teamCountry,
+                            val model: String? = initObject?.model,
+                            val city: String? = initObject?.city,
+                            val userName: String? = initObject?.userName,
+                            val email: String? = initObject?.email
+)
+
 class RegistrationViewModel : ViewModel() {
+    private val _regInfo = MutableLiveData<RegistrationInfo>()
 
+    val regInfo: LiveData<RegistrationInfo>
+        get() = _regInfo
+
+    init {
+        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Russia"))
+    }
 }
-
 
 interface TeambrellaCityAPI {
     @GET("GeoObject/GetCities")

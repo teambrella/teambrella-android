@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -45,16 +45,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/team_icon"
-            android:text="Aнтикаско"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/country"
+            android:id="@+id/team_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Russia"
             android:textAllCaps="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +68,7 @@
             android:background="@drawable/section_background"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/country"
+            app:layout_constraintTop_toBottomOf="@id/team_country"
             app:layout_constraintVertical_bias="0.0"
             android:orientation="vertical"
             android:layout_margin="16dp"
