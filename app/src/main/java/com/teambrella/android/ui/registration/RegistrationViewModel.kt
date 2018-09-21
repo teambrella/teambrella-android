@@ -36,7 +36,7 @@ class RegistrationViewModel : ViewModel() {
         get() = _regInfo
 
     init {
-        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Russia"))
+        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Россия"))
     }
 }
 
@@ -46,7 +46,7 @@ interface TeambrellaCityAPI {
 }
 
 interface TeambrellaCarsAPI {
-    @GET("carobject/getcars?q=Q")
+    @GET("carobject/getcars")
     fun getCarList(@Query("q") query: String): Observable<List<String>>
 }
 

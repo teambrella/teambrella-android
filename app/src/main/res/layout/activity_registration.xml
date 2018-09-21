@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:background="@color/colorAccent"
             android:src="@drawable/ic_confetti_color"
             tools:ignore="ContentDescription" />
 
@@ -90,9 +92,10 @@
                 style="@style/Teambrella.TextAppearance.Input"
                 android:maxLines="1"
                 android:inputType="text"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:scrollHorizontally="true"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:nextFocusForward="@id/location_value" />
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/location_title"
@@ -106,7 +109,7 @@
                 android:maxLines="1"
                 android:inputType="text"
                 android:imeOptions="actionNext"
-                android:nextFocusForward="@+id/next"
+                android:nextFocusForward="@+id/name_value"
                 android:scrollHorizontally="true"
                 android:layout_marginTop="8dp" />
 
@@ -122,7 +125,7 @@
                 style="@style/Teambrella.TextAppearance.Input"
                 android:maxLines="1"
                 android:inputType="text"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:scrollHorizontally="true"
                 android:layout_marginTop="8dp" />
 
@@ -143,17 +146,27 @@
                 android:layout_marginTop="8dp" />
 
 
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/agreement"
+                android:layout_width="match_parent"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/blueGrey"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/terms_of_services_agreement" />
+
+
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/agree"
+                android:id="@+id/register"
                 style="@style/Teambrella.TextAppearance.SectionButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:layout_marginTop="36dp"
                 android:layout_gravity="end"
                 android:background="@drawable/header_button"
-                android:text="@string/agree"
+                android:text="@string/register"
                 android:focusable="true"
                 android:textColor="@android:color/white" />
 

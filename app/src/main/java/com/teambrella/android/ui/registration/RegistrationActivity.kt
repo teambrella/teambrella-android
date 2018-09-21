@@ -7,8 +7,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.Html
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.teambrella.android.BuildConfig
 import com.teambrella.android.R
@@ -28,6 +28,7 @@ class RegistrationActivity : AppCompatActivity() {
     private lateinit var teamIconView: ImageView
     private lateinit var teamNameView: TextView
     private lateinit var teamCountryView: TextView
+    private lateinit var agreement: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,8 @@ class RegistrationActivity : AppCompatActivity() {
         teamNameView = findViewById(R.id.team_name)
         teamCountryView = findViewById(R.id.team_country)
 
+        agreement = findViewById(R.id.agreement)
+
         modelView.setAdapter(CarAdapter(this))
         locationView.setAdapter(CityAdapter(this))
         locationView.onItemClickListener = ItemClickListener()
@@ -60,16 +63,14 @@ class RegistrationActivity : AppCompatActivity() {
             teamCountryView.text = regInfo?.teamCountry
         })
 
+
+        agreement.text = Html.fromHtml(getString(R.string.terms_of_services_agreement))
+
     }
 
     private inner class ItemClickListener : AdapterView.OnItemClickListener {
         override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            val focus = currentFocus
-            if (focus != null) {
-                val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputManager.hideSoftInputFromWindow(focus.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-
-            }
+            findViewById<View>(currentFocus.nextFocusForwardId).requestFocus()
         }
     }
 }
