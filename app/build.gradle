@@ -8,7 +8,7 @@ buildscript {
 
     dependencies {
         //noinspection GradleDynamicVersion
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 apply plugin: 'com.android.application'
@@ -39,8 +39,8 @@ android {
         minSdkVersion 19
         //noinspection OldTargetApi
         targetSdkVersion 27
-        versionCode 151
-        versionName "and-0.5.0.151"
+        versionCode 152
+        versionName "and-0.5.0.152"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -161,14 +161,14 @@ dependencies {
 
     /*Image Loader*/
     implementation 'de.hdodenhof:circleimageview:2.1.0'
-    implementation("com.github.bumptech.glide:glide:4.7.1") {
+    implementation("com.github.bumptech.glide:glide:4.8.0") {
         exclude group: "com.android.support"
     }
-    implementation("com.github.bumptech.glide:recyclerview-integration:4.7.1") {
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
         transitive = false
     }
 
-    kapt 'com.github.bumptech.glide:compiler:4.7.1'
+    kapt 'com.github.bumptech.glide:compiler:4.8.0'
 
     /* *Facebook SDK*/
     implementation 'com.facebook.android:facebook-android-sdk:4.33.0'
@@ -177,7 +177,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:16.0.3'
     implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-messaging:17.3.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
 
