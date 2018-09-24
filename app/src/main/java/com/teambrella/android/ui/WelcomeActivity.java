@@ -29,6 +29,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
@@ -44,7 +45,6 @@ import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.services.TeambrellaLoginService;
 import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
-import com.teambrella.android.ui.registration.RegistrationActivity;
 import com.teambrella.android.ui.registration.RegistrationActivityKt;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
@@ -647,4 +647,10 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mWaitVkLoginResponse = false;
         setState(State.INIT);
     };
+
+
+    private void checkDynamicLinks() {
+        Log.e("TEST", FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).getResult().getLink().toString());
+    }
+
 }

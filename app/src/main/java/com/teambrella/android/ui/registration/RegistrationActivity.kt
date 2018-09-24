@@ -51,7 +51,7 @@ class RegistrationActivity : AppCompatActivity() {
         modelView.setAdapter(CarAdapter(this))
         locationView.setAdapter(CityAdapter(this))
         locationView.onItemClickListener = ItemClickListener()
-        modelView.onItemClickListener = ItemClickListener()
+        modelView.onItemClickListener = ModelClickListener()
 
 
         ViewModelProviders.of(this).get(RegistrationViewModel::class.java).regInfo.observe(this, Observer { regInfo ->
@@ -73,4 +73,28 @@ class RegistrationActivity : AppCompatActivity() {
             findViewById<View>(currentFocus.nextFocusForwardId).requestFocus()
         }
     }
+
+    private inner class ModelClickListener : AdapterView.OnItemClickListener {
+        override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            val model = parent?.adapter?.getItem(position)
+            if (model is String) {
+                model.trim().takeIf {
+                    it[it.length - 4].isDigit() && it[it.length - 3].isDigit()
+                            && it[it.length - 2].isDigit() && it[it.length - 1].isDigit()
+                }.let {
+                    if (it != null) {
+                        findViewById<View>(currentFocus.nextFocusForwardId).requestFocus()
+                    } else {
+                        modelView.setText(model, true)
+                        modelView.postDelayed({ modelView.showDropDown() }, 100)
+                    }
+
+                }
+
+
+            }
+
+        }
+    }
+
 }
