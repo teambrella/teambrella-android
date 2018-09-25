@@ -39,8 +39,8 @@ android {
         minSdkVersion 19
         //noinspection OldTargetApi
         targetSdkVersion 27
-        versionCode 151
-        versionName "and-0.5.0.151"
+        versionCode 152
+        versionName "and-0.5.0.152"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -177,8 +177,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:16.0.3'
     implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-invites:16.0.3'
     implementation 'com.google.firebase:firebase-messaging:17.3.2'
+    implementation 'com.google.firebase:firebase-invites:16.0.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
 

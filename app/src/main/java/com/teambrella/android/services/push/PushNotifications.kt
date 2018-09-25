@@ -56,6 +56,8 @@ private const val TOPIC_NAME = "TopicName"
 private const val DISCUSSION_TOPIC_NAME = "DiscussionTopicName"
 private const val MY_TOPIC = "MyTopic"
 private const val USER_GENDER = "UserGender"
+private const val TITLE = "Title"
+private const val SUBTITLE = "Subtitle"
 
 interface INotificationMessage {
 
@@ -86,6 +88,8 @@ interface INotificationMessage {
     var amount: String?
     var debug: Boolean
     var isMale: Boolean
+    var title: String?
+    var subtitle: String?
 }
 
 class FireBaseNotificationMessage(val data: MutableMap<String, String>) : INotificationMessage {
@@ -117,7 +121,8 @@ class FireBaseNotificationMessage(val data: MutableMap<String, String>) : INotif
     override var amount: String? = data[AMOUNT]
     override var debug: Boolean = data[DEBUG]?.toBoolean() ?: false
     override var isMale: Boolean = (FEMALE != data[USER_GENDER])
-
+    override var title: String? = data[TITLE]
+    override var subtitle: String? = data[SUBTITLE]
 }
 
 
@@ -151,6 +156,8 @@ class BundleNotificationMessage(val data: Bundle) : INotificationMessage {
         amount = message.amount
         debug = message.debug
         isMale = message.isMale
+        title = message.title
+        subtitle = message.subtitle
     }
 
     override var cmd: Int
@@ -291,6 +298,17 @@ class BundleNotificationMessage(val data: Bundle) : INotificationMessage {
         set(value) {
             data.putBoolean(USER_GENDER, value)
         }
+
+    override var title: String?
+        get() = data.getString(TITLE)
+        set(value) {
+            data.putString(TITLE, value)
+        }
+    override var subtitle: String?
+        get() = data.getString(SUBTITLE)
+        set(value) {
+            data.putString(SUBTITLE, value)
+        }
 }
 
 
@@ -322,6 +340,8 @@ class SocketNotificationMessage(private val data: JsonObject) : INotificationMes
     override var amount: String? = data.amountStr
     override var debug: Boolean = false
     override var isMale: Boolean = data.userGender?.equals(FEMALE) ?: true
+    override var title: String? = null
+    override var subtitle: String? = null
 }
 
 
