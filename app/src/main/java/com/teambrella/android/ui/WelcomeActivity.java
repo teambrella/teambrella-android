@@ -165,29 +165,54 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             setState(State.INIT);
             registerUser(facebookAccessToken, privateKey, key.getPublicKeyAsHex());
         } else {
-            Intent intent = getIntent();
-            Uri uri = intent.getData();
-            if (uri != null) {
-                switch (TeambrellaLinks.INSTANCE.match(uri)) {
-                    case TeambrellaLinks.JOIN: {
-                        RegistrationActivityKt.startRegistration(this, uri);
-                        finish();
-                        return;
-                    }
-                    default: {
-                        mUser.setPrivateKey(uri.getQueryParameter("key"));
-                        getTeams(mUser.getPrivateKey());
-                        return;
-                    }
-                }
-            }
+            checkDynamicLink(savedInstanceState);
+        }
+    }
 
-            if (savedInstanceState == null) {
-                mWalletBackupManager.readOnConnected(false);
-                setState(State.LOADING);
-            } else {
-                setState(State.INIT);
-            }
+
+    private void checkDynamicLink(@Nullable Bundle savedInstanceState) {
+        final Intent intent = getIntent();
+        if (intent != null) {
+            FirebaseDynamicLinks.getInstance()
+                    .getDynamicLink(getIntent())
+                    .addOnSuccessListener(this, pendingDynamicLinkData -> {
+                        Uri deepLink = pendingDynamicLinkData != null ? pendingDynamicLinkData.getLink() : null;
+                        if (deepLink != null) {
+                            switch (TeambrellaLinks.INSTANCE.match(deepLink)) {
+                                case TeambrellaLinks.JOIN: {
+                                    RegistrationActivityKt.startRegistration(this, deepLink);
+                                    finish();
+                                }
+                            }
+                        } else {
+                            onNoDynamicLinks(savedInstanceState);
+                        }
+                    })
+                    .addOnFailureListener(this, e -> {
+                        onNoDynamicLinks(savedInstanceState);
+                    });
+            setState(State.LOADING);
+        } else {
+            onNoDynamicLinks(savedInstanceState);
+        }
+    }
+
+
+    private void onNoDynamicLinks(@Nullable Bundle savedInstanceState) {
+
+        Intent intent = getIntent();
+        Uri uri = intent.getData();
+        if (uri != null) {
+            mUser.setPrivateKey(uri.getQueryParameter("key"));
+            getTeams(mUser.getPrivateKey());
+            return;
+        }
+
+        if (savedInstanceState == null) {
+            mWalletBackupManager.readOnConnected(false);
+            setState(State.LOADING);
+        } else {
+            setState(State.INIT);
         }
     }
 
@@ -655,10 +680,5 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mWaitVkLoginResponse = false;
         setState(State.INIT);
     };
-
-
-    private void checkDynamicLinks() {
-        Log.e("TEST", FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).getResult().getLink().toString());
-    }
 
 }

@@ -162,7 +162,7 @@
     <string name="notification_claim_header">Новая заявка в %1$s</string>
     <string name="notification_claim_text">%1$s на %2$s</string>
     <string name="notification_messages_since">%d new messages</string>
-    <string name="notification_funded_header">Кошелек пополне</string>
+    <string name="notification_funded_header">Кошелек пополнен</string>
     <string name="inbox">Приватные сообщения</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У тебя ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выбери кого-то, кому доверяешь, чтобы он стал твоим прокси.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
@@ -216,10 +216,10 @@
     <string name="her_car">Машина</string>
     <string name="my_car">Моя Машина</string>
     <string name="object_dog">Собака</string>
-    <string name="cover_him">Зашищаю Его</string>
-    <string name="cover_her">Защишаю Ее</string>
+    <string name="cover_him">Защищаю Его</string>
+    <string name="cover_her">Защищаю Её</string>
     <string name="would_cover_him">Защищал Бы Его</string>
-    <string name="would_cover_her">Защищал Бы Ее</string>
+    <string name="would_cover_her">Защищал Бы Её</string>
     <string name="compare">Сравнить</string>
 
     <string name="no_claims"><![CDATA[<font color=\'#3c4753\'>Еще нет заявок в команде.</font>]]></string>
@@ -264,7 +264,7 @@
 
     <string name="vote">Голосовать</string>
     <string name="vote_chat">Голос</string>
-    <string name="card_voting_label">Aктивно</string>
+    <string name="card_voting_label">Активно</string>
     <string name="notification_settings">Настройки уведомлений</string>
     <string name="notification_option_unmuted_title">Включены</string>
     <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>
@@ -280,7 +280,7 @@
     <string name="backup_your_wallet_title">Резервное копирование кошелька</string>
     <string name="backup_your_wallet_description">Чтобы восстановить доступ к кошельку понадобится приватный ключ. Строго рекомендуется сохранить ключ с помощью Google Smart Lock.</string>
     <string name="tap_to_backup_wallet">Нажми, чтобы сохранить кошелек с помощью Google Smart Lock</string>
-    <string name="save_password">Cохранить Пароль</string>
+    <string name="save_password">Сохранить Пароль</string>
     <string name="later">Позже</string>
 
     <string name="rating">Рейтинг</string>
