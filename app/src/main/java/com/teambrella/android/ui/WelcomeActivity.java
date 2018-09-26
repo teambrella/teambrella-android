@@ -34,6 +34,7 @@ import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaClientException;
+import com.teambrella.android.api.TeambrellaLinks;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -167,9 +168,18 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             Intent intent = getIntent();
             Uri uri = intent.getData();
             if (uri != null) {
-                mUser.setPrivateKey(uri.getQueryParameter("key"));
-                getTeams(mUser.getPrivateKey());
-                return;
+                switch (TeambrellaLinks.INSTANCE.match(uri)) {
+                    case TeambrellaLinks.JOIN: {
+                        RegistrationActivityKt.startRegistration(this, uri);
+                        finish();
+                        return;
+                    }
+                    default: {
+                        mUser.setPrivateKey(uri.getQueryParameter("key"));
+                        getTeams(mUser.getPrivateKey());
+                        return;
+                    }
+                }
             }
 
             if (savedInstanceState == null) {
@@ -434,11 +444,9 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
 
     private void onTryDemo(@SuppressWarnings("unused") View v) {
-//        mUser.setDemoUser();
-//        getDemoTeams(mUser.getPrivateKey());
-//        StatisticHelper.onTryDemo(this);
-        RegistrationActivityKt.startRegistration(this);
-        finish();
+        mUser.setDemoUser();
+        getDemoTeams(mUser.getPrivateKey());
+        StatisticHelper.onTryDemo(this);
     }
 
     @Override

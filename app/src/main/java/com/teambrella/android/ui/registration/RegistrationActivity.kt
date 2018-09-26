@@ -7,94 +7,67 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.Html
 import android.view.View
-import android.widget.*
-import com.teambrella.android.BuildConfig
 import com.teambrella.android.R
-import com.teambrella.android.image.glide.GlideApp
 
 
-fun startRegistration(context: Context) {
-    context.startActivity(Intent(context, RegistrationActivity::class.java))
+fun startRegistration(context: Context, data: Uri) {
+    context.startActivity(Intent(context, RegistrationActivity::class.java).setData(data))
 }
 
 class RegistrationActivity : AppCompatActivity() {
 
-    private lateinit var modelView: AutoCompleteTextView
-    private lateinit var locationView: AutoCompleteTextView
-    private lateinit var nameView: EditText
-    private lateinit var emailView: EditText
-    private lateinit var teamIconView: ImageView
-    private lateinit var teamNameView: TextView
-    private lateinit var teamCountryView: TextView
-    private lateinit var agreement: TextView
+    companion object {
+        const val WELCOME_FRAGMENT_TAG = "welcome_tag"
+        const val REGISTRATION_FRAGMENT_TAG = "registration_fragment_tag"
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         setContentView(R.layout.activity_registration)
 
-        modelView = findViewById(R.id.model_value)
-        locationView = findViewById(R.id.location_value)
-        nameView = findViewById(R.id.name_value)
-        emailView = findViewById(R.id.email_value)
+        viewModel.regInfo.observe(this, Observer { _regInfo ->
+            when (_regInfo?.uiState) {
 
-        teamIconView = findViewById(R.id.team_icon)
-        teamNameView = findViewById(R.id.team_name)
-        teamCountryView = findViewById(R.id.team_country)
-
-        agreement = findViewById(R.id.agreement)
-
-        modelView.setAdapter(CarAdapter(this))
-        locationView.setAdapter(CityAdapter(this))
-        locationView.onItemClickListener = ItemClickListener()
-        modelView.onItemClickListener = ModelClickListener()
-
-
-        ViewModelProviders.of(this).get(RegistrationViewModel::class.java).regInfo.observe(this, Observer { regInfo ->
-            regInfo?.teamIcon?.let {
-                GlideApp.with(teamIconView).load(Uri.Builder().scheme(BuildConfig.SCHEME).authority(BuildConfig.AUTHORITY).appendEncodedPath(it).build())
-                        .into(teamIconView)
-            }
-            teamNameView.text = regInfo?.teamName
-            teamCountryView.text = regInfo?.teamCountry
-        })
-
-
-        agreement.text = Html.fromHtml(getString(R.string.terms_of_services_agreement))
-
-    }
-
-    private inner class ItemClickListener : AdapterView.OnItemClickListener {
-        override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            findViewById<View>(currentFocus.nextFocusForwardId).requestFocus()
-        }
-    }
-
-    private inner class ModelClickListener : AdapterView.OnItemClickListener {
-        override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            val model = parent?.adapter?.getItem(position)
-            if (model is String) {
-                model.trim().takeIf {
-                    it[it.length - 4].isDigit() && it[it.length - 3].isDigit()
-                            && it[it.length - 2].isDigit() && it[it.length - 1].isDigit()
-                }.let {
-                    if (it != null) {
-                        findViewById<View>(currentFocus.nextFocusForwardId).requestFocus()
-                    } else {
-                        modelView.setText(model, true)
-                        modelView.postDelayed({ modelView.showDropDown() }, 100)
+                UIState.WELCOME -> {
+                    supportFragmentManager.apply {
+                        if (findFragmentByTag(WELCOME_FRAGMENT_TAG) == null) {
+                            val fragment = findFragmentById(R.id.fragment_container)
+                            beginTransaction().apply {
+                                if (fragment != null) {
+                                    remove(fragment)
+                                }
+                                add(R.id.fragment_container, WelcomeToJoinFragment(), WELCOME_FRAGMENT_TAG)
+                            }.commit()
+                        }
                     }
-
                 }
 
-
+                UIState.REGISTRATION -> {
+                    supportFragmentManager.apply {
+                        if (findFragmentByTag(REGISTRATION_FRAGMENT_TAG) == null) {
+                            val fragment = findFragmentById(R.id.fragment_container)
+                            beginTransaction().apply {
+                                if (fragment != null) {
+                                    remove(fragment)
+                                }
+                                add(R.id.fragment_container, CarRegistrationFragment(), REGISTRATION_FRAGMENT_TAG)
+                            }.commit()
+                        }
+                    }
+                }
             }
-
-        }
+        })
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private val viewModel: RegistrationViewModel
+        get() = ViewModelProviders.of(this).get(RegistrationViewModel::class.java)
 }

@@ -365,5 +365,7 @@
     <string name="terms_of_services_agreement" translatable="false"><![CDATA[Создавая учётную запись, ты принимаешь <br> <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a> Teambrella</a>]]></string>
     <string name="my_name_is_title" translatable="false">Меня зовут</string>
     <string name="location_title" translatable="false">Город</string>
+    <string name="welcome_to_join_title" translatable="false">Привет!</string>
+    <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
 
 </resources>
