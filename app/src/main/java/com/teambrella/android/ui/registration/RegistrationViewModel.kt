@@ -47,7 +47,7 @@ class RegistrationViewModel : ViewModel() {
         get() = _regInfo
 
     init {
-        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Россия"))
+        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Russia"))
     }
 
     fun onFacebookLogin(activity: Activity) {
