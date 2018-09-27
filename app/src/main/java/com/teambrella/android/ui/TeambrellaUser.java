@@ -2,6 +2,7 @@ package com.teambrella.android.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationManagerCompat;
@@ -37,6 +38,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN = "last_backup_notification_shown";
     private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME = "last_background_restriction_screen_time";
     private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_NOTIFICATION_TIME = "last_background_restriction_notification_time";
+    private static final String PREFERENCE_KEY_INVITATION_LINK = "invitation_link";
 
     private static TeambrellaUser sUser;
 
@@ -211,6 +213,22 @@ public class TeambrellaUser {
     public boolean canShowBackupNotification(long delay) {
         return Math.abs(mPreferences.getLong(PREFERENCE_KEY_LAST_BACK_UP_NOTIFICATION_SHOWN, 0) - System.currentTimeMillis())
                 > delay;
+    }
+
+    public void setInvitationLink(Uri link) {
+        if (link != null) {
+            mPreferences.edit().putString(PREFERENCE_KEY_INVITATION_LINK, link.toString()).apply();
+        } else {
+            mPreferences.edit().remove(PREFERENCE_KEY_INVITATION_LINK).apply();
+        }
+    }
+
+    public Uri getInvitationLink() {
+        String linkString = mPreferences.getString(PREFERENCE_KEY_INVITATION_LINK, null);
+        if (linkString != null) {
+            return Uri.parse(linkString);
+        }
+        return null;
     }
 
 }

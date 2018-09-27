@@ -180,6 +180,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         if (deepLink != null) {
                             switch (TeambrellaLinks.INSTANCE.match(deepLink)) {
                                 case TeambrellaLinks.JOIN: {
+                                    mUser.setInvitationLink(deepLink);
                                     RegistrationActivityKt.startRegistration(this, deepLink);
                                     finish();
                                 }
@@ -205,6 +206,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         if (uri != null) {
             mUser.setPrivateKey(uri.getQueryParameter("key"));
             getTeams(mUser.getPrivateKey());
+            return;
+        }
+
+        Uri invitationLink = mUser.getInvitationLink();
+        if (invitationLink != null) {
+            RegistrationActivityKt.startRegistration(this, invitationLink);
+            finish();
             return;
         }
 
