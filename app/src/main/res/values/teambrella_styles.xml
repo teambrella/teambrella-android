@@ -246,7 +246,6 @@
     </style>
 
 
-
     <style name="Teambrella.TextAppearance.SectionButton">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/section_button_text_color</item>
@@ -283,5 +282,106 @@
         <item name="android:progressDrawable">@drawable/seek_bar_progress</item>
     </style>
 
+
+    <style name="Teambrella.Registration" />
+
+    <style name="Teambrella.Registration.TeamIcon">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance">
+        <item name="android:fontFamily">@font/source_sans_pro</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.TeamName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.Country">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.MessageTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#2c3948</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.MessageDescription">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#3c4753</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.SocialButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">42dp</item>
+        <item name="android:background">@drawable/header_button</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:minHeight">42dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+
+    <style name="Teambrella.Registration.TextAppearance.InputTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#8596A3</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.Input">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#434d5d</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:background">@drawable/default_edit_text_background</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColorHint">#B5B5B5</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.Header">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">#2D9BCF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Teambrella.Registration.TextAppearance.Agreement">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/blueGrey</item>
+        <item name="android:gravity">center</item>
+    </style>
 
 </resources>

@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.teambrella.android.BuildConfig
 import com.teambrella.android.R
 import com.teambrella.android.image.glide.GlideApp
@@ -40,6 +42,7 @@ class WelcomeToJoinFragment : Fragment() {
             viewModel.regInfo.observe(this, Observer { regInfo ->
                 regInfo?.teamIcon?.let {
                     GlideApp.with(teamIconView).load(Uri.Builder().scheme(BuildConfig.SCHEME).authority(BuildConfig.AUTHORITY).appendEncodedPath(it).build())
+                            .apply(RequestOptions().transforms(RoundedCorners(_activity.resources.getDimensionPixelSize(R.dimen.rounded_corners_4dp))))
                             .into(teamIconView)
                 }
                 teamNameView.text = regInfo?.teamName

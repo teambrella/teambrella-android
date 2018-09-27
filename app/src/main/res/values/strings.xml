@@ -359,11 +359,15 @@
     <string name="application_started_notification_description" translatable="false">Your application has been started</string>
 
     <string name="registration" translatable="false">Регистрация</string>
-    <string name="model" translatable="false">Марка, модель, год</string>
-    <string name="email" translatable="false">Email</string>
+    <string name="model" translatable="false">Автомобиль (марка, модель, год)</string>
+    <string name="model_hint" translatable="false">Ford Focus 2014</string>
+    <string name="name_hint" translatable="false">Иван Петров</string>
+    <string name="location_hint" translatable="false">Санкт-Петербург, Россия</string>
+    <string name="email_hint" translatable="false">myemail@mail.ru</string>
+    <string name="email" translatable="false">E-mail</string>
     <string name="register" translatable="false">Зарегистрироваться</string>
     <string name="terms_of_services_agreement" translatable="false"><![CDATA[Создавая учётную запись, ты принимаешь <br> <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a> Teambrella</a>]]></string>
-    <string name="my_name_is_title" translatable="false">Меня зовут</string>
+    <string name="my_name_is_title" translatable="false">Имя</string>
     <string name="location_title" translatable="false">Город</string>
     <string name="welcome_to_join_title" translatable="false">Привет!</string>
     <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
