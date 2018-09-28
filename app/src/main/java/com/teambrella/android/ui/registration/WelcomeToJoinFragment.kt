@@ -21,6 +21,8 @@ class WelcomeToJoinFragment : Fragment() {
     private lateinit var teamIconView: ImageView
     private lateinit var teamNameView: TextView
     private lateinit var teamCountryView: TextView
+    private lateinit var welcomeTitle: TextView
+    private lateinit var welcomeDescription: TextView
     private lateinit var facebookLogin: View
     private lateinit var vkLogin: View
 
@@ -31,11 +33,15 @@ class WelcomeToJoinFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         teamIconView = view.findViewById(R.id.team_icon)
         teamNameView = view.findViewById(R.id.team_name)
         teamCountryView = view.findViewById(R.id.team_country)
         facebookLogin = view.findViewById(R.id.facebook_login)
         vkLogin = view.findViewById(R.id.vk_login)
+        welcomeTitle = view.findViewById(R.id.welcome_to_join_title)
+        welcomeDescription = view.findViewById(R.id.welcome_to_join_description)
+
 
         activity?.let { _activity ->
             val viewModel = ViewModelProviders.of(_activity).get(RegistrationViewModel::class.java)
@@ -55,6 +61,10 @@ class WelcomeToJoinFragment : Fragment() {
                 vkLogin.setOnClickListener { _ ->
                     viewModel.onVkLogin(_activity)
                 }
+
+                welcomeTitle.text = regInfo?.welcomeTitle
+                welcomeDescription.text = regInfo?.welcomeMessage
+
             })
         }
 

@@ -17,13 +17,17 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.google.gson.JsonObject
 import com.teambrella.android.R
+import com.teambrella.android.api.*
+import com.teambrella.android.ui.registration.join.JoinServer
 import java.util.*
 
 
 enum class UIState {
     WELCOME,
-    REGISTRATION
+    REGISTRATION,
+    PLEASE_WAIT_WELCOME
 }
 
 
@@ -31,6 +35,8 @@ data class RegistrationInfo(val initObject: RegistrationInfo? = null,
                             val teamIcon: String? = initObject?.teamIcon,
                             val teamName: String? = initObject?.teamName,
                             val teamCountry: String? = initObject?.teamCountry,
+                            val welcomeTitle: String? = initObject?.welcomeTitle,
+                            val welcomeMessage: String? = initObject?.welcomeMessage,
                             val model: String? = initObject?.model,
                             val city: String? = initObject?.city,
                             val userName: String? = initObject?.userName,
@@ -41,7 +47,14 @@ data class RegistrationInfo(val initObject: RegistrationInfo? = null,
 class RegistrationViewModel : ViewModel() {
     private val _regInfo = MutableLiveData<RegistrationInfo>()
     private val facebookLoginController = FacebookLoginController()
-    private val vkLoginController = VKLoginController()
+    private val vkLoginController = VKLoginController(
+            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION)) },
+            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME)) },
+            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME)) })
+
+
+    private val joinServer = JoinServer()
+
 
     val regInfo: LiveData<RegistrationInfo>
         get() = _regInfo
@@ -51,19 +64,50 @@ class RegistrationViewModel : ViewModel() {
     }
 
     fun onFacebookLogin(activity: Activity) {
-        facebookLoginController.login(activity) { _ ->
+
+        fun onSuccess(token: String?) {
             _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
         }
+
+        fun onError() {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME))
+        }
+
+        fun onCancel() {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME))
+        }
+
+        facebookLoginController.login(activity, ::onSuccess, ::onError, ::onCancel)
     }
 
     fun onVkLogin(activity: Activity) {
-        vkLoginController.login(activity) { _ ->
-            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
-        }
+        vkLoginController.login(activity)
+        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.PLEASE_WAIT_WELCOME))
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         facebookLoginController.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun onActivityStart() {
+        vkLoginController.onActivityStart()
+    }
+
+    fun getWelcomeScreen(teamId: Int, invite: String?) {
+
+        fun onSuccess(data: JsonObject?) {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value,
+                    teamName = data.data?.teamName,
+                    teamIcon = data.data?.teamLogo,
+                    welcomeTitle = data.data?.welcomeTitle,
+                    welcomeMessage = data.data?.welcomeText))
+        }
+
+        fun onError() {
+
+        }
+
+        joinServer.getWelcomeScreen(teamId, invite, ::onSuccess, ::onError)
     }
 }
 
@@ -71,7 +115,7 @@ private class FacebookLoginController {
 
     private val callbackManager = CallbackManager.Factory.create()
 
-    fun login(activity: Activity, onSuccess: (String) -> Unit) {
+    fun login(activity: Activity, onSuccess: (String) -> Unit, onError: () -> Unit, onCancel: () -> Unit) {
         val loginManager = LoginManager.getInstance()
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {
@@ -82,10 +126,12 @@ private class FacebookLoginController {
 
             override fun onCancel() {
                 loginManager.unregisterCallback(callbackManager)
+                onCancel.invoke()
             }
 
             override fun onError(error: FacebookException?) {
                 loginManager.unregisterCallback(callbackManager)
+                onError.invoke()
             }
         })
 
@@ -101,32 +147,64 @@ private class FacebookLoginController {
     }
 }
 
-private class VKLoginController {
+private class VKLoginController(val onSuccess: (String?) -> Unit, val onError: () -> Unit, val onCancel: () -> Unit) {
 
 
     private var handler = Handler()
 
-    fun login(activity: Activity, onSuccess: (String?) -> Unit) {
+    fun login(activity: Activity) {
         WebAuthProvider.init(Auth0(activity).apply { isOIDCConformant = true })
                 .withScheme("app")
                 .withConnection("vkontakte")
                 .withCustomTabsOptions(CustomTabsOptions.newBuilder().withToolbarColor(R.color.colorPrimary).showTitle(true).build())
                 .start(activity, object : AuthCallback {
                     override fun onFailure(dialog: Dialog) {
-
+                        handler.post {
+                            if (waitForLoginResponse) {
+                                onError.invoke()
+                                waitForLoginResponse = false
+                                handler.removeCallbacks(vkLoginTimeOut)
+                            }
+                        }
                     }
 
                     override fun onFailure(exception: AuthenticationException) {
-
+                        handler.post {
+                            if (waitForLoginResponse) {
+                                onError.invoke()
+                                waitForLoginResponse = false
+                                handler.removeCallbacks(vkLoginTimeOut)
+                            }
+                        }
                     }
 
                     override fun onSuccess(credentials: com.auth0.android.result.Credentials) {
                         handler.post {
-                            onSuccess.invoke(credentials.accessToken)
+                            if (waitForLoginResponse) {
+                                onSuccess.invoke(credentials.accessToken)
+                                waitForLoginResponse = false
+                                handler.removeCallbacks(vkLoginTimeOut)
+                            }
                         }
                     }
                 })
+
+        waitForLoginResponse = true
     }
+
+    fun onActivityStart() {
+        if (waitForLoginResponse) {
+            handler.removeCallbacks(vkLoginTimeOut)
+            handler.postDelayed(vkLoginTimeOut, 3000)
+        }
+    }
+
+    private val vkLoginTimeOut = Runnable {
+        onCancel.invoke()
+        waitForLoginResponse = false
+    }
+
+    private var waitForLoginResponse: Boolean = false
 }
 
 

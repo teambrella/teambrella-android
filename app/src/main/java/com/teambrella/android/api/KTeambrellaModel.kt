@@ -35,6 +35,9 @@ const val DATE_PAY_TO_JOIN = "DatePayToJoin"
 const val SUBTITLE = "SubTitle"
 const val SYSTEM_TYPE = "SystemType"
 const val VK_URL = "VkUrl"
+const val INVITE = "Invite"
+const val WELCOME_TITLE = "WelcomeTitle"
+const val WELCOME_TEXT = "WelcomeText"
 
 
 object ChatItems {
@@ -366,8 +369,9 @@ var JsonObject?.added: Long?
     set(value) = setValue(TeambrellaModel.ATTR_DATA_ADDED, value)
 
 
-val JsonObject?.teamId: Int?
+var JsonObject?.teamId: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_ID)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_TEAM_ID, value)
 
 val JsonObject?.topicId: String?
     get() = getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
@@ -549,6 +553,16 @@ val JsonObject?.incidentDate: String?
 
 val JsonObject?.subTitle: String?
     get() = getString(SUBTITLE)
+
+var JsonObject?.invite: String?
+    get() = getString(INVITE)
+    set(value) = setString(INVITE, value)
+
+val JsonObject?.welcomeTitle: String?
+    get() = getString(WELCOME_TITLE)
+
+val JsonObject?.welcomeText: String?
+    get() = getString(WELCOME_TEXT)
 
 fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat

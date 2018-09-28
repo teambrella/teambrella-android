@@ -359,7 +359,7 @@
     <string name="application_started_notification_description" translatable="false">Your application has been started</string>
 
     <string name="registration" translatable="false">Регистрация</string>
-    <string name="model" translatable="false">Автомобиль (марка, модель, год)</string>
+    <string name="model" translatable="false">Автомобиль</string>
     <string name="model_hint" translatable="false">Ford Focus 2014</string>
     <string name="name_hint" translatable="false">Иван Петров</string>
     <string name="location_hint" translatable="false">Санкт-Петербург, Россия</string>

@@ -31,7 +31,7 @@
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/team_icon"
             style="@style/Teambrella.Registration.TeamIcon"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="84dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -75,33 +75,9 @@
                 android:text="@string/registration" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/model_title"
-                style="@style/Teambrella.Registration.TextAppearance.InputTitle"
-                android:layout_marginTop="16dp"
-                android:text="@string/model" />
-
-            <android.support.v7.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/model_value"
-                style="@style/Teambrella.Registration.TextAppearance.Input"
-                android:layout_marginTop="8dp"
-                android:hint="@string/model_hint"
-                android:nextFocusForward="@id/location_value" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/location_title"
-                style="@style/Teambrella.Registration.TextAppearance.InputTitle"
-                android:text="@string/location_title" />
-
-            <android.support.v7.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/location_value"
-                style="@style/Teambrella.Registration.TextAppearance.Input"
-                android:hint="@string/location_hint"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@+id/name_value" />
-
-            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/name_title"
                 style="@style/Teambrella.Registration.TextAppearance.InputTitle"
+                android:layout_marginTop="24dp"
                 android:text="@string/my_name_is_title" />
 
 
@@ -109,6 +85,7 @@
                 android:id="@+id/name_value"
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:hint="@string/name_hint"
+                android:nextFocusForward="@id/email_value"
                 android:imeOptions="actionNext" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -121,8 +98,33 @@
                 android:id="@+id/email_value"
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:hint="@string/email_hint"
-                android:imeOptions="actionDone" />
+                android:nextFocusForward="@id/location_value"
+                android:imeOptions="actionNext" />
 
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/location_title"
+                style="@style/Teambrella.Registration.TextAppearance.InputTitle"
+                android:text="@string/location_title" />
+
+            <android.support.v7.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/location_value"
+                style="@style/Teambrella.Registration.TextAppearance.Input"
+                android:hint="@string/location_hint"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@+id/model_value" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/model_title"
+                style="@style/Teambrella.Registration.TextAppearance.InputTitle"
+                android:layout_marginTop="16dp"
+                android:text="@string/model" />
+
+            <android.support.v7.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/model_value"
+                style="@style/Teambrella.Registration.TextAppearance.Input"
+                android:imeOptions="actionDone"
+                android:hint="@string/model_hint" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/agreement"
