@@ -6,11 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.teambrella.android.R
 import com.teambrella.android.ui.dialog.ProgressDialogFragment
+import com.teambrella.android.util.ConnectivityUtils
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 fun startRegistration(context: Context, data: Uri) {
@@ -33,16 +37,15 @@ class RegistrationActivity : AppCompatActivity() {
 
         viewModel.regInfo.observe(this, Observer { _regInfo ->
             when (_regInfo?.uiState) {
-                UIState.WELCOME -> showWelcomeScreen(false)
+                UIState.WELCOME_PRELOAD -> showWelcomeScreen(false, _regInfo.error)
+                UIState.WELCOME -> showWelcomeScreen(false, _regInfo.error)
                 UIState.REGISTRATION -> showRegistrationScreen(false)
-                UIState.PLEASE_WAIT_WELCOME -> showWelcomeScreen(true)
+                UIState.PLEASE_WAIT_WELCOME -> showWelcomeScreen(true, _regInfo.error)
             }
         })
 
         if (savedInstanceState == null) {
-            val joinUri = intent.data
-            val teamId = Integer.parseInt(joinUri.lastPathSegment)
-            viewModel.getWelcomeScreen(teamId, joinUri?.getQueryParameter("invite"))
+            getWelcomeScreen()
         }
     }
 
@@ -85,7 +88,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun showWelcomeScreen(wait: Boolean) {
+    private fun showWelcomeScreen(wait: Boolean, error: Throwable?) {
         supportFragmentManager.let { fragmentManager ->
             fragmentManager.beginTransaction().apply {
                 if (fragmentManager.findFragmentByTag(WELCOME_FRAGMENT_TAG) == null) {
@@ -108,5 +111,33 @@ class RegistrationActivity : AppCompatActivity() {
 
             }.takeIf { !it.isEmpty }?.commit()
         }
+
+        error?.let { _error ->
+            val isInternetAvailable = ConnectivityUtils.isNetworkAvailable(this)
+            if (_error is UnknownHostException
+                    || _error is SocketTimeoutException || !isInternetAvailable) {
+                Snackbar.make(findViewById(R.id.input_container), R.string.no_internet_connection, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.retry) { _ ->
+                            getWelcomeScreen()
+                        }
+                        .setActionTextColor(resources.getColor(R.color.lightGold))
+                        .show()
+            } else {
+                Snackbar.make(findViewById(R.id.input_container), R.string.unable_to_connect_try_later, Snackbar.LENGTH_LONG)
+                        .addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                super.onDismissed(transientBottomBar, event)
+                                finish()
+                            }
+                        })
+                        .show()
+            }
+        }
+    }
+
+    private fun getWelcomeScreen() {
+        val joinUri = intent.data
+        val teamId = Integer.parseInt(joinUri.lastPathSegment)
+        viewModel.getWelcomeScreen(teamId, joinUri?.getQueryParameter("invite"))
     }
 }

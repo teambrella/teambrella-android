@@ -12,6 +12,7 @@ import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.provider.AuthCallback
 import com.auth0.android.provider.CustomTabsOptions
 import com.auth0.android.provider.WebAuthProvider
+import com.auth0.android.result.Credentials
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -25,6 +26,7 @@ import java.util.*
 
 
 enum class UIState {
+    WELCOME_PRELOAD,
     WELCOME,
     REGISTRATION,
     PLEASE_WAIT_WELCOME
@@ -41,7 +43,8 @@ data class RegistrationInfo(val initObject: RegistrationInfo? = null,
                             val city: String? = initObject?.city,
                             val userName: String? = initObject?.userName,
                             val email: String? = initObject?.email,
-                            val uiState: UIState = UIState.WELCOME
+                            val error: Throwable? = initObject?.error,
+                            val uiState: UIState = initObject?.uiState ?: UIState.WELCOME
 )
 
 class RegistrationViewModel : ViewModel() {
@@ -60,7 +63,7 @@ class RegistrationViewModel : ViewModel() {
         get() = _regInfo
 
     init {
-        _regInfo.postValue(RegistrationInfo(null, teamIcon = "/content/uploads/0/car.png", teamName = "Антикаско", teamCountry = "Russia"))
+        _regInfo.postValue(RegistrationInfo(null, uiState = UIState.WELCOME_PRELOAD))
     }
 
     fun onFacebookLogin(activity: Activity) {
@@ -99,13 +102,17 @@ class RegistrationViewModel : ViewModel() {
             _regInfo.postValue(RegistrationInfo(_regInfo.value,
                     teamName = data.data?.teamName,
                     teamIcon = data.data?.teamLogo,
+                    teamCountry = "Россия",
                     welcomeTitle = data.data?.welcomeTitle,
-                    welcomeMessage = data.data?.welcomeText))
+                    welcomeMessage = data.data?.welcomeText, uiState = UIState.WELCOME))
         }
 
-        fun onError() {
-
+        fun onError(error: Throwable) {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value,
+                    error = error))
         }
+
+        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME_PRELOAD, error = null))
 
         joinServer.getWelcomeScreen(teamId, invite, ::onSuccess, ::onError)
     }
@@ -178,7 +185,7 @@ private class VKLoginController(val onSuccess: (String?) -> Unit, val onError: (
                         }
                     }
 
-                    override fun onSuccess(credentials: com.auth0.android.result.Credentials) {
+                    override fun onSuccess(credentials: Credentials) {
                         handler.post {
                             if (waitForLoginResponse) {
                                 onSuccess.invoke(credentials.accessToken)

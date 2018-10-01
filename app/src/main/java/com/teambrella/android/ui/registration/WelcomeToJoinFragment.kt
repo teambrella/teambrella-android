@@ -25,6 +25,7 @@ class WelcomeToJoinFragment : Fragment() {
     private lateinit var welcomeDescription: TextView
     private lateinit var facebookLogin: View
     private lateinit var vkLogin: View
+    private lateinit var inputContainer: View
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -41,6 +42,7 @@ class WelcomeToJoinFragment : Fragment() {
         vkLogin = view.findViewById(R.id.vk_login)
         welcomeTitle = view.findViewById(R.id.welcome_to_join_title)
         welcomeDescription = view.findViewById(R.id.welcome_to_join_description)
+        inputContainer = view.findViewById(R.id.input_container)
 
 
         activity?.let { _activity ->
@@ -64,6 +66,12 @@ class WelcomeToJoinFragment : Fragment() {
 
                 welcomeTitle.text = regInfo?.welcomeTitle
                 welcomeDescription.text = regInfo?.welcomeMessage
+
+
+                inputContainer.visibility = when (regInfo?.uiState) {
+                    UIState.WELCOME_PRELOAD -> View.GONE
+                    else -> View.VISIBLE
+                }
 
             })
         }

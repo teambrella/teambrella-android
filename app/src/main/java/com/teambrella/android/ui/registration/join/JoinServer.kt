@@ -36,7 +36,7 @@ class JoinServer {
             }).build()).build().create(JoinAPI::class.java)
 
 
-    fun getWelcomeScreen(teamId: Int, invitationCode: String?, onSuccess: (JsonObject?) -> Unit, onError: () -> Unit) {
+    fun getWelcomeScreen(teamId: Int, invitationCode: String?, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
         val requestData = JsonObject().apply {
             this.teamId = teamId
             this.invite = invitationCode
@@ -51,7 +51,7 @@ class JoinServer {
         }
 
         fun onError(error: Throwable) {
-            onError.invoke()
+            onError.invoke(error)
             disposable?.takeIf { !it.isDisposed }?.dispose()
         }
 
