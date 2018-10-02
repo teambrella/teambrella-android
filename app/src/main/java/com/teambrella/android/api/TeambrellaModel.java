@@ -222,6 +222,7 @@ public class TeambrellaModel {
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED = 9;
     public static final int VALUE_STATUS_RESULT_NOT_SUPPORTED_CLIENT_VERSION = 12;
     public static final int VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICATION_STARTED = 13;
+    public static final int VALUE_STATUS_RESULT_INVITE_ONLY = 14;
 
 
     /*Data*/

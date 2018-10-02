@@ -66,7 +66,8 @@
             android:layout_marginTop="16dp"
             android:id="@+id/facebook_login"
             style="@style/Teambrella.Registration.TextAppearance.SocialButton"
-            android:text="@string/continue_with_facebook" />
+            android:text="@string/continue_with_facebook"
+            android:visibility="gone" />
 
 
         <android.support.v7.widget.AppCompatTextView
@@ -74,7 +75,15 @@
             style="@style/Teambrella.Registration.TextAppearance.SocialButton"
             android:layout_width="match_parent"
             android:layout_marginTop="16dp"
-            android:text="@string/continue_with_vk" />
+            android:text="@string/continue_with_vk"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/lets_go"
+            style="@style/Teambrella.Registration.TextAppearance.SocialButton"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="@string/continue_without_login" />
 
 
     </LinearLayout>

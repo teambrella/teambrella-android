@@ -1,35 +1,31 @@
 package com.teambrella.android.ui.registration
 
-import android.app.Activity
-import android.app.Dialog
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Intent
-import android.os.Handler
-import com.auth0.android.Auth0
-import com.auth0.android.authentication.AuthenticationException
-import com.auth0.android.provider.AuthCallback
-import com.auth0.android.provider.CustomTabsOptions
-import com.auth0.android.provider.WebAuthProvider
-import com.auth0.android.result.Credentials
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
+import android.content.Context
 import com.google.gson.JsonObject
-import com.teambrella.android.R
 import com.teambrella.android.api.*
+import com.teambrella.android.api.server.TeambrellaServer
+import com.teambrella.android.api.server.TeambrellaUris
+import com.teambrella.android.blockchain.CryptoException
+import com.teambrella.android.blockchain.EtherAccount
+import com.teambrella.android.data.base.subscribeAutoDispose
+import com.teambrella.android.ui.TeambrellaUser
 import com.teambrella.android.ui.registration.join.JoinServer
-import java.util.*
+import com.teambrella.android.util.log.Log
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.bitcoinj.core.DumpedPrivateKey
 
 
 enum class UIState {
     WELCOME_PRELOAD,
     WELCOME,
     REGISTRATION,
-    PLEASE_WAIT_WELCOME
+    PLEASE_WAIT_WELCOME,
+    PLEASE_WAIT_REGISTRATION,
+    COMPLETE
 }
 
 
@@ -43,68 +39,119 @@ data class RegistrationInfo(val initObject: RegistrationInfo? = null,
                             val city: String? = initObject?.city,
                             val userName: String? = initObject?.userName,
                             val email: String? = initObject?.email,
+                            val teamId: Int? = initObject?.teamId,
+                            val inviteCode: String? = initObject?.inviteCode,
                             val error: Throwable? = initObject?.error,
                             val uiState: UIState = initObject?.uiState ?: UIState.WELCOME
 )
 
 class RegistrationViewModel : ViewModel() {
+
+
+    companion object {
+        const val LOG_TAG = "RegistrationViewModel"
+    }
+
+
     private val _regInfo = MutableLiveData<RegistrationInfo>()
-    private val facebookLoginController = FacebookLoginController()
-    private val vkLoginController = VKLoginController(
-            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION)) },
-            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME)) },
-            { _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME)) })
-
-
     private val joinServer = JoinServer()
+    private lateinit var teambrellaUser: TeambrellaUser
 
 
     val regInfo: LiveData<RegistrationInfo>
         get() = _regInfo
 
+
     init {
         _regInfo.postValue(RegistrationInfo(null, uiState = UIState.WELCOME_PRELOAD))
     }
 
-    fun onFacebookLogin(activity: Activity) {
 
-        fun onSuccess(token: String?) {
-            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
-        }
-
-        fun onError() {
-            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME))
-        }
-
-        fun onCancel() {
-            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME))
-        }
-
-        facebookLoginController.login(activity, ::onSuccess, ::onError, ::onCancel)
+    fun init(context: Context) {
+        teambrellaUser = TeambrellaUser.get(context)
     }
 
-    fun onVkLogin(activity: Activity) {
-        vkLoginController.login(activity)
-        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.PLEASE_WAIT_WELCOME))
+
+    /**
+     * Continue registration
+     */
+    fun continueRegistration() {
+        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        facebookLoginController.onActivityResult(requestCode, resultCode, data)
-    }
 
-    fun onActivityStart() {
-        vkLoginController.onActivityStart()
-    }
+    /**
+     * Register user on the server
+     */
+    fun registerUser(context: Context, name: String, email: String, location: String, model: String) {
 
-    fun getWelcomeScreen(teamId: Int, invite: String?) {
 
         fun onSuccess(data: JsonObject?) {
+            teambrellaUser.privateKey = teambrellaUser.pendingPrivateKey
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.COMPLETE))
+        }
+
+        fun onError(error: Throwable) {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, userName = name, email = email, city = location, model = model,
+                    uiState = UIState.REGISTRATION, error = error))
+        }
+
+
+        val privateKey = teambrellaUser.pendingPrivateKey
+        val key = DumpedPrivateKey.fromBase58(null, privateKey).key
+
+        val server = TeambrellaServer(context.applicationContext,
+                teambrellaUser.pendingPrivateKey,
+                teambrellaUser.deviceCode,
+                teambrellaUser.getInfoMask(context.applicationContext))
+
+
+        var publicKeySignature: String? = null
+
+        try {
+            publicKeySignature = EtherAccount.toPublicKeySignature(teambrellaUser.pendingPrivateKey, context.applicationContext, key.publicKeyAsHex)
+        } catch (e: CryptoException) {
+            Log.e(LOG_TAG, "Was unable to generate eth address from the private key. " +
+                    "Only public key will be registered on the server. " +
+                    "The error was: " + e.message, e)
+        }
+
+        val info = _regInfo.value
+
+        server.requestObservable(TeambrellaUris.getRegisterUserUri(publicKeySignature), JsonObject().apply {
+            this.teamId = info?.teamId
+            this.invite = info?.inviteCode
+            this.name = name
+            this.location = location
+            this.email = email
+            this.carModelString = model
+
+        }).subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribeAutoDispose(::onSuccess, ::onError) {}
+
+        _regInfo.postValue(RegistrationInfo(_regInfo.value, error = null, uiState = UIState.PLEASE_WAIT_REGISTRATION))
+
+    }
+
+
+    /**
+     * Request welcome screen
+     */
+    fun getWelcomeScreen(teamId: Int, invite: String?) {
+
+        fun onSuccess(response: JsonObject?) {
+            val data = response.data
             _regInfo.postValue(RegistrationInfo(_regInfo.value,
-                    teamName = data.data?.teamName,
-                    teamIcon = data.data?.teamLogo,
-                    teamCountry = "Россия",
-                    welcomeTitle = data.data?.welcomeTitle,
-                    welcomeMessage = data.data?.welcomeText, uiState = UIState.WELCOME))
+                    teamName = data?.teamName,
+                    teamIcon = data?.teamLogo,
+                    teamCountry = data?.teamArea,
+                    userName = data?.name,
+                    city = data?.location,
+                    model = data?.carModelString,
+                    email = data?.email,
+                    welcomeTitle = data?.welcomeTitle,
+                    welcomeMessage = data?.welcomeText, uiState = UIState.WELCOME))
         }
 
         fun onError(error: Throwable) {
@@ -112,106 +159,10 @@ class RegistrationViewModel : ViewModel() {
                     error = error))
         }
 
-        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME_PRELOAD, error = null))
+        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.WELCOME_PRELOAD, error = null, teamId = teamId, inviteCode = invite))
+
 
         joinServer.getWelcomeScreen(teamId, invite, ::onSuccess, ::onError)
     }
 }
-
-private class FacebookLoginController {
-
-    private val callbackManager = CallbackManager.Factory.create()
-
-    fun login(activity: Activity, onSuccess: (String) -> Unit, onError: () -> Unit, onCancel: () -> Unit) {
-        val loginManager = LoginManager.getInstance()
-        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(result: LoginResult) {
-                loginManager.unregisterCallback(callbackManager)
-                onSuccess.invoke(result.accessToken.token)
-                loginManager.logOut()
-            }
-
-            override fun onCancel() {
-                loginManager.unregisterCallback(callbackManager)
-                onCancel.invoke()
-            }
-
-            override fun onError(error: FacebookException?) {
-                loginManager.unregisterCallback(callbackManager)
-                onError.invoke()
-            }
-        })
-
-        val permissions = LinkedList<String>()
-        permissions.add("public_profile")
-        permissions.add("email")
-        loginManager.logInWithReadPermissions(activity, permissions)
-
-    }
-
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-    }
-}
-
-private class VKLoginController(val onSuccess: (String?) -> Unit, val onError: () -> Unit, val onCancel: () -> Unit) {
-
-
-    private var handler = Handler()
-
-    fun login(activity: Activity) {
-        WebAuthProvider.init(Auth0(activity).apply { isOIDCConformant = true })
-                .withScheme("app")
-                .withConnection("vkontakte")
-                .withCustomTabsOptions(CustomTabsOptions.newBuilder().withToolbarColor(R.color.colorPrimary).showTitle(true).build())
-                .start(activity, object : AuthCallback {
-                    override fun onFailure(dialog: Dialog) {
-                        handler.post {
-                            if (waitForLoginResponse) {
-                                onError.invoke()
-                                waitForLoginResponse = false
-                                handler.removeCallbacks(vkLoginTimeOut)
-                            }
-                        }
-                    }
-
-                    override fun onFailure(exception: AuthenticationException) {
-                        handler.post {
-                            if (waitForLoginResponse) {
-                                onError.invoke()
-                                waitForLoginResponse = false
-                                handler.removeCallbacks(vkLoginTimeOut)
-                            }
-                        }
-                    }
-
-                    override fun onSuccess(credentials: Credentials) {
-                        handler.post {
-                            if (waitForLoginResponse) {
-                                onSuccess.invoke(credentials.accessToken)
-                                waitForLoginResponse = false
-                                handler.removeCallbacks(vkLoginTimeOut)
-                            }
-                        }
-                    }
-                })
-
-        waitForLoginResponse = true
-    }
-
-    fun onActivityStart() {
-        if (waitForLoginResponse) {
-            handler.removeCallbacks(vkLoginTimeOut)
-            handler.postDelayed(vkLoginTimeOut, 3000)
-        }
-    }
-
-    private val vkLoginTimeOut = Runnable {
-        onCancel.invoke()
-        waitForLoginResponse = false
-    }
-
-    private var waitForLoginResponse: Boolean = false
-}
-
 

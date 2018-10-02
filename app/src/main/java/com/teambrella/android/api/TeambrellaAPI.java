@@ -51,6 +51,11 @@ public interface TeambrellaAPI {
 
 
     @Headers("Content-Type: application/json")
+    @POST("join/registerKey")
+    Observable<Response<JsonObject>> registerUser(@Query("sigOfPublicKey") String sigOfPublicKey, @Body JsonElement body);
+
+
+    @Headers("Content-Type: application/json")
     @POST("claim/getChat")
     Observable<Response<JsonObject>> getClaimChat(@Body JsonElement body);
 

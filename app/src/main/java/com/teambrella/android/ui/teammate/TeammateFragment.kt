@@ -65,6 +65,7 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
     private val votingContainerView: View? by ViewHolder(R.id.voting_container)
     private val objectInfoContainerView: View? by ViewHolder(R.id.object_info_container)
     private val votingResultContainerView: View? by ViewHolder(R.id.voting_result_container)
+    private val contactsInfoContainer: View? by ViewHolder(R.id.contacts_container)
 
 
     private var currency: String? = null
@@ -268,6 +269,11 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
                 heCoversMeIf02 = it.hetCoversMeIf02 ?: heCoversMeIf02
                 heCoversMeIf499 = it.heCoversMeIf499 ?: heCoversMeIf499
                 myRisk = it.myRisk ?: myRisk
+            }
+
+            if (basic.facebookUrl == null && basic.vkUrl == null) {
+                contactsInfoContainer?.visibility = View.GONE
+                //votingResultContainerView?.setBackgroundResource(R.drawable.block_last)
             }
 
             isShown = true

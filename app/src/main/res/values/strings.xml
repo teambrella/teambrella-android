@@ -366,10 +366,14 @@
     <string name="email_hint" translatable="false">myemail@mail.ru</string>
     <string name="email" translatable="false">E-mail</string>
     <string name="register" translatable="false">Зарегистрироваться</string>
-    <string name="terms_of_services_agreement" translatable="false"><![CDATA[Создавая учётную запись, ты принимаешь <br> <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a> Teambrella</a>]]></string>
+    <string name="terms_of_services_agreement" translatable="false"><![CDATA[Регистрируясь в Teambrella, Вы принимаете <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a>]]></string>
     <string name="my_name_is_title" translatable="false">Имя</string>
     <string name="location_title" translatable="false">Город</string>
     <string name="welcome_to_join_title" translatable="false">Привет!</string>
     <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
-
+    <string name="continue_without_login" translatable="false">Далее</string>
+    <string name="registration_error_name" translatable="false">Введите имя</string>
+    <string name="registration_error_location" translatable="false">Введите город</string>
+    <string name="registration_error_email" translatable="false">Введите правильный E-mail</string>
+    <string name="registration_error_model" translatable="false">Введите марку, модель и год автомобиля</string>
 </resources>

@@ -26,6 +26,7 @@ public class WalletBackupManager {
     private static final String LOG_TAG = WalletBackupManager.class.getSimpleName();
 
     private static final String VKONTAKTE = "vkontakte";
+    private static final String NO_SOCIAL = "no|";
 
     private static final int SAVE_WALLET_REQUEST_CODE = 205;
     private static final int READ_WALLET_REQUEST_CODE = 206;
@@ -100,7 +101,7 @@ public class WalletBackupManager {
         }
 
         String login = id.startsWith(VKONTAKTE) ? String.format("vk.com/id%s", id.substring(10, id.length()))
-                : String.format("fb.com/%s", id);
+                : id.startsWith(NO_SOCIAL) ? id.substring(3, id.length()) : String.format("fb.com/%s", id);
 
 
         Credential credential = new Credential.Builder(login)

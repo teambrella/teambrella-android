@@ -36,8 +36,12 @@ const val SUBTITLE = "SubTitle"
 const val SYSTEM_TYPE = "SystemType"
 const val VK_URL = "VkUrl"
 const val INVITE = "Invite"
+const val INVITE_CODE = "invitecode"
+const val EMAIL = "Email"
 const val WELCOME_TITLE = "WelcomeTitle"
 const val WELCOME_TEXT = "WelcomeText"
+const val CAR_MODEL_STRING = "CarModelString"
+const val TEAM_AREA = "TeamArea"
 
 
 object ChatItems {
@@ -110,6 +114,15 @@ val JsonObject?.datePaymentFinished: String?
 val JsonObject?.datePayToJoin: String?
     get() = this?.getString(DATE_PAY_TO_JOIN)
 
+
+var JsonObject?.location: String?
+    get() = this?.getString(TeambrellaModel.ATTR_DATA_LOCATION)
+    set(value) = setString(TeambrellaModel.ATTR_DATA_LOCATION, value)
+
+var JsonObject?.teamArea: String?
+    get() = this?.getString(TEAM_AREA)
+    set(value) = setString(TEAM_AREA, value)
+
 val JsonObject?.systemType: Int?
     get() = this?.getInt(SYSTEM_TYPE)
 
@@ -164,11 +177,17 @@ var JsonObject?.avatar: String?
     set(value) = setString(TeambrellaModel.ATTR_DATA_AVATAR, value)
 
 
-val JsonObject?.name: String?
+var JsonObject?.name: String?
     get() = getString(TeambrellaModel.ATTR_DATA_NAME)
+    set(value) = setString(TeambrellaModel.ATTR_DATA_NAME, value)
 
-val JsonObject?.model: String?
+var JsonObject?.email: String?
+    get() = getString(EMAIL)
+    set(value) = setString(EMAIL, value)
+
+var JsonObject?.model: String?
     get() = getString(TeambrellaModel.ATTR_DATA_MODEL)
+    set(value) = setString(TeambrellaModel.ATTR_DATA_MODEL, value)
 
 val JsonObject?.year: String?
     get() = getString(TeambrellaModel.ATTR_DATA_YEAR)
@@ -416,6 +435,10 @@ var JsonObject?.chat: JsonArray?
 val JsonObject?.teamAccessLevel: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL)
 
+var JsonObject.carModelString: String?
+    get() = getString(CAR_MODEL_STRING)
+    set(value) = setString(CAR_MODEL_STRING, value)
+
 val JsonObject?.recommendedVersion: Int
     get() = getInt(RECOMMENDING_VERSION) ?: 0
 
@@ -557,6 +580,10 @@ val JsonObject?.subTitle: String?
 var JsonObject?.invite: String?
     get() = getString(INVITE)
     set(value) = setString(INVITE, value)
+
+var JsonObject?.inviteCode: String?
+    get() = getString(INVITE_CODE)
+    set(value) = setString(INVITE_CODE, value)
 
 val JsonObject?.welcomeTitle: String?
     get() = getString(WELCOME_TITLE)

@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.teambrella.android.R
+import com.teambrella.android.ui.WelcomeActivity
 import com.teambrella.android.ui.dialog.ProgressDialogFragment
 import com.teambrella.android.util.ConnectivityUtils
 import java.net.SocketTimeoutException
@@ -39,31 +40,27 @@ class RegistrationActivity : AppCompatActivity() {
             when (_regInfo?.uiState) {
                 UIState.WELCOME_PRELOAD -> showWelcomeScreen(false, _regInfo.error)
                 UIState.WELCOME -> showWelcomeScreen(false, _regInfo.error)
-                UIState.REGISTRATION -> showRegistrationScreen(false)
+                UIState.REGISTRATION -> showRegistrationScreen(false, _regInfo.error)
                 UIState.PLEASE_WAIT_WELCOME -> showWelcomeScreen(true, _regInfo.error)
+                UIState.PLEASE_WAIT_REGISTRATION -> showRegistrationScreen(true, _regInfo.error)
+                UIState.COMPLETE -> {
+                    finish()
+                    startActivity(Intent(this, WelcomeActivity::class.java))
+                }
             }
         })
 
         if (savedInstanceState == null) {
+            viewModel.init(this)
             getWelcomeScreen()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.onActivityStart()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        viewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     private val viewModel: RegistrationViewModel
         get() = ViewModelProviders.of(this).get(RegistrationViewModel::class.java)
 
 
-    private fun showRegistrationScreen(wait: Boolean) {
+    private fun showRegistrationScreen(wait: Boolean, error: Throwable?) {
         supportFragmentManager.let { fragmentManager ->
             fragmentManager.beginTransaction().apply {
                 if (fragmentManager.findFragmentByTag(REGISTRATION_FRAGMENT_TAG) == null) {
@@ -85,6 +82,18 @@ class RegistrationActivity : AppCompatActivity() {
                 }
 
             }.takeIf { !it.isEmpty }?.commit()
+        }
+
+        error?.let { _error ->
+            val isInternetAvailable = ConnectivityUtils.isNetworkAvailable(this)
+            if (_error is UnknownHostException
+                    || _error is SocketTimeoutException || !isInternetAvailable) {
+                Snackbar.make(findViewById(R.id.input_container), R.string.no_internet_connection, Snackbar.LENGTH_SHORT)
+                        .show()
+            } else {
+                Snackbar.make(findViewById(R.id.input_container), R.string.unable_to_connect_try_later, Snackbar.LENGTH_SHORT)
+                        .show()
+            }
         }
     }
 

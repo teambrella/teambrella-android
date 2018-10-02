@@ -19,10 +19,41 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface JoinAPI {
     @POST("join/getWelcome")
     fun getWelcome(@Body request: JsonElement): Observable<Response<JsonObject>>
+
+    @POST("join/getOne/{teamId}")
+    fun getJoinedUser(@Path("teamId") teamId: Int,
+                      @Query("invite") invite: String): Observable<Response<JsonObject>>
+
+    @POST("join/getOne/{teamId}")
+    fun getJoinedUser(@Path("teamId") teamId: Int): Observable<Response<JsonObject>>
+
+
+    @POST("join/getOne/{teamId}")
+    fun getFacebookJoinedUser(@Path("teamId") teamId: Int,
+                              @Query("invite") invite: String,
+                              @Query("facebooktoken") facebookToken: String): Observable<Response<JsonObject>>
+
+    @POST("join/getOne/{teamId}")
+    fun getFacebookJoinedUser(@Path("teamId") teamId: Int,
+                              @Query("facebooktoken") facebookToken: String): Observable<Response<JsonObject>>
+
+
+    @POST("join/getOne/{teamId}")
+    fun getVkJoinedUser(@Path("teamId") teamId: Int,
+                        @Query("invite") invite: String,
+                        @Query("auth0Token") auth0Token: String): Observable<Response<JsonObject>>
+
+    @POST("join/getOne/{teamId}")
+    fun getVkJoinedUser(@Path("teamId") teamId: Int,
+                        @Query("auth0Token") auth0Token: String): Observable<Response<JsonObject>>
+
+
 }
 
 class JoinServer {
@@ -36,12 +67,46 @@ class JoinServer {
             }).build()).build().create(JoinAPI::class.java)
 
 
-    fun getWelcomeScreen(teamId: Int, invitationCode: String?, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
+    fun getWelcomeScreen(teamId: Int?, invitationCode: String?, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
+
         val requestData = JsonObject().apply {
             this.teamId = teamId
             this.invite = invitationCode
         }
 
+        autoSubscribe(api.getWelcome(requestData), onSuccess, onError)
+    }
+
+    fun getFacebookJoinedUser(teamId: Int, invitationCode: String?, facebookToken: String, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
+        autoSubscribe(
+                if (invitationCode != null) api.getFacebookJoinedUser(teamId, invitationCode, facebookToken)
+                else api.getFacebookJoinedUser(teamId, facebookToken),
+                onSuccess,
+                onError
+        )
+    }
+
+
+    fun getVkJoinedUser(teamId: Int, invitationCode: String?, auth0Token: String, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
+        autoSubscribe(
+                if (invitationCode != null) api.getVkJoinedUser(teamId, invitationCode, auth0Token)
+                else api.getVkJoinedUser(teamId, auth0Token),
+                onSuccess,
+                onError
+        )
+    }
+
+    fun getJoinedUser(teamId: Int, invitationCode: String?, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
+        autoSubscribe(
+                if (invitationCode != null) api.getJoinedUser(teamId, invitationCode)
+                else api.getJoinedUser(teamId),
+                onSuccess,
+                onError
+        )
+    }
+
+
+    private fun autoSubscribe(observable: Observable<Response<JsonObject>>, onSuccess: (JsonObject?) -> Unit, onError: (Throwable) -> Unit) {
 
         var disposable: Disposable? = null
 
@@ -55,10 +120,9 @@ class JoinServer {
             disposable?.takeIf { !it.isDisposed }?.dispose()
         }
 
-        disposable = api.getWelcome(requestData).subscribeOn(Schedulers.io())
+        disposable = observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::onResponse, ::onError)
     }
-
 
 }

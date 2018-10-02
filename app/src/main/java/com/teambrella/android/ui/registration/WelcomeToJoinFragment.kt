@@ -23,9 +23,8 @@ class WelcomeToJoinFragment : Fragment() {
     private lateinit var teamCountryView: TextView
     private lateinit var welcomeTitle: TextView
     private lateinit var welcomeDescription: TextView
-    private lateinit var facebookLogin: View
-    private lateinit var vkLogin: View
     private lateinit var inputContainer: View
+    private lateinit var letsGoView: View
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,11 +37,11 @@ class WelcomeToJoinFragment : Fragment() {
         teamIconView = view.findViewById(R.id.team_icon)
         teamNameView = view.findViewById(R.id.team_name)
         teamCountryView = view.findViewById(R.id.team_country)
-        facebookLogin = view.findViewById(R.id.facebook_login)
-        vkLogin = view.findViewById(R.id.vk_login)
+
         welcomeTitle = view.findViewById(R.id.welcome_to_join_title)
         welcomeDescription = view.findViewById(R.id.welcome_to_join_description)
         inputContainer = view.findViewById(R.id.input_container)
+        letsGoView = view.findViewById(R.id.lets_go)
 
 
         activity?.let { _activity ->
@@ -56,14 +55,6 @@ class WelcomeToJoinFragment : Fragment() {
                 teamNameView.text = regInfo?.teamName
                 teamCountryView.text = regInfo?.teamCountry
 
-                facebookLogin.setOnClickListener { _ ->
-                    viewModel.onFacebookLogin(_activity)
-                }
-
-                vkLogin.setOnClickListener { _ ->
-                    viewModel.onVkLogin(_activity)
-                }
-
                 welcomeTitle.text = regInfo?.welcomeTitle
                 welcomeDescription.text = regInfo?.welcomeMessage
 
@@ -71,6 +62,10 @@ class WelcomeToJoinFragment : Fragment() {
                 inputContainer.visibility = when (regInfo?.uiState) {
                     UIState.WELCOME_PRELOAD -> View.GONE
                     else -> View.VISIBLE
+                }
+
+                letsGoView.setOnClickListener {
+                    viewModel.continueRegistration()
                 }
 
             })

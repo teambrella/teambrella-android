@@ -125,9 +125,38 @@
 
 
     <RelativeLayout
-        android:id="@+id/facebook_login"
+        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="42dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/facebook_login_background"
+        app:layout_constraintBottom_toTopOf="@id/try_demo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="300dp">
+
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.02"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="Continue"
+            android:textColor="@color/blueWithAHintOfPurple"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/facebook_login"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
@@ -162,6 +191,7 @@
 
     <RelativeLayout
         android:id="@+id/vk_login"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginBottom="16dp"

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white"
+    android:overScrollMode="never"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -78,6 +79,7 @@
                 android:id="@+id/name_title"
                 style="@style/Teambrella.Registration.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
+                android:inputType="text"
                 android:text="@string/my_name_is_title" />
 
 
@@ -85,6 +87,7 @@
                 android:id="@+id/name_value"
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:hint="@string/name_hint"
+                android:inputType="text"
                 android:nextFocusForward="@id/email_value"
                 android:imeOptions="actionNext" />
 
@@ -98,6 +101,7 @@
                 android:id="@+id/email_value"
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:hint="@string/email_hint"
+                android:inputType="textEmailAddress"
                 android:nextFocusForward="@id/location_value"
                 android:imeOptions="actionNext" />
 
@@ -112,6 +116,7 @@
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:hint="@string/location_hint"
                 android:imeOptions="actionNext"
+                android:inputType="text"
                 android:nextFocusForward="@+id/model_value" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -124,6 +129,8 @@
                 android:id="@+id/model_value"
                 style="@style/Teambrella.Registration.TextAppearance.Input"
                 android:imeOptions="actionDone"
+                android:inputType="text"
+                android:nextFocusForward="@id/register"
                 android:hint="@string/model_hint" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -138,6 +145,8 @@
                 style="@style/Teambrella.Registration.TextAppearance.SocialButton"
                 android:layout_marginTop="36dp"
                 android:layout_gravity="end"
+                android:focusable="true"
+                android:clickable="true"
                 android:text="@string/register"
                 android:background="@drawable/header_button" />
 
