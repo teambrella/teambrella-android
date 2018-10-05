@@ -6,10 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.server.TeambrellaServer;
+import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.ui.TeambrellaUser;
+import com.teambrella.android.ui.registration.join.JoinServer;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -66,9 +71,35 @@ public class TeambrellaRequestFragment extends Fragment {
         }
     }
 
-    public void request(Uri uri) {
-        if (mServer != null) {
-            request(mServer, uri);
+    public void request(final Uri uri) {
+        switch (TeambrellaUris.sUriMatcher.match(uri)) {
+            case TeambrellaUris.JOIN_GET_WELCOME:
+                new JoinServer().getWelcomeScreen(null, null, responseBody -> {
+                    JsonObject status = responseBody.getAsJsonObject(TeambrellaModel.ATTR_STATUS);
+                    if (status != null) {
+                        JsonElement resultCodeElement = status.get(TeambrellaModel.ATTR_STATUS_RESULT_CODE);
+                        int resultCode = !resultCodeElement.isJsonNull() ? resultCodeElement.getAsInt() : TeambrellaModel.VALUE_STATUS_RESULT_CODE_FATAL;
+                        JsonElement errorMessageElement = status.get(TeambrellaModel.ATTR_STATUS_ERROR_MESSAGE);
+                        String errorMessage = errorMessageElement == null || errorMessageElement.isJsonNull() ? null : errorMessageElement.getAsString();
+                        if (resultCode != 0) {
+                            onError(new TeambrellaServerException(uri, resultCode, errorMessage, 0));
+                        } else {
+                            status.addProperty(TeambrellaModel.ATTR_STATUS_URI, uri.toString());
+                            onNext(responseBody);
+                        }
+                    } else {
+                        onError(new TeambrellaClientException(uri, "no status", new RuntimeException()));
+                    }
+                    return null;
+                }, throwable -> {
+                    onError(new TeambrellaClientException(uri, throwable.getMessage(), throwable));
+                    return null;
+                });
+                break;
+            default:
+                if (mServer != null) {
+                    request(mServer, uri);
+                }
         }
     }
 

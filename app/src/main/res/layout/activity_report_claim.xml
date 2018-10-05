@@ -40,7 +40,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/object_title"
-                style="@style/Teambrella.TextAppearence.MessageTitle"
+                style="@style/Teambrella.TextAppearance.MessageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -63,7 +63,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/incident_date_title"
-                style="@style/Teambrella.TextAppearence.InputTitle"
+                style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/incident_date"
                 app:layout_constraintTop_toBottomOf="@id/object_icon" />
@@ -87,7 +87,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/expenses_title"
-                style="@style/Teambrella.TextAppearence.InputTitle"
+                style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/expenses"
                 app:layout_constraintTop_toBottomOf="@id/incident_date" />
@@ -126,7 +126,7 @@
                     android:orientation="vertical">
 
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.TextAppearence.InputTitle"
+                        style="@style/Teambrella.TextAppearance.InputTitle"
                         android:gravity="left"
                         android:text="@string/deductible"
                         tools:ignore="RtlHardcoded" />
@@ -150,7 +150,7 @@
                     android:orientation="vertical">
 
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.TextAppearence.InputTitle"
+                        style="@style/Teambrella.TextAppearance.InputTitle"
                         android:gravity="center"
                         android:text="@string/coverage" />
 
@@ -176,7 +176,7 @@
                     tools:ignore="RtlHardcoded">
 
                     <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                        style="@style/Teambrella.TextAppearence.InputTitle"
+                        style="@style/Teambrella.TextAppearance.InputTitle"
                         android:gravity="right"
                         android:text="@string/claim_amount" />
 
@@ -202,7 +202,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/description_title"
-                style="@style/Teambrella.TextAppearence.InputTitle"
+                style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -230,7 +230,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/photos_title"
-                style="@style/Teambrella.TextAppearence.InputTitle"
+                style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -246,7 +246,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/add_photos"
-                style="@style/Teambrella.TextAppearence.SectionButton"
+                style="@style/Teambrella.TextAppearance.SectionButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -255,7 +255,7 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/address_title"
-                style="@style/Teambrella.TextAppearence.InputTitle"
+                style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/reimburse_to"
                 app:layout_constraintTop_toBottomOf="@id/add_photos" />

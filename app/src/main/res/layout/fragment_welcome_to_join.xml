@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@drawable/ic_confetti_color"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/team_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/team_name"
+        app:layout_constraintVertical_chainStyle="packed"
+        style="@style/Teambrella.Registration.TeamIcon" />
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/team_name"
+        app:layout_constraintTop_toBottomOf="@id/team_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/team_country"
+        android:layout_marginTop="8dp"
+        style="@style/Teambrella.Registration.TextAppearance.TeamName" />
+
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/team_country"
+        app:layout_constraintTop_toBottomOf="@id/team_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/input_container"
+        style="@style/Teambrella.Registration.TextAppearance.Country" />
+
+
+    <LinearLayout
+        android:id="@+id/input_container"
+        app:layout_constraintTop_toBottomOf="@id/team_country"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/section_background"
+        android:orientation="vertical"
+        app:layout_constraintWidth_max="400dp"
+        app:layout_constrainedWidth="true"
+        android:layout_margin="16dp"
+        android:padding="36dp">
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/welcome_to_join_title"
+            style="@style/Teambrella.Registration.TextAppearance.MessageTitle" />
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/welcome_to_join_description"
+            style="@style/Teambrella.Registration.TextAppearance.MessageDescription"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_marginTop="16dp"
+            android:id="@+id/facebook_login"
+            style="@style/Teambrella.Registration.TextAppearance.SocialButton"
+            android:text="@string/continue_with_facebook"
+            android:visibility="gone" />
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/vk_login"
+            style="@style/Teambrella.Registration.TextAppearance.SocialButton"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="@string/continue_with_vk"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/lets_go"
+            style="@style/Teambrella.Registration.TextAppearance.SocialButton"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="@string/continue_without_login" />
+
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

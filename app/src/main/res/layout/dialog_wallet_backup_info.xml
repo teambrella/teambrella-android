@@ -40,7 +40,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/message_title"
-        style="@style/Teambrella.TextAppearence.MessageTitle"
+        style="@style/Teambrella.TextAppearance.MessageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -55,7 +55,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratRegularTextView
         android:id="@+id/message_text"
-        style="@style/Teambrella.TextAppearence.MessageText"
+        style="@style/Teambrella.TextAppearance.MessageText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

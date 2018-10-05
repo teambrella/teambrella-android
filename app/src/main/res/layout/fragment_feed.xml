@@ -36,7 +36,7 @@
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/start_new_discussion"
-                    style="@style/Teambrella.TextAppearence.SectionButton"
+                    style="@style/Teambrella.TextAppearance.SectionButton"
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
                     android:layout_margin="16dp"

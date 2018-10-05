@@ -37,6 +37,7 @@ class WalletBackUpService : GcmTaskService() {
 
 
         private const val VKONTAKTE = "vkontakte"
+        private const val NO_SOCIAL = "no|"
 
 
         fun schedulePeriodicBackupCheck(context: Context) {
@@ -95,6 +96,8 @@ class WalletBackUpService : GcmTaskService() {
                     val socialName = it.socialName
                     val login = if (socialName?.startsWith(VKONTAKTE) == true)
                         String.format("vk.com/id%s", socialName.substring(10, socialName.length))
+                    else if (socialName?.startsWith(NO_SOCIAL) == true)
+                        socialName.substring(3, socialName.length)
                     else
                         String.format("fb.com/%s", socialName)
 

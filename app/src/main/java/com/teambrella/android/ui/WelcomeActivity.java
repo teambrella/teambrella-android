@@ -29,10 +29,12 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaClientException;
+import com.teambrella.android.api.TeambrellaLinks;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -44,6 +46,7 @@ import com.teambrella.android.blockchain.EtherAccount;
 import com.teambrella.android.services.TeambrellaLoginService;
 import com.teambrella.android.ui.app.AppOutdatedActivity;
 import com.teambrella.android.ui.base.AppCompatRequestActivity;
+import com.teambrella.android.ui.registration.RegistrationActivityKt;
 import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.log.Log;
@@ -80,7 +83,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private enum PendingLoginState {
         FACEBOOK,
-        VKONTAKTE
+        VKONTAKTE,
+        NO_SOCIAL
     }
 
 
@@ -89,6 +93,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private View mInvitationOnlyView;
     private View mFacebookLoginButton;
     private View mVkLoginButton;
+    private View mContinueButton;
     private View mTryDemoButton;
     private View mTryDemoInvite;
     private View mMarginView;
@@ -126,13 +131,15 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         mInvitationOnlyView = findViewById(R.id.invitation_only);
         mTryDemoButton = findViewById(R.id.try_demo);
-        mFacebookLoginButton = findViewById(R.id.facebook_login);
-        mVkLoginButton = findViewById(R.id.vk_login);
+        mFacebookLoginButton = new View(this);//findViewById(R.id.facebook_login);
+        mVkLoginButton = new View(this);//findViewById(R.id.vk_login);
+        mContinueButton = findViewById(R.id.login);
         mInvitationDescription = findViewById(R.id.invitation_description);
         mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mVkLoginButton.setOnClickListener(this::onVkLogin);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
+        mContinueButton.setOnClickListener(this::onContinue);
         mTryDemoInvite = findViewById(R.id.try_demo_invite);
         mMarginView = findViewById(R.id.margin);
         mTryDemoInvite.setOnClickListener(this::onTryDemo);
@@ -162,20 +169,61 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             setState(State.INIT);
             registerUser(facebookAccessToken, privateKey, key.getPublicKeyAsHex());
         } else {
-            Intent intent = getIntent();
-            Uri uri = intent.getData();
-            if (uri != null) {
-                mUser.setPrivateKey(uri.getQueryParameter("key"));
-                getTeams(mUser.getPrivateKey());
-                return;
-            }
+            checkDynamicLink(savedInstanceState);
+        }
+    }
 
-            if (savedInstanceState == null) {
-                mWalletBackupManager.readOnConnected(false);
-                setState(State.LOADING);
-            } else {
-                setState(State.INIT);
-            }
+
+    private void checkDynamicLink(@Nullable Bundle savedInstanceState) {
+        final Intent intent = getIntent();
+        if (intent != null) {
+            FirebaseDynamicLinks.getInstance()
+                    .getDynamicLink(getIntent())
+                    .addOnSuccessListener(pendingDynamicLinkData -> {
+                        Uri deepLink = pendingDynamicLinkData != null ? pendingDynamicLinkData.getLink() : null;
+                        if (deepLink != null) {
+                            switch (TeambrellaLinks.INSTANCE.match(deepLink)) {
+                                case TeambrellaLinks.JOIN: {
+                                    mUser.setInvitationLink(deepLink);
+                                    RegistrationActivityKt.startRegistration(this, deepLink);
+                                    finish();
+                                }
+                            }
+                        } else {
+                            onNoDynamicLinks(savedInstanceState);
+                        }
+                    })
+                    .addOnFailureListener(e -> onNoDynamicLinks(savedInstanceState));
+
+            setState(State.LOADING);
+        } else {
+            onNoDynamicLinks(savedInstanceState);
+        }
+    }
+
+
+    private void onNoDynamicLinks(@Nullable Bundle savedInstanceState) {
+
+        Intent intent = getIntent();
+        Uri uri = intent.getData();
+        if (uri != null) {
+            mUser.setPrivateKey(uri.getQueryParameter("key"));
+            getTeams(mUser.getPrivateKey());
+            return;
+        }
+
+        Uri invitationLink = mUser.getInvitationLink();
+        if (invitationLink != null) {
+            RegistrationActivityKt.startRegistration(this, invitationLink);
+            finish();
+            return;
+        }
+
+        if (savedInstanceState == null) {
+            mWalletBackupManager.readOnConnected(false);
+            setState(State.LOADING);
+        } else {
+            setState(State.INIT);
         }
     }
 
@@ -184,6 +232,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case INIT:
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
                 mVkLoginButton.setVisibility(View.VISIBLE);
+                mContinueButton.setVisibility(View.VISIBLE);
                 mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mTryDemoInvite.setVisibility(View.VISIBLE);
@@ -193,12 +242,14 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
+                mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mMarginView.setVisibility(View.GONE);
                 break;
             case INVITE_ONLY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
+                mContinueButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.we_are_invite_only_title);
@@ -209,6 +260,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
+                mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.almost_ready_title);
                 mInvitationDescription.setText(R.string.almost_ready_description);
@@ -218,6 +270,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
+                mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.access_denied_title);
                 setInvitationDescription(R.string.access_denied_description);
@@ -228,6 +281,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
+                mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.pending_application_title);
                 setInvitationDescription(R.string.pending_application_description);
@@ -259,6 +313,12 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
     private void onVkLogin(@SuppressWarnings("unused") View v) {
         mPendingLoginState = PendingLoginState.VKONTAKTE;
+        mWalletBackupManager.readWallet(true);
+    }
+
+
+    private void onContinue(View v) {
+        mPendingLoginState = PendingLoginState.NO_SOCIAL;
         mWalletBackupManager.readWallet(true);
     }
 
@@ -524,6 +584,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         }
                         getTeams(mUser.getPrivateKey());
                         break;
+
+                    case TeambrellaUris.JOIN_GET_WELCOME:
+                        finish();
+                        JsonWrapper data = result.getObject(TeambrellaModel.ATTR_DATA);
+                        int teamId = data.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID);
+                        RegistrationActivityKt.startRegistration(WelcomeActivity.this, Uri.parse(BuildConfig.BASE_URL + "/join/" + teamId));
+                        break;
                 }
             }
         } else {
@@ -533,6 +600,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 TeambrellaServerException exception = (TeambrellaServerException) error;
                 switch (exception.getErrorCode()) {
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM:
+                    case TeambrellaModel.VALUE_STATUS_RESULT_INVITE_ONLY:
                         setState(State.INVITE_ONLY);
                         break;
                     case TeambrellaModel.VALUE_STATUS_RESULT_USER_HAS_NO_TEAM_BUT_APPLICTION_APPROVED:
@@ -625,10 +693,18 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         @Override
         public void onWalletReadError(int code, boolean force) {
             if (force) {
-                if (mPendingLoginState == PendingLoginState.VKONTAKTE) {
-                    loginByVK();
-                } else {
-                    loginByFacebook();
+                if (mPendingLoginState != null) {
+                    switch (mPendingLoginState) {
+                        case VKONTAKTE:
+                            loginByVK();
+                            break;
+                        case FACEBOOK:
+                            loginByFacebook();
+                            break;
+                        case NO_SOCIAL:
+                            request(TeambrellaUris.getWelcomeUri());
+                            break;
+                    }
                 }
             } else {
                 setState(State.INIT);
@@ -643,4 +719,5 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mWaitVkLoginResponse = false;
         setState(State.INIT);
     };
+
 }

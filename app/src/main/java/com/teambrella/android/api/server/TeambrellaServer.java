@@ -338,6 +338,7 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
             }
             break;
+            case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
             case TeambrellaUris.ME_REGISTER_AUTH0_KEY:
@@ -374,6 +375,12 @@ public class TeambrellaServer {
                 String signature = uri.getQueryParameter(TeambrellaUris.KEY_SIG_OF_PUBLIC_KEY);
                 return mAPI.registerAuth0Key(auth0Token, signature);
             }
+
+            case TeambrellaUris.ME_REGISTER_USER: {
+                String signature = uri.getQueryParameter(TeambrellaUris.KEY_SIG_OF_PUBLIC_KEY);
+                return mAPI.registerUser(signature, requestBody);
+            }
+
             case TeambrellaUris.CLAIMS_LIST:
                 return mAPI.getClaimsList(requestBody);
             case TeambrellaUris.CLAIMS_ONE:

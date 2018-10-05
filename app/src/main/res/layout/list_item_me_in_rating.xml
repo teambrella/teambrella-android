@@ -28,7 +28,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/title"
-        style="@style/Teambrella.TextAppearence.MessageTitle"
+        style="@style/Teambrella.TextAppearance.MessageTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -76,7 +76,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/opt_to_rating"
-        style="@style/Teambrella.TextAppearence.SectionButton"
+        style="@style/Teambrella.TextAppearance.SectionButton"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginTop="16dp"

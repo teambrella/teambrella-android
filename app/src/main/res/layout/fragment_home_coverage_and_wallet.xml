@@ -10,7 +10,7 @@
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/submit_claim"
-        style="@style/Teambrella.TextAppearence.SectionButton"
+        style="@style/Teambrella.TextAppearance.SectionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/home_submit_claim_margin_bottom"

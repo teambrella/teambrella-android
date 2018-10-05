@@ -63,7 +63,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/amount_title"
-            style="@style/Teambrella.TextAppearence.InputTitle"
+            style="@style/Teambrella.TextAppearance.InputTitle"
             android:layout_marginTop="24dp"
             android:text="@string/withdraw_amount_title"
             android:textAllCaps="false"
@@ -106,7 +106,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/to_address_title"
-            style="@style/Teambrella.TextAppearence.InputTitle"
+            style="@style/Teambrella.TextAppearance.InputTitle"
             android:layout_marginTop="16dp"
             android:text="@string/to_address"
             app:layout_constraintTop_toBottomOf="@id/amount_input" />
@@ -129,7 +129,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/submit"
-            style="@style/Teambrella.TextAppearence.SectionButton"
+            style="@style/Teambrella.TextAppearance.SectionButton"
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_marginTop="24dp"
