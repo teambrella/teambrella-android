@@ -58,7 +58,7 @@ public class WalletBackupManager {
 
     private final CopyOnWriteArrayList<IWalletBackupListener> mListeners = new CopyOnWriteArrayList<>();
 
-    private final FragmentActivity mActivity;
+    private FragmentActivity mActivity;
 
     private Boolean mForceReadOnConnected = null;
 
@@ -77,6 +77,10 @@ public class WalletBackupManager {
                 .enableAutoManage(activity, mConnectionFailedListener)
                 .addApi(Auth.CREDENTIALS_API, options)
                 .build();
+    }
+
+    public void setActivity(FragmentActivity activity) {
+        mActivity = activity;
     }
 
     public void addBackupListener(IWalletBackupListener listener) {

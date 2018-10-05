@@ -39,8 +39,8 @@ android {
         minSdkVersion 19
         //noinspection OldTargetApi
         targetSdkVersion 27
-        versionCode 156
-        versionName "and-0.5.2.156"
+        versionCode 157
+        versionName "and-0.5.2.157"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true

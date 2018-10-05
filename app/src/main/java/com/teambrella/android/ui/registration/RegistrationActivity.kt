@@ -56,6 +56,11 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.onActivityResult(requestCode, resultCode, data)
+    }
+
     private val viewModel: RegistrationViewModel
         get() = ViewModelProviders.of(this).get(RegistrationViewModel::class.java)
 

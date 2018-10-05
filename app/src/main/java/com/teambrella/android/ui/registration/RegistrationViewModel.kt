@@ -4,10 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import android.content.Intent
+import android.support.v7.app.AppCompatActivity
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.api.server.TeambrellaUris
+import com.teambrella.android.backup.WalletBackupManager
 import com.teambrella.android.blockchain.CryptoException
 import com.teambrella.android.blockchain.EtherAccount
 import com.teambrella.android.data.base.subscribeAutoDispose
@@ -56,6 +59,7 @@ class RegistrationViewModel : ViewModel() {
     private val _regInfo = MutableLiveData<RegistrationInfo>()
     private val joinServer = JoinServer()
     private lateinit var teambrellaUser: TeambrellaUser
+    private var walletBackupManager: WalletBackupManager? = null
 
 
     val regInfo: LiveData<RegistrationInfo>
@@ -67,8 +71,14 @@ class RegistrationViewModel : ViewModel() {
     }
 
 
-    fun init(context: Context) {
+    fun init(context: AppCompatActivity) {
         teambrellaUser = TeambrellaUser.get(context)
+        if (walletBackupManager == null) {
+            walletBackupManager = WalletBackupManager(context)
+            walletBackupManager?.addBackupListener(walletBackupListener)
+        } else {
+            walletBackupManager?.setActivity(context)
+        }
     }
 
 
@@ -76,7 +86,12 @@ class RegistrationViewModel : ViewModel() {
      * Continue registration
      */
     fun continueRegistration() {
-        _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
+        walletBackupManager?.readWallet(true)
+    }
+
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        walletBackupManager?.onActivityResult(requestCode, resultCode, data)
     }
 
 
@@ -163,6 +178,28 @@ class RegistrationViewModel : ViewModel() {
 
 
         joinServer.getWelcomeScreen(teamId, invite, ::onSuccess, ::onError)
+    }
+
+
+    private val walletBackupListener = object : WalletBackupManager.IWalletBackupListener {
+
+        override fun onWalletSaved(force: Boolean) {
+
+        }
+
+        override fun onWalletSaveError(code: Int, force: Boolean) {
+
+        }
+
+        override fun onWalletRead(key: String, force: Boolean) {
+            teambrellaUser.privateKey = key
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.COMPLETE))
+
+        }
+
+        override fun onWalletReadError(code: Int, force: Boolean) {
+            _regInfo.postValue(RegistrationInfo(_regInfo.value, uiState = UIState.REGISTRATION))
+        }
     }
 }
 
