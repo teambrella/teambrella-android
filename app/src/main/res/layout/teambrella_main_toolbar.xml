@@ -34,6 +34,18 @@
             android:textColor="@android:color/white"
             android:textSize="17sp" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/notification_settings"
+            android:visibility="gone"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:paddingRight="4dp"
+            android:scaleType="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_icon_bell" />
+
+
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

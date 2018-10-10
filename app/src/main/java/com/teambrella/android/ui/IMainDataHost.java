@@ -47,7 +47,6 @@ public interface IMainDataHost extends IDataHost {
 
     void showWallet();
 
-
     void addWalletBackupListener(WalletBackupManager.IWalletBackupListener listener);
 
     void removeWalletBackupListener(WalletBackupManager.IWalletBackupListener listener);
@@ -57,5 +56,11 @@ public interface IMainDataHost extends IDataHost {
     void showWalletBackupDialog();
 
     String getInviteFriendsText();
+
+    void showTeamNotificationSettingsDialog();
+
+    void setTeamNotificationSettings(int value);
+
+    int getTeamNotificationSettings();
 
 }

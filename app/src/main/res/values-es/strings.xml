@@ -329,4 +329,13 @@
     <string name="paid_claim_shareable_bike">Reembolsamos a nuestro compañero la bicicleta robada. ¿Muy bien, de verdad? %s</string>
     <string name="paid_title">Pagado</string>
     <string name="copied">Copiado</string>
+
+    <string name="notification_daily_title">Every day</string>
+    <string name="notification_daily_description">You\'ll be receiving fresh news every day.</string>
+    <string name="notification_every_3_days_title">Once every 3 days</string>
+    <string name="notification_every_3_days_description">You\'ll be able to take part in every voting.</string>
+    <string name="notification_once_a_week_title">Once a week</string>
+    <string name="notification_once_a_week_description">A summary of the team events for the week.</string>
+    <string name="notification_every_never_title">Turned off</string>
+    <string name="notification_every_never_description">Notifications about team news are turned off.</string>
 </resources>

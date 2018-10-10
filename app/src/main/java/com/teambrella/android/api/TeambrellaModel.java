@@ -93,6 +93,14 @@ public class TeambrellaModel {
     }
 
 
+    public static final class TeamNotifications {
+        public static final int NEVER = 0;
+        public static final int DAILY = 1;
+        public static final int ONCE_EVERY_3_DAYS = 2;
+        public static final int ONCE_A_WEEK = 3;
+    }
+
+
     /*
      * Tx  Kind
      */
@@ -175,6 +183,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TO_ADDRESS = "ToAddress";
     public static final String ATTR_REQUEST_AMOUNT = "Amount";
     public static final String ATTR_REQUEST_NEW_MESSAGE_ID = "NewMessageId";
+    public static final String ATTR_REQUEST_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
@@ -408,6 +417,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_TOTAL_COMISSION = "TotalCommission";
     public static final String ATTR_DATA_VOTED_PART = "VotedPart";
     public static final String ATTR_DATA_DATE_JOINED = "DateJoined";
+    public static final String ATTR_DATA_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

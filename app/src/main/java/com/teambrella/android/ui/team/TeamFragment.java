@@ -105,4 +105,9 @@ public class TeamFragment extends AMainLandingFragment {
         return s;
     }
 
+
+    @Override
+    protected boolean isNotificationSettingsEnabled() {
+        return true;
+    }
 }

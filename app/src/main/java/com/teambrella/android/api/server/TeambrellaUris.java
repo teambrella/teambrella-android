@@ -56,6 +56,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_GET_ME = "getMe";
     private static final String SEGMENT_JOIN = "join";
     private static final String SEGMENT_GET_WELCOME = "getWelcome";
+    private static final String SEGMENT_GET_MY_SETTINGS = "getMySettings";
+    private static final String SEGMENT_SET_MY_SETTINGS = "setMySettings";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -86,6 +88,7 @@ public class TeambrellaUris {
     public static final String KEY_POST_ID = "postId";
     public static final String KEY_STATUS = "status";
     public static final String KEY_INVITE_CODE = "invitecode";
+    public static final String KEY_NOTIFICATION_SETTING = "notificationSetting";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -131,6 +134,8 @@ public class TeambrellaUris {
     public static final int ME_REGISTER_AUTH0_KEY = 40;
     public static final int ME_REGISTER_USER = 41;
     public static final int JOIN_GET_WELCOME = 42;
+    public static final int GET_TEAM_NOTIFICATION_SETTINGS = 43;
+    public static final int SET_TEAM_NOTIFICATION_SETTINGS = 44;
 
 
     static {
@@ -176,6 +181,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_GET_ME, GET_ME);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_REGISTER, ME_REGISTER_USER);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_JOIN + "/" + SEGMENT_GET_WELCOME, JOIN_GET_WELCOME);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_SET_MY_SETTINGS, SET_TEAM_NOTIFICATION_SETTINGS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_GET_MY_SETTINGS, GET_TEAM_NOTIFICATION_SETTINGS);
     }
 
 
@@ -657,6 +664,26 @@ public class TeambrellaUris {
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_JOIN)
                 .appendEncodedPath(SEGMENT_GET_WELCOME)
+                .build();
+    }
+
+
+    public static Uri getNotificationSettingUri(int teamId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_GET_MY_SETTINGS)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .build();
+    }
+
+    public static Uri getUpdateNotificationSettingUri(int teamId, int notificationSetting) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_SET_MY_SETTINGS)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_NOTIFICATION_SETTING, Integer.toString(notificationSetting))
                 .build();
     }
 

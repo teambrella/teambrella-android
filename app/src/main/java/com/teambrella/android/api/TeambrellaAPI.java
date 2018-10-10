@@ -204,7 +204,6 @@ public interface TeambrellaAPI {
     @POST("wallet/newWithdraw")
     Observable<Response<JsonObject>> newWithdraw(@Body JsonElement body);
 
-
     @Headers("Content-Type: application/json")
     @POST("feed/setIsMuted")
     Observable<Response<JsonObject>> setChatMuted(@Body JsonElement body);
@@ -216,4 +215,12 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("me/getMe")
     Observable<Response<JsonObject>> getMe(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/getMySettings")
+    Observable<Response<JsonObject>> getTeamNotificationSettings(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/setMySettings")
+    Observable<Response<JsonObject>> setTeamNotificationSettings(@Body JsonElement body);
 }

@@ -109,6 +109,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     public static final String USER_DATA = "user_data";
     public static final String WALLET_DATA = "wallet_data";
     public static final String VOTE_DATA = "vote_data";
+    public static final String TEAM_NOTIFICATIONS_DATA = "team_notifications_data";
 
 
     private static final String HOME_TAG = "home";
@@ -117,6 +118,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private static final String PROFILE_TAG = "profile";
     private static final String TEAM_CHOOSER_FRAGMENT_TAG = "team_chooser";
     private static final String WALLET_BACKUP_FRAGMENT_TAG = "wallet_backup_dialog";
+    private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
 
 
     private int mSelectedItemId = -1;
@@ -131,6 +133,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private String mUserTopicId;
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
+    private int mTeamNotificationSettings = TeambrellaModel.TeamNotifications.DAILY;
 
     private Stack<Integer> mBackStack = new Stack<>();
     private WalletBackupManager mWalletBackupManager;
@@ -203,6 +206,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         super.onPostCreate(savedInstanceState);
         getObservable(HOME_DATA_TAG).observe(this, mHomeObserver);
         getObservable(USER_DATA).observe(this, mUserObserver);
+        getObservable(TEAM_NOTIFICATIONS_DATA).observe(this, mTeamNotificationObserver);
     }
 
     @Override
@@ -324,7 +328,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             case HOME_TAG:
                 return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, KHomeFragment.class);
             case TEAM_TAG:
-                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, TeamFragment.class);
+                return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG, TEAM_NOTIFICATIONS_DATA}, TeamFragment.class);
             case PROFILE_TAG:
                 return ADataFragmentKt.createDataFragment(new String[]{HOME_DATA_TAG}, UserFragment.class);
             case PROXIES_TAG:
@@ -337,7 +341,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @NonNull
     @Override
     protected String[] getDataTags() {
-        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA, VOTE_DATA} : new String[]{};
+        return mTeam != null ? new String[]{HOME_DATA_TAG, SET_PROXY_POSITION_DATA, USER_DATA, WALLET_DATA, VOTE_DATA, TEAM_NOTIFICATIONS_DATA} : new String[]{};
     }
 
     @NonNull
@@ -393,9 +397,10 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                 return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getWallet(getTeamId()));
             case VOTE_DATA:
                 return ATeambrellaDataHostActivityKt.getDataConfig();
+            case TEAM_NOTIFICATIONS_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getNotificationSettingUri(getTeamId()), true);
             default:
                 return super.getDataConfig(tag);
-
         }
     }
 
@@ -818,6 +823,25 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         }
     }
 
+    @Override
+    public void showTeamNotificationSettingsDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(NOTIFICATION_SETTINGS_FRAGMENT_TAG) == null) {
+            new TeamNotificationsSettingsDialogFragment().show(fragmentManager, NOTIFICATION_SETTINGS_FRAGMENT_TAG);
+        }
+    }
+
+
+    @Override
+    public void setTeamNotificationSettings(int value) {
+        ViewModelProviders.of(this).get(TEAM_NOTIFICATIONS_DATA, TeambrellaDataViewModel.class)
+                .load(TeambrellaUris.getUpdateNotificationSettingUri(getTeamId(), value));
+    }
+
+    @Override
+    public int getTeamNotificationSettings() {
+        return mTeamNotificationSettings;
+    }
 
     public MainActivity() {
         registerLifecycleCallback(new MainTeambrellaBroadcastReceiver());
@@ -849,6 +873,16 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             mUserTopicId = discussion.getString(TeambrellaModel.ATTR_DATA_TOPIC_ID);
         }
     };
+
+    private Observer<Notification<JsonObject>> mTeamNotificationObserver = notification -> {
+        if (notification != null && notification.isOnNext()) {
+            JsonWrapper response = new JsonWrapper(notification.getValue());
+            JsonWrapper data = response.getObject(TeambrellaModel.ATTR_DATA);
+            mTeamNotificationSettings = data.getInt(TeambrellaModel.ATTR_DATA_NEW_TEAMMATES_NOTIFICATION
+                    , TeambrellaModel.TeamNotifications.DAILY);
+        }
+    };
+
 
 }
 

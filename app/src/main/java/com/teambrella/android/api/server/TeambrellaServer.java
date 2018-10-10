@@ -338,6 +338,20 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
             }
             break;
+
+            case TeambrellaUris.GET_TEAM_NOTIFICATION_SETTINGS: {
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+            }
+            break;
+            case TeambrellaUris.SET_TEAM_NOTIFICATION_SETTINGS: {
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                String notificationString = uri.getQueryParameter(TeambrellaUris.KEY_NOTIFICATION_SETTING);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_TEAMMATES_NOTIFICATION, Integer.parseInt(notificationString));
+            }
+
+            break;
             case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
@@ -350,6 +364,7 @@ public class TeambrellaServer {
             case TeambrellaUris.DEBUG_DB:
             case TeambrellaUris.DEBUG_LOG:
             case TeambrellaUris.GET_ME:
+            case TeambrellaUris.JOIN_GET_WELCOME:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -451,6 +466,10 @@ public class TeambrellaServer {
                 return mAPI.getWalletTransactions(requestBody);
             case TeambrellaUris.GET_ME:
                 return mAPI.getMe(requestBody);
+            case TeambrellaUris.GET_TEAM_NOTIFICATION_SETTINGS:
+                return mAPI.getTeamNotificationSettings(requestBody);
+            case TeambrellaUris.SET_TEAM_NOTIFICATION_SETTINGS:
+                return mAPI.setTeamNotificationSettings(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }
