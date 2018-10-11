@@ -58,6 +58,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_GET_WELCOME = "getWelcome";
     private static final String SEGMENT_GET_MY_SETTINGS = "getMySettings";
     private static final String SEGMENT_SET_MY_SETTINGS = "setMySettings";
+    private static final String SEGMENT_SET_PIN = "setPin";
+    private static final String SEGMENT_GET_PIN = "getPin";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -89,6 +91,7 @@ public class TeambrellaUris {
     public static final String KEY_STATUS = "status";
     public static final String KEY_INVITE_CODE = "invitecode";
     public static final String KEY_NOTIFICATION_SETTING = "notificationSetting";
+    public static final String KEY_MY_PIN = "MyPin";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -136,6 +139,8 @@ public class TeambrellaUris {
     public static final int JOIN_GET_WELCOME = 42;
     public static final int GET_TEAM_NOTIFICATION_SETTINGS = 43;
     public static final int SET_TEAM_NOTIFICATION_SETTINGS = 44;
+    public static final int SET_TOPIC_PIN = 45;
+    public static final int GET_TOPIC_PIN = 46;
 
 
     static {
@@ -183,6 +188,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_JOIN + "/" + SEGMENT_GET_WELCOME, JOIN_GET_WELCOME);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_SET_MY_SETTINGS, SET_TEAM_NOTIFICATION_SETTINGS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_GET_MY_SETTINGS, GET_TEAM_NOTIFICATION_SETTINGS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_SET_PIN, SET_TOPIC_PIN);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_GET_PIN, GET_TOPIC_PIN);
     }
 
 
@@ -684,6 +691,25 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_SET_MY_SETTINGS)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_NOTIFICATION_SETTING, Integer.toString(notificationSetting))
+                .build();
+    }
+
+    public static Uri getTopicPinUri(String topicId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_GET_PIN)
+                .appendQueryParameter(KEY_ID, topicId)
+                .build();
+    }
+
+    public static Uri getUpdateTopicUri(String topicId, int myPin) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_FEED)
+                .appendEncodedPath(SEGMENT_SET_PIN)
+                .appendQueryParameter(KEY_ID, topicId)
+                .appendQueryParameter(KEY_MY_PIN, Integer.toString(myPin))
                 .build();
     }
 

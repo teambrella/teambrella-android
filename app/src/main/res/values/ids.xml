@@ -3,4 +3,5 @@
     <item name="exit" type="id" />
     <item name="mute" type="id" />
     <item name="unmute" type="id" />
+    <item name="pin" type="id" />
 </resources>

@@ -223,4 +223,12 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("feed/setMySettings")
     Observable<Response<JsonObject>> setTeamNotificationSettings(@Body JsonElement body);
+    
+    @Headers("Content-Type: application/json")
+    @POST("feed/getPin")
+    Observable<Response<JsonObject>> getTopicPin(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("feed/setPin")
+    Observable<Response<JsonObject>> setTopicPin(@Body JsonElement body);
 }
