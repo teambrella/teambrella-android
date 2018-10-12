@@ -65,6 +65,17 @@
             android:id="@+id/pin_topic"
             android:background="@drawable/selectable_item_background">
 
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/pin_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_pin_green" />
+
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/pin_title"
                 style="@style/Teambrella.TextAppearance.MessageTitle"
@@ -74,7 +85,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/pin_text"
                 app:layout_constraintEnd_toStartOf="@+id/is_pin_selected"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pin_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
@@ -88,7 +99,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/is_pin_selected"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pin_icon"
                 app:layout_constraintTop_toBottomOf="@id/pin_title" />
 
 
@@ -112,6 +123,17 @@
             android:id="@+id/unpin_topic"
             android:background="@drawable/selectable_item_background">
 
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/unpin_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_pin_red" />
+
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/unpin_title"
                 style="@style/Teambrella.TextAppearance.MessageTitle"
@@ -121,7 +143,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/unpin_text"
                 app:layout_constraintEnd_toStartOf="@+id/is_unpin_selected"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/unpin_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
@@ -135,7 +157,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/is_unpin_selected"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/unpin_icon"
                 app:layout_constraintTop_toBottomOf="@id/unpin_title" />
 
 

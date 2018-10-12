@@ -325,7 +325,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
                 if (mShowPinUnpinMenuItem) {
                     menu.add(0, R.id.pin, 0, null)
-                            .setIcon(R.drawable.ic_pin_white).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                            .setIcon(R.drawable.ic_pin_grey).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 }
 
                 switch (mMuteStatus) {
