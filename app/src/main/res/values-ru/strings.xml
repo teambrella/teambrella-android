@@ -340,4 +340,5 @@
     <string name="notification_every_never_title">Выключены</string>
     <string name="notification_every_never_description">Уведомления о новостях команды выключены.</string>
     <string name="select_profile_photo">Выберете фото для aватара</string>
+    <string name="pin_the_topic">Прикрепить тему</string>
 </resources>

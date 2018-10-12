@@ -1,8 +1,12 @@
 package com.teambrella.android.ui.chat;
 
+import android.arch.lifecycle.LiveData;
 import android.net.Uri;
 
+import com.google.gson.JsonObject;
 import com.teambrella.android.data.base.IDataHost;
+
+import io.reactivex.Notification;
 
 /**
  * Chat Activity
@@ -32,4 +36,12 @@ public interface IChatActivity extends IDataHost {
     MuteStatus getMuteStatus();
 
     void setChatMuted(boolean muted);
+
+    LiveData<Notification<JsonObject>> getPinTopicObservable();
+
+    void pinTopic();
+
+    void unpinTopic();
+
+    void resetPin();
 }

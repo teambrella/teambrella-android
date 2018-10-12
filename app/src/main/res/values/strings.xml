@@ -377,14 +377,15 @@
     <string name="registration_error_email" translatable="false">Введите правильный E-mail</string>
     <string name="registration_error_model" translatable="false">Введите марку, модель и год автомобиля</string>
 
-    <string name="notification_daily_title" translatable="false">Every day</string>
-    <string name="notification_daily_description" translatable="false">You\'ll be receiving fresh news every day.</string>
-    <string name="notification_every_3_days_title" translatable="false">Once every 3 days</string>
-    <string name="notification_every_3_days_description" translatable="false">You\'ll be able to take part in every voting.</string>
-    <string name="notification_once_a_week_title" translatable="false">Once a week</string>
-    <string name="notification_once_a_week_description" translatable="false">A summary of the team events for the week.</string>
-    <string name="notification_every_never_title" translatable="false">Turned off</string>
-    <string name="notification_every_never_description" translatable="false">Notifications about team news are turned off.</string>
+    <string name="notification_daily_title">Every day</string>
+    <string name="notification_daily_description">You\'ll be receiving fresh news every day.</string>
+    <string name="notification_every_3_days_title">Once every 3 days</string>
+    <string name="notification_every_3_days_description">You\'ll be able to take part in every voting.</string>
+    <string name="notification_once_a_week_title">Once a week</string>
+    <string name="notification_once_a_week_description">A summary of the team events for the week.</string>
+    <string name="notification_every_never_title">Turned off</string>
+    <string name="notification_every_never_description">Notifications about team news are turned off.</string>
+    <string name="pin_the_topic">Pin the topic</string>
 
     <string name="choose" translatable="false">Choose</string>
     <string name="select_profile_photo">Select Profile Photo</string>

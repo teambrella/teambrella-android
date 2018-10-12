@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.chat;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -87,10 +88,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
 
     private static final String DATA_FRAGMENT_TAG = "data_fragment_tag";
+    private static final String PIN_UNPIN_DATA = "pin_unpin_data_fragment";
     private static final String UI_FRAGMENT_TAG = "ui_fragment_tag";
     public static final String CLAIM_DATA_TAG = "claim_data_tag";
     public static final String VOTE_DATA_TAG = "vote_data_tag";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
+    private static final String PIN_UNPIN_FRAGMENT_TAG = "pin_unpin";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
@@ -114,6 +117,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private MuteStatus mMuteStatus = null;
     private float mVote = -1;
     private long mLastRead = -1L;
+    private boolean mShowPinUnpinMenuItem = false;
 
     private TeambrellaBroadcastManager mChatBroadCastManager;
 
@@ -282,9 +286,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         switch (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
             case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
                 findViewById(R.id.input).setVisibility(View.VISIBLE);
+                mShowPinUnpinMenuItem = true;
                 break;
             default:
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
+                    mShowPinUnpinMenuItem = true;
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
                     findViewById(R.id.input).setVisibility(View.GONE);
@@ -316,6 +322,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT)) {
             if (mMuteStatus != null) {
+
+                if (mShowPinUnpinMenuItem) {
+                    menu.add(0, R.id.pin, 0, null)
+                            .setIcon(R.drawable.ic_pin_white).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                }
+
                 switch (mMuteStatus) {
                     case DEFAULT:
                     case MUTED:
@@ -522,6 +534,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             case R.id.unmute:
                 showNotificationSettings();
                 return true;
+            case R.id.pin:
+                showPinTopicDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -566,7 +581,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         if (mAction != null) {
             switch (mAction) {
                 case SHOW_CLAIM_CHAT_ACTION:
-                    return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG};
+                    return new String[]{CLAIM_DATA_TAG, VOTE_DATA_TAG, PIN_UNPIN_DATA};
+                case SHOW_FEED_CHAT_ACTION:
+                    return new String[]{PIN_UNPIN_DATA};
+                case SHOW_TEAMMATE_CHAT_ACTION:
+                    return new String[]{PIN_UNPIN_DATA};
             }
         }
         return new String[]{};
@@ -587,6 +606,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getClaimUri(getIntent().getIntExtra(EXTRA_CLAIM_ID, -1)));
             case VOTE_DATA_TAG:
                 return ATeambrellaDataHostActivityKt.getDataConfig();
+            case PIN_UNPIN_DATA:
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getTopicPinUri(getIntent().getStringExtra(EXTRA_TOPIC_ID)), true);
         }
         return super.getDataConfig(tag);
     }
@@ -660,6 +681,14 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(NOTIFICATION_SETTINGS_FRAGMENT_TAG) == null) {
             NotificationsSettingsDialogFragment.getInstance().show(fragmentManager, NOTIFICATION_SETTINGS_FRAGMENT_TAG);
+        }
+    }
+
+
+    private void showPinTopicDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(PIN_UNPIN_FRAGMENT_TAG) == null) {
+            new PinTopicDialogFragment().show(fragmentManager, PIN_UNPIN_FRAGMENT_TAG);
         }
     }
 
@@ -770,6 +799,30 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     public void launchActivity(Intent intent) {
         // nothing to do
+    }
+
+
+    @Override
+    public LiveData<Notification<JsonObject>> getPinTopicObservable() {
+        return getObservable(PIN_UNPIN_DATA);
+    }
+
+    @Override
+    public void pinTopic() {
+        ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel.class)
+                .load((TeambrellaUris.getUpdateTopicUri(getIntent().getStringExtra(EXTRA_TOPIC_ID), 1)));
+    }
+
+    @Override
+    public void unpinTopic() {
+        ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel.class)
+                .load((TeambrellaUris.getUpdateTopicUri(getIntent().getStringExtra(EXTRA_TOPIC_ID), -1)));
+    }
+
+    @Override
+    public void resetPin() {
+        ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel.class)
+                .load((TeambrellaUris.getUpdateTopicUri(getIntent().getStringExtra(EXTRA_TOPIC_ID), 0)));
     }
 
     private void setClaimTitle(@NotNull String incidentDate) {

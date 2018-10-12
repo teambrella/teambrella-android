@@ -177,6 +177,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private void checkDynamicLink(@Nullable Bundle savedInstanceState) {
         final Intent intent = getIntent();
         if (intent != null) {
+            setState(State.LOADING);
             FirebaseDynamicLinks.getInstance()
                     .getDynamicLink(getIntent())
                     .addOnSuccessListener(pendingDynamicLinkData -> {
@@ -194,8 +195,6 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                         }
                     })
                     .addOnFailureListener(e -> onNoDynamicLinks(savedInstanceState));
-
-            setState(State.LOADING);
         } else {
             onNoDynamicLinks(savedInstanceState);
         }

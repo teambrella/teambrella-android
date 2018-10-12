@@ -338,7 +338,7 @@
     <string name="notification_once_a_week_description">A summary of the team events for the week.</string>
     <string name="notification_every_never_title">Turned off</string>
     <string name="notification_every_never_description">Notifications about team news are turned off.</string>
-
     <string name="select_profile_photo">Select Profile Photo</string>
-    
+    <string name="pin_the_topic">Pin the topic</string>
+
 </resources>

@@ -350,7 +350,14 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_TEAMMATES_NOTIFICATION, Integer.parseInt(notificationString));
             }
-
+            case TeambrellaUris.GET_TOPIC_PIN: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+            }
+            break;
+            case TeambrellaUris.SET_TOPIC_PIN: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_PIN, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_MY_PIN)));
+            }
             break;
             case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
@@ -473,6 +480,10 @@ public class TeambrellaServer {
                 return mAPI.setTeamNotificationSettings(requestBody);
             case TeambrellaUris.SET_AVATAR:
                 return mAPI.setAvatar(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.GET_TOPIC_PIN:
+                return mAPI.getTopicPin(requestBody);
+            case TeambrellaUris.SET_TOPIC_PIN:
+                return mAPI.setTopicPin(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

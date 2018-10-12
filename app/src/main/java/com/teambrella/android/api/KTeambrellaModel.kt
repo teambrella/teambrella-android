@@ -42,6 +42,12 @@ const val WELCOME_TITLE = "WelcomeTitle"
 const val WELCOME_TEXT = "WelcomeText"
 const val CAR_MODEL_STRING = "CarModelString"
 const val TEAM_AREA = "TeamArea"
+const val MY_PIN = "MyPin"
+const val TEAM_PIN = "TeamPin"
+const val PIN_TITLE = "PinTitle"
+const val PIN_TEXT = "PinText"
+const val UNPIN_TITLE = "UnpinTitle"
+const val UNPIN_TEXT = "UnpinText"
 
 
 object ChatItems {
@@ -590,6 +596,25 @@ val JsonObject?.welcomeTitle: String?
 
 val JsonObject?.welcomeText: String?
     get() = getString(WELCOME_TEXT)
+
+val JsonObject?.myPin: Int?
+    get() = getInt(MY_PIN)
+
+val JsonObject?.teamPin: Float?
+    get() = getFloat(TEAM_PIN)
+
+val JsonObject?.pinTitle: String?
+    get() = getString(PIN_TITLE)
+
+val JsonObject?.pinText: String?
+    get() = getString(PIN_TEXT)
+
+val JsonObject?.unpinText: String?
+    get() = getString(UNPIN_TEXT)
+
+val JsonObject?.unpinTitle: String?
+    get() = getString(UNPIN_TITLE)
+
 
 fun JsonObject?.getFloat(key: String): Float? {
     return this?.getJsonElement(key)?.asFloat
