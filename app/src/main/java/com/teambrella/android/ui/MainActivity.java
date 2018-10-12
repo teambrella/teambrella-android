@@ -30,6 +30,7 @@ import com.teambrella.android.backup.WalletBackUpService;
 import com.teambrella.android.backup.WalletBackupManager;
 import com.teambrella.android.blockchain.CryptoException;
 import com.teambrella.android.blockchain.EtherAccount;
+import com.teambrella.android.data.base.TeambrellaDataLoaderKt;
 import com.teambrella.android.image.TeambrellaImageLoader;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationService;
@@ -54,6 +55,7 @@ import com.teambrella.android.ui.teammate.TeammateViewModel;
 import com.teambrella.android.ui.user.UserFragment;
 import com.teambrella.android.ui.user.wallet.WalletBackupInfoFragment;
 import com.teambrella.android.ui.widget.BottomBarItemView;
+import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.TeambrellaUtilService;
 import com.teambrella.android.util.log.Log;
 
@@ -63,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
 
 import static com.teambrella.android.services.push.KPushNotifications.CREATED_POST;
 import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MSG;
@@ -134,6 +137,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private MainNotificationClient mClient;
     private EtherAccount mEtherAccount;
     private int mTeamNotificationSettings = TeambrellaModel.TeamNotifications.DAILY;
+    private ImagePicker mImagePicker;
 
     private Stack<Integer> mBackStack = new Stack<>();
     private WalletBackupManager mWalletBackupManager;
@@ -199,6 +203,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
         getComponent().inject(this);
         mWalletBackupManager = new WalletBackupManager(this);
+
+        mImagePicker = new ImagePicker(this);
     }
 
     @Override
@@ -517,7 +523,42 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
+
+        Observable<ImagePicker.ImageDescriptor> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            TeambrellaDataLoaderKt.subscribeAutoDispose(result, t -> {
+                request(TeambrellaUris.setAvatarUri(t.file.getAbsolutePath()));
+                return null;
+            }, throwable -> {
+                return null;
+            }, () -> null);
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
+    protected void onRequestResult(@NotNull Notification<JsonObject> response) {
+        super.onRequestResult(response);
+        if (response.isOnNext()) {
+            String requestUriString = Observable.just(response.getValue()).map(JsonWrapper::new)
+                    .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_STATUS))
+                    .map(jsonWrapper -> jsonWrapper.getString(TeambrellaModel.ATTR_STATUS_URI))
+                    .blockingFirst(null);
+            Uri uri = Uri.parse(requestUriString);
+            switch (TeambrellaUris.sUriMatcher.match(uri)) {
+                case TeambrellaUris.SET_AVATAR:
+                    load(HOME_DATA_TAG);
+                    load(USER_DATA);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    protected boolean isRequestable() {
+        return true;
     }
 
     @Override
@@ -841,6 +882,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     @Override
     public int getTeamNotificationSettings() {
         return mTeamNotificationSettings;
+    }
+
+
+    @Override
+    public void setAvatar() {
+        mImagePicker.startPicking();
     }
 
     public MainActivity() {

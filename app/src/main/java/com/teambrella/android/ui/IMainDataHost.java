@@ -63,4 +63,6 @@ public interface IMainDataHost extends IDataHost {
 
     int getTeamNotificationSettings();
 
+    void setAvatar();
+    
 }

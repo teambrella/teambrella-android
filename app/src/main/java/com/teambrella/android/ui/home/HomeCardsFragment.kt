@@ -93,6 +93,10 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
 
+                    TeambrellaModel.FEED_ITEM_SET_AVATR -> createCardFragment(UpdateAvatarCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+
                     else -> createCardFragment(ClaimCardFragment::class.java, position
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
@@ -148,8 +152,8 @@ class PayToJoinCardFragment : CardFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.setOnClickListener {  _->
-                dataHost.showWallet()
+        view.setOnClickListener { _ ->
+            dataHost.showWallet()
         }
     }
 
@@ -157,7 +161,7 @@ class PayToJoinCardFragment : CardFragment() {
         notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
-            subtitle?.text= it.subTitle
+            subtitle?.text = it.subTitle
             icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
         }
     }
@@ -179,17 +183,44 @@ class UpdateProfileCardFragment : CardFragment() {
         notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
-            subtitle?.text= it.subTitle
+            subtitle?.text = it.subTitle
             icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
 
 
-            view?.setOnClickListener {_->
+            view?.setOnClickListener { _ ->
                 startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
                         , it.itemUserId
                         , it.itemUserName
                         , null
                         , it.topicId
                         , dataHost.teamAccessLevel))
+            }
+        }
+    }
+}
+
+
+class UpdateAvatarCardFragment : CardFragment() {
+
+    private val titleView: TextView? by ViewHolder(R.id.title)
+    private val textView: TextView? by ViewHolder(R.id.text)
+    private val subtitle: TextView? by ViewHolder(R.id.subtitle)
+    private val icon: ImageView? by ViewHolder(R.id.icon)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.home_cards_action, container, false)
+
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+            titleView?.text = it.chatTitle
+            textView?.text = it.text
+            subtitle?.text = it.subTitle
+            icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+
+
+            view?.setOnClickListener { _ ->
+                dataHost.setAvatar()
             }
         }
     }

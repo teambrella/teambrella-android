@@ -130,6 +130,12 @@ class TeammateFragment : ADataProgressFragment<ITeammateActivity>(), VoterBar.Vo
             if (!transaction.isEmpty) {
                 transaction.commit()
             }
+
+            if (dataHost.isItMe) {
+                userPictureView?.setOnClickListener {
+                    dataHost.setAvatar()
+                }
+            }
         }
 
         if (savedInstanceState == null) {

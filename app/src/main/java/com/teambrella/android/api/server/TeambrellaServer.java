@@ -358,6 +358,7 @@ public class TeambrellaServer {
             case TeambrellaUris.ME_REGISTER_AUTH0_KEY:
             case TeambrellaUris.MY_TEAMS:
             case TeambrellaUris.NEW_FILE:
+            case TeambrellaUris.SET_AVATAR:
             case TeambrellaUris.INBOX:
             case TeambrellaUris.DEMO_TEAMS:
             case TeambrellaUris.GET_DEMO_TEAMS_SUR:
@@ -470,6 +471,8 @@ public class TeambrellaServer {
                 return mAPI.getTeamNotificationSettings(requestBody);
             case TeambrellaUris.SET_TEAM_NOTIFICATION_SETTINGS:
                 return mAPI.setTeamNotificationSettings(requestBody);
+            case TeambrellaUris.SET_AVATAR:
+                return mAPI.setAvatar(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

@@ -223,4 +223,9 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("feed/setMySettings")
     Observable<Response<JsonObject>> setTeamNotificationSettings(@Body JsonElement body);
+
+
+    @Headers("Content-Type: image/jpeg")
+    @POST("me/setAvatar")
+    Observable<Response<JsonObject>> setAvatar(@Body RequestBody body);
 }

@@ -58,6 +58,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_GET_WELCOME = "getWelcome";
     private static final String SEGMENT_GET_MY_SETTINGS = "getMySettings";
     private static final String SEGMENT_SET_MY_SETTINGS = "setMySettings";
+    private static final String SEGMENT_SET_AVATAR = "setAvatar";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -136,6 +137,7 @@ public class TeambrellaUris {
     public static final int JOIN_GET_WELCOME = 42;
     public static final int GET_TEAM_NOTIFICATION_SETTINGS = 43;
     public static final int SET_TEAM_NOTIFICATION_SETTINGS = 44;
+    public static final int SET_AVATAR = 45;
 
 
     static {
@@ -183,6 +185,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_JOIN + "/" + SEGMENT_GET_WELCOME, JOIN_GET_WELCOME);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_SET_MY_SETTINGS, SET_TEAM_NOTIFICATION_SETTINGS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_GET_MY_SETTINGS, GET_TEAM_NOTIFICATION_SETTINGS);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_SET_AVATAR, SET_AVATAR);
     }
 
 
@@ -684,6 +687,15 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_SET_MY_SETTINGS)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_NOTIFICATION_SETTING, Integer.toString(notificationSetting))
+                .build();
+    }
+
+    public static Uri setAvatarUri(String path) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_ME)
+                .appendEncodedPath(SEGMENT_SET_AVATAR)
+                .appendQueryParameter(KEY_URI, path)
                 .build();
     }
 

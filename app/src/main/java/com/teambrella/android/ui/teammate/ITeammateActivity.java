@@ -25,4 +25,6 @@ public interface ITeammateActivity extends IDataHost {
     int getTeammateId();
 
     void launchActivity(Intent intent);
+
+    void setAvatar();
 }

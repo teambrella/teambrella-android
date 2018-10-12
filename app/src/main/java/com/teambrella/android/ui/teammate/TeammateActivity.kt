@@ -98,7 +98,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             }
 
             customView.findViewById<View>(R.id.send_message)?.apply {
-                    visibility = View.GONE
+                visibility = View.GONE
             }
         }
 
@@ -166,12 +166,12 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
                 }
 
 
-                _data.team?.let { _team->
+                _data.team?.let { _team ->
                     supportActionBar?.customView?.findViewById<View>(R.id.send_message)?.apply {
-                        when{
+                        when {
                             user.userId == intent.userId ||
-                            _team.teamAccessLevel == TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH
-                                -> {
+                                    _team.teamAccessLevel == TeambrellaModel.TeamAccessLevel.READ_ONLY_ALL_AND_STEALTH
+                            -> {
                                 visibility = View.GONE
                             }
                             else -> {
@@ -231,7 +231,10 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     override fun launchActivity(intent: Intent?) {
         startActivityForResult(intent, 3)
     }
+    
+    override fun setAvatar() {
 
+    }
 
     private inner class TeammateNotificationClient(context: Context) : TeambrellaNotificationServiceClient(context) {
 

@@ -22,6 +22,7 @@
         android:layout_width="@dimen/teammate_object_picture_width"
         android:layout_height="@dimen/teammate_object_picture_height"
         android:layout_marginTop="41dp"
+        android:background="@drawable/picture_background_round_4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -135,7 +136,7 @@
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/risk"
                     style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/avg_difference"
