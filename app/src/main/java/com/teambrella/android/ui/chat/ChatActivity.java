@@ -117,6 +117,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private MuteStatus mMuteStatus = null;
     private float mVote = -1;
     private long mLastRead = -1L;
+    private boolean mShowPinUnpinMenuItem = false;
 
     private TeambrellaBroadcastManager mChatBroadCastManager;
 
@@ -285,9 +286,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         switch (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
             case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
                 findViewById(R.id.input).setVisibility(View.VISIBLE);
+                mShowPinUnpinMenuItem = true;
                 break;
             default:
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
+                    mShowPinUnpinMenuItem = true;
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
                     findViewById(R.id.input).setVisibility(View.GONE);
@@ -318,11 +321,13 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mAction == null || !mAction.equals(SHOW_CONVERSATION_CHAT)) {
-
-            menu.add(0, R.id.pin, 0, null)
-                    .setIcon(R.drawable.ic_pin_white).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
             if (mMuteStatus != null) {
+
+                if (mShowPinUnpinMenuItem) {
+                    menu.add(0, R.id.pin, 0, null)
+                            .setIcon(R.drawable.ic_pin_white).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                }
+
                 switch (mMuteStatus) {
                     case DEFAULT:
                     case MUTED:
