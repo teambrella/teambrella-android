@@ -44,6 +44,7 @@ import com.teambrella.android.ui.base.TeambrellaDataViewModel;
 import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsViewModel;
+import com.teambrella.android.ui.dialog.ProgressDialogFragment;
 import com.teambrella.android.ui.home.HomeViewModel;
 import com.teambrella.android.ui.home.KHomeFragment;
 import com.teambrella.android.ui.proxies.ProxiesFragment;
@@ -122,6 +123,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private static final String TEAM_CHOOSER_FRAGMENT_TAG = "team_chooser";
     private static final String WALLET_BACKUP_FRAGMENT_TAG = "wallet_backup_dialog";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
+    private static final String PLEASE_WAIT_DIALOG_FRAGMENT_TAG = "please_wait";
 
 
     private int mSelectedItemId = -1;
@@ -138,6 +140,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private EtherAccount mEtherAccount;
     private int mTeamNotificationSettings = TeambrellaModel.TeamNotifications.DAILY;
     private ImagePicker mImagePicker;
+    private boolean mShowPleaseWaitOnResume = false;
 
     private Stack<Integer> mBackStack = new Stack<>();
     private WalletBackupManager mWalletBackupManager;
@@ -515,6 +518,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         }
     }
 
+
     @Override
     public void startNewDiscussion() {
         StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), DEFAULT_REQUEST_CODE);
@@ -526,10 +530,13 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
         Observable<ImagePicker.ImageDescriptor> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
         if (result != null) {
+            mShowPleaseWaitOnResume = true;
             TeambrellaDataLoaderKt.subscribeAutoDispose(result, t -> {
                 request(TeambrellaUris.setAvatarUri(t.file.getAbsolutePath()));
                 return null;
             }, throwable -> {
+                mShowPleaseWaitOnResume = false;
+                hidePleaseWait();
                 return null;
             }, () -> null);
         }
@@ -549,6 +556,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             Uri uri = Uri.parse(requestUriString);
             switch (TeambrellaUris.sUriMatcher.match(uri)) {
                 case TeambrellaUris.SET_AVATAR:
+                    mShowPleaseWaitOnResume = false;
+                    hidePleaseWait();
                     load(HOME_DATA_TAG);
                     load(USER_DATA);
                     break;
@@ -588,6 +597,12 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         if (mClient != null) {
             mClient.onResume();
         }
+
+        if (mShowPleaseWaitOnResume) {
+            showPleaseWait();
+            mShowPleaseWaitOnResume = false;
+        }
+
     }
 
     @Override
@@ -887,7 +902,22 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void setAvatar() {
-        mImagePicker.startPicking();
+        mImagePicker.startPicking(getString(R.string.select_profile_photo));
+    }
+
+    private void showPleaseWait() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG) == null) {
+            new ProgressDialogFragment().show(fragmentManager, PLEASE_WAIT_DIALOG_FRAGMENT_TAG);
+        }
+    }
+
+    private void hidePleaseWait() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        ProgressDialogFragment fragment = (ProgressDialogFragment) fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
     }
 
     public MainActivity() {

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
@@ -15,10 +16,13 @@ import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaUris
+import com.teambrella.android.data.base.subscribeAutoDispose
 import com.teambrella.android.services.TeambrellaNotificationServiceClient
 import com.teambrella.android.services.push.INotificationMessage
 import com.teambrella.android.ui.base.*
 import com.teambrella.android.ui.chat.ChatActivity
+import com.teambrella.android.ui.dialog.ProgressDialogFragment
+import com.teambrella.android.util.ImagePicker
 import io.reactivex.Notification
 
 fun getTeammateIntent(context: Context, teamId: Int, userId: String, name: String?, userPictureUri: String?) = Intent(context, TeammateActivity::class.java).apply {
@@ -40,6 +44,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         private const val VOTE = "vote"
         private const val PROXY = "proxy"
         private const val UI = "ui"
+        private const val PLEASE_WAIT_DIALOG_FRAGMENT_TAG = "please_wait_tag"
     }
 
     override val dataTags: Array<String> = arrayOf(TEAMMATE, VOTE, PROXY)
@@ -62,6 +67,8 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     private lateinit var teambrellaBroadcastManager: TeambrellaBroadcastManager
     private lateinit var titleView: TextView
     private lateinit var notificationClient: TeammateNotificationClient
+    private lateinit var imagePicker: ImagePicker
+    private var showPleaseWaitOnResume = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,6 +116,9 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             this@TeammateActivity.onDataUpdated(notification ?: throw kotlin.RuntimeException())
         })
 
+
+        imagePicker = ImagePicker(this)
+
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -131,6 +141,10 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     override fun onResume() {
         super.onResume()
         notificationClient.onPause()
+        if (showPleaseWaitOnResume) {
+            showPleaseWaitOnResume = false
+            showPleaseWait()
+        }
     }
 
     override fun onPause() {
@@ -153,6 +167,20 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        imagePicker.onActivityResult(requestCode, resultCode, data)?.apply {
+            showPleaseWaitOnResume = true
+            subscribeAutoDispose({ t ->
+                request(TeambrellaUris.setAvatarUri(t.file.absolutePath))
+            }, {
+                showPleaseWaitOnResume = false
+                hidePleaseWait()
+            }, { })
+        }
     }
 
     private fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -228,12 +256,27 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
 
     override fun getTeammateId(): Int = teammateId ?: 0
 
+    override val isRequestable = true
+
     override fun launchActivity(intent: Intent?) {
         startActivityForResult(intent, 3)
     }
-    
-    override fun setAvatar() {
 
+    override fun setAvatar() {
+        imagePicker.startPicking(getString(R.string.select_profile_photo))
+    }
+
+    override fun onRequestResult(response: Notification<JsonObject>) {
+        super.onRequestResult(response)
+        response.takeIf { it.isOnNext }?.value?.status?.uri?.let {
+            when (TeambrellaUris.sUriMatcher.match(Uri.parse(it))) {
+                TeambrellaUris.SET_AVATAR -> {
+                    showPleaseWaitOnResume = false
+                    hidePleaseWait()
+                    load(TEAMMATE)
+                }
+            }
+        }
     }
 
     private inner class TeammateNotificationClient(context: Context) : TeambrellaNotificationServiceClient(context) {
@@ -263,6 +306,22 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
                 load(TEAMMATE)
                 mUpdateOnResume = false
             }
+        }
+    }
+
+
+    private fun showPleaseWait() {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG) == null) {
+            ProgressDialogFragment().show(fragmentManager, PLEASE_WAIT_DIALOG_FRAGMENT_TAG)
+        }
+    }
+
+    private fun hidePleaseWait() {
+        val fragmentManager = supportFragmentManager
+        val fragment = fragmentManager.findFragmentByTag(PLEASE_WAIT_DIALOG_FRAGMENT_TAG)
+        if (fragment != null && fragment is ProgressDialogFragment) {
+            fragment.dismiss()
         }
     }
 

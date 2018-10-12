@@ -359,7 +359,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 mMessageView.setText(null);
                 break;
             case R.id.send_image:
-                mImagePicker.startPicking();
+                mImagePicker.startPicking(getString(R.string.choose));
                 break;
         }
     }

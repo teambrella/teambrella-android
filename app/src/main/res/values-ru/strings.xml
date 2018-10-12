@@ -339,4 +339,5 @@
     <string name="notification_once_a_week_description">Ты будешь получать сводку о том, что произошло в команде за неделю.</string>
     <string name="notification_every_never_title">Выключены</string>
     <string name="notification_every_never_description">Уведомления о новостях команды выключены.</string>
+    <string name="select_profile_photo">Выберете фото для aватара</string>
 </resources>

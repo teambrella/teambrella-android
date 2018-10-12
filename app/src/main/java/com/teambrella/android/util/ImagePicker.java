@@ -61,8 +61,8 @@ public class ImagePicker {
     }
 
 
-    public void startPicking() {
-        mContext.startActivityForResult(getImagePickerIntent(getTempFileUri()), IMAGE_PICKER_REQUEST_CODE);
+    public void startPicking(String title) {
+        mContext.startActivityForResult(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_REQUEST_CODE);
     }
 
 
@@ -110,7 +110,7 @@ public class ImagePicker {
     /**
      * Get image picker intent
      */
-    private Intent getImagePickerIntent(Uri cameraFile) {
+    private Intent getImagePickerIntent(Uri cameraFile, String title) {
         Intent chooserIntent = null;
 
         List<Intent> intentList = new ArrayList<>();
@@ -128,7 +128,7 @@ public class ImagePicker {
         addIntentToList(intentList, takePhotoIntent);
 
         if (intentList.size() > 0) {
-            chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), "Choose");
+            chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1), title);
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 

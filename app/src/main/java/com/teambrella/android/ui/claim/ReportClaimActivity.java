@@ -263,7 +263,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_photos:
-                mImagePicker.startPicking();
+                mImagePicker.startPicking(getString(R.string.choose));
                 break;
             case R.id.incident_date:
                 showDatePicker(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
