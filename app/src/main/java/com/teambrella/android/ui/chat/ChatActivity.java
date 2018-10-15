@@ -290,7 +290,6 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 break;
             default:
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
-                    mShowPinUnpinMenuItem = true;
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
                     findViewById(R.id.input).setVisibility(View.GONE);
