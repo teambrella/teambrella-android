@@ -1,6 +1,7 @@
 package com.teambrella.android.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.StringRes;
 
 import com.teambrella.android.backup.WalletBackupManager;
@@ -30,6 +31,12 @@ public interface IMainDataHost extends IDataHost {
     void showTeamChooser();
 
     String getUserId();
+
+    String getUserName();
+
+    String getUserTopicID();
+
+    Uri getUserPicture();
 
     String getCurrency();
 

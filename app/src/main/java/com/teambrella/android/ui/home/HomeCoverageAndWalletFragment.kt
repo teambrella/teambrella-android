@@ -12,6 +12,7 @@ import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.ui.IMainDataHost
 import com.teambrella.android.ui.base.ADataFragment
+import com.teambrella.android.ui.chat.ChatActivity
 import com.teambrella.android.ui.claim.ReportClaimActivity
 import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.util.AmountCurrencyUtil
@@ -41,6 +42,14 @@ class HomeCoverageAndWalletFragment : ADataFragment<IMainDataHost>() {
             val objectName = _data.objectName
             objectModel?.text = objectName
             objectImage?.setImage(imageLoader.getImageUrl(_data.smallPhoto), R.dimen.rounded_corners_3dp)
+            objectImage?.setOnClickListener {
+                startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
+                        , dataHost.userId
+                        , dataHost.userName
+                        , dataHost.userPicture.toString()
+                        , dataHost.userTopicID
+                        , dataHost.teamAccessLevel))
+            }
 
             coverage?.text = Html.fromHtml(getString(R.string.coverage_format_string
                     , Math.round((data.coverage ?: 0f) * 100)))

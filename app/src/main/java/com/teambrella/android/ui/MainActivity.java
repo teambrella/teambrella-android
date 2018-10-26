@@ -590,6 +590,20 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         return mTeam.getString(TeambrellaModel.ATTR_DATA_CURRENCY);
     }
 
+    @Override
+    public String getUserName() {
+        return mUserName;
+    }
+
+    @Override
+    public String getUserTopicID() {
+        return mUserTopicId;
+    }
+
+    @Override
+    public Uri getUserPicture() {
+        return mUserPicture;
+    }
 
     @Override
     protected void onResume() {
