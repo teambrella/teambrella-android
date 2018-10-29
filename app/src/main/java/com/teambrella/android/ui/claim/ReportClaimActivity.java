@@ -83,6 +83,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private TextView mClaimAmount;
     private PhotoAdapter mPhotoAdapter;
     private ImagePicker mImagePicker;
+    private TextView mSubmitClaimDone;
 
 
     private Disposable mDisposable;
@@ -202,6 +203,8 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         AmountCurrencyUtil.setAmount(findViewById(R.id.deductible), 0f, mCurrency);
         mDescriptionView = findViewById(R.id.description);
         mAddressView = findViewById(R.id.address);
+        mSubmitClaimDone = findViewById(R.id.submit_claim_done);
+        mSubmitClaimDone.setOnClickListener(this::onClick);
     }
 
     /**
@@ -242,7 +245,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.submit_menu, menu);
+//        getMenuInflater().inflate(R.menu.submit_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -252,9 +255,9 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.submit:
-                item.setEnabled(!submitClaim());
-                return true;
+//            case R.id.submit:
+//                item.setEnabled(!submitClaim());
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -267,6 +270,9 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
                 break;
             case R.id.incident_date:
                 showDatePicker(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                break;
+            case R.id.submit_claim_done:
+                mSubmitClaimDone.setEnabled(!submitClaim());
                 break;
         }
     }

@@ -20,6 +20,19 @@
 
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/submit_claim_done"
+                style="@style/Teambrella.TextAppearance.SectionButton"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/header_button_normal"
+                android:text="@string/report_claim"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/address" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/header"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
                 android:layout_width="wrap_content"
@@ -75,10 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/default_edit_text_background"
-                android:paddingBottom="10dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/incident_date_title"
@@ -100,10 +113,10 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/default_edit_text_background"
                 android:inputType="numberDecimal"
-                android:paddingBottom="10dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/expenses_title" />
@@ -219,10 +232,10 @@
                 android:background="@drawable/default_edit_text_background"
                 android:gravity="top|left"
                 android:lines="6"
-                android:paddingBottom="10dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/description_title" />
@@ -268,10 +281,10 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/default_edit_text_background"
                 android:hint="@string/ethereum_address"
-                android:paddingBottom="10dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/address_title" />
