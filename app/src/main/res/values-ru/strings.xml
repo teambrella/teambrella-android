@@ -26,7 +26,7 @@
     <string name="collision_deductible_insurance">Ущерб</string>
 
     <string name="limit">Лимит</string>
-    <string name="see_claims_format_string">Заявки на Выплату(%d)</string>
+    <string name="see_claims_format_string">Заявки на Выплату (%d)</string>
     <string name="voting_stats">Статистика</string>
     <string name="weight">Вес</string>
 
