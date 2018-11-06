@@ -1,5 +1,6 @@
 package com.teambrella.android.util;
 
+import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.webkit.MimeTypeMap;
 
 import com.teambrella.android.R;
@@ -40,8 +42,6 @@ public class ImagePicker {
 
     private static final String LOG_TAG = ImagePicker.class.getSimpleName();
 
-
-    private static final int IMAGE_PICKER_REQUEST_CODE = 101;
     private static final String EXTENSION = ".jpg";
     private static final SimpleDateFormat CAMERA_FILE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
 
@@ -49,6 +49,8 @@ public class ImagePicker {
     private final AppCompatActivity mContext;
     private Uri mCameraFileUri;
 
+    public static final int IMAGE_PICKER_REQUEST_CODE = 101;
+    public static final int IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE = 102;
 
     public static class ImageDescriptor {
         public File file;
@@ -65,12 +67,16 @@ public class ImagePicker {
         mContext.startActivityForResult(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_REQUEST_CODE);
     }
 
+    public void startPickingInFragment(String title, AppCompatDialogFragment fragment) {
+        fragment.startActivityForResult(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE);
+    }
 
     public Observable<ImageDescriptor> onActivityResult(int requestCode, int resultCode, Intent data) {
         Observable<File> fileObservable;
         Observable<ImageDescriptor> result = null;
         switch (requestCode) {
             case IMAGE_PICKER_REQUEST_CODE:
+            case IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE:
                 File cameraFile = mCameraFileUri != null ? new File(mCameraFileUri.getPath()) : null;
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     Uri uri = data != null ? data.getData() : null;

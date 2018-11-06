@@ -1,8 +1,13 @@
 package com.teambrella.android.ui.chat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.text.method.LinkMovementMethod
@@ -52,8 +57,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private const val VIEW_TYPE_PAID_CLAIM = VIEW_TYPE_REGULAR + 6
         private const val VIEW_TYPE_PAY_TO_JOIN = VIEW_TYPE_REGULAR + 7
         private const val VIEW_TYPE_SYSTEM_MESSAGE = VIEW_TYPE_REGULAR + 8
+        private const val VIEW_TYPE_ADD_PHOTO_TO_JOIN = VIEW_TYPE_REGULAR + 9
         private const val FILE_PREFIX = "file:"
-
+        private const val TAKE_PHOTOS_FRAGMENT_TAG = "take_photos_dialog"
     }
 
     private val timeFormat: SimpleDateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a", Locale.ENGLISH)
@@ -78,7 +84,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 ChatItems.CHAT_ITEM_DATE -> VIEW_TYPE_DATE
                 ChatItems.CHAT_ITEM_PAID_CLAIM -> VIEW_TYPE_PAID_CLAIM
                 ChatItems.CHAT_ITEM_PAY_TO_JOIN -> VIEW_TYPE_PAY_TO_JOIN
-                ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN, ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN -> VIEW_TYPE_SYSTEM_MESSAGE
+                ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN ->
+                    if (item?.stringId?.endsWith("000000000001") ?: false) VIEW_TYPE_ADD_PHOTO_TO_JOIN else VIEW_TYPE_SYSTEM_MESSAGE // dirty hack
+                ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN -> VIEW_TYPE_SYSTEM_MESSAGE
                 else -> VIEW_TYPE_REGULAR
             }
         }
@@ -97,6 +105,8 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             VIEW_TYPE_DATE -> ChatDateViewHolder(inflater.inflate(R.layout.list_item_date, parent, false))
             VIEW_TYPE_PAID_CLAIM -> ChatPaidClaimViewHolder(inflater.inflate(R.layout.list_item_chat_paid_claim, parent, false))
             VIEW_TYPE_PAY_TO_JOIN -> PayToJoinViewHolder(inflater.inflate(R.layout.list_item_message_fund_wallet, parent, false))
+//            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> AddPhotoToJoinHolder(inflater.inflate(R.layout.list_item_message_add_photos, parent, false))
+            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             VIEW_TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             else -> super.onCreateViewHolder(parent, viewType)
         }
@@ -126,6 +136,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         }
 
         if (holder is PayToJoinViewHolder) {
+            mPager.loadedData[position]?.asJsonObject?.let {
+                holder.onBind(it)
+            }
+        }
+
+        if (holder is AddPhotoToJoinHolder) {
             mPager.loadedData[position]?.asJsonObject?.let {
                 holder.onBind(it)
             }
@@ -237,6 +253,21 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             fundWallet?.setOnClickListener {
                 QRCodeActivity.startQRCode(context, EtherAccount(TeambrellaUser.get(context).privateKey, context)
                         .depositAddress)
+            }
+        }
+    }
+
+    private inner class AddPhotoToJoinHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val addPhotos: View? = itemView.findViewById(R.id.make_photos)
+        private val message: TextView? = itemView.findViewById(R.id.message)
+
+        fun onBind(item: JsonObject) {
+            message?.text = item.text
+            addPhotos?.setOnClickListener {
+                val fragmentManager = (context as AppCompatActivity).getSupportFragmentManager()
+                if (fragmentManager.findFragmentByTag(TAKE_PHOTOS_FRAGMENT_TAG) == null) {
+                    TakePhotosDialogFragment.getInstance().show(fragmentManager, TAKE_PHOTOS_FRAGMENT_TAG)
+                }
             }
         }
     }

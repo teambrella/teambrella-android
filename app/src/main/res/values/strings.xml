@@ -107,6 +107,7 @@
     <string name="try_demo">Try the Demo</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
     <string name="continue_with_vk">Continue with VK</string>
+    <string name="continue_without_login" translatable="false">Continue</string>
     <string name="proxy_vote">Proxy Vote</string>
     <string name="my_proxies">My Proxies</string>
     <string name="proxy_for">Proxy For</string>
@@ -120,7 +121,6 @@
     <string name="opt_into_rating">Opt Into Rating</string>
     <string name="opt_out_of_rating">Opt Out of Rating</string>
     <string name="profile">Profile</string>
-    :ы
 
     <string name="decision_harsh">harsh</string>
     <string name="decision_severe">severe</string>
@@ -152,6 +152,8 @@
     <string name="describe_your_case">Describe your case</string>
     <string name="photos">Photos</string>
     <string name="add_photos">Add photos</string>
+    <string name="add_photos_to_chat">Add to Chat</string>
+    <string name="make_photos">Take Photos</string>
     <string name="reimburse_to">reimburse to</string>
     <string name="submit_claim">Submit</string>
     <string name="no_incident_date_error"> No incident date</string>
@@ -371,7 +373,6 @@
     <string name="location_title" translatable="false">Город</string>
     <string name="welcome_to_join_title" translatable="false">Привет!</string>
     <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
-    <string name="continue_without_login" translatable="false">Далее</string>
     <string name="registration_error_name" translatable="false">Введите имя</string>
     <string name="registration_error_location" translatable="false">Введите город</string>
     <string name="registration_error_email" translatable="false">Введите правильный E-mail</string>

@@ -5,13 +5,14 @@ import android.net.Uri;
 
 import com.google.gson.JsonObject;
 import com.teambrella.android.data.base.IDataHost;
+import com.teambrella.android.ui.base.ITeambrellaDaggerActivity;
 
 import io.reactivex.Notification;
 
 /**
  * Chat Activity
  */
-public interface IChatActivity extends IDataHost {
+public interface IChatActivity extends IDataHost, ITeambrellaDaggerActivity {
     enum MuteStatus {
         DEFAULT,
         MUTED,

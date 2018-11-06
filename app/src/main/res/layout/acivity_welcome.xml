@@ -145,7 +145,7 @@
             android:drawablePadding="8dp"
             android:gravity="center"
             android:layout_centerInParent="true"
-            android:text="Continue"
+            android:text="@string/continue_without_login"
             android:textColor="@color/blueWithAHintOfPurple"
             android:textSize="15sp" />
 

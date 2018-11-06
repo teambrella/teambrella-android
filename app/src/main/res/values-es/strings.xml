@@ -87,6 +87,7 @@
     <string name="try_demo">Probar Demo</string>
     <string name="continue_with_facebook">Continuar con Facebook</string>
     <string name="continue_with_vk">Continuar con VK</string>
+    <string name="continue_without_login" translatable="false">Continuar</string>
     <string name="proxy_vote">Proxy </string>
     <string name="my_proxies">Mis Proxies</string>
     <string name="proxy_for">Proxy Para</string>
@@ -129,6 +130,8 @@
     <string name="describe_your_case">Describe tu caso</string>
     <string name="photos">Fotos</string>
     <string name="add_photos">Cargar las fotos</string>
+    <string name="add_photos_to_chat">Cargar las fotos</string>
+    <string name="make_photos">Cargar las fotos</string>
     <string name="reimburse_to">Reembolso a</string>
     <string name="submit_claim">Enviar</string>
     <string name="no_incident_date_error">No hay fecha del incidente</string>

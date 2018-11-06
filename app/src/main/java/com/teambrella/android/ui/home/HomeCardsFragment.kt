@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.home
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
@@ -26,6 +27,7 @@ import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
 import com.teambrella.android.ui.util.setUnreadCount
 import com.teambrella.android.util.AmountCurrencyUtil
+import com.teambrella.android.util.StatisticHelper
 import io.reactivex.Notification
 import java.util.*
 
@@ -93,7 +95,11 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
 
-                    TeambrellaModel.FEED_ITEM_SET_AVATR -> createCardFragment(UpdateAvatarCardFragment::class.java, position
+                    TeambrellaModel.FEED_ITEM_SET_AVATAR -> createCardFragment(UpdateAvatarCardFragment::class.java, position
+                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                            , tags)
+
+                    TeambrellaModel.FEED_ITEM_INVITE_FRIENDS -> createCardFragment(InviteFriendsCardFragment::class.java, position
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0
                             , tags)
 
@@ -221,6 +227,35 @@ class UpdateAvatarCardFragment : CardFragment() {
 
             view?.setOnClickListener { _ ->
                 dataHost.setAvatar()
+            }
+        }
+    }
+}
+
+
+class InviteFriendsCardFragment : CardFragment() {
+
+    private val titleView: TextView? by ViewHolder(R.id.title)
+    private val textView: TextView? by ViewHolder(R.id.text)
+    private val subtitle: TextView? by ViewHolder(R.id.subtitle)
+    private val icon: ImageView? by ViewHolder(R.id.icon)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.home_cards_action, container, false)
+
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+            titleView?.text = it.chatTitle
+            textView?.text = it.text
+            subtitle?.text = it.subTitle
+            icon?.setImage(imageLoader.getImageUrl(it.smallPhotoOrAvatar), R.dimen.rounded_corners_3dp)
+
+
+            view?.setOnClickListener { _ ->
+                startActivity(Intent.createChooser(Intent().setAction(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, dataHost.inviteFriendsText)
+                        .setType("text/plain"), context!!.getString(R.string.invite_friends)))
+                StatisticHelper.onInviteFriends(context, dataHost.teamId)
             }
         }
     }

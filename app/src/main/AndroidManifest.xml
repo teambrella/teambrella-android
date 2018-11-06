@@ -7,9 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission
-        android:name="android.permission.CAMERA"
-        tools:node="remove" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false"></uses-feature>
 
     <application
         android:name=".TeambrellaApplication"
@@ -19,13 +18,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -45,38 +44,29 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
         <activity
             android:name=".ui.teammate.TeammateActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.team.claims.ClaimsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.claim.ClaimActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.image.ImageViewerActivity"
             android:theme="@style/AppTheme.ImageViewer" />
-
         <activity
             android:name=".ui.chat.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Chat"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".ui.claim.ReportClaimActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.chat.StartNewChatActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.chat.inbox.InboxActivity"
             android:launchMode="singleTop"
@@ -90,34 +80,27 @@
         <activity
             android:name=".ui.CosignersActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.teammates.TeammatesByRiskActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.demo.NewDemoSessionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
-
         <activity
             android:name=".ui.withdraw.WithdrawActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.wallet.WalletTransactionsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.app.AppOutdatedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
-
         <activity
             android:name=".ui.background.BackgroundRestrictionsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Modal" />
-
         <activity
             android:name=".ui.registration.RegistrationActivity"
             android:screenOrientation="portrait"
@@ -137,17 +120,14 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.TeambrellaNotificationService"
             android:exported="true" />
-
         <service android:name=".services.TeambrellaFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".backup.WalletBackUpService"
             android:exported="true"
@@ -156,8 +136,6 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-
-
         <service
             android:name=".services.TeambrellaLoginService"
             android:exported="true"
@@ -167,14 +145,11 @@
             </intent-filter>
         </service>
 
-
         <receiver android:name=".util.UserPresentBroadCastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-
-
         <receiver
             android:name=".util.LocaleChangedBroadcastReceiver"
             android:enabled="true"
@@ -183,8 +158,6 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </receiver>
-
-
         <receiver android:name=".util.PackageReplacedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -194,18 +167,15 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="@string/com_google_android_backup_api_key" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_teambrella_status" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/lightBlue" />
-
 
         <provider
             android:name="android.support.v4.content.FileProvider"

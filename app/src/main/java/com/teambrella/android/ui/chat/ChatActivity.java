@@ -544,6 +544,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ImagePicker.IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE) {
+            return; // processed by a fragment
+        }
+
         Observable<ImagePicker.ImageDescriptor> result = mImagePicker.onActivityResult(requestCode, resultCode, data);
         if (result != null) {
             result.subscribe(descriptor -> {

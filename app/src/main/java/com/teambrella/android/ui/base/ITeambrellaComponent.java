@@ -8,6 +8,7 @@ import com.teambrella.android.data.base.TeambrellaDataLoader;
 import com.teambrella.android.data.base.TeambrellaDataPagerLoader;
 import com.teambrella.android.data.base.TeambrellaRequestLoader;
 import com.teambrella.android.ui.chat.KChatDataPagerLoader;
+import com.teambrella.android.ui.chat.TakePhotosDialogFragment;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
 import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets;
 
@@ -45,4 +46,6 @@ public interface ITeambrellaComponent {
     void inject(TeambrellaAvatarsWidgets widgets);
 
     void inject(ReportClaimActivity activity);
+
+    void inject(TakePhotosDialogFragment fragment);
 }

@@ -438,7 +438,8 @@ public class TeambrellaModel {
     public static final int FEED_ITEM_TEAM_NOTIFICATION = 100;
     public static final int FEED_ITEM_PAY_TO_JOIN = 200;
     public static final int FEED_ITEM_UPDATE_PROFILE = 210;
-    public static final int FEED_ITEM_SET_AVATR = 211;
+    public static final int FEED_ITEM_SET_AVATAR = 211;
+    public static final int FEED_ITEM_INVITE_FRIENDS = 300;
 
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;

@@ -31,4 +31,5 @@
     <dimen name="padding_16dp">16dp</dimen>
     <dimen name="chat_bubble_max_width">230dp</dimen>
     <dimen name="stats_cell_padding">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
