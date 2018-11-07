@@ -24,7 +24,7 @@ class TeamNotificationsSettingsDialogFragment : BottomSheetDialogFragment() {
         private const val VIEW_TYPE_NEVER = 0
         private const val VIEW_TYPE_DAILY = 1
         private const val VIEW_TYPE_ONCE_EVERY_3_DAYS = 2
-        private const val VIEW_TYPE_ONCE_A_WEEK = 3
+        private const val VIEW_TYPE_ONCE_A_MONTH = 3
     }
 
 
@@ -71,9 +71,9 @@ class TeamNotificationsSettingsDialogFragment : BottomSheetDialogFragment() {
 
 
         list.addView(inflater.inflate(R.layout.list_item_chat_notification_option, list, false).apply {
-            initListItem(this, VIEW_TYPE_ONCE_A_WEEK, teamNotificationSettings == TeambrellaModel.TeamNotifications.ONCE_A_WEEK)
+            initListItem(this, VIEW_TYPE_ONCE_A_MONTH, teamNotificationSettings == TeambrellaModel.TeamNotifications.ONCE_A_MONTH)
             setOnClickListener {
-                mainDataHost?.teamNotificationSettings = TeambrellaModel.TeamNotifications.ONCE_A_WEEK
+                mainDataHost?.teamNotificationSettings = TeambrellaModel.TeamNotifications.ONCE_A_MONTH
                 dismiss()
             }
         })
@@ -117,10 +117,10 @@ class TeamNotificationsSettingsDialogFragment : BottomSheetDialogFragment() {
                 subtitle.setText(R.string.notification_every_3_days_description)
             }
 
-            VIEW_TYPE_ONCE_A_WEEK -> {
+            VIEW_TYPE_ONCE_A_MONTH -> {
                 icon.setImageResource(R.drawable.ic_icon_bell_green)
-                title.setText(R.string.notification_once_a_week_title)
-                subtitle.setText(R.string.notification_once_a_week_description)
+                title.setText(R.string.notification_once_a_month_title)
+                subtitle.setText(R.string.notification_once_a_month_description)
             }
 
             VIEW_TYPE_NEVER -> {

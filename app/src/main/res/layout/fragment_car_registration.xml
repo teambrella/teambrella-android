@@ -79,7 +79,6 @@
                 android:id="@+id/name_title"
                 style="@style/Teambrella.Registration.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
-                android:inputType="text"
                 android:text="@string/my_name_is_title" />
 
 

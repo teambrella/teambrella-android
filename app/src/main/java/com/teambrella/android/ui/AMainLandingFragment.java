@@ -83,7 +83,7 @@ public class AMainLandingFragment extends ADataFragment<IMainDataHost> {
                             switch (data.getInt(TeambrellaModel.ATTR_DATA_NEW_TEAMMATES_NOTIFICATION
                                     , TeambrellaModel.TeamNotifications.DAILY)) {
                                 case TeambrellaModel.TeamNotifications.DAILY:
-                                case TeambrellaModel.TeamNotifications.ONCE_A_WEEK:
+                                case TeambrellaModel.TeamNotifications.ONCE_A_MONTH:
                                 case TeambrellaModel.TeamNotifications.ONCE_EVERY_3_DAYS:
                                     mNotificationSettings.setImageResource(R.drawable.ic_icon_bell);
                                     break;

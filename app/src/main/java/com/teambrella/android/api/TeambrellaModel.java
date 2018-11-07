@@ -97,7 +97,7 @@ public class TeambrellaModel {
         public static final int NEVER = 0;
         public static final int DAILY = 1;
         public static final int ONCE_EVERY_3_DAYS = 2;
-        public static final int ONCE_A_WEEK = 3;
+        public static final int ONCE_A_MONTH = 3;
     }
 
 

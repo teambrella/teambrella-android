@@ -534,7 +534,11 @@ public class TeambrellaContentProviderClient {
 
                     Multisig currentMultisig = tx.getFromMultisig();
                     if (currentMultisig == null) {
-                        setNeedsFullClientUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+                        if (tx == null || !tx.teammate.haveAnyAddress()) {
+                            setNeedsFullClientUpdate("Could not cosign Tx " + tx.id + ". No Multisig record for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id)));
+                        }else{
+                            Log.v("Skipped to cosign Tx" + tx.id + ". There are probably Next Multisigs, but the current for teammate id: " + (tx.teammate == null ? "null" : Long.toString(tx.teammate.id));
+                        }
 
                         iterator.remove();
                     } else {
