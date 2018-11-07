@@ -358,31 +358,31 @@
     <string name="application_approved_notification_description" translatable="false">Your application has been approved</string>
     <string name="application_started_notification_description" translatable="false">Your application has been started</string>
 
-    <string name="registration" translatable="false">Регистрация</string>
-    <string name="model" translatable="false">Автомобиль</string>
+    <string name="registration" translatable="false">Application</string>
+    <string name="model" translatable="false">Car</string>
     <string name="model_hint" translatable="false">Ford Focus 2014</string>
-    <string name="name_hint" translatable="false">Иван Петров</string>
-    <string name="location_hint" translatable="false">Санкт-Петербург, Россия</string>
-    <string name="email_hint" translatable="false">myemail@mail.ru</string>
+    <string name="name_hint" translatable="false">John Smith</string>
+    <string name="location_hint" translatable="false">New Yourk, USA</string>
+    <string name="email_hint" translatable="false">myemail@gmail.com</string>
     <string name="email" translatable="false">E-mail</string>
-    <string name="register" translatable="false">Зарегистрироваться</string>
-    <string name="terms_of_services_agreement" translatable="false"><![CDATA[Регистрируясь в Teambrella, Вы принимаете <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a>]]></string>
-    <string name="my_name_is_title" translatable="false">Имя</string>
-    <string name="location_title" translatable="false">Город</string>
-    <string name="welcome_to_join_title" translatable="false">Привет!</string>
-    <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
-    <string name="continue_without_login" translatable="false">Далее</string>
-    <string name="registration_error_name" translatable="false">Введите имя</string>
-    <string name="registration_error_location" translatable="false">Введите город</string>
-    <string name="registration_error_email" translatable="false">Введите правильный E-mail</string>
-    <string name="registration_error_model" translatable="false">Введите марку, модель и год автомобиля</string>
+    <string name="register" translatable="false">Done</string>
+    <string name="terms_of_services_agreement" translatable="false"><![CDATA[By pressing the Done button, you accept Teambrella\'s <a href="https://teambrella.com/TermsOfService.pdf">Terms Of Service</a>]]></string>
+    <string name="my_name_is_title" translatable="false">Name Surname</string>
+    <string name="location_title" translatable="false">City</string>
+    <string name="welcome_to_join_title" translatable="false">Hi!</string>
+    <string name="welcome_to_join_description" translatable="false">You and your teammates cover each other. If you submit a claim within your team, your teammates pay it.</string>
+    <string name="continue_without_login" translatable="false">Continue</string>
+    <string name="registration_error_name" translatable="false">Enter your name, please</string>
+    <string name="registration_error_location" translatable="false">Enter your city, please</string>
+    <string name="registration_error_email" translatable="false">Enter a proper e-mail, please</string>
+    <string name="registration_error_model" translatable="false">Please enter mark, model, and year of your car</string>
 
     <string name="notification_daily_title">Every day</string>
     <string name="notification_daily_description">You\'ll be receiving fresh news every day.</string>
     <string name="notification_every_3_days_title">Once every 3 days</string>
     <string name="notification_every_3_days_description">You\'ll be able to take part in every voting.</string>
-    <string name="notification_once_a_week_title">Once a week</string>
-    <string name="notification_once_a_week_description">A summary of the team events for the week.</string>
+    <string name="notification_once_a_month_title">Once a month</string>
+    <string name="notification_once_a_month_description">A summary of the team events for the month.</string>
     <string name="notification_every_never_title">Turned off</string>
     <string name="notification_every_never_description">Notifications about team news are turned off.</string>
     <string name="pin_the_topic">Pin the topic</string>

@@ -331,12 +331,31 @@
     <string name="paid_title">Выплачено</string>
     <string name="copied">Скопировано</string>
 
+    <string name="registration" translatable="false">Регистрация</string>
+    <string name="model" translatable="false">Автомобиль</string>
+    <string name="model_hint" translatable="false">A6 2014</string>
+    <string name="name_hint" translatable="false">Иван Петров</string>
+    <string name="location_hint" translatable="false">Санкт-Петербург, Россия</string>
+    <string name="email_hint" translatable="false">myemail@mail.ru</string>
+    <string name="email" translatable="false">E-mail</string>
+    <string name="register" translatable="false">Готово</string>
+    <string name="terms_of_services_agreement" translatable="false"><![CDATA[Нажимая кнопку Готово, Вы принимаете <a href="https://teambrella.com/TermsOfService.pdf">Условия Использования</a> Teambrella]]></string>
+    <string name="my_name_is_title" translatable="false">Имя Фамилия</string>
+    <string name="location_title" translatable="false">Город</string>
+    <string name="welcome_to_join_title" translatable="false">Привет!</string>
+    <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
+    <string name="continue_without_login" translatable="false">Далее</string>
+    <string name="registration_error_name" translatable="false">Введите имя</string>
+    <string name="registration_error_location" translatable="false">Введите город</string>
+    <string name="registration_error_email" translatable="false">Введите правильный E-mail</string>
+    <string name="registration_error_model" translatable="false">Введите марку, модель и год автомобиля</string>
+
     <string name="notification_daily_title">Каждый день</string>
     <string name="notification_daily_description">Ты будешь оперативно получать все новости о команде.</string>
     <string name="notification_every_3_days_title">Раз в 3 дня</string>
     <string name="notification_every_3_days_description">Ни одно голосование не пройдет мимо тебя.</string>
-    <string name="notification_once_a_week_title">Раз в неделю</string>
-    <string name="notification_once_a_week_description">Ты будешь получать сводку о том, что произошло в команде за неделю.</string>
+    <string name="notification_once_a_month_title">Раз в месяц</string>
+    <string name="notification_once_a_month_description">Ты будешь получать сводку о том, что произошло в команде за месяц.</string>
     <string name="notification_every_never_title">Выключены</string>
     <string name="notification_every_never_description">Уведомления о новостях команды выключены.</string>
     <string name="select_profile_photo">Выберете фото для aватара</string>
