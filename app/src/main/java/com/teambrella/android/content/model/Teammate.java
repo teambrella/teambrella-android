@@ -88,6 +88,10 @@ public class Teammate {
         return null;
     }
 
+    public boolean haveAnyAddress() {
+        return this.multisigs != null && this.multisigs.size() > 0;
+    }
+
     @Override
     public String toString() {
         return "{id:" + id + ", teamId:" + teamId + ", fb:" + facebookName + ", publicKey:" + publicKey + ", publicKeyAddress:" + publicKeyAddress + "}";
