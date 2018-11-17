@@ -74,6 +74,10 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> newPost(@Body JsonElement body);
 
     @Headers("Content-Type: application/json")
+    @POST("post/delPost")
+    Observable<Response<JsonObject>> deletePost(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
     @POST("me/getTeams")
     Observable<Response<JsonObject>> getTeams();
 
@@ -116,7 +120,6 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("proxy/setMyProxyPosition")
     Observable<Response<JsonObject>> setProxyPosition(@Body JsonElement body);
-
 
     @Headers("Content-Type: image/jpeg")
     @POST("post/newUpload")

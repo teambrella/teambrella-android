@@ -164,7 +164,7 @@ class PayToJoinCardFragment : CardFragment() {
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
-        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.takeIf { it.count()>position }?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
             subtitle?.text = it.subTitle
@@ -186,7 +186,7 @@ class UpdateProfileCardFragment : CardFragment() {
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
-        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.takeIf { it.count()>position }?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
             subtitle?.text = it.subTitle
@@ -218,7 +218,7 @@ class UpdateAvatarCardFragment : CardFragment() {
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
-        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.takeIf { it.count()>position }?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
             subtitle?.text = it.subTitle
@@ -245,7 +245,7 @@ class InviteFriendsCardFragment : CardFragment() {
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
-        notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject?.let {
+        notification.takeIf { it.isOnNext }?.value?.data?.cards?.takeIf { it.count()>position }?.get(position)?.asJsonObject?.let {
             titleView?.text = it.chatTitle
             textView?.text = it.text
             subtitle?.text = it.subTitle
@@ -280,7 +280,7 @@ class ClaimCardFragment : CardFragment() {
 
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
-        val card = notification.takeIf { it.isOnNext }?.value?.data?.cards?.get(position)?.asJsonObject
+        val card = notification.takeIf { it.isOnNext }?.value?.data?.cards?.takeIf { it.count()>position }?.get(position)?.asJsonObject
         card?.let { _card ->
             when (_card.itemType) {
                 TeambrellaModel.FEED_ITEM_TEAMMATE -> {

@@ -6,12 +6,15 @@ import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.data.base.KTeambrellaChatDataPagerLoader
+import com.teambrella.android.ui.chat.KChatDataPagerLoader.Companion.separate
 import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
+import com.teambrella.android.util.log.Log
 import java.util.*
 
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
 
+    private val LOG_TAG = KChatDataPagerLoader::class.java.simpleName
 
     companion object {
 
@@ -89,6 +92,34 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
     }
 
 
+    public fun canUpdateAnotherImageButton(): Boolean {
+        var awaitsNewImages = false
+        var hasAnImageAlready = false
+        array.forEach() {
+            val message = it.asJsonObject;
+            if (message.systemType == ChatSystemMessages.FIRST_PHOTO_MISSING) {
+                awaitsNewImages = true
+            }
+            if (message.images?.size()?:0 > 0 || message.localImages?.size()?:0 > 0) {
+                hasAnImageAlready = true
+            }
+        }
+        return awaitsNewImages && hasAnImageAlready
+    }
+
+    public fun updateAnotherImageButton(forced: Boolean = false) {
+        if (forced || canUpdateAnotherImageButton()) {
+            remove({
+                it.asJsonObject.chatItemType == ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN
+            })
+            addAsNext(JsonObject().apply {
+                chatItemType = ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN
+                val currentDate = Calendar.getInstance()
+                added = currentDate.time.time
+            })
+        }
+    }
+
     override fun postProcess(response: JsonObject, next: Boolean): JsonObject {
         val messages = getPageableData(response)
 
@@ -145,20 +176,46 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             return false
         }
 
+        fun getMyLastImageMessage(): JsonObject {
+            var myImageMessage = JsonObject()
+            val iterator = messages.iterator()
+            while (iterator.hasNext()) {
+                val message = iterator.next()!!.asJsonObject
+                val images = message.images
+                if (images != null && images.size() > 0 && userId == message.userId) {
+                    myImageMessage = message
+                }
+            }
+            return myImageMessage
+        }
+
+        val myLastImageMessage = getMyLastImageMessage()
+        var awaitsNewImages = canUpdateAnotherImageButton()
+
         while (iterator.hasNext()) {
             val message = iterator.next()!!.asJsonObject
             var text = message.text
             val images = message.images
             val id = message.stringId
-            val presentIterator = array.iterator()
-            while (presentIterator.hasNext()) {
-                val item = presentIterator.next()!!.asJsonObject
-                if (item.stringId == id) {
-                    message.localImages = item.localImages
-                    presentIterator.remove()
-                    response.metadata.itemsUpdated = true
+
+            val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == id }
+            if (posOfOldItem >= 0)  {
+                val oldItem = array[posOfOldItem].asJsonObject
+                if (array[posOfOldItem].asJsonObject.lastUpdated < message.lastUpdated) {
+                    val newMessage = message.deepCopy()
+                    newMessage.localImages = oldItem.localImages
+                    newMessage.chatItemType = oldItem.chatItemType
+                    newMessage.isNextDay = oldItem.isNextDay
+                    newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
+                    array.set(posOfOldItem, newMessage)
+                    Log.v(LOG_TAG, "(postProcess) Updating: $id at $posOfOldItem")
+                    response.metadata.itemDeleted = true
                 }
-                if (item.chatItemType == ChatItems.CHAT_ITEM_PAID_CLAIM) {
+                continue // nothing to see here, move along
+            }
+
+            array.forEach {
+                if (it.asJsonObject.chatItemType == ChatItems.CHAT_ITEM_PAID_CLAIM) {
                     paymentDate = null
                 }
             }
@@ -218,7 +275,10 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                     newMessage.chatItemType =
                             when (newMessage.systemType) {
                                 ChatSystemMessages.FIRST_MESSAGE_MISSING -> ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN
-                                ChatSystemMessages.FIRST_PHOTO_MISSING -> ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN
+                                ChatSystemMessages.FIRST_PHOTO_MISSING -> {
+                                    awaitsNewImages = true
+                                    ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN
+                                }
                                 ChatSystemMessages.NEEDS_FUNDING -> ChatItems.CHAT_ITEM_PAY_TO_JOIN
                                 else -> {
                                     if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_MESSAGE
@@ -228,6 +288,17 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                     appendDateItem(message)
                     newMessages.add(newMessage)
                 }
+            }
+
+            if (message.stringId == myLastImageMessage.stringId && awaitsNewImages) {
+                remove({
+                    it.asJsonObject.chatItemType == ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN
+                }, false)
+                newMessages.add(JsonObject().apply {
+                    chatItemType = ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN
+                    val currentDate = Calendar.getInstance()
+                    added = currentDate.time.time
+                })
             }
 
             lastTime = paymentDate?.let {
@@ -284,4 +355,5 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 .replace("</p>".toRegex(), "")
                 .trim { it <= ' ' }
     }
+
 }

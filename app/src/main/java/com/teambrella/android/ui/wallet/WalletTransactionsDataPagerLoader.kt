@@ -10,25 +10,25 @@ import com.teambrella.android.data.base.TeambrellaDataPagerLoader
  */
 class WalletTransactionsDataPagerLoader(uri: Uri) : TeambrellaDataPagerLoader(uri, null) {
 
-    override fun onAddNewData(newData: JsonArray) {
-        val items = JsonArray()
-        for (element in newData) {
-            val item = element.asJsonObject
-            val tos = item.To
-            item.remove(TO)
-            tos?.let {
-                for (toElement in tos) {
-                    val tosItem = toElement.asJsonObject
-                    val newItem = item.deepCopy()
-                    newItem.userId = tosItem.userId
-                    newItem.userName = tosItem.userName
-                    newItem.amount = tosItem.amount
-                    newItem.kind = tosItem.kind
-                    newItem.avatar = tosItem.avatar
-                    items.add(newItem)
-                }
-            }
+  override fun onAddNewData(newData: JsonArray) {
+    val items = JsonArray()
+    for (element in newData) {
+      val item = element.asJsonObject
+      val tos = item.To
+      item.remove(TO)
+      tos?.let {
+        for (toElement in tos) {
+          val tosItem = toElement.asJsonObject
+          val newItem = item.deepCopy()
+          newItem.userId = tosItem.userId
+          newItem.userName = tosItem.userName
+          newItem.amount = tosItem.amount
+          newItem.kind = tosItem.kind
+          newItem.avatar = tosItem.avatar
+          items.add(newItem)
         }
-        array.addAll(items)
+      }
     }
+    array.addAll(items)
+  }
 }

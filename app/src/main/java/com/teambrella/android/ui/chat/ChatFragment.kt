@@ -235,9 +235,13 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                             val paymentCrypto: Double? = basicPart.paymentResCrypto
 
                             if (votingCrypto != null && paymentCrypto != null && votingCrypto != 0.0) {
-                                voteTitleView?.setText(R.string.paid_title)
-                                setClaimVoteValue(if (paymentCrypto > votingCrypto) 1f else
-                                    (paymentCrypto / votingCrypto).toFloat())
+                                if ((paymentCrypto / votingCrypto).toFloat() < 0.995) {
+                                    voteTitleView?.setText(R.string.paid_title)
+                                    setClaimVoteValue((paymentCrypto / votingCrypto).toFloat())
+                                } else {
+                                    voteTitleView?.setText(R.string.being_paid_title)
+                                    setClaimVoteValue(1f)
+                                }
                             } else {
                                 voteTitleView?.setText(R.string.team_vote)
                                 setClaimVoteValue(basicPart.reimbursement ?: -1f)

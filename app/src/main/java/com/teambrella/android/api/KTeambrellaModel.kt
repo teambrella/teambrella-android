@@ -60,6 +60,7 @@ object ChatItems {
     const val CHAT_ITEM_PAY_TO_JOIN = "pay_to_join"
     const val CHAT_ITEM_ADD_PHOTO_TO_JOIN = "add_photo_to_join"
     const val CHAT_ITEM_ADD_MESSAGE_TO_JOIN = "add_message_to_join"
+    const val CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN = "another_photo_to_join"
 }
 
 object ChatSystemMessages {
@@ -362,7 +363,7 @@ val JsonObject?.itemDate: String?
     get() = getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)
 
 val JsonObject?.itemUserId: String?
-    get() = getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID);
+    get() = getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)
 
 val JsonObject?.team: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM)
@@ -535,6 +536,10 @@ var JsonObject?.itemsUpdated: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED)
     set(value) = setBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, value)
 
+var JsonObject?.itemDeleted: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_METADATA_ITEM_DELETED)
+    set(value) = setBoolean(TeambrellaModel.ATTR_METADATA_ITEM_DELETED, value)
+
 var JsonObject?.metadata: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_METADATA_)
     set(value) = setObject(TeambrellaModel.ATTR_METADATA_, value)
@@ -564,6 +569,9 @@ val JsonObject?.toAddress: String?
 
 val JsonObject?.isNew: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_NEW)
+
+val JsonObject?.lastUpdated: Long
+    get() = getLong(TeambrellaModel.ATTR_DATA_LAST_UPDATED)?:0
 
 val JsonObject?.votingResCrypto: Double?
     get() = getDouble(VOTING_RES_CRYPTO)

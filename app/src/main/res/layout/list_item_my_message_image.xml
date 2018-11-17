@@ -40,7 +40,10 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/date_time_chat_background"
             android:lineSpacingExtra="5dp"
-            android:padding="4dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:textColor="@android:color/white"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,6 +61,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_schedule"
             app:tint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/date_time_chat_background"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_clear"
+            tools:ignore="RtlHardcoded" />
 
 
     </android.support.constraint.ConstraintLayout>

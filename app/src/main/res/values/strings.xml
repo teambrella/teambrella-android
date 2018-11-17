@@ -154,6 +154,7 @@
     <string name="add_photos">Add photos</string>
     <string name="add_photos_to_chat">Add to Chat</string>
     <string name="make_photos">Take Photos</string>
+    <string name="take_another_photo">Take Another Photo</string>
     <string name="reimburse_to">reimburse to</string>
     <string name="submit_claim">Submit</string>
     <string name="no_incident_date_error"> No incident date</string>
@@ -355,6 +356,7 @@
     <string name="paid_claim_shareable_pet">We helped our teammate to pay the vet bill.  Pretty cool, huh? %s</string>
     <string name="paid_claim_shareable_bike">We reimbursed our teammate for the stolen bike. Pretty cool, huh? %s</string>
     <string name="paid_title">Paid</string>
+    <string name="being_paid_title">Being Paid</string>
     <string name="copied">Copied</string>
 
     <string name="application_approved_notification_description" translatable="false">Your application has been approved</string>
@@ -373,7 +375,6 @@
     <string name="location_title" translatable="false">City</string>
     <string name="welcome_to_join_title" translatable="false">Hi!</string>
     <string name="welcome_to_join_description" translatable="false">You and your teammates cover each other. If you submit a claim within your team, your teammates pay it.</string>
-    <string name="continue_without_login" translatable="false">Continue</string>
     <string name="registration_error_name" translatable="false">Enter your name, please</string>
     <string name="registration_error_location" translatable="false">Enter your city, please</string>
     <string name="registration_error_email" translatable="false">Enter a proper e-mail, please</string>

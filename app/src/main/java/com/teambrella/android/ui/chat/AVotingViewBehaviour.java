@@ -15,77 +15,77 @@ import android.view.animation.DecelerateInterpolator;
 public class AVotingViewBehaviour extends CoordinatorLayout.Behavior<View> {
 
 
-    protected static final long DURATION = 300;
+  protected static final long DURATION = 300;
 
-    private final OnHideShowListener mListener;
+  private final OnHideShowListener mListener;
 
-    AVotingViewBehaviour() {
-        mListener = null;
-    }
+  AVotingViewBehaviour() {
+    mListener = null;
+  }
 
-    AVotingViewBehaviour(OnHideShowListener mListener) {
-        this.mListener = mListener;
-    }
+  AVotingViewBehaviour(OnHideShowListener mListener) {
+    this.mListener = mListener;
+  }
 
-    public interface OnHideShowListener {
-        void onHide();
+  public interface OnHideShowListener {
+    void onHide();
 
-        void onShow();
-    }
+    void onShow();
+  }
 
-    boolean isAnimated = false;
+  boolean isAnimated = false;
 
 
-    public void show(View view) {
-        if (!isAnimated) {
-            isAnimated = true;
-            ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", -view.getHeight(), 0f);
-            AnimatorSet set = new AnimatorSet();
-            set.playTogether(translation);
-            set.setDuration(DURATION);
-            set.setInterpolator(new DecelerateInterpolator());
-            set.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    if (mListener != null) {
-                        mListener.onShow();
-                    }
-                    view.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    isAnimated = false;
-                }
-            });
-            set.start();
+  public void show(View view) {
+    if (!isAnimated) {
+      isAnimated = true;
+      ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", -view.getHeight(), 0f);
+      AnimatorSet set = new AnimatorSet();
+      set.playTogether(translation);
+      set.setDuration(DURATION);
+      set.setInterpolator(new DecelerateInterpolator());
+      set.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+          if (mListener != null) {
+            mListener.onShow();
+          }
+          view.setVisibility(View.VISIBLE);
         }
-    }
 
-
-    void hide(View view) {
-        if (!isAnimated) {
-            if (view.getVisibility() == View.VISIBLE) {
-                isAnimated = true;
-                if (mListener != null) {
-                    mListener.onHide();
-                }
-                ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", 0, -(float) view.getHeight());
-                AnimatorSet set = new AnimatorSet();
-                set.playTogether(translation);
-                set.setDuration(DURATION);
-                set.setInterpolator(new AccelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.INVISIBLE);
-                        isAnimated = false;
-                    }
-                });
-                set.start();
-            }
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          super.onAnimationEnd(animation);
+          isAnimated = false;
         }
+      });
+      set.start();
     }
+  }
+
+
+  void hide(View view) {
+    if (!isAnimated) {
+      if (view.getVisibility() == View.VISIBLE) {
+        isAnimated = true;
+        if (mListener != null) {
+          mListener.onHide();
+        }
+        ObjectAnimator translation = ObjectAnimator.ofFloat(view, "translationY", 0, -(float) view.getHeight());
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(translation);
+        set.setDuration(DURATION);
+        set.setInterpolator(new AccelerateInterpolator());
+        set.addListener(new AnimatorListenerAdapter() {
+          @Override
+          public void onAnimationEnd(Animator animation) {
+            super.onAnimationEnd(animation);
+            view.setVisibility(View.INVISIBLE);
+            isAnimated = false;
+          }
+        });
+        set.start();
+      }
+    }
+  }
 }

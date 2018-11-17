@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.net.Uri
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
@@ -182,7 +183,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                     .map { postProcess(it, true) }
                     .map {
                         it.metadata = (it.metadata ?: JsonObject()).apply {
-                            reload = false
+                            reload = (array.size() == 0) // only reload on open
                             forced = force
                             direction = TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION
                             size = getPageableData(it).size()
@@ -298,7 +299,45 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         _observable.postValue(Notification.createOnNext(response))
     }
 
+    fun remove(predicate: (JsonElement) -> Boolean, needNotify: Boolean = true) {
+        val response = JsonObject().apply {
+            metadata = JsonObject().apply {
+                itemDeleted = true
+            }
+            data = JsonObject().apply {
+            }
+        }
+        array.removeAll {
+            predicate(it)
+        }
+        if (needNotify) {
+            _observable.postValue(Notification.createOnNext(response))
+        }
+    }
 
     override fun reload() = reload(chatUri)
-    override fun reload(uri: Uri) = Unit
+
+    override fun reload(uri: Uri) {
+        server.requestObservable(TeambrellaUris.appendPagination(uri, 0, LIMIT), null)
+                .map(this::appendUri)
+                .map { postProcess(it, true) }
+                .map {
+                    it.metadata = JsonObject().apply {
+                        reload = true
+                        forced = true
+                        direction = TeambrellaModel.ATTR_METADATA_NEXT_DIRECTION
+                        size = getPageableData(it).size()
+                    }
+                    it
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+//                    _nextIndex = 0
+//                    array = JsonArray()
+                }
+                .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
+        _isNextLoading = true
+        _hasNextError = false
+    }
 }

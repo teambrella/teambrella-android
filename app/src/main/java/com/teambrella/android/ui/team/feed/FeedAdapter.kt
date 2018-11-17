@@ -82,6 +82,9 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
         private val type: TextView? = itemView.findViewById(R.id.type)
 
         fun onBind(item: JsonObject) {
+            if (item.text == null) {
+                return
+            }
             setImage(item)
             setType(item)
             setTitle(item)
@@ -122,11 +125,11 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
                 }
                 TeambrellaModel.FEED_ITEM_TEAM_CHAT -> {
                     type?.setRightCompoundDrawable(R.drawable.ic_discussion)
-                    type?.setText(R.string.discussion);
+                    type?.setText(R.string.discussion)
                 }
                 else -> {
                     type?.setRightCompoundDrawable(R.drawable.ic_application)
-                    type?.setText(R.string.application);
+                    type?.setText(R.string.application)
                 }
             }
         }

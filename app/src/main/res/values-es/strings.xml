@@ -131,7 +131,8 @@
     <string name="photos">Fotos</string>
     <string name="add_photos">Cargar las fotos</string>
     <string name="add_photos_to_chat">Cargar las fotos</string>
-    <string name="make_photos">Cargar las fotos</string>
+    <string name="make_photos">Una foto más</string>
+    <string name="take_another_photo">Cargar otra foto</string>
     <string name="reimburse_to">Reembolso a</string>
     <string name="submit_claim">Enviar</string>
     <string name="no_incident_date_error">No hay fecha del incidente</string>
@@ -331,6 +332,7 @@
     <string name="paid_claim_shareable_pet">Ayudamos a nuestro compañero a pagar la factura veterinaria. ¿Muy bien, de verdad? %s</string>
     <string name="paid_claim_shareable_bike">Reembolsamos a nuestro compañero la bicicleta robada. ¿Muy bien, de verdad? %s</string>
     <string name="paid_title">Pagado</string>
+    <string name="being_paid_title">Pagado</string>
     <string name="copied">Copiado</string>
 
     <string name="notification_daily_title">Every day</string>

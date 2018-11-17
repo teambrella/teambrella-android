@@ -12,6 +12,7 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.Wallet;
 
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
 /**
@@ -39,6 +40,7 @@ public class TeambrellaUser {
     private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_SCREEN_TIME = "last_background_restriction_screen_time";
     private static final String PREFERENCE_KEY_LAST_BACKGROUND_RESTRICTION_NOTIFICATION_TIME = "last_background_restriction_notification_time";
     private static final String PREFERENCE_KEY_INVITATION_LINK = "invitation_link";
+    private static final String PREFERENCE_KEY_PENDING_URIS = "pending_uris";
 
     private static TeambrellaUser sUser;
 
@@ -231,4 +233,26 @@ public class TeambrellaUser {
         return null;
     }
 
+    public void setPendingUris(LinkedHashSet<Uri> pendingUris) {
+        String urisString = "";
+        for (Uri uri : pendingUris) {
+            if (!urisString.isEmpty()) {
+                urisString += " ";
+            }
+            urisString += uri.toString();
+        }
+        mPreferences.edit().putString(PREFERENCE_KEY_PENDING_URIS, urisString).apply();
+    }
+
+    public LinkedHashSet<Uri> getPendingUris() {
+        LinkedHashSet<Uri> pendingUris = new LinkedHashSet<>();
+        String urisString = mPreferences.getString(PREFERENCE_KEY_PENDING_URIS, "");
+        for(String uri : urisString.split("\\s+")) {
+            if (uri.length() == 0) {
+                continue;
+            }
+            pendingUris.add(Uri.parse(uri));
+        }
+        return pendingUris;
+    }
 }

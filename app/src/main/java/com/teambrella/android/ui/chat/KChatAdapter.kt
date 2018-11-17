@@ -1,6 +1,7 @@
 package com.teambrella.android.ui.chat
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
@@ -58,8 +59,8 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private const val VIEW_TYPE_PAY_TO_JOIN = VIEW_TYPE_REGULAR + 7
         private const val VIEW_TYPE_SYSTEM_MESSAGE = VIEW_TYPE_REGULAR + 8
         private const val VIEW_TYPE_ADD_PHOTO_TO_JOIN = VIEW_TYPE_REGULAR + 9
+        private const val VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN = VIEW_TYPE_REGULAR + 10
         private const val FILE_PREFIX = "file:"
-        private const val TAKE_PHOTOS_FRAGMENT_TAG = "take_photos_dialog"
     }
 
     private val timeFormat: SimpleDateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a", Locale.ENGLISH)
@@ -85,7 +86,8 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 ChatItems.CHAT_ITEM_PAID_CLAIM -> VIEW_TYPE_PAID_CLAIM
                 ChatItems.CHAT_ITEM_PAY_TO_JOIN -> VIEW_TYPE_PAY_TO_JOIN
                 ChatItems.CHAT_ITEM_ADD_PHOTO_TO_JOIN ->
-                    if (item?.stringId?.endsWith("000000000001") ?: false) VIEW_TYPE_ADD_PHOTO_TO_JOIN else VIEW_TYPE_SYSTEM_MESSAGE // dirty hack
+                    if (item?.stringId == "00000800-0800-0800-0800-000000000001") VIEW_TYPE_ADD_PHOTO_TO_JOIN else VIEW_TYPE_SYSTEM_MESSAGE
+                ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN -> VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN
                 ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN -> VIEW_TYPE_SYSTEM_MESSAGE
                 else -> VIEW_TYPE_REGULAR
             }
@@ -105,8 +107,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             VIEW_TYPE_DATE -> ChatDateViewHolder(inflater.inflate(R.layout.list_item_date, parent, false))
             VIEW_TYPE_PAID_CLAIM -> ChatPaidClaimViewHolder(inflater.inflate(R.layout.list_item_chat_paid_claim, parent, false))
             VIEW_TYPE_PAY_TO_JOIN -> PayToJoinViewHolder(inflater.inflate(R.layout.list_item_message_fund_wallet, parent, false))
-//            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> AddPhotoToJoinHolder(inflater.inflate(R.layout.list_item_message_add_photos, parent, false))
-            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
+            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> AddPhotoToJoinHolder(inflater.inflate(R.layout.list_item_message_add_photos, parent, false))
+            VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN -> AnotherPhotoToJoinHolder(inflater.inflate(R.layout.list_item_message_another_photo, parent, false))
+//            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             VIEW_TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             else -> super.onCreateViewHolder(parent, viewType)
         }
@@ -142,6 +145,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         }
 
         if (holder is AddPhotoToJoinHolder) {
+            mPager.loadedData[position]?.asJsonObject?.let {
+                holder.onBind(it)
+            }
+        }
+
+        if (holder is AnotherPhotoToJoinHolder) {
             mPager.loadedData[position]?.asJsonObject?.let {
                 holder.onBind(it)
             }
@@ -264,10 +273,16 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         fun onBind(item: JsonObject) {
             message?.text = item.text
             addPhotos?.setOnClickListener {
-                val fragmentManager = (context as AppCompatActivity).getSupportFragmentManager()
-                if (fragmentManager.findFragmentByTag(TAKE_PHOTOS_FRAGMENT_TAG) == null) {
-                    TakePhotosDialogFragment.getInstance().show(fragmentManager, TAKE_PHOTOS_FRAGMENT_TAG)
-                }
+                (context as ChatActivity).startTakingPhoto()
+            }
+        }
+    }
+
+    private inner class AnotherPhotoToJoinHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val addPhotos: View? = itemView.findViewById(R.id.make_photos)
+        fun onBind(item: JsonObject) {
+            addPhotos?.setOnClickListener {
+                (context as ChatActivity).startTakingPhoto()
             }
         }
     }
@@ -329,7 +344,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
                 MODE_CLAIM -> {
                     vote?.visibility = View.VISIBLE
-                    vote?.text = if (voteValue > 0) String.format(Locale.US, "%s:%d%%", context.getString(R.string.chat_voted), Math.round(voteValue * 100)) else
+                    vote?.text = if (voteValue >= 0) String.format(Locale.US, "%s:%d%%", context.getString(R.string.chat_voted), Math.round(voteValue * 100)) else
                         context.getString(R.string.chat_not_voted_yet)
                 }
                 MODE_APPLICATION -> {
@@ -352,9 +367,22 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val context = itemView.context
         private val image: ImageView? = itemView.findViewById(R.id.image)
         private val width = itemView.context.resources.getDimensionPixelSize(R.dimen.chat_image_width)
+        private val closeButton: View? = itemView.findViewById(R.id.close)
 
         override fun onBind(item: JsonObject) {
             super.onBind(item)
+
+//            image?.setLongClickable(true)
+//            image?.setOnLongClickListener {
+//                // itemView.visibility = View.GONE
+//                (context as ChatActivity).deletePost(item.stringId)
+//                true
+//            }
+            closeButton?.visibility = if ((context as ChatActivity).isFullAccess) View.GONE else View.VISIBLE
+            closeButton?.setOnClickListener {
+                context.deletePost(item.stringId)
+            }
+
             var smallImages = item.localImages?.mapTo(ArrayList()) { FILE_PREFIX + it.asString }
             if (smallImages == null) {
                 smallImages = item.smallImages?.mapTo(ArrayList()) { it.asString }
@@ -375,7 +403,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                         image?.setImage(imageLoader.getImageUrl(_smallImages[_index]), R.dimen.rounded_corners_4dp, false)
                     }
 
-
+                    image?.setOnClickListener(null) // clear it, we're in a recycling view
                     if (item.messageStatus != TeambrellaModel.PostStatus.POST_PENDING) {
                         item.images?.mapTo(ArrayList()) { it.asString }?.let { _images ->
                             image?.setOnClickListener {
@@ -383,6 +411,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                             }
                         }
                     }
+//                    image?.imageAlpha = if (item.messageStatus == TeambrellaModel.PostStatus.POST_PENDING) 128 else 255;
                 }
             }
         }

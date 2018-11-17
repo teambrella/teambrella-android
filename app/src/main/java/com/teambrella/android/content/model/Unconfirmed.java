@@ -12,48 +12,48 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Unconfirmed {
-    private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
+  private static final String LOG_TAG = TeambrellaUtilService.class.getSimpleName();
 
-    private Date mDate;
+  private Date mDate;
 
-    @Column(TeambrellaRepository.Unconfirmed.ID)
-    public long id;
+  @Column(TeambrellaRepository.Unconfirmed.ID)
+  public long id;
 
-    @Column(TeambrellaRepository.Unconfirmed.MULTISIG_ID)
-    public long multisigId;
+  @Column(TeambrellaRepository.Unconfirmed.MULTISIG_ID)
+  public long multisigId;
 
-    @Column(TeambrellaRepository.Unconfirmed.TX_ID)
-    public String txId;
+  @Column(TeambrellaRepository.Unconfirmed.TX_ID)
+  public String txId;
 
-    @Column(TeambrellaRepository.Unconfirmed.CRYPTO_TX)
-    public String cryptoTx;
+  @Column(TeambrellaRepository.Unconfirmed.CRYPTO_TX)
+  public String cryptoTx;
 
-    @Column(TeambrellaRepository.Unconfirmed.CRYPTO_FEE)
-    public long cryptoFee;
+  @Column(TeambrellaRepository.Unconfirmed.CRYPTO_FEE)
+  public long cryptoFee;
 
-    @Column(TeambrellaRepository.Unconfirmed.CRYPTO_NONCE)
-    public long cryptoNonce;
+  @Column(TeambrellaRepository.Unconfirmed.CRYPTO_NONCE)
+  public long cryptoNonce;
 
-    @Column(TeambrellaRepository.Unconfirmed.DATE_CREATED)
-    public String dateCreated;
+  @Column(TeambrellaRepository.Unconfirmed.DATE_CREATED)
+  public String dateCreated;
 
 
-    public void initDates(SimpleDateFormat sdf){
-        try{
-            mDate = sdf.parse(dateCreated);
-        }catch (ParseException e){
-            Log.e(LOG_TAG, "Cannot recognise date format: " + dateCreated, e);
-        }
+  public void initDates(SimpleDateFormat sdf){
+    try{
+      mDate = sdf.parse(dateCreated);
+    }catch (ParseException e){
+      Log.e(LOG_TAG, "Cannot recognise date format: " + dateCreated, e);
     }
+  }
 
-    public void formatDates(SimpleDateFormat sdf) {
-        dateCreated = sdf.format(mDate);
-    }
+  public void formatDates(SimpleDateFormat sdf) {
+    dateCreated = sdf.format(mDate);
+  }
 
-    public Date getDateCreated(){
-        return mDate;
-    }
-    public void setDateCreated(Date d){
-        mDate = d;
-    }
+  public Date getDateCreated(){
+    return mDate;
+  }
+  public void setDateCreated(Date d){
+    mDate = d;
+  }
 }

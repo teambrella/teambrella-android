@@ -27,6 +27,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_REGISTER = "register";
     private static final String SEGMENT_CHAT = "chat";
     private static final String SEGMENT_NEW_POST = "newPost";
+    private static final String SEGMENT_DELETE_POST = "delPost";
     private static final String SEGMENT_TEAMS = "teams";
     private static final String SEGMENT_TEAMS_SUR = "teamsur";
     private static final String SEGMENT_VOTE = "vote";
@@ -143,6 +144,7 @@ public class TeambrellaUris {
     public static final int SET_AVATAR = 45;
     public static final int SET_TOPIC_PIN = 46;
     public static final int GET_TOPIC_PIN = 47;
+    public static final int DELETE_POST = 48;
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
@@ -155,6 +157,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_ONE, CLAIMS_ONE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_CHAT, CLAIMS_CHAT);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_NEW_POST, NEW_POST);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_DELETE_POST, DELETE_POST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTE, SET_CLAIM_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTE, SET_TEAMMATE_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_HOME, GET_HOME);
@@ -291,6 +294,15 @@ public class TeambrellaUris {
         }
 
         return builder.build();
+    }
+
+    public static Uri getDeletePostUri(String postId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendEncodedPath(SEGMENT_DELETE_POST)
+                .appendQueryParameter(KEY_ID, postId)
+                .build();
     }
 
     public static Uri getHomeUri(int teamId) {

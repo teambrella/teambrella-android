@@ -232,6 +232,9 @@ public class TeambrellaServer {
                     requestBody.add(TeambrellaModel.ATTR_REQUEST_IMAGES, new Gson().fromJson(images, JsonElement.class));
                 }
                 break;
+            case TeambrellaUris.DELETE_POST:
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                break;
             case TeambrellaUris.SET_CLAIM_VOTE: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_ID)));
                 float vote = Float.parseFloat(uri.getQueryParameter(TeambrellaUris.KEY_VOTE)) / 100;
@@ -412,6 +415,8 @@ public class TeambrellaServer {
                 return mAPI.getClaimChat(requestBody);
             case TeambrellaUris.NEW_POST:
                 return mAPI.newPost(requestBody);
+            case TeambrellaUris.DELETE_POST:
+                return mAPI.deletePost(requestBody);
             case TeambrellaUris.MY_TEAMS:
                 return mAPI.getTeams();
             case TeambrellaUris.SET_CLAIM_VOTE:
@@ -513,7 +518,12 @@ public class TeambrellaServer {
                 throw new TeambrellaServerException(uri, TeambrellaModel.VALUE_STATUS_RESULT_CODE_FATAL, "Something went wrong", 0);
             }
             if (resultCode != 0) {
-                throw new TeambrellaServerException(uri, resultCode, errorMessage, timestamp);
+                switch (TeambrellaUris.sUriMatcher.match(uri)) {
+                    case TeambrellaUris.DELETE_POST:
+                        return true;
+                    default:
+                        throw new TeambrellaServerException(uri, resultCode, errorMessage, timestamp);
+                }
             }
         }
         return true;

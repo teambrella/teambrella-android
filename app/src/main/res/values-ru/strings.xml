@@ -85,7 +85,6 @@
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
     <string name="continue_with_vk">Продолжить с VK</string>
-    <string name="continue_without_login" translatable="false">Далее</string>
     <string name="proxy_vote">Голос прокси</string>
     <string name="my_proxies">Мои Прокси</string>
     <string name="proxy_for">Я Прокси Для</string>
@@ -133,6 +132,7 @@
     <string name="add_photos">Добавить фото</string>
     <string name="add_photos_to_chat">Добавить в чат</string>
     <string name="make_photos">Сделать Фото</string>
+    <string name="take_another_photo">Сделать Еще Фото</string>
     <string name="reimburse_to">Перечислить на</string>
     <string name="submit_claim">Подтвердить</string>
     <string name="no_incident_date_error">Введите дату.</string>
@@ -171,7 +171,7 @@
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
     <string name="private_conversation">Private Chat</string>
     <string name="ends_in">Осталось %s</string>
-    <string name="declined">Отменена</string>
+    <string name="declined">Отказано</string>
     <string name="all_votes">Все голоса</string>
     <string name="weight_format_string"><![CDATA[Вес <b>%.1f</b>]]></string>
     <string name="votes">Голоса</string>
@@ -332,6 +332,7 @@
     <string name="paid_claim_shareable_pet">Мы помогли участнику оплатить лечение питомца.  Неплохо, да? %s</string>
     <string name="paid_claim_shareable_bike">Мы возместили участнику стоимость украденного велосипеда. Неплохо, да? %s</string>
     <string name="paid_title">Выплачено</string>
+    <string name="being_paid_title">Выплачивается</string>
     <string name="copied">Скопировано</string>
 
     <string name="registration" translatable="false">Регистрация</string>

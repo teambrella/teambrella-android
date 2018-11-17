@@ -1,8 +1,9 @@
 package com.teambrella.android.util;
 
-import android.app.DialogFragment;
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,10 +13,14 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.webkit.MimeTypeMap;
+
+import android.support.v4.content.ContextCompat;
 
 import com.teambrella.android.R;
 import com.teambrella.android.util.log.Log;
@@ -47,10 +52,11 @@ public class ImagePicker {
 
 
     private final AppCompatActivity mContext;
+    private Intent mIntent;
     private Uri mCameraFileUri;
 
     public static final int IMAGE_PICKER_REQUEST_CODE = 101;
-    public static final int IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE = 102;
+    public static final int IMAGE_TAKE_PHOTO_REQUEST_CODE = 104;
 
     public static class ImageDescriptor {
         public File file;
@@ -62,21 +68,42 @@ public class ImagePicker {
         mContext = context;
     }
 
-
     public void startPicking(String title) {
-        mContext.startActivityForResult(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_REQUEST_CODE);
+        checkPermissionAndStart(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_REQUEST_CODE);
     }
 
-    public void startPickingInFragment(String title, AppCompatDialogFragment fragment) {
-        fragment.startActivityForResult(getImagePickerIntent(getTempFileUri(), title), IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE);
+    public void startTakingPhoto(String title) {
+        checkPermissionAndStart(getCameraIntent(getTempFileUri(), title), IMAGE_TAKE_PHOTO_REQUEST_CODE);
     }
+
+    public void checkPermissionAndStart(Intent intent, int request) {
+        mIntent = intent;
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA}, request);
+        } else {
+            mContext.startActivityForResult(mIntent, request);
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case IMAGE_PICKER_REQUEST_CODE:
+            case IMAGE_TAKE_PHOTO_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mContext.startActivity(mIntent);
+                }
+                break;
+        }
+    }
+
 
     public Observable<ImageDescriptor> onActivityResult(int requestCode, int resultCode, Intent data) {
         Observable<File> fileObservable;
         Observable<ImageDescriptor> result = null;
         switch (requestCode) {
             case IMAGE_PICKER_REQUEST_CODE:
-            case IMAGE_PICKER_IN_FRAGMENT_REQUEST_CODE:
+            case IMAGE_TAKE_PHOTO_REQUEST_CODE:
                 File cameraFile = mCameraFileUri != null ? new File(mCameraFileUri.getPath()) : null;
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     Uri uri = data != null ? data.getData() : null;
@@ -139,6 +166,14 @@ public class ImagePicker {
         }
 
         return chooserIntent;
+    }
+
+    private Intent getCameraIntent(Uri cameraFile, String title) {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePhotoIntent.putExtra("return-data", true);
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraFile);
+        takePhotoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        return takePhotoIntent;
     }
 
     private void addIntentToList(List<Intent> list, Intent intent) {
@@ -207,6 +242,9 @@ public class ImagePicker {
         int maxDimen = 1200;
 
         Bitmap bitmap = BitmapFactory.decodeFile(srcFile.getAbsolutePath());
+        if (bitmap == null) {
+            float scaleFactor = ((float) Math.max(bitmap.getHeight(), bitmap.getWidth())) / maxDimen;
+        }
         float scaleFactor = ((float) Math.max(bitmap.getHeight(), bitmap.getWidth())) / maxDimen;
         Bitmap newBitmap;
         if (scaleFactor > 1.0f) {

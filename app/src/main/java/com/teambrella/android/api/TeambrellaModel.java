@@ -211,6 +211,7 @@ public class TeambrellaModel {
     public static final String ATTR_METADATA_FORCE = "force";
     public static final String ATTR_METADATA_RELOAD = "reload";
     public static final String ATTR_METADATA_ITEMS_UPDATED = "ItemsUpdated";
+    public static final String ATTR_METADATA_ITEM_DELETED = "ItemDeleted";
     public static final String ATTR_METADATA_NEXT_DIRECTION = "next";
     public static final String ATTR_METADATA_PREVIOUS_DIRECTION = "previous";
     public static final String ATTR_METADATA_SIZE = "size";
@@ -419,6 +420,8 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_VOTED_PART = "VotedPart";
     public static final String ATTR_DATA_DATE_JOINED = "DateJoined";
     public static final String ATTR_DATA_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
+    public static final String ATTR_DATA_LAST_UPDATED = "LastUpdated";
+
 
 
     public static final String ATTR_DATA_HE_COVERS_ME02 = "HeCoversMeIf02";

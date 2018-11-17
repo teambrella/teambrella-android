@@ -304,7 +304,7 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                     break;
                 case TeambrellaModel.ClaimStates.DECLINED:
                     mResultView.setText(R.string.declined);
-                    mResultView.setTextColor(Color.RED);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
                     mPaymentProgress.setVisibility(View.INVISIBLE);
                     break;
             }
