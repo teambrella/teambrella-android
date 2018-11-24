@@ -79,6 +79,7 @@ public class TeambrellaUris {
     public static final String KEY_VOTE = "Vote";
     public static final String KEY_POSITION = "Position";
     public static final String KEY_URI = "uri";
+    public static final String KEY_CAM = "cam";
     public static final String KEY_DATE = "date";
     public static final String KEY_EXPENSES = "expenses";
     public static final String KEY_MESSAGE = "message";
@@ -249,13 +250,18 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getNewFileUri(String path, String uuid) {
-        return new Uri.Builder()
+    public static Uri getNewFileUri(String path, String uuid, boolean cameraUsed) {
+        Uri.Builder builder = new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendPath(SEGMENT_NEW_FILE)
                 .appendQueryParameter(KEY_URI, path)
-                .appendQueryParameter(KEY_ID, uuid)
-                .build();
+                .appendQueryParameter(KEY_ID, uuid);
+
+        if (cameraUsed) {
+            builder.appendQueryParameter(KEY_CAM, "X");
+        }
+
+        return  builder.build();
     }
 
     public static Uri getDebugDbUri(String path) {

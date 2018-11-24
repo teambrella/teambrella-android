@@ -305,6 +305,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                 itemDeleted = true
             }
             data = JsonObject().apply {
+                discussionPart = JsonObject()
             }
         }
         array.removeAll {

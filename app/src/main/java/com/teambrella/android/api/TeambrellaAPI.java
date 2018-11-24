@@ -125,6 +125,9 @@ public interface TeambrellaAPI {
     @POST("post/newUpload")
     Observable<Response<JsonObject>> newFile(@Body RequestBody body);
 
+    @Headers("Content-Type: image/jpeg")
+    @POST("post/newUpload")
+    Observable<Response<JsonObject>> newFileCam(@Query("cam") String camUsed, @Body RequestBody body);
 
     @Headers("Content-Type: application/octet-stream")
     @POST("me/debugDB")

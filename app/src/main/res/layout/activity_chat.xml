@@ -20,7 +20,6 @@
             android:id="@+id/send_image"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_attachment" />
@@ -34,6 +33,15 @@
             android:scaleType="center"
             app:srcCompat="@drawable/ic_sendbutton" />
 
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/add_photos"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_camera" />
+
         <com.teambrella.android.ui.widget.AkkuratRegularEditText
             android:id="@+id/text"
             android:layout_width="0dp"
@@ -42,16 +50,18 @@
             android:layout_centerVertical="true"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@id/send_image"
-            android:layout_toStartOf="@id/send_text"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="42dp"
+            android:layout_marginStart="42dp"
             android:background="@drawable/default_edit_text_background"
-            android:gravity="center_vertical|left"
+            android:gravity="center_vertical|start"
             android:hint="@string/message"
-            android:maxLines="3"
+            android:maxLines="8"
             android:minHeight="38dp"
             android:paddingBottom="4dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
             android:paddingTop="4dp"
             android:textSize="15sp"
             tools:ignore="RtlHardcoded" />

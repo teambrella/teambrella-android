@@ -198,7 +198,8 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             val images = message.images
             val id = message.stringId
 
-            val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == id }
+            val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == id
+                    && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
             if (posOfOldItem >= 0)  {
                 val oldItem = array[posOfOldItem].asJsonObject
                 if (array[posOfOldItem].asJsonObject.lastUpdated < message.lastUpdated) {

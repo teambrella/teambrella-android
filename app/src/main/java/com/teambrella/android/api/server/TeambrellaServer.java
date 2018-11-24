@@ -442,7 +442,11 @@ public class TeambrellaServer {
             case TeambrellaUris.SET_PROXY_POSITION:
                 return mAPI.setProxyPosition(requestBody);
             case TeambrellaUris.NEW_FILE:
-                return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+                String camUsed = uri.getQueryParameter(TeambrellaUris.KEY_CAM);
+                if (camUsed != null)
+                    return mAPI.newFileCam("X", RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+                else
+                    return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.DEBUG_DB:
                 return mAPI.debugDB(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.DEBUG_LOG:

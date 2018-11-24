@@ -8,6 +8,8 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -61,6 +63,7 @@ public class ImagePicker {
     public static class ImageDescriptor {
         public File file;
         public float ratio;
+        public boolean cameraUsed;
     }
 
 
@@ -239,29 +242,79 @@ public class ImagePicker {
 
     private ImageDescriptor scaleImageIfNeeded(File srcFile) throws IOException {
 
-        int maxDimen = 1200;
-
         Bitmap bitmap = BitmapFactory.decodeFile(srcFile.getAbsolutePath());
-        if (bitmap == null) {
-            float scaleFactor = ((float) Math.max(bitmap.getHeight(), bitmap.getWidth())) / maxDimen;
-        }
+
+        int maxDimen = 1200;
         float scaleFactor = ((float) Math.max(bitmap.getHeight(), bitmap.getWidth())) / maxDimen;
-        Bitmap newBitmap;
         if (scaleFactor > 1.0f) {
             scaleFactor = 1 / scaleFactor;
-            newBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scaleFactor), (int) (bitmap.getHeight() * scaleFactor), true);
+            Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * scaleFactor), (int) (bitmap.getHeight() * scaleFactor), true);
             bitmap.recycle();
-        } else {
-            newBitmap = bitmap;
+            bitmap = newBitmap;
         }
-        File newFile = compress(newBitmap);
+
+        ExifInterface exif = new ExifInterface(srcFile.getAbsolutePath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_UNDEFINED);
+        Bitmap rotatedBitmap = rotateBitmap(bitmap, orientation);
+        if (rotatedBitmap != bitmap) {
+            bitmap.recycle();
+        }
+        bitmap = rotatedBitmap;
+
+        File newFile = compress(bitmap);
         //noinspection ResultOfMethodCallIgnored
         srcFile.delete();
         ImageDescriptor imageDescriptor = new ImageDescriptor();
         imageDescriptor.file = newFile;
         imageDescriptor.ratio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
+        imageDescriptor.cameraUsed = mCameraFileUri.toString().contains(srcFile.getAbsolutePath());
         bitmap.recycle();
         return imageDescriptor;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private File compress(Bitmap bitmap) throws IOException {

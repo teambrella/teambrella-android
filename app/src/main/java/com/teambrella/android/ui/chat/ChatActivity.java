@@ -1,5 +1,7 @@
 package com.teambrella.android.ui.chat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
@@ -17,12 +19,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -253,7 +262,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         mMessageView = findViewById(R.id.text);
         findViewById(R.id.send_text).setOnClickListener(this::onClick);
         findViewById(R.id.send_image).setOnClickListener(this::onClick);
-
+        findViewById(R.id.add_photos).setOnClickListener(this::onClick);
 
         Boolean needHideSendImage = false;
         if (mAction != null) {
@@ -305,7 +314,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 mFullAccess = true;
                 break;
             default:
-                needHideSendImage = true;
+                //needHideSendImage = true;
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
@@ -316,15 +325,72 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
         if (needHideSendImage) {
             findViewById(R.id.send_image).setVisibility(View.GONE);
+            findViewById(R.id.add_photos).setVisibility(View.GONE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
             params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
             mMessageView.setLayoutParams(params);
+        }
+        else {
+            findViewById(R.id.send_text).setVisibility(View.GONE);
+            mMessageView.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {
+                    String text = mMessageView.getText().toString().trim();
+                    Log.v(LOG_TAG, "[anim] A(" + text + ")");
+                    if (text.length() > 0) {
+                        setAnimation(false, findViewById(R.id.add_photos));
+                        setAnimation(true, findViewById(R.id.send_text));
+                    } else {
+                        setAnimation(true, findViewById(R.id.add_photos));
+                        setAnimation(false, findViewById(R.id.send_text));
+                    }
+                }
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    String text = mMessageView.getText().toString().trim();
+                    Log.v(LOG_TAG, "[anim] B(" + text + ")");
+                }
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String text = mMessageView.getText().toString().trim();
+                    Log.v(LOG_TAG, "[anim] C(" + text + ")");
+                }
+            });
         }
 
         mClient = new ChatNotificationClient(this);
         mClient.connect();
 
         setResult(RESULT_OK);
+    }
+
+    protected void setAnimation(boolean fadeIn, View view) {
+        Animation anim = new AlphaAnimation(fadeIn?0:1, fadeIn?1:0);
+        anim.setInterpolator(fadeIn ? new DecelerateInterpolator() : new AccelerateInterpolator());
+        anim.setDuration(100);
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (fadeIn) {
+                    Log.v(LOG_TAG, "[anim] setAnimation: onAnimationStart(fadeIn) " + view.toString());
+                    view.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (!fadeIn) {
+                    Log.v(LOG_TAG, "[anim] setAnimation: onAnimationStart(fadeOut) " + view.toString());
+                    view.setVisibility(View.GONE);
+                }
+                view.setAnimation(null);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        if (view.getVisibility() == View.GONE && fadeIn
+                || view.getVisibility() == View.VISIBLE && !fadeIn) {
+            Log.v(LOG_TAG, "[anim] setAnimation: setAnimation() " + view.toString());
+            view.startAnimation(anim);
+        }
     }
 
     @Override
@@ -395,6 +461,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 break;
             case R.id.send_image:
                 startImagePicking();
+                break;
+            case R.id.add_photos:
+                startTakingPhoto();
                 break;
         }
     }
@@ -686,7 +755,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             TeambrellaDataLoaderKt.subscribeAutoDispose(result, descriptor -> {
                 String uuid = UUID.randomUUID().toString();
                 ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
-                queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid));
+                queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed));
                 return null;
             }, throwable -> {
                 // SnakBar is shown in onRequestResult
