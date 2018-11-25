@@ -118,6 +118,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/default_edit_text_background"
             android:hint="@string/ethereum_address"
+            android:inputType="textVisiblePassword"
             android:maxLength="42"
             android:paddingBottom="10dp"
             android:paddingEnd="16dp"
@@ -138,7 +139,8 @@
             android:textColor="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/eth_address_input" />
+            app:layout_constraintTop_toBottomOf="@+id/eth_address_input"
+            />
 
 
     </android.support.constraint.ConstraintLayout>
