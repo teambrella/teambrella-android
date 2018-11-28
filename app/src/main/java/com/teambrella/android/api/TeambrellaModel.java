@@ -421,6 +421,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_DATE_JOINED = "DateJoined";
     public static final String ATTR_DATA_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
     public static final String ATTR_DATA_LAST_UPDATED = "LastUpdated";
+    public static final String ATTR_DATA_CAMERA_USED = "CameraUsed";
 
 
 

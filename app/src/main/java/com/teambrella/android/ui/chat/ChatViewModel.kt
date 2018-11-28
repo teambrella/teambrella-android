@@ -52,7 +52,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
         loader.addAsNext(post)
     }
 
-    fun addPendingImage(postId: String, fileUri: String, ratio: Float) {
+    fun addPendingImage(postId: String, fileUri: String, ratio: Float, wasCameraUsed: Boolean) {
         val loader = dataPager as KChatDataPagerLoader
         val post = JsonObject().apply {
             userId = loader.userId
@@ -60,6 +60,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
             messageStatus = TeambrellaModel.PostStatus.POST_PENDING
             imageIndex = 0
             chatItemType = ChatItems.CHAT_ITEM_MY_IMAGE
+            cameraUsed = wasCameraUsed
             val currentDate = Calendar.getInstance()
             added = currentDate.time.time
 

@@ -490,6 +490,10 @@ var JsonObject?.chatItemType: String?
     get() = getString(TeambrellaModel.ATTR_DATA_ITEM_TYPE)
     set(value) = setString(TeambrellaModel.ATTR_DATA_ITEM_TYPE, value)
 
+var JsonObject?.cameraUsed: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_CAMERA_USED)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_CAMERA_USED, value)
+
 var JsonObject?.sharedUrl: String?
     get() = getString(SHARED_URL)
     set(value) = setString(SHARED_URL, value)

@@ -754,7 +754,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         if (result != null) {
             TeambrellaDataLoaderKt.subscribeAutoDispose(result, descriptor -> {
                 String uuid = UUID.randomUUID().toString();
-                ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio);
+                ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio, descriptor.cameraUsed);
                 queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed));
                 return null;
             }, throwable -> {

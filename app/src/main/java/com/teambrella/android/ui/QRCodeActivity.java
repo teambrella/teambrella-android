@@ -29,12 +29,15 @@ import io.reactivex.schedulers.Schedulers;
 public class QRCodeActivity extends AppCompatActivity {
 
 
-    public static final String EXTRA_ADDRESS = "extra_address";
+    public static final String EXTRA_DATA = "extra_data";
+    public static final String EXTRA_TYPE = "extra_type";
+    public static final int QRTYPE_ADDRESS = 0;
+    public static final int QRTYPE_KEY = 1;
 
-
-    public static void startQRCode(Context context, String address) {
+    public static void startQRCode(Context context, String data, int qrType) {
         context.startActivity(new Intent(context, QRCodeActivity.class)
-                .putExtra(EXTRA_ADDRESS, address));
+                .putExtra(EXTRA_DATA, data)
+                .putExtra(EXTRA_TYPE, qrType));
     }
 
 
@@ -50,11 +53,20 @@ public class QRCodeActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector);
         }
 
-        setTitle(R.string.qr_code);
+        final String data = getIntent().getStringExtra(EXTRA_DATA);
+        final int qrType = getIntent().getIntExtra(EXTRA_TYPE, QRTYPE_ADDRESS);
 
-        final String address = getIntent().getStringExtra(EXTRA_ADDRESS);
+        if (qrType == QRTYPE_ADDRESS) {
+            setTitle(R.string.qr_code_address_title);
+            ((TextView) findViewById(R.id.data_title)).setText(R.string.qr_code_address_title);
+        }
+        if (qrType == QRTYPE_KEY) {
+            setTitle(R.string.qr_code_key_title);
+            ((TextView) findViewById(R.id.data_title)).setText(R.string.qr_code_key_title);
+        }
 
-        Observable.just(address).map(s -> QRCodeUtils.createBitmap(s, getResources().getColor(R.color.dark)
+
+        Observable.just(data).map(s -> QRCodeUtils.createBitmap(s, getResources().getColor(R.color.dark)
                 , getResources().getColor(R.color.activity_background)))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,12 +76,12 @@ public class QRCodeActivity extends AppCompatActivity {
                 }, throwable -> {
                 });
 
-        ((TextView) findViewById(R.id.address)).setText(address);
+        ((TextView) findViewById(R.id.address)).setText(data);
 
-        findViewById(R.id.copy_address).setOnClickListener(v -> {
+        findViewById(R.id.copy_data).setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             if (clipboard != null) {
-                ClipData clip = ClipData.newPlainText(getString(R.string.ethereum_address), address);
+                ClipData clip = ClipData.newPlainText(getString(R.string.ethereum_address), data);
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show();
             }

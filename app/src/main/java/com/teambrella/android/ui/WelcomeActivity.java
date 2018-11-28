@@ -29,6 +29,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.gson.JsonObject;
 import com.teambrella.android.BuildConfig;
@@ -72,6 +74,8 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private static final String CUSTOM_ACTION = "extra_custom_action";
     private static final String TEAM_ID_EXTRA = "team_id_extra";
 
+    private static final int RC_BARCODE_CAPTURE = 9001;
+
     private enum State {
         INIT,
         LOADING,
@@ -94,6 +98,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
     private View mFacebookLoginButton;
     private View mVkLoginButton;
     private View mContinueButton;
+    private View mOpenWithQRButton;
     private View mTryDemoButton;
     private View mTryDemoInvite;
     private View mMarginView;
@@ -138,11 +143,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         mInvitationTitle = findViewById(R.id.invitation_title);
         mFacebookLoginButton.setOnClickListener(this::onFacebookLogin);
         mVkLoginButton.setOnClickListener(this::onVkLogin);
+        mOpenWithQRButton = findViewById(R.id.open_with_qr);
         mTryDemoButton.setOnClickListener(this::onTryDemo);
         mContinueButton.setOnClickListener(this::onContinue);
         mTryDemoInvite = findViewById(R.id.try_demo_invite);
         mMarginView = findViewById(R.id.margin);
         mTryDemoInvite.setOnClickListener(this::onTryDemo);
+        mOpenWithQRButton.setOnClickListener(this::onOpenWithQR);
 
         mFacebookId = savedInstanceState != null ? savedInstanceState.getString(FACEBOOK_ID_EXTRA, null) : null;
 
@@ -213,9 +220,13 @@ public class WelcomeActivity extends AppCompatRequestActivity {
 
         Uri invitationLink = mUser.getInvitationLink();
         if (invitationLink != null) {
-            RegistrationActivityKt.startRegistration(this, invitationLink);
-            finish();
-            return;
+            switch (TeambrellaLinks.INSTANCE.match(invitationLink)) {
+                case TeambrellaLinks.JOIN: {
+                    RegistrationActivityKt.startRegistration(this, invitationLink);
+                    finish();
+                    return;
+                }
+            }
         }
 
         if (savedInstanceState == null) {
@@ -232,6 +243,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.VISIBLE);
                 mVkLoginButton.setVisibility(View.VISIBLE);
                 mContinueButton.setVisibility(View.VISIBLE);
+                mOpenWithQRButton.setVisibility((mUser.getPrivateKey() != null) ? View.GONE : View.VISIBLE);
                 mTryDemoButton.setVisibility(View.VISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
                 mTryDemoInvite.setVisibility(View.VISIBLE);
@@ -240,6 +252,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case LOADING:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
+                mOpenWithQRButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.GONE);
@@ -249,6 +262,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
                 mContinueButton.setVisibility(View.INVISIBLE);
+                mOpenWithQRButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
                 mInvitationTitle.setText(R.string.we_are_invite_only_title);
@@ -258,6 +272,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case ALMOST_READY:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
+                mOpenWithQRButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
@@ -268,6 +283,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case ACCESS_DENIED:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
+                mOpenWithQRButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
@@ -279,6 +295,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             case PENDING_APPLICATION:
                 mFacebookLoginButton.setVisibility(View.INVISIBLE);
                 mVkLoginButton.setVisibility(View.INVISIBLE);
+                mOpenWithQRButton.setVisibility(View.INVISIBLE);
                 mTryDemoButton.setVisibility(View.INVISIBLE);
                 mContinueButton.setVisibility(View.INVISIBLE);
                 mInvitationOnlyView.setVisibility(View.VISIBLE);
@@ -496,11 +513,68 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         StatisticHelper.onTryDemo(this);
     }
 
+    private void onOpenWithQR(@SuppressWarnings("unused") View v) {
+        Intent intent = new Intent(this, com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity.class);
+        intent.putExtra(com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity.AutoFocus, true);
+        intent.putExtra(com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity.UseFlash, false);
+
+        startActivityForResult(intent, RC_BARCODE_CAPTURE);
+        //StatisticHelper.onTryDemo(this);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallBackManager.onActivityResult(requestCode, resultCode, data);
-        mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity.BarcodeObject);
+
+                    // Register with QR code
+                    if (barcode.rawValue.matches("^[5KL][1-9A-HJ-NP-Za-km-z]{50,51}$")) {
+                        mPendingLoginState = null;
+                        mUser.setPrivateKey(barcode.rawValue);
+                        StatisticHelper.onUserRegistered(this);
+                        if (!BuildConfig.DEBUG) {
+                            Answers.getInstance().logLogin(new LoginEvent().putSuccess(true));
+                        }
+                        getTeams(mUser.getPrivateKey());
+                    }
+
+
+                    // Register with deeplink
+                    if (barcode.rawValue.matches("https://teambrella.*")
+                            || barcode.rawValue.matches("https://surilla.*")) {
+                        setState(State.LOADING);
+                        FirebaseDynamicLinks.getInstance()
+                                .getDynamicLink(Uri.parse(barcode.rawValue))
+                                .addOnSuccessListener(pendingDynamicLinkData -> {
+                                    Uri deepLink = pendingDynamicLinkData != null ? pendingDynamicLinkData.getLink() : null;
+                                    if (deepLink != null) {
+                                        switch (TeambrellaLinks.INSTANCE.match(deepLink)) {
+                                            case TeambrellaLinks.JOIN: {
+                                                mUser.setInvitationLink(deepLink);
+                                                RegistrationActivityKt.startRegistration(this, deepLink);
+                                                finish();
+                                            }
+                                        }
+                                    }
+                                });
+                    }
+
+                    //Log.d(TAG, "Barcode read: " + barcode.displayValue);
+                } else {
+                    //Log.d(TAG, "No barcode captured, intent data is null");
+                }
+            } else {
+                //Log.d(TAG, "QR reader returned error");
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+            mCallBackManager.onActivityResult(requestCode, resultCode, data);
+            mWalletBackupManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 

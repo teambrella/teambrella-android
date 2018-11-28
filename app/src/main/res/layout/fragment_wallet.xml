@@ -165,7 +165,7 @@
 
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                    android:id="@+id/make_photos"
+                    android:id="@+id/fund_wallet"
                     style="@style/Teambrella.TextAppearance.SectionButton"
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
@@ -270,6 +270,17 @@
 
             </LinearLayout>
 
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/show_private_key"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/selectable_item_background"
+                android:gravity="start|center_vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/show_private_key"
+                android:textColor="@color/charcoalGrey"
+                android:textSize="15sp" />
 
         </LinearLayout>
 

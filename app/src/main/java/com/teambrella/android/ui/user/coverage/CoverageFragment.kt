@@ -88,7 +88,7 @@ class CoverageFragment : ADataFragment<IMainDataHost>() {
         val fundAddress = dataHost.fundAddress
         if (fundAddress != null) {
             mFundButton?.isEnabled = true
-            mFundButton?.setOnClickListener { QRCodeActivity.startQRCode(context, fundAddress) }
+            mFundButton?.setOnClickListener { QRCodeActivity.startQRCode(context, fundAddress, QRCodeActivity.QRTYPE_ADDRESS) }
         } else {
             mFundButton?.isEnabled = false
         }

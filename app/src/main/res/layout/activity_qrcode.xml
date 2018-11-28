@@ -29,6 +29,7 @@
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+            android:id="@+id/data_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ethereum_address" />
@@ -44,7 +45,7 @@
 
 
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/copy_address"
+            android:id="@+id/copy_data"
             style="@style/Teambrella.TextAppearance.SectionButton"
             android:layout_width="match_parent"
             android:layout_height="42dp"

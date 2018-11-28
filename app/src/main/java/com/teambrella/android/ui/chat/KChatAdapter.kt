@@ -261,7 +261,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             message?.text = item.text
             fundWallet?.setOnClickListener {
                 QRCodeActivity.startQRCode(context, EtherAccount(TeambrellaUser.get(context).privateKey, context)
-                        .depositAddress)
+                        .depositAddress, QRCodeActivity.QRTYPE_ADDRESS)
             }
         }
     }
@@ -314,7 +314,13 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
             }
 
-            time?.text = timeFormat.format(TimeUtils.getDateFromTicks(item.created ?: 0L))
+            val cameraUsed = item.images?.firstOrNull().toString().contains("@cam") || item.cameraUsed == true
+            val timeString = timeFormat.format(TimeUtils.getDateFromTicks(item.created ?: 0L))
+            if (cameraUsed) {
+                time?.text = "\uD83D\uDCF7 " + timeString
+            } else {
+                time?.text = timeString
+            }
             status?.visibility = if (item.messageStatus == TeambrellaModel.PostStatus.POST_PENDING) View.VISIBLE else View.GONE
             time?.visibility = if (status == null || status.visibility == View.GONE) View.VISIBLE else View.GONE
         }

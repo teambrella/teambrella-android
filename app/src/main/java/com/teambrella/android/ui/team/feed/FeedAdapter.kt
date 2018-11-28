@@ -69,7 +69,8 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
 
     override fun onPagerItemChanged(item: Int) {
         super.onPagerItemChanged(item)
-        notifyItemChanged(headersCount + item)
+        // notifyItemChanged(headersCount + item) // see https://stackoverflow.com/questions/30220771/recyclerview-inconsistency-detected-invalid-item-position
+        notifyDataSetChanged();
     }
 
     private inner class FeedItemViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -184,9 +184,9 @@
     <string name="fund_wallet">Financiar monedero</string>
     <string name="recommended_funding">Financiamiento Recomendado </string>
     <string name="recommended">Recomendado</string>
-    <string name="copy_address">Copiar direción </string>
+    <string name="copy_address">Copiar</string>
     <string name="ethereum_address">Dirección de Ethereum</string>
-    <string name="qr_code">QR-Code</string>
+    <string name="qr_code_address_title">QR-Code</string>
     <string name="cosigners">Co-firmantes</string>
     <string name="now">Ahora</string>
     <string name="unable_to_connect_try_later">Oops, no se puede conectar con Teambrella. Inténtalo más tarde.</string>
@@ -345,5 +345,14 @@
     <string name="notification_every_never_description">Notifications about team news are turned off.</string>
     <string name="select_profile_photo">Select Profile Photo</string>
     <string name="pin_the_topic">Pin the topic</string>
+    <string name="show_private_key">Export private key</string>
+    <string name="open_with_qr">Iniciar sesión con código QR</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="ok">OK</string>
+    <string name="invalid_qr_code">Not a valid QR code</string>
+    <string name="use_qr_code">Scan a QR code with a private key. The application will log in automatically.</string>
+    <string name="qr_code_key_title">Your Private Key</string>
 
 </resources>

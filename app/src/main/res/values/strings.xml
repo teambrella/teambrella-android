@@ -204,9 +204,9 @@
     <string name="fund_wallet">Fund wallet</string>
     <string name="recommended_funding">Recommended Funding</string>
     <string name="recommended">Recommended</string>
-    <string name="copy_address">Copy Address</string>
+    <string name="copy_address">Copy</string>
     <string name="ethereum_address">Ethereum Address</string>
-    <string name="qr_code">QR-Code</string>
+    <string name="qr_code_address_title">Your Ethereum address</string>
     <string name="cosigners">Co-signers</string>
     <string name="now">Now</string>
     <string name="unable_to_connect_try_later">Oops, unable to connect to Teambrella. Keep calm and try again later.</string>
@@ -392,5 +392,14 @@
 
     <string name="choose" translatable="false">Choose</string>
     <string name="select_profile_photo">Select Profile Photo</string>
+    <string name="show_private_key">Show private key</string>
+    <string name="open_with_qr">Log with QR code</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="ok">OK</string>
+    <string name="invalid_qr_code">Not a valid QR code</string>
+    <string name="use_qr_code">Scan a QR code with a private key. The application will log in automatically.</string>
+    <string name="qr_code_key_title">Your Private Key</string>
 
 </resources>

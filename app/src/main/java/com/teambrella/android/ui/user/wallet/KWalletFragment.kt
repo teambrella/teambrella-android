@@ -14,6 +14,7 @@ import com.teambrella.android.api.cryptoBalance
 import com.teambrella.android.api.currencyRate
 import com.teambrella.android.api.data
 import com.teambrella.android.backup.WalletBackupManager
+import com.teambrella.android.blockchain.EtherAccount
 import com.teambrella.android.ui.CosignersActivity
 import com.teambrella.android.ui.IMainDataHost
 import com.teambrella.android.ui.QRCodeActivity
@@ -56,6 +57,7 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
     private val uninterruptedCoverageCurrencyValue: TextView? by ViewHolder(R.id.for_uninterrupted_coverage_currency_value)
     private val backupWalletButton: View? by ViewHolder(R.id.backup_wallet)
     private val backupWalletMessage: View? by ViewHolder(R.id.wallet_not_backed_up_message)
+    private val showPrivateKeyButton: View? by ViewHolder(R.id.show_private_key)
     private val decimalFormat = DecimalFormat.getInstance()
     private var showBackupInfoOnShow: Boolean = false
     private var isWalletBackedUp: Boolean? = null
@@ -87,9 +89,9 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
                     .subscribe({ qrCodeView?.setImageBitmap(it) }, {})
 
             fundWalletView?.isEnabled = true
-            fundWalletView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it) }
+            fundWalletView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it, QRCodeActivity.QRTYPE_ADDRESS) }
             qrCodeView?.visibility = View.VISIBLE
-            qrCodeView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it) }
+            qrCodeView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it, QRCodeActivity.QRTYPE_ADDRESS) }
 
         }
 
@@ -106,6 +108,10 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
                 backupWalletButton?.visibility =
                         if (it.getBoolean(EXTRA_BACKUP, false)) View.VISIBLE else View.GONE
             }
+        }
+
+        showPrivateKeyButton?.setOnClickListener {
+            QRCodeActivity.startQRCode(context, TeambrellaUser.get(context).privateKey, QRCodeActivity.QRTYPE_KEY)
         }
 
         super.onViewCreated(view, savedInstanceState)

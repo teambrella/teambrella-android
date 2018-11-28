@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/topLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+
+  <android.support.design.widget.CoordinatorLayout
+      android:id="@+id/coordinator"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@+id/bottom_bar"
+      android:layout_marginBottom="0dp">
+
+
+    <com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSourcePreview
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+      <com.google.android.gms.samples.vision.barcodereader.ui.camera.GraphicOverlay
+          android:id="@+id/graphicOverlay"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+
+    </com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSourcePreview>
+
+  </android.support.design.widget.CoordinatorLayout>
+
+  <LinearLayout
+      android:id="@+id/bottom_bar"
+      android:layout_width="match_parent"
+      android:layout_height="96dp"
+      android:layout_alignParentBottom="true"
+      android:background="@drawable/navigation_view_background"
+      android:orientation="horizontal">
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/enter_qr_code"
+        tools:text="Audi A6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:lines="3"
+        android:padding="@dimen/padding_16dp"
+        android:text="@string/use_qr_code"
+        android:textAppearance="@style/AppTheme.ActionBar.TitleTextStyle"
+        android:textColor="@color/battleshipGrey" />
+  </LinearLayout>
+
+
+</RelativeLayout>

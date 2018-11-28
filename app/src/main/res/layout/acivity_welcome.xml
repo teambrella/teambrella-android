@@ -109,20 +109,35 @@
 
 
     <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/open_with_qr"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/open_with_qr"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/try_demo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
         android:id="@+id/try_demo"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="@string/try_demo"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <RelativeLayout
         android:id="@+id/login"
@@ -132,7 +147,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
         android:background="@drawable/facebook_login_background"
-        app:layout_constraintBottom_toTopOf="@id/try_demo"
+        app:layout_constraintBottom_toTopOf="@id/open_with_qr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_max="300dp">
