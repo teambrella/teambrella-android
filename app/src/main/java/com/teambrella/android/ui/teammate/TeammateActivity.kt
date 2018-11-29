@@ -266,6 +266,10 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         imagePicker.startPicking(getString(R.string.select_profile_photo))
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        imagePicker.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     override fun onRequestResult(response: Notification<JsonObject>) {
         super.onRequestResult(response)
         response.takeIf { it.isOnNext }?.value?.status?.uri?.let {

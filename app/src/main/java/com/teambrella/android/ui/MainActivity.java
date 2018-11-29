@@ -544,6 +544,10 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mImagePicker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     @Override
     protected void onRequestResult(@NotNull Notification<JsonObject> response) {

@@ -265,6 +265,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         findViewById(R.id.add_photos).setOnClickListener(this::onClick);
 
         Boolean needHideSendImage = false;
+        Boolean needHideTakePhoto = false;
         if (mAction != null) {
             switch (mAction) {
                 case SHOW_TEAMMATE_CHAT_ACTION:
@@ -284,6 +285,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 case SHOW_CONVERSATION_CHAT:
                     setTitle(R.string.private_conversation);
                     needHideSendImage = true;
+                    needHideTakePhoto = true;
                     if (mTitle != null) {
                         mTitle.setText(R.string.private_conversation);
                     }
@@ -314,7 +316,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 mFullAccess = true;
                 break;
             default:
-                //needHideSendImage = true;
+                needHideSendImage = true;
                 if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
@@ -325,10 +327,13 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
         if (needHideSendImage) {
             findViewById(R.id.send_image).setVisibility(View.GONE);
-            findViewById(R.id.add_photos).setVisibility(View.GONE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mMessageView.getLayoutParams();
             params.leftMargin = getResources().getDimensionPixelSize(R.dimen.margin_8);
             mMessageView.setLayoutParams(params);
+        }
+
+        if (needHideTakePhoto) {
+            findViewById(R.id.add_photos).setVisibility(View.GONE);
         }
         else {
             findViewById(R.id.send_text).setVisibility(View.GONE);
