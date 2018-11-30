@@ -92,7 +92,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
     }
 
 
-    public fun canUpdateAnotherImageButton(): Boolean {
+    public fun canUpdateAnotherImageButton(dontCareIfHasAnImageAlready: Boolean = false): Boolean {
         var awaitsNewImages = false
         var hasAnImageAlready = false
         array.forEach() {
@@ -104,11 +104,11 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 hasAnImageAlready = true
             }
         }
-        return awaitsNewImages && hasAnImageAlready
+        return awaitsNewImages && (dontCareIfHasAnImageAlready || hasAnImageAlready)
     }
 
     public fun updateAnotherImageButton(forced: Boolean = false) {
-        if (forced || canUpdateAnotherImageButton()) {
+        if (canUpdateAnotherImageButton(forced)) {
             remove({
                 it.asJsonObject.chatItemType == ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN
             })
@@ -207,6 +207,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                     newMessage.localImages = oldItem.localImages
                     newMessage.chatItemType = oldItem.chatItemType
                     newMessage.isNextDay = oldItem.isNextDay
+                    newMessage.imageIndex = oldItem.imageIndex
                     newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
                     array.set(posOfOldItem, newMessage)
                     Log.v(LOG_TAG, "(postProcess) Updating: $id at $posOfOldItem")

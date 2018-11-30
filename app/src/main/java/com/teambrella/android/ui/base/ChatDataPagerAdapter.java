@@ -59,7 +59,7 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
               case TeambrellaModel.ATTR_METADATA_PREVIOUS_DIRECTION:
                 notifyItemRangeInserted(0, addedSize - 1);
-                // notifyItemChanged(addedSize); // see https://stackoverflow.com/questions/30220771/recyclerview-inconsistency-detected-invalid-item-position
+                //notifyItemChanged(addedSize); // see https://stackoverflow.com/questions/30220771/recyclerview-inconsistency-detected-invalid-item-position
                 break;
             }
           }
