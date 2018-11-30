@@ -94,7 +94,7 @@ public class ImagePicker {
             case IMAGE_PICKER_REQUEST_CODE:
             case IMAGE_TAKE_PHOTO_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mContext.startActivity(mIntent);
+                    mContext.startActivityForResult(mIntent, requestCode);
                 }
                 break;
         }
