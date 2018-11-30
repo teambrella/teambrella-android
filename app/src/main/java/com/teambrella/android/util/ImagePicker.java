@@ -242,7 +242,11 @@ public class ImagePicker {
 
     private ImageDescriptor scaleImageIfNeeded(File srcFile) throws IOException {
 
-        Bitmap bitmap = BitmapFactory.decodeFile(srcFile.getAbsolutePath());
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inDither = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(srcFile.getAbsolutePath(), options);
 
         int maxDimen = 1200;
         float scaleFactor = ((float) Math.max(bitmap.getHeight(), bitmap.getWidth())) / maxDimen;
