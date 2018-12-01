@@ -112,6 +112,9 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
         override fun getCount() = cards?.size() ?: 0
         override fun getItemPosition(fragment: Any): Int {
             if (fragment is CardFragment) {
+                if (fragment.position >= getCount()) {
+                    return POSITION_NONE
+                }
                 return if (fragment.type == cards?.get(fragment.position)?.asJsonObject?.itemType) PagerAdapter.POSITION_UNCHANGED else
                     PagerAdapter.POSITION_NONE
             }
