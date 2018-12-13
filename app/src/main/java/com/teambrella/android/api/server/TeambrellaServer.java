@@ -219,7 +219,6 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_OFFSET, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_OFFSET)));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
             case TeambrellaUris.NEW_POST:
-
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
 
@@ -362,6 +361,11 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_PIN, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_MY_PIN)));
             }
             break;
+            case TeambrellaUris.SET_POST_LIKE: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_LIKE, uri.getQueryParameter(TeambrellaUris.KEY_MY_LIKE));
+            }
+            break;
             case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
@@ -493,6 +497,8 @@ public class TeambrellaServer {
                 return mAPI.getTopicPin(requestBody);
             case TeambrellaUris.SET_TOPIC_PIN:
                 return mAPI.setTopicPin(requestBody);
+            case TeambrellaUris.SET_POST_LIKE:
+                return mAPI.setPostLike(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

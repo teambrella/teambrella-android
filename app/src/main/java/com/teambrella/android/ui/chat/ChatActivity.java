@@ -116,6 +116,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public static final String VOTE_DATA_TAG = "vote_data_tag";
     private static final String NOTIFICATION_SETTINGS_FRAGMENT_TAG = "notification_settings";
     private static final String PIN_UNPIN_FRAGMENT_TAG = "pin_unpin";
+    private static final String MESSAGE_MENU_FRAGMENT_TAG = "message_menu";
 
     private static final String SHOW_TEAMMATE_CHAT_ACTION = "show_teammate_chat_action";
     private static final String SHOW_CLAIM_CHAT_ACTION = "show_claim_chat_action";
@@ -917,6 +918,14 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         }
     }
 
+    public void showMessageMenuDialog(String postId, int myLike) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(MESSAGE_MENU_FRAGMENT_TAG) == null) {
+            MessageMenuDialogFragment.Companion.getInstance(postId, myLike).show(fragmentManager, MESSAGE_MENU_FRAGMENT_TAG);
+        }
+    }
+
+
     private class ChatNotificationClient extends TeambrellaNotificationServiceClient {
 
         private boolean mResumed;
@@ -997,6 +1006,13 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public void setChatMuted(boolean muted) {
         request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
     }
+
+    @Override
+    public void setMyMessageVote(String postId, int vote) {
+        ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setMyMessageVote(postId, vote);
+        queuedRequest(TeambrellaUris.getSetPostLike(postId, vote));
+    }
+
 
 
     @Override

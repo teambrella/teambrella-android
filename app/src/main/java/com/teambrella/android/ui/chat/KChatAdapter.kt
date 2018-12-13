@@ -300,6 +300,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
     private open inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         protected val userPicture: ImageView? = itemView.findViewById(R.id.user_picture)
         private val time: TextView? = itemView.findViewById(R.id.time)
+        private val likes: TextView? = itemView.findViewById(R.id.likes)
         private val status: View? = itemView.findViewById(R.id.status)
 
         open fun onBind(item: JsonObject) {
@@ -323,6 +324,13 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             }
             status?.visibility = if (item.messageStatus == TeambrellaModel.PostStatus.POST_PENDING) View.VISIBLE else View.GONE
             time?.visibility = if (status == null || status.visibility == View.GONE) View.VISIBLE else View.GONE
+            likes?.visibility = if (item?.likes?:0 != 0) View.VISIBLE else View.GONE
+            likes?.text = if (item?.likes ?:0 > 0) "+" + item?.likes.toString() else item?.likes.toString()
+            itemView.alpha = when  {
+                item?.grayed ?:0F >= 0.7F -> 0.15F
+                item?.grayed ?:0F >= 0.3F -> 0.3F
+                else -> 1.0F
+            }
         }
     }
 
@@ -333,6 +341,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val teammateName: TextView? = itemView.findViewById(R.id.teammate_name)
         private val vote: TextView? = itemView.findViewById(R.id.vote)
         private val header: View? = itemView.findViewById(R.id.header)
+        private val bubble: View? = itemView.findViewById(R.id.bubble)
 
         init {
             message?.movementMethod = LinkMovementMethod.getInstance()
@@ -364,6 +373,14 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                     header?.visibility = View.GONE
                 }
             }
+
+            bubble?.setOnClickListener {
+                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+            }
+            message?.setOnClickListener {
+                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+            }
+
         }
     }
 
@@ -374,6 +391,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val image: ImageView? = itemView.findViewById(R.id.image)
         private val width = itemView.context.resources.getDimensionPixelSize(R.dimen.chat_image_width)
         private val closeButton: View? = itemView.findViewById(R.id.close)
+        private val bubble: View? = itemView.findViewById(R.id.bubble)
 
         override fun onBind(item: JsonObject) {
             super.onBind(item)
@@ -414,6 +432,13 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                         item.images?.mapTo(ArrayList()) { it.asString }?.let { _images ->
                             image?.setOnClickListener {
                                 context.startActivity(ImageViewerActivity.getLaunchIntent(context, _images, _index))
+                            }
+                            bubble?.setOnClickListener {
+                                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                            }
+                            image?.setOnLongClickListener {
+                                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                                true
                             }
                         }
                     }

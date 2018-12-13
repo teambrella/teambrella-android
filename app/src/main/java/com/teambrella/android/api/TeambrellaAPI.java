@@ -240,4 +240,8 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("feed/setPin")
     Observable<Response<JsonObject>> setTopicPin(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("vote/setPostLike")
+    Observable<Response<JsonObject>> setPostLike(@Body JsonElement body);
 }

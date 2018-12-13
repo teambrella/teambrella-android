@@ -354,5 +354,8 @@
     <string name="invalid_qr_code">Not a valid QR code</string>
     <string name="use_qr_code">Scan a QR code with a private key. The application will log in automatically.</string>
     <string name="qr_code_key_title">Your Private Key</string>
+    <string name="upvote_message">Second that!</string>
+    <string name="upvote_message_desciption">Upvote the message</string>
+    <string name="downvote_message">Dislike</string>
 
 </resources>

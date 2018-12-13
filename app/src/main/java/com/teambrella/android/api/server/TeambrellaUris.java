@@ -62,6 +62,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_SET_AVATAR = "setAvatar";
     private static final String SEGMENT_SET_PIN = "setPin";
     private static final String SEGMENT_GET_PIN = "getPin";
+    private static final String SEGMENT_SET_POST_LIKE = "setPostLike";
 
 
     public static final String KEY_FACEBOOK_TOKEN = "facebookToken";
@@ -95,6 +96,7 @@ public class TeambrellaUris {
     public static final String KEY_INVITE_CODE = "invitecode";
     public static final String KEY_NOTIFICATION_SETTING = "notificationSetting";
     public static final String KEY_MY_PIN = "MyPin";
+    public static final String KEY_MY_LIKE = "MyLike";
 
 
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -146,6 +148,7 @@ public class TeambrellaUris {
     public static final int SET_TOPIC_PIN = 46;
     public static final int GET_TOPIC_PIN = 47;
     public static final int DELETE_POST = 48;
+    public static final int SET_POST_LIKE = 49;
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
@@ -196,6 +199,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_ME + "/" + SEGMENT_SET_AVATAR, SET_AVATAR);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_SET_PIN, SET_TOPIC_PIN);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_GET_PIN, GET_TOPIC_PIN);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_VOTE + "/" + SEGMENT_SET_POST_LIKE, SET_POST_LIKE);
     }
 
 
@@ -665,6 +669,16 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_MUTE)
                 .appendQueryParameter(KEY_ID, topicId)
                 .appendQueryParameter(KEY_MUTED, Boolean.toString(muted))
+                .build();
+    }
+
+    public static Uri getSetPostLike(String postId, int myLike) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_VOTE)
+                .appendEncodedPath(SEGMENT_SET_POST_LIKE)
+                .appendQueryParameter(KEY_POST_ID, postId)
+                .appendQueryParameter(KEY_MY_LIKE, Integer.toString(myLike))
                 .build();
     }
 

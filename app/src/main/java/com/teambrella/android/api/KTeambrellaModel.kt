@@ -402,6 +402,18 @@ var JsonObject?.teamId: Int?
 val JsonObject?.topicId: String?
     get() = getString(TeambrellaModel.ATTR_DATA_TOPIC_ID)
 
+var JsonObject?.likes: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_LIKES)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_LIKES, value)
+
+var JsonObject?.myLike: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_MY_LIKE)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_MY_LIKE, value)
+
+var JsonObject?.grayed: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_GRAYED)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_GRAYED, value)
+
 val JsonObject?.topicName: String?
     get() = getString(TOPIC_NAME)
 

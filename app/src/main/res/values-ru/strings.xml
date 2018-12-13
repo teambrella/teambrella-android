@@ -373,5 +373,8 @@
     <string name="invalid_qr_code">Неправильный QR код</string>
     <string name="use_qr_code">Наведи камеру на QR код с приватным ключем. Приложение залогинится автоматически.</string>
     <string name="qr_code_key_title">Приватный Ключ</string>
+    <string name="upvote_message">Нравится</string>
+    <string name="upvote_message_desciption">Upvote the message</string>
+    <string name="downvote_message">Не нравится</string>
 
 </resources>

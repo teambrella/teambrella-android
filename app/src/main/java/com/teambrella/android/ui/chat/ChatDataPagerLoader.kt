@@ -2,6 +2,7 @@ package com.teambrella.android.ui.chat
 
 import android.net.Uri
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
@@ -10,6 +11,8 @@ import com.teambrella.android.ui.chat.KChatDataPagerLoader.Companion.separate
 import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
 import com.teambrella.android.util.log.Log
+import io.reactivex.Notification
+import io.reactivex.Observable
 import java.util.*
 
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
@@ -119,6 +122,32 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             })
         }
     }
+
+    public fun updateLikes(postId: String, myLike: Int) {
+        val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == postId
+                && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
+
+        val oldItem = array[posOfOldItem]?.asJsonObject
+        oldItem?.let {
+            val newMessage = it.deepCopy()
+            var likesDiff = myLike - (it.myLike?:0)
+            newMessage.myLike = myLike
+            newMessage.likes = (it.likes?:0) + likesDiff
+            array.set(posOfOldItem, newMessage)
+            Log.v(LOG_TAG, "(updateLikes) Updating: $postId at $posOfOldItem")
+
+            val response = JsonObject().apply {
+                metadata = JsonObject().apply {
+                    itemDeleted = true
+                }
+                data = JsonObject().apply {
+                    discussionPart = JsonObject()
+                }
+            }
+            _observable.postValue(Notification.createOnNext(response))
+        }
+    }
+
 
     override fun postProcess(response: JsonObject, next: Boolean): JsonObject {
         val messages = getPageableData(response)
@@ -328,7 +357,6 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         }
 
         response.data?.discussionPart?.chat = newMessages
-
         return super.postProcess(response, next)
     }
 

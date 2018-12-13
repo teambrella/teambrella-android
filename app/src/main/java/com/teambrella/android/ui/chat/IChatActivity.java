@@ -45,4 +45,6 @@ public interface IChatActivity extends IDataHost, ITeambrellaDaggerActivity {
     void unpinTopic();
 
     void resetPin();
+
+    void setMyMessageVote(String postId, int vote);
 }

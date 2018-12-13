@@ -87,11 +87,15 @@ class ChatViewModel : TeambrellaPagerViewModel() {
 
     fun deleteMyImage(postId: String) {
         val loader = dataPager as KChatDataPagerLoader
-        var post = loader
         loader.remove({
             it.asJsonObject.stringId  == postId
         })
         loader.updateAnotherImageButton()
+    }
+
+    fun setMyMessageVote(postId: String, vote: Int) {
+        val loader = dataPager as KChatDataPagerLoader
+        loader.updateLikes(postId, vote)
     }
 
 }

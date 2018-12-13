@@ -6,6 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 /**
@@ -185,9 +187,11 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_NEW_MESSAGE_ID = "NewMessageId";
     public static final String ATTR_REQUEST_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
     public static final String ATTR_REQUEST_MY_PIN = "MyPin";
+    public static final String ATTR_REQUEST_MY_LIKE = "MyLike";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
+    public static final String ATTR_REQUEST_POST_ID = "PostId";
     public static final String ATTR_REQUEST_TITLE = "Title";
     public static final String ATTR_REQUEST_TEXT = "Text";
     public static final String ATTR_REQUEST_ID = "Id";
@@ -324,6 +328,9 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
     public static final String ATTR_DATA_GENDER = "Gender";
     public static final String ATTR_DATA_REIMBURSEMENT = "Reimbursement";
+    public static final String ATTR_DATA_LIKES = "Likes";
+    public static final String ATTR_DATA_MY_LIKE = "MyLike";
+    public static final String ATTR_DATA_GRAYED = "Grayed";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";

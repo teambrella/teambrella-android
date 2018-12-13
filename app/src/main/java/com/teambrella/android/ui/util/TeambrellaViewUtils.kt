@@ -19,76 +19,76 @@ import java.text.ParseException
 
 
 fun ImageView.setAvatar(url: GlideUrl?) {
-    url?.let {
-        GlideApp.with(this).load(it)
-                .apply(RequestOptions().circleCrop().placeholder(R.drawable.picture_background_circle))
-                .thumbnail(0.5f)
-                .into(this)
-    }
+  url?.let {
+    GlideApp.with(this).load(it)
+            .apply(RequestOptions().circleCrop().placeholder(R.drawable.picture_background_circle))
+            .thumbnail(0.5f)
+            .into(this)
+  }
 }
 
 fun ImageView.setImage(url: GlideUrl?, @DimenRes radius: Int, crop: Boolean = true) {
-    url?.let {
-        val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
-        fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
-            RequestOptions().transform(RoundedCorners(radiusPx))
+  url?.let {
+    val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
+    fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
+      RequestOptions().transform(RoundedCorners(radiusPx))
 
-        GlideApp.with(this).load(it)
-                .apply(getRequestOptions())
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(this)
-    }
+    GlideApp.with(this).load(it)
+            .apply(getRequestOptions())
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+  }
 }
 
 fun ImageView.setImage(url: String?, @DimenRes radius: Int, crop: Boolean = true) {
-    url?.let {
-        val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
-        fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
-            RequestOptions().transform(RoundedCorners(radiusPx))
+  url?.let {
+    val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
+    fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
+      RequestOptions().transform(RoundedCorners(radiusPx))
 
-        GlideApp.with(this).load(it)
-                .apply(getRequestOptions())
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(this)
-    }
+    GlideApp.with(this).load(it)
+            .apply(getRequestOptions())
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+  }
 }
 
 fun ImageView.setImage(url: GlideUrl?, @DimenRes radius: Int, @DrawableRes placeholder: Int) {
-    url?.let {
-        GlideApp.with(this).load(it)
-                .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(this.context.resources.getDimensionPixelOffset(radius))))
-                .placeholder(placeholder)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(this)
-    }
+  url?.let {
+    GlideApp.with(this).load(it)
+            .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(this.context.resources.getDimensionPixelOffset(radius))))
+            .placeholder(placeholder)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+  }
 }
 
 fun TextView.setRightCompoundDrawable(@DrawableRes drawableRes: Int) {
-    val drawable = if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        this.resources.getDrawable(drawableRes, null) else this.resources.getDrawable(drawableRes)
-    this.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+  val drawable = if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+    this.resources.getDrawable(drawableRes, null) else this.resources.getDrawable(drawableRes)
+  this.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
 }
 
 fun TextView.setUnreadCount(count: Int) {
-    this.text = count.toString()
-    this.visibility = if (count > 0) View.VISIBLE else View.INVISIBLE
+  this.text = count.toString()
+  this.visibility = if (count > 0) View.VISIBLE else View.INVISIBLE
 }
 
 fun TextView.setAVGDifference(value: Float, avg: Float) {
-    val percent = Math.round((value - avg) / avg * 100)
-    when {
-        percent > 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_bigger_format_string, percent)
-        percent < 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_smaller_format_string, percent)
-        else -> this.setText(R.string.vote_avg_difference_same)
-    }
+  val percent = Math.round((value - avg) / avg * 100)
+  when {
+    percent > 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_bigger_format_string, percent)
+    percent < 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_smaller_format_string, percent)
+    else -> this.setText(R.string.vote_avg_difference_same)
+  }
 }
 
 fun TextView.setRelativeTimeSpan(serverTime: String) {
-    try {
-        val time = TeambrellaDateUtils.getServerTime(serverTime)
-        val now = System.currentTimeMillis()
-        this.text = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
-    } catch (e: ParseException) {
-        e.printStackTrace()
-    }
+  try {
+    val time = TeambrellaDateUtils.getServerTime(serverTime)
+    val now = System.currentTimeMillis()
+    this.text = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE)
+  } catch (e: ParseException) {
+    e.printStackTrace()
+  }
 }
