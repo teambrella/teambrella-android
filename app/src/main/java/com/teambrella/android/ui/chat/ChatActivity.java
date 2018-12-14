@@ -46,6 +46,7 @@ import com.teambrella.android.TeambrellaApplication;
 import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
+import com.teambrella.android.api.TeambrellaServerException;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.api.server.TeambrellaUris;
 import com.teambrella.android.data.base.IDataPager;
@@ -80,6 +81,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import bolts.Bolts;
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 
@@ -142,6 +144,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private float mVote = -1;
     private long mLastRead = -1L;
     private boolean mFullAccess = false;
+    private boolean mIsMyChat = false;
 
     private View mContainer;
     private Snackbar mSnackBar;
@@ -217,6 +220,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
         int mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mAction = intent.getStringExtra(EXTRA_ACTION);
+        mIsMyChat = mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId());
 
         mLastRead = savedInstanceState != null ? savedInstanceState.getLong(EXTRA_LAST_READ, -1) : -1;
 
@@ -318,7 +322,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 break;
             default:
                 needHideSendImage = true;
-                if (mUserId != null && mUserId.equals(TeambrellaUser.get(this).getUserId())) {
+                if (mIsMyChat) {
                     findViewById(R.id.input).setVisibility(View.VISIBLE);
                 } else {
                     findViewById(R.id.input).setVisibility(View.GONE);
@@ -512,9 +516,18 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     }
 
     protected synchronized void onRequestResult(Notification<JsonObject> response) {
-        if (response.isOnNext()) {
+        Boolean isServerError = response.getError() != null && response.getError() instanceof TeambrellaServerException;
 
-            Uri uri = getRequestUri(response);
+        if (response.isOnNext() || isServerError && response.isOnError()) {
+            Uri uri = null;
+            if (isServerError) {
+                TeambrellaException exception = (TeambrellaException) response.getError();
+                uri = exception.getUri();
+            }
+            else {
+                uri = getRequestUri(response);
+            }
+
             if (uri.equals(requestInProcess)) {
                 requestInProcess = null;
             }
@@ -522,29 +535,31 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             urisToProcess.remove(uri);
             TeambrellaUser.get(this).setPendingUris(urisToProcess);
 
-            // Process request
-            switch (TeambrellaUris.sUriMatcher.match(uri)) {
-                case TeambrellaUris.NEW_FILE:
-                    JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
-                            .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
-                    Uri uriNew = TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString());
-                    Log.v(LOG_TAG, "(onRequestResult) Adding Uri: " + uriNew);
-                    urisToProcess.add(uriNew);
-                    StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE);
-                    break;
-                case TeambrellaUris.NEW_POST:
-                case TeambrellaUris.NEW_PRIVATE_MESSAGE:
-                    getPager(DATA_FRAGMENT_TAG).loadNext(true);
-                    break;
-                case TeambrellaUris.MUTE:
-                    Observable.fromArray(response.getValue())
-                            .map(JsonWrapper::new)
-                            .map(jsonWrapper -> jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA, false))
-                            .doOnNext(isMuted -> {
-                                mMuteStatus = isMuted ? MuteStatus.MUTED : MuteStatus.UMMUTED;
-                                invalidateOptionsMenu();
-                            }).blockingFirst();
-                    break;
+            if (!isServerError) {
+                // Process request
+                switch (TeambrellaUris.sUriMatcher.match(uri)) {
+                    case TeambrellaUris.NEW_FILE:
+                        JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
+                                .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
+                        Uri uriNew = TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString());
+                        Log.v(LOG_TAG, "(onRequestResult) Adding Uri: " + uriNew);
+                        urisToProcess.add(uriNew);
+                        StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE);
+                        break;
+                    case TeambrellaUris.NEW_POST:
+                    case TeambrellaUris.NEW_PRIVATE_MESSAGE:
+                        getPager(DATA_FRAGMENT_TAG).loadNext(true);
+                        break;
+                    case TeambrellaUris.MUTE:
+                        Observable.fromArray(response.getValue())
+                                .map(JsonWrapper::new)
+                                .map(jsonWrapper -> jsonWrapper.getBoolean(TeambrellaModel.ATTR_DATA, false))
+                                .doOnNext(isMuted -> {
+                                    mMuteStatus = isMuted ? MuteStatus.MUTED : MuteStatus.UMMUTED;
+                                    invalidateOptionsMenu();
+                                }).blockingFirst();
+                        break;
+                }
             }
 
 
@@ -563,7 +578,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 queuedRequest(urisToProcess.iterator().next());
             }
         }
-        else if (response.isOnError()) {
+
+        if (!isServerError && response.isOnError()) {
             TeambrellaException exception = (TeambrellaException) response.getError();
             final Uri uri = exception.getUri();
             if (uri.equals(requestInProcess)) {
@@ -574,6 +590,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.DELETE_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
+                case TeambrellaUris.SET_POST_LIKE:
                     Log.v(LOG_TAG, "(onRequestResult - error) Adding Uri: " + uri);
                     urisToProcess.add(uri);
                     showSnackBar(exception);
@@ -606,6 +623,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                             case TeambrellaUris.NEW_POST:
                             case TeambrellaUris.DELETE_POST:
                             case TeambrellaUris.NEW_PRIVATE_MESSAGE:
+                            case TeambrellaUris.SET_POST_LIKE:
                                 if (urisToProcess.size() > 0) {
                                     Log.v(LOG_TAG, "(showSnackBar) Processing Uri-1: " + uri);
                                     queuedRequest(urisToProcess.iterator().next());
@@ -1077,5 +1095,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
     public boolean isFullAccess() {
         return mFullAccess;
+    }
+
+    public boolean isMyChat() {
+        return mIsMyChat;
     }
 }

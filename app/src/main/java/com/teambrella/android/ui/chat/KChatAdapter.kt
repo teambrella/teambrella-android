@@ -65,6 +65,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
     private val timeFormat: SimpleDateFormat = SimpleDateFormat(if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a", Locale.ENGLISH)
     private val dateFormat = SimpleDateFormat("d MMMM", Locale.getDefault())
+    private val chatContext = context as ChatActivity
 
 
     init {
@@ -273,7 +274,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         fun onBind(item: JsonObject) {
             message?.text = item.text
             addPhotos?.setOnClickListener {
-                (context as ChatActivity).startTakingPhoto()
+                chatContext.startTakingPhoto()
             }
         }
     }
@@ -282,7 +283,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val addPhotos: View? = itemView.findViewById(R.id.make_photos)
         fun onBind(item: JsonObject) {
             addPhotos?.setOnClickListener {
-                (context as ChatActivity).startTakingPhoto()
+                chatContext.startTakingPhoto()
             }
         }
     }
@@ -374,13 +375,14 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
             }
 
-            bubble?.setOnClickListener {
-                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+            if (mode != MODE_CONVERSATION && (chatContext.isFullAccess || chatContext.isMyChat)) {
+                bubble?.setOnClickListener {
+                    chatContext.showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                }
+                message?.setOnClickListener {
+                    chatContext.showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                }
             }
-            message?.setOnClickListener {
-                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
-            }
-
         }
     }
 
@@ -402,9 +404,9 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 //                (context as ChatActivity).deletePost(item.stringId)
 //                true
 //            }
-            closeButton?.visibility = if ((context as ChatActivity).isFullAccess) View.GONE else View.VISIBLE
+            closeButton?.visibility = if (chatContext.isFullAccess) View.GONE else View.VISIBLE
             closeButton?.setOnClickListener {
-                context.deletePost(item.stringId)
+                chatContext.deletePost(item.stringId)
             }
 
             var smallImages = item.localImages?.mapTo(ArrayList()) { FILE_PREFIX + it.asString }
@@ -433,12 +435,16 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                             image?.setOnClickListener {
                                 context.startActivity(ImageViewerActivity.getLaunchIntent(context, _images, _index))
                             }
-                            bubble?.setOnClickListener {
-                                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
-                            }
-                            image?.setOnLongClickListener {
-                                (context as ChatActivity).showMessageMenuDialog(item.stringId, item.myLike ?: 0)
-                                true
+                            if (mode != MODE_CONVERSATION && (chatContext.isFullAccess || chatContext.isMyChat)) {
+                                bubble?.setOnClickListener {
+                                    chatContext.showMessageMenuDialog(item.stringId, item.myLike
+                                            ?: 0)
+                                }
+                                image?.setOnLongClickListener {
+                                    chatContext.showMessageMenuDialog(item.stringId, item.myLike
+                                            ?: 0)
+                                    true
+                                }
                             }
                         }
                     }
