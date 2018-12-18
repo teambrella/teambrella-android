@@ -364,7 +364,7 @@
 
   <string name="registration" translatable="false">Application</string>
   <string name="model" translatable="false">Car</string>
-  <string name="model_hint" translatable="false">Ford Focus 2014</string>
+  <string name="model_hint" translatable="false">Ford Focus 2016</string>
   <string name="name_hint" translatable="false">John Smith</string>
   <string name="location_hint" translatable="false">New Yourk, USA</string>
   <string name="email_hint" translatable="false">myemail@gmail.com</string>

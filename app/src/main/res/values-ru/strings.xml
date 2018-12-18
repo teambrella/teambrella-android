@@ -337,8 +337,8 @@
 
     <string name="registration" translatable="false">Регистрация</string>
     <string name="model" translatable="false">Автомобиль</string>
-    <string name="model_hint" translatable="false">A6 2014</string>
-    <string name="name_hint" translatable="false">Иван Петров</string>
+    <string name="model_hint" translatable="false">Ford Focus 2016</string>
+    <string name="name_hint" translatable="false">Дмитрий Иванов</string>
     <string name="location_hint" translatable="false">Санкт-Петербург, Россия</string>
     <string name="email_hint" translatable="false">myemail@mail.ru</string>
     <string name="email" translatable="false">E-mail</string>
