@@ -41,6 +41,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_SET_MY_PROXY = "setMyProxy";
     private static final String SEGMENT_SET_POSITION = "setPosition";
     private static final String SEGMENT_NEW_FILE = "newFile";
+    private static final String SEGMENT_NEW_FILE_CONVERSATION = "newFileConversation";
     private static final String SEGMENT_NEW_CLAIM = "newClaim";
     private static final String SEGMENT_NEW_CHAT = "newChat";
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
@@ -149,6 +150,7 @@ public class TeambrellaUris {
     public static final int GET_TOPIC_PIN = 47;
     public static final int DELETE_POST = 48;
     public static final int SET_POST_LIKE = 49;
+    public static final int NEW_FILE_CONVERSATION = 50;
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
@@ -180,6 +182,7 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_LIST, INBOX);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_CHAT, CONVERSATION_CHAT);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_POST, NEW_PRIVATE_MESSAGE);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_FILE_CONVERSATION, NEW_FILE_CONVERSATION);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTES, APPLICATION_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
@@ -267,6 +270,7 @@ public class TeambrellaUris {
 
         return  builder.build();
     }
+
 
     public static Uri getDebugDbUri(String path) {
         return new Uri.Builder()
@@ -585,7 +589,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getInbox() {
+    public static Uri getInboxUri() {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
@@ -593,7 +597,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getConversationChat(String userId) {
+    public static Uri getConversationChatUri(String userId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
@@ -602,18 +606,37 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getNewConversationMessage(String userId, String messageId, String text) {
-        return new Uri.Builder()
+    public static Uri getNewConversationMessageUri(String userId, String messageId, String text, String images) {
+        Uri.Builder builder = new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
                 .appendEncodedPath(SEGMENT_NEW_POST)
                 .appendQueryParameter(KEY_ID, userId)
-                .appendQueryParameter(KEY_POST_ID, messageId)
-                .appendQueryParameter(KEY_MESSAGE, text)
+                .appendQueryParameter(KEY_POST_ID, messageId);
+
+        if (text != null) {
+            builder.appendQueryParameter(KEY_MESSAGE, text);
+        }
+
+        if (images != null) {
+            builder.appendQueryParameter(KEY_IMAGES, images);
+        }
+
+        return builder.build();
+    }
+
+    public static Uri getNewConversationFileUri(String path, String uuid) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_PRIVATE_MESSAGE)
+                .appendEncodedPath(SEGMENT_NEW_FILE_CONVERSATION)
+                .appendQueryParameter(KEY_URI, path)
+                .appendQueryParameter(KEY_ID, uuid)
                 .build();
     }
 
-    public static Uri getAllVotesForClaim(int teamId, int claimId) {
+
+    public static Uri getAllVotesForClaimUri(int teamId, int claimId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_CLAIMS)
@@ -623,7 +646,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getAllVotesForTeammate(int teamId, int teammateId) {
+    public static Uri getAllVotesForTeammateUri(int teamId, int teammateId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_TEAMMATE)
@@ -633,7 +656,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getWallet(int teamId) {
+    public static Uri getWalletUri(int teamId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_WALLET)
@@ -642,7 +665,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getWithdrawals(int teamId) {
+    public static Uri getWithdrawalsUri(int teamId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_WALLET)
@@ -662,7 +685,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getSetChatMuted(String topicId, boolean muted) {
+    public static Uri getSetChatMutedUri(String topicId, boolean muted) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_FEED)
@@ -672,7 +695,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getSetPostLike(String postId, int myLike) {
+    public static Uri getSetPostLikeUri(String postId, int myLike) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_VOTE)
@@ -682,7 +705,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getWalletTransactions(int teamId) {
+    public static Uri getWalletTransactionsUri(int teamId) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_WALLET)
@@ -691,7 +714,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri getMe() {
+    public static Uri getMeUri() {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_ME)
@@ -762,7 +785,7 @@ public class TeambrellaUris {
      *
      * @return uri
      */
-    public static Uri getUpdates() {
+    public static Uri getUpdatesUri() {
         return new Uri.Builder().authority(AUTHORITY).appendEncodedPath(SEGMENT_ME)
                 .appendEncodedPath(SEGMENT_UPDATES).build();
     }

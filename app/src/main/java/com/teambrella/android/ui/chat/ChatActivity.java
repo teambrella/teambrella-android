@@ -1,15 +1,13 @@
 package com.teambrella.android.ui.chat;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -31,7 +29,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,7 +39,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
-import com.teambrella.android.TeambrellaApplication;
 import com.teambrella.android.api.TeambrellaClientException;
 import com.teambrella.android.api.TeambrellaException;
 import com.teambrella.android.api.TeambrellaModel;
@@ -58,14 +54,12 @@ import com.teambrella.android.services.push.INotificationMessage;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
-import com.teambrella.android.ui.base.ATeambrellaDataHostActivity;
 import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager;
 import com.teambrella.android.ui.base.TeambrellaDataViewModel;
 import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
 import com.teambrella.android.ui.claim.IClaimActivity;
 import com.teambrella.android.ui.widget.AkkuratBoldTypefaceSpan;
-import com.teambrella.android.util.ConnectivityUtils;
 import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.StatisticHelper;
 import com.teambrella.android.util.TeambrellaDateUtils;
@@ -77,11 +71,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import bolts.Bolts;
 import io.reactivex.Notification;
 import io.reactivex.Observable;
 
@@ -160,7 +152,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public static Intent getConversationChat(Context context, String userId, String userName, String imageUri) {
         return new Intent(context, ChatActivity.class)
                 .putExtra(EXTRA_USER_ID, userId)
-                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChat(userId))
+                .putExtra(EXTRA_URI, TeambrellaUris.getConversationChatUri(userId))
                 .putExtra(EXTRA_USER_NAME, userName)
                 .putExtra(EXTRA_IMAGE_URI, imageUri)
                 .putExtra(EXTRA_ACTION, SHOW_CONVERSATION_CHAT)
@@ -289,8 +281,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 break;
                 case SHOW_CONVERSATION_CHAT:
                     setTitle(R.string.private_conversation);
-                    needHideSendImage = true;
-                    needHideTakePhoto = true;
+                    needHideSendImage = false;
+                    needHideTakePhoto = false;
                     if (mTitle != null) {
                         mTitle.setText(R.string.private_conversation);
                     }
@@ -345,7 +337,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             mMessageView.addTextChangedListener(new TextWatcher() {
                 public void afterTextChanged(Editable s) {
                     String text = mMessageView.getText().toString().trim();
-                    Log.v(LOG_TAG, "[anim] A(" + text + ")");
+                     //Log.v(LOG_TAG, "[anim] A(" + text + ")");
                     if (text.length() > 0) {
                         setAnimation(false, findViewById(R.id.add_photos));
                         setAnimation(true, findViewById(R.id.send_text));
@@ -357,12 +349,12 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                     String text = mMessageView.getText().toString().trim();
-                    Log.v(LOG_TAG, "[anim] B(" + text + ")");
+                    //Log.v(LOG_TAG, "[anim] B(" + text + ")");
                 }
 
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     String text = mMessageView.getText().toString().trim();
-                    Log.v(LOG_TAG, "[anim] C(" + text + ")");
+                    //Log.v(LOG_TAG, "[anim] C(" + text + ")");
                 }
             });
         }
@@ -455,7 +447,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                         case SHOW_CONVERSATION_CHAT: {
                             String uuid = UUID.randomUUID().toString();
                             model.addPendingMessage(uuid, text, -1f);
-                            queuedRequest(TeambrellaUris.getNewConversationMessage(mUserId, uuid, text));
+                            queuedRequest(TeambrellaUris.getNewConversationMessageUri(mUserId, uuid, text, null));
                             StatisticHelper.onPrivateMessage(this);
                         }
                         break;
@@ -501,6 +493,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     public synchronized void restoreUrisToProcess() {
         LinkedHashSet<Uri> storedUris = TeambrellaUser.get(this).getPendingUris();
         for(Uri uri : storedUris) {
+            if (TeambrellaUris.sUriMatcher.match(uri) == UriMatcher.NO_MATCH) {
+                continue;
+            }
             queuedRequest(uri);
         }
     }
@@ -539,9 +534,19 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 // Process request
                 switch (TeambrellaUris.sUriMatcher.match(uri)) {
                     case TeambrellaUris.NEW_FILE:
+                    case TeambrellaUris.NEW_FILE_CONVERSATION:
                         JsonArray array = Observable.just(response.getValue()).map(JsonWrapper::new)
                                 .map(jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA)).blockingFirst();
-                        Uri uriNew = TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString());
+                        Uri uriNew = null;
+                        switch (mAction) {
+                            case SHOW_CONVERSATION_CHAT: {
+                                uriNew = TeambrellaUris.getNewConversationMessageUri(mUserId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString());
+                            }
+                            break;
+                            default: {
+                                uriNew = TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString());
+                            }
+                        }
                         Log.v(LOG_TAG, "(onRequestResult) Adding Uri: " + uriNew);
                         urisToProcess.add(uriNew);
                         StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE);
@@ -567,7 +572,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             while (iter.hasNext()) {
                 Uri storedUri = iter.next();
                 // Process Files last, updates posts as they come
-                if (TeambrellaUris.sUriMatcher.match(storedUri) != TeambrellaUris.NEW_FILE) {
+                int uriType = TeambrellaUris.sUriMatcher.match(storedUri);
+                if (uriType != TeambrellaUris.NEW_FILE && uriType != TeambrellaUris.NEW_FILE_CONVERSATION) {
                     Log.v(LOG_TAG, "(onRequestResult) Processing Uri-1: " + uri);
                     queuedRequest(storedUri);
                     return;
@@ -587,6 +593,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             }
             switch (TeambrellaUris.sUriMatcher.match(uri)) {
                 case TeambrellaUris.NEW_FILE:
+                case TeambrellaUris.NEW_FILE_CONVERSATION:
                 case TeambrellaUris.NEW_POST:
                 case TeambrellaUris.DELETE_POST:
                 case TeambrellaUris.NEW_PRIVATE_MESSAGE:
@@ -620,6 +627,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                     .setAction(R.string.retry, v -> {
                         switch (TeambrellaUris.sUriMatcher.match(uri)) {
                             case TeambrellaUris.NEW_FILE:
+                            case TeambrellaUris.NEW_FILE_CONVERSATION:
                             case TeambrellaUris.NEW_POST:
                             case TeambrellaUris.DELETE_POST:
                             case TeambrellaUris.NEW_PRIVATE_MESSAGE:
@@ -779,7 +787,15 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             TeambrellaDataLoaderKt.subscribeAutoDispose(result, descriptor -> {
                 String uuid = UUID.randomUUID().toString();
                 ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio, descriptor.cameraUsed);
-                queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed));
+                switch (mAction) {
+                    case SHOW_CONVERSATION_CHAT: {
+                        queuedRequest(TeambrellaUris.getNewConversationFileUri(descriptor.file.getAbsolutePath(), uuid));
+                    }
+                    break;
+                    default: {
+                        queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed));
+                    }
+                }
                 return null;
             }, throwable -> {
                 // SnakBar is shown in onRequestResult
@@ -1022,13 +1038,13 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
     @Override
     public void setChatMuted(boolean muted) {
-        request(TeambrellaUris.getSetChatMuted(mTopicId, muted));
+        request(TeambrellaUris.getSetChatMutedUri(mTopicId, muted));
     }
 
     @Override
     public void setMyMessageVote(String postId, int vote) {
         ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setMyMessageVote(postId, vote);
-        queuedRequest(TeambrellaUris.getSetPostLike(postId, vote));
+        queuedRequest(TeambrellaUris.getSetPostLikeUri(postId, vote));
     }
 
 

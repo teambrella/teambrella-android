@@ -403,7 +403,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             case USER_DATA:
                 return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getTeammateUri(getTeamId(), mUserId), true);
             case WALLET_DATA:
-                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getWallet(getTeamId()));
+                return ATeambrellaDataHostActivityKt.getDataConfig(TeambrellaUris.getWalletUri(getTeamId()));
             case VOTE_DATA:
                 return ATeambrellaDataHostActivityKt.getDataConfig();
             case TEAM_NOTIFICATIONS_DATA:

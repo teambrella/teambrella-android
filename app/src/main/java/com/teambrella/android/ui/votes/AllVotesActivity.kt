@@ -74,7 +74,7 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
             context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
                 this.teamId = teamId
                 this.claimId = claimId
-                this.uri = TeambrellaUris.getAllVotesForClaim(teamId, claimId)
+                this.uri = TeambrellaUris.getAllVotesForClaimUri(teamId, claimId)
             })
         }
 
@@ -82,7 +82,7 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
             context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
                 this.teamId = teamId
                 this.teammateId = teammateId
-                this.uri = TeambrellaUris.getAllVotesForTeammate(teamId, teammateId)
+                this.uri = TeambrellaUris.getAllVotesForTeammateUri(teamId, teammateId)
             })
         }
     }

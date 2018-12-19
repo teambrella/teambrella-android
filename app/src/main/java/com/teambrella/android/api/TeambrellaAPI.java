@@ -171,6 +171,10 @@ public interface TeambrellaAPI {
     @POST("privatemessage/newMessage")
     Observable<Response<JsonObject>> newConversationMessage(@Body JsonElement body);
 
+    @Headers("Content-Type: image/jpeg")
+    @POST("privatemessage/newUpload")
+    Observable<Response<JsonObject>> newConversationFile(@Body RequestBody body);
+
 
     @SuppressWarnings("SpellCheckingInspection")
     @Headers("Content-Type: application/json")

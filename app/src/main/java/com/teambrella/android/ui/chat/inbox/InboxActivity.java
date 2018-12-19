@@ -101,7 +101,7 @@ public class InboxActivity extends ATeambrellaActivity {
         switch (tag) {
             case INBOX_DATA_TAG: {
                 Bundle config = new Bundle();
-                config.putParcelable(TeambrellaViewModelKt.EXTRA_URI, TeambrellaUris.getInbox());
+                config.putParcelable(TeambrellaViewModelKt.EXTRA_URI, TeambrellaUris.getInboxUri());
                 return config;
             }
         }

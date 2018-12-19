@@ -300,6 +300,10 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEXT, uri.getQueryParameter(TeambrellaUris.KEY_MESSAGE));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_USER_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_NEW_MESSAGE_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
+                images = uri.getQueryParameter(TeambrellaUris.KEY_IMAGES);
+                if (images != null) {
+                    requestBody.add(TeambrellaModel.ATTR_REQUEST_TEMP_FILE_NAMES, new Gson().fromJson(images, JsonElement.class));
+                }
                 break;
             case TeambrellaUris.APPLICATION_VOTES:
                 String teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
@@ -380,6 +384,7 @@ public class TeambrellaServer {
             case TeambrellaUris.DEBUG_LOG:
             case TeambrellaUris.GET_ME:
             case TeambrellaUris.JOIN_GET_WELCOME:
+            case TeambrellaUris.NEW_FILE_CONVERSATION:
                 break;
             default:
                 throw new RuntimeException("unknown uri:" + uri);
@@ -451,6 +456,8 @@ public class TeambrellaServer {
                     return mAPI.newFileCam("X", RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
                 else
                     return mAPI.newFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
+            case TeambrellaUris.NEW_FILE_CONVERSATION:
+                return mAPI.newConversationFile(RequestBody.create(MediaType.parse("image/jpeg"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.DEBUG_DB:
                 return mAPI.debugDB(RequestBody.create(MediaType.parse("application/octet-stream"), new File(uri.getQueryParameter(TeambrellaUris.KEY_URI))));
             case TeambrellaUris.DEBUG_LOG:

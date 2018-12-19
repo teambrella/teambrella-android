@@ -236,10 +236,10 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
 
                             if (votingCrypto != null && paymentCrypto != null && votingCrypto != 0.0) {
                                 if ((paymentCrypto / votingCrypto).toFloat() < 0.995) {
-                                    voteTitleView?.setText(R.string.paid_title)
+                                    voteTitleView?.setText(R.string.being_paid_title)
                                     setClaimVoteValue((paymentCrypto / votingCrypto).toFloat())
                                 } else {
-                                    voteTitleView?.setText(R.string.being_paid_title)
+                                    voteTitleView?.setText(R.string.paid_title)
                                     setClaimVoteValue(1f)
                                 }
                             } else {

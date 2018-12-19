@@ -121,7 +121,7 @@ public class WithdrawActivity extends ATeambrellaActivity implements IWithdrawAc
     protected Bundle getDataPagerConfig(@NotNull String tag) {
         switch (tag) {
             case WITHDRAWALS_DATA_TAG:
-                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getWithdrawals(mTeamId), TeambrellaModel.ATTR_DATA_TXS);
+                return ATeambrellaDataHostActivityKt.getPagerConfig(TeambrellaUris.getWithdrawalsUri(mTeamId), TeambrellaModel.ATTR_DATA_TXS);
         }
         return super.getDataPagerConfig(tag);
     }

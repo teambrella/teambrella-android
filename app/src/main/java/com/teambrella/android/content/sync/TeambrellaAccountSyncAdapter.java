@@ -61,7 +61,7 @@ class TeambrellaAccountSyncAdapter {
 //            updateConnectionTime(provider);
 //
 //
-//            JsonObject result = server.requestObservable(TeambrellaUris.getUpdates(), getRequestBody(provider)).blockingFirst();
+//            JsonObject result = server.requestObservable(TeambrellaUris.getUpdatesUri(), getRequestBody(provider)).blockingFirst();
 //
 //            if (result != null) {
 //                JsonObject status = result.get(TeambrellaModel.ATTR_STATUS).getAsJsonObject();

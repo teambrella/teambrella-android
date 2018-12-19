@@ -180,6 +180,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_EXPENSES = "Expenses";
     public static final String ATTR_REQUEST_MESSAGE = "Message";
     public static final String ATTR_REQUEST_IMAGES = "Images";
+    public static final String ATTR_REQUEST_TEMP_FILE_NAMES = "TempFileNames";
     public static final String ATTR_REQUEST_ADDRESS = "Address";
     public static final String ATTR_REQUEST_SORTED_BY_RISK = "OrderByRisk";
     public static final String ATTR_REQUEST_TO_ADDRESS = "ToAddress";

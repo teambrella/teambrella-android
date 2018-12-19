@@ -156,7 +156,7 @@ public class TeambrellaWallet {
 
         mTeambrellaClient.updateConnectionTime(new Date());
 
-        JsonObject response = mServer.requestObservable(TeambrellaUris.getUpdates(), mTeambrellaClient.getClientUpdates())
+        JsonObject response = mServer.requestObservable(TeambrellaUris.getUpdatesUri(), mTeambrellaClient.getClientUpdates())
                 .blockingFirst();
 
         if (response != null) {

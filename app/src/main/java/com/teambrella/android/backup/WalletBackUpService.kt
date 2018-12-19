@@ -86,7 +86,7 @@ class WalletBackUpService : GcmTaskService() {
         val user = TeambrellaUser.get(this)
         if (!user.isDemoUser) {
             val server = TeambrellaServer(this, user.privateKey, user.deviceCode, user.getInfoMask(this))
-            val me = server.requestObservable(TeambrellaUris.getMe(), null).blockingFirst()
+            val me = server.requestObservable(TeambrellaUris.getMeUri(), null).blockingFirst()
             me?.data?.let {
                 val googleApiClient = GoogleApiClient.Builder(this)
                         .addApi(Auth.CREDENTIALS_API, CredentialsOptions.Builder().forceEnableSaveDialog().build())

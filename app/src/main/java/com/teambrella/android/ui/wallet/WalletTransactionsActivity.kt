@@ -80,7 +80,7 @@ class WalletTransactionsActivity : ATeambrellaActivity(), IWalletTransactionActi
     }
 
     override fun getDataPagerConfig(tag: String): Bundle? = when (tag) {
-        Tags.DATA_TAG -> getPagerConfig(TeambrellaUris.getWalletTransactions(intent.getIntExtra(TEAM_ID_EXTRA, 0)))
+        Tags.DATA_TAG -> getPagerConfig(TeambrellaUris.getWalletTransactionsUri(intent.getIntExtra(TEAM_ID_EXTRA, 0)))
         else -> super.getDataPagerConfig(tag)
     }
 
