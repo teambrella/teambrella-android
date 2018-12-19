@@ -187,6 +187,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     if (proxyName != null && proxyAvatar != null) {
                         mProxyName.setText(proxyName);
                         GlideApp.with(this).load(getImageLoader().getImageUrl(voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)))
+                                .placeholder(R.drawable.picture_background_circle)
                                 .into(mProxyAvatar);
                         mProxyName.setVisibility(View.VISIBLE);
                         mProxyAvatar.setVisibility(View.VISIBLE);
@@ -223,7 +224,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
 
                 if (basic != null) {
                     GlideApp.with(this).load(getImageLoader().getImageUrl(basic.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
-                            .into(mNewTeammateIcon);
+                            .placeholder(R.drawable.picture_background_circle).into(mNewTeammateIcon);
                 }
 
 
@@ -305,6 +306,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     JsonWrapper item = it.next();
                     mLeftTeammateIcon.setVisibility(View.VISIBLE);
                     GlideApp.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                            .placeholder(R.drawable.picture_background_circle)
                             .into(mLeftTeammateIcon);
                     mLeftTeammateRisk.setVisibility(View.VISIBLE);
                     mLeftTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));
@@ -317,6 +319,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                     JsonWrapper item = it.next();
                     mRightTeammateIcon.setVisibility(View.VISIBLE);
                     GlideApp.with(this).load(getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR)))
+                            .placeholder(R.drawable.picture_background_circle)
                             .into(mRightTeammateIcon);
                     mRightTeammateRisk.setVisibility(View.VISIBLE);
                     mRightTeammateRisk.setText(String.format(Locale.US, "%.2f", item.getFloat(TeambrellaModel.ATTR_DATA_RISK)));

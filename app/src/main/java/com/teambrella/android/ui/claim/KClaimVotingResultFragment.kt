@@ -156,7 +156,8 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
                 it.visibility = View.VISIBLE
             }
             this.proxyAvatar?.let {
-                GlideApp.with(this).load(imageLoader.getImageUrl(proxyAvatar)).into(it)
+                GlideApp.with(this).load(imageLoader.getImageUrl(proxyAvatar))
+                        .placeholder(R.drawable.picture_background_circle).into(it)
                 it.visibility = View.VISIBLE
             }
 

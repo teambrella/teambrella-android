@@ -85,6 +85,7 @@ public class TeambrellaAvatarsWidgets extends FrameLayout {
                 GlideApp.with(this).load(loader.getImageUrl(uri))
                         .apply(RequestOptions.downsampleOf(DownsampleStrategy.CENTER_OUTSIDE))
                         .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
+                        .placeholder(R.drawable.picture_background_circle)
                         .into(imageview);
             }
             imageview.setVisibility(uri != null ? VISIBLE : GONE);

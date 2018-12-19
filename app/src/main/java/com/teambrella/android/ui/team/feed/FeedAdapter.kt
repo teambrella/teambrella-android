@@ -129,8 +129,10 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
                     type?.setText(R.string.discussion)
                 }
                 else -> {
-                    type?.setRightCompoundDrawable(R.drawable.ic_application)
-                    type?.setText(R.string.application)
+                    //type?.setRightCompoundDrawable(R.drawable.ic_application)
+                    //type?.setText(R.string.application)
+                    type?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    type?.setText("")
                 }
             }
         }

@@ -169,7 +169,7 @@
     <string name="inbox">Приватные сообщения</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У тебя ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выбери кого-то, кому доверяешь, чтобы он стал твоим прокси.</font]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
-    <string name="private_conversation">Private Chat</string>
+    <string name="private_conversation">Приватный чат</string>
     <string name="ends_in">Осталось %s</string>
     <string name="declined">Отказано</string>
     <string name="all_votes">Все голоса</string>
