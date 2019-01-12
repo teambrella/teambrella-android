@@ -50,7 +50,11 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         if (type == TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR) {
             type = if (position == 0 && headersCount > 0) VIEW_TYPE_INVITES_FRIENDS
             else {
-                val jsonObject = mPager.loadedData.get(position - headersCount).asJsonObject
+                var dataPosition = position - headersCount
+                if (dataPosition < 0 || dataPosition >= mPager.loadedData.count()) {
+                    return TeambrellaDataPagerAdapter.VIEW_TYPE_ERROR
+                }
+                val jsonObject = mPager.loadedData.get(dataPosition).asJsonObject
                 when (jsonObject.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).asInt) {
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS -> VIEW_TYPE_HEADER_NEW_MEMBERS
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES -> VIEW_TYPE_HEADER_TEAMMATES

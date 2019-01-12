@@ -71,3 +71,6 @@ public static ** valueOf(java.lang.String);
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+
+# Required by AppsFlyer
+-dontwarn com.android.installreferrer

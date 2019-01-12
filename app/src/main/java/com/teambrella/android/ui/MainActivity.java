@@ -21,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -132,7 +133,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     private String mSocialName;
     private Uri mUserPicture;
     private ImageView mAvatar;
-    private JsonWrapper mTeam;
+    private JsonObject mTeam;
     private Snackbar mSnackBar;
     private String mUserCity;
     private String mUserTopicId;
@@ -164,7 +165,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
         mTeam = intent.hasExtra(TEAM_EXTRA) ? new JsonWrapper(new Gson()
                 .fromJson(intent.getStringExtra(TEAM_EXTRA)
-                        , JsonObject.class)) : null;
+                        , JsonObject.class)).getObject() : null;
 
         super.onCreate(savedInstanceState);
 
@@ -438,7 +439,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public int getTeamId() {
-        return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_TEAM_ID).getAsInt();
     }
 
 
@@ -474,27 +475,27 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public int getTeamType() {
-        return mTeam.getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE).getAsInt();
     }
 
     @Override
     public String getTeamName() {
-        return mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_NAME);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_TEAM_NAME).getAsString();
     }
 
     @Override
     public String getTeamLogoUri() {
-        return mTeam.getString(TeambrellaModel.ATTR_DATA_TEAM_LOGO);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_TEAM_LOGO).getAsString();
     }
 
     @Override
     public int getTeammateId() {
-        return mTeam.getInt(TeambrellaModel.ATTR_DATA_MY_TEAMMATE_ID);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_MY_TEAMMATE_ID).getAsInt();
     }
 
     @Override
     public String getInviteFriendsText() {
-        return mTeam.getString(TeambrellaModel.ATTR_DATA_INVITE_FRIENDS_TEXT);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_INVITE_FRIENDS_TEXT).getAsString();
     }
 
     @Override
@@ -521,7 +522,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public void startNewDiscussion() {
-        StartNewChatActivity.startForResult(this, mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ID), DEFAULT_REQUEST_CODE);
+        StartNewChatActivity.startForResult(this, mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_TEAM_ID).getAsInt(), DEFAULT_REQUEST_CODE);
     }
 
     @Override
@@ -576,7 +577,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public int getTeamAccessLevel() {
-        return mTeam.getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL).getAsInt();
     }
 
     @Override
@@ -591,7 +592,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     @Override
     public String getCurrency() {
-        return mTeam.getString(TeambrellaModel.ATTR_DATA_CURRENCY);
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_CURRENCY).getAsString();
     }
 
     @Override
@@ -953,6 +954,8 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
             mUserName = data.getString(TeambrellaModel.ATTR_DATA_NAME);
             mSocialName = data.getString(TeambrellaModel.ATTR_DATA_SOCIAL_NAME);
             mUserPicture = TeambrellaImageLoader.getImageUri(data.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            mTeam.addProperty(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL,
+                    data.getObject(TeambrellaModel.ATTR_DATA_ONE_TEAM).getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL, getTeamAccessLevel()));
         }
     };
 

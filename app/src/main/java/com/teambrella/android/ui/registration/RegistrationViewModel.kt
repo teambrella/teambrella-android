@@ -6,6 +6,9 @@ import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
+import com.appsflyer.AFInAppEventParameterName
+import com.appsflyer.AFInAppEventType
+import com.appsflyer.AppsFlyerLib
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
@@ -20,6 +23,8 @@ import com.teambrella.android.util.log.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.bitcoinj.core.DumpedPrivateKey
+
+
 
 
 enum class UIState {
@@ -140,6 +145,10 @@ class RegistrationViewModel : ViewModel() {
             this.location = location
             this.email = email
             this.carModelString = model
+
+            val eventValue = HashMap<String, Any>()
+            eventValue[AFInAppEventParameterName.EVENT_START] = 1
+            AppsFlyerLib.getInstance().trackEvent(context, AFInAppEventType.SUBSCRIBE, eventValue)
 
         }).subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())

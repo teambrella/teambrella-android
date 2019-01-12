@@ -206,7 +206,14 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
         if (notification.isOnNext) {
             val data = notification.value.data
             val metadata = notification.value.metadata
-            if ((metadata?.forced == true || metadata?.reload == true) && metadata.size ?: 0 > 0) {
+            var needScrollDown = metadata?.reload == true && metadata.size ?: 0 > 0
+            if (metadata?.forced == true && metadata.size ?: 0 > 0) {
+                val lastItemVisible = (list?.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition()
+                if (lastItemVisible == (adapter?.itemCount ?: 0) - 2) {
+                    needScrollDown = true
+                }
+            }
+            if (needScrollDown) {
                 list?.layoutManager?.scrollToPosition((adapter?.itemCount ?: 0) - 1)
             }
 
