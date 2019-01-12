@@ -1009,6 +1009,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                     if (messageTopicId != null && messageTopicId.equals(mTopicId)) {
                         if (!mResumed) {
                             mReloadOnResume = true;
+                        } else {
+                            getPager(DATA_FRAGMENT_TAG).loadNext(true);
                         }
                     }
                     return mResumed && messageTopicId != null && messageTopicId.equals(mTopicId);
