@@ -46,7 +46,7 @@ class HomeCoverageAndWalletFragment : ADataFragment<IMainDataHost>() {
                 startActivity(ChatActivity.getTeammateChat(context, dataHost.teamId
                         , dataHost.userId
                         , dataHost.userName
-                        , dataHost.userPicture.toString()
+                        , dataHost.userPicture?.toString() ?: ""
                         , dataHost.userTopicID
                         , dataHost.teamAccessLevel))
             }

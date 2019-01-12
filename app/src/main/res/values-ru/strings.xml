@@ -44,7 +44,7 @@
     <string name="add_to_my_proxies">Сделать моим прокси</string>
 
 
-    <string name="claim_title_format_string">Заявка %d</string>
+    <string name="claim_title_format_string">Обсуждение заявки</string>
     <string name="claim_title_date_format_string">Заявка - %s</string>
     <string name="claim_details">Детали заявки</string>
     <string name="claim_amount">Сумма выплаты</string>

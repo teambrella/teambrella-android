@@ -108,7 +108,7 @@ public class TeambrellaNotificationService extends Service {
                         }
                     }
 
-                    if (mTeambrellaSocketClient == null && !user.isDemoUser() && user.getPrivateKey() != null) {
+                    if (mTeambrellaSocketClient == null && user != null && !user.isDemoUser() && user.getPrivateKey() != null) {
                         mTeambrellaSocketClient = new TeambrellaNotificationSocketClient(this);
                     }
                     return START_STICKY;
