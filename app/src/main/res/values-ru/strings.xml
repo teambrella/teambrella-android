@@ -76,7 +76,7 @@
     <string name="your_claim">Твоя заявка</string>
     <string name="claimed">Заявлено</string>
     <string name="welcome_user_format_string">Привет, %s! </string>
-    <string name="application">Вступление</string>
+    <string name="application">Вступление в команду</string>
     <string name="discussion">Обсуждение</string>
     <string name="pet_insurance">Здоровье Питомца</string>
     <string name="claim">Заявка</string>
@@ -237,7 +237,7 @@
     <string name="access_denied_description"><![CDATA[В данный момент ты не можешь войти в Тимбреллу. Пожалуйста, свяжись с нашей поддержкой <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
 
     <string name="notification_title_your_claim">@string/your_claim</string>
-    <string name="notification_title_your_application">Ваше вступление</string>
+    <string name="notification_title_your_application">Вступление в команду</string>
     <string name="notification_title_other_claim">"Заявка участника %s"</string>
     <string name="notification_title_other_application">"%s - вступление"</string>
     <string name="notification_chat_picture_format_string">%1$s отправил изображение</string>
@@ -376,5 +376,6 @@
     <string name="upvote_message">Нравится</string>
     <string name="upvote_message_desciption">Upvote the message</string>
     <string name="downvote_message">Не нравится</string>
+    <string name="continue_joining">Продолжить вступление в команду</string>
 
 </resources>

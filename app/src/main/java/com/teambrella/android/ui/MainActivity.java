@@ -21,7 +21,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
@@ -43,6 +42,7 @@ import com.teambrella.android.ui.base.ATeambrellaDataHostActivityKt;
 import com.teambrella.android.ui.base.TeambrellaActivityBroadcastReceiver;
 import com.teambrella.android.ui.base.TeambrellaDataViewModel;
 import com.teambrella.android.ui.base.TeambrellaPagerViewModel;
+import com.teambrella.android.ui.chat.ChatActivity;
 import com.teambrella.android.ui.chat.StartNewChatActivity;
 import com.teambrella.android.ui.claim.ClaimsViewModel;
 import com.teambrella.android.ui.dialog.ProgressDialogFragment;
@@ -78,16 +78,12 @@ import static com.teambrella.android.services.push.KPushNotifications.PRIVATE_MS
  */
 public class MainActivity extends ATeambrellaActivity implements IMainDataHost, ITeammateActivity {
 
-    /**
-     * Action to show feed
-     */
     public static final String ACTION_SHOW_FEED = "action_show_feed";
 
-    /**
-     * Action to show wallet
-     */
     public static final String ACTION_SHOW_WALLET = "action_show_wallet";
     public static final String ACTION_BACKUP_WALLET = "action_backup_wallet";
+
+    public static final String ACTION_SHOW_MY_TOPIC = "action_show_my_topic";
 
 
     public static final String ACTION_SHOW_I_AM_PROXY_FOR = "action_show_i_am_proxy_for";
@@ -242,6 +238,9 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
                         break;
                     case ACTION_SHOW_FEED:
                         showFeed();
+                        break;
+                    case ACTION_SHOW_MY_TOPIC:
+                        showMyTopic();
                         break;
 
                     case ACTION_SHOW_I_AM_PROXY_FOR:
@@ -752,6 +751,15 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
 
     private void showFeed() {
         onNavigationItemSelected(findViewById(R.id.team), true, true);
+    }
+
+    private void showMyTopic() {
+        startActivity(ChatActivity.getTeammateChat(this, getTeamId()
+                , getUserId()
+                , getUserName()
+                , getUserPicture() != null ? getUserPicture().toString() : ""
+                , getUserTopicID()
+                , getTeamAccessLevel()));
     }
 
     private void showIAmProxyFor() {

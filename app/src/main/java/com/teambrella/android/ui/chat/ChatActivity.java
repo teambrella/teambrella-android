@@ -51,6 +51,7 @@ import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.services.TeambrellaNotificationManager;
 import com.teambrella.android.services.TeambrellaNotificationServiceClient;
 import com.teambrella.android.services.push.INotificationMessage;
+import com.teambrella.android.ui.MainActivity;
 import com.teambrella.android.ui.TeambrellaUser;
 import com.teambrella.android.ui.base.ADataFragmentKt;
 import com.teambrella.android.ui.base.ATeambrellaActivity;
@@ -257,12 +258,16 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         mNotificationHelpView = findViewById(R.id.notification_help);
 
         mMessageView = findViewById(R.id.text);
-        findViewById(R.id.send_text).setOnClickListener(this::onClick);
-        findViewById(R.id.send_image).setOnClickListener(this::onClick);
-        findViewById(R.id.add_photos).setOnClickListener(this::onClick);
+        findViewById(R.id.send_text).setOnClickListener(this::onSendText);
+        findViewById(R.id.send_image).setOnClickListener(v -> {
+            this.startImagePicking();
+        });
+        findViewById(R.id.add_photos).setOnClickListener(v -> {
+            this.startTakingPhoto();
+        });
 
         Boolean needHideSendImage = false;
-        Boolean needHideTakePhoto = false;
+        Boolean needShowContinueJoining = false;
         if (mAction != null) {
             switch (mAction) {
                 case SHOW_TEAMMATE_CHAT_ACTION:
@@ -282,7 +287,6 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                 case SHOW_CONVERSATION_CHAT:
                     setTitle(R.string.private_conversation);
                     needHideSendImage = false;
-                    needHideTakePhoto = false;
                     if (mTitle != null) {
                         mTitle.setText(R.string.private_conversation);
                     }
@@ -309,18 +313,18 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
         switch (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
             case TeambrellaModel.TeamAccessLevel.FULL_ACCESS:
-                findViewById(R.id.input).setVisibility(View.VISIBLE);
                 mFullAccess = true;
                 break;
             default:
                 needHideSendImage = true;
-                if (mIsMyChat) {
-                    findViewById(R.id.input).setVisibility(View.VISIBLE);
-                } else {
-                    findViewById(R.id.input).setVisibility(View.GONE);
+                if (!mIsMyChat) {
+                    needShowContinueJoining = true;
                 }
                 break;
         }
+
+        findViewById(R.id.inputActive).setVisibility(needShowContinueJoining ? View.GONE : View.VISIBLE);
+        findViewById(R.id.continueJoining).setVisibility(needShowContinueJoining ? View.VISIBLE : View.GONE);
 
         if (needHideSendImage) {
             findViewById(R.id.send_image).setVisibility(View.GONE);
@@ -329,35 +333,34 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
             mMessageView.setLayoutParams(params);
         }
 
-        if (needHideTakePhoto) {
-            findViewById(R.id.add_photos).setVisibility(View.GONE);
-        }
-        else {
-            findViewById(R.id.send_text).setVisibility(View.GONE);
-            mMessageView.addTextChangedListener(new TextWatcher() {
-                public void afterTextChanged(Editable s) {
-                    String text = mMessageView.getText().toString().trim();
-                     //Log.v(LOG_TAG, "[anim] A(" + text + ")");
-                    if (text.length() > 0) {
-                        setAnimation(false, findViewById(R.id.add_photos));
-                        setAnimation(true, findViewById(R.id.send_text));
-                    } else {
-                        setAnimation(true, findViewById(R.id.add_photos));
-                        setAnimation(false, findViewById(R.id.send_text));
-                    }
+        findViewById(R.id.send_text).setVisibility(View.GONE);
+        mMessageView.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                String text = mMessageView.getText().toString().trim();
+                 //Log.v(LOG_TAG, "[anim] A(" + text + ")");
+                if (text.length() > 0) {
+                    setAnimation(false, findViewById(R.id.add_photos));
+                    setAnimation(true, findViewById(R.id.send_text));
+                } else {
+                    setAnimation(true, findViewById(R.id.add_photos));
+                    setAnimation(false, findViewById(R.id.send_text));
                 }
+            }
 
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    String text = mMessageView.getText().toString().trim();
-                    //Log.v(LOG_TAG, "[anim] B(" + text + ")");
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                String text = mMessageView.getText().toString().trim();
+                //Log.v(LOG_TAG, "[anim] B(" + text + ")");
+            }
 
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String text = mMessageView.getText().toString().trim();
-                    //Log.v(LOG_TAG, "[anim] C(" + text + ")");
-                }
-            });
-        }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = mMessageView.getText().toString().trim();
+                //Log.v(LOG_TAG, "[anim] C(" + text + ")");
+            }
+        });
+
+        findViewById(R.id.continueJoining).setOnClickListener(v -> {
+            startActivity(MainActivity.getLaunchIntent(this, MainActivity.ACTION_SHOW_MY_TOPIC, mTeamId));
+        });
 
         mClient = new ChatNotificationClient(this);
         mClient.connect();
@@ -437,45 +440,38 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     }
 
 
-    private void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.send_text:
-                String text = mMessageView.getText().toString().trim();
-                if (!TextUtils.isEmpty(text)) {
-                    ChatViewModel model = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class);
-                    switch (mAction) {
-                        case SHOW_CONVERSATION_CHAT: {
-                            String uuid = UUID.randomUUID().toString();
-                            model.addPendingMessage(uuid, text, -1f);
-                            queuedRequest(TeambrellaUris.getNewConversationMessageUri(mUserId, uuid, text, null));
-                            StatisticHelper.onPrivateMessage(this);
-                        }
-                        break;
-                        default: {
-                            String uuid = UUID.randomUUID().toString();
-                            model.addPendingMessage(uuid, text, mVote);
-                            queuedRequest(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
-                            StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT);
-                        }
-                    }
+    private void onSendText(View v) {
+        String text = mMessageView.getText().toString().trim();
+        if (!TextUtils.isEmpty(text)) {
+            ChatViewModel model = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class);
+            switch (mAction) {
+                case SHOW_CONVERSATION_CHAT: {
+                    String uuid = UUID.randomUUID().toString();
+                    model.addPendingMessage(uuid, text, -1f);
+                    queuedRequest(TeambrellaUris.getNewConversationMessageUri(mUserId, uuid, text, null));
+                    StatisticHelper.onPrivateMessage(this);
                 }
-                mMessageView.setText(null);
                 break;
-            case R.id.send_image:
-                startImagePicking();
-                break;
-            case R.id.add_photos:
-                startTakingPhoto();
-                break;
+                default: {
+                    String uuid = UUID.randomUUID().toString();
+                    model.addPendingMessage(uuid, text, mVote);
+                    queuedRequest(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null));
+                    StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT);
+                }
+            }
         }
+        mMessageView.setText(null);
     }
+
 
     public void startImagePicking() {
         mImagePicker.startPicking(getString(R.string.choose));
     }
+
     public void startTakingPhoto() {
         mImagePicker.startTakingPhoto(getString(R.string.choose));
     }
+
 
     @Override
     public Uri getChatUri() {
