@@ -404,5 +404,6 @@
   <string name="upvote_message">Second that!</string>
   <string name="upvote_message_desciption">Upvote the message</string>
   <string name="downvote_message">Dislike</string>
+    <string name="continue_joining">Continue joining the team</string>
 
 </resources>
