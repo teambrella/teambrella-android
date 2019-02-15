@@ -254,6 +254,8 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
 
     override fun getTeamId(): Int = intent.teamId
 
+    override fun getTeammateName(): String? = userName
+
     override fun getTeammateId(): Int = teammateId ?: 0
 
     override val isRequestable = true

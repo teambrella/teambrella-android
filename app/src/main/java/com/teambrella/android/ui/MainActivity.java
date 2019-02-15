@@ -600,6 +600,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     @Override
+    public String getTeammateName() {
+        return mUserName;
+    }
+
+    @Override
     public String getUserTopicID() {
         return mUserTopicId;
     }

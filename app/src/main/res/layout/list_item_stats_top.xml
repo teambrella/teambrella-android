@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/selectable_item_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="20dp"
+    android:paddingBottom="24dp">
+
+
+    <LinearLayout
+        android:id="@+id/stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:divider="@drawable/vertical_divider"
+        android:orientation="horizontal"
+        android:showDividers="middle">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:dividerPadding="1dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_name_low"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:text="@string/less_than_team" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_low"
+                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
+                android:paddingTop="8dp"
+                android:textSize="28sp"
+                android:textColor="@color/perrywinkle"
+                tools:text="3.6"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_name_middle"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:text="@string/as_team" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_middle"
+                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
+                android:textSize="28sp"
+                android:paddingTop="8dp"
+                android:textColor="@color/blueGrey"
+                tools:text="3.6"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/stats_claims"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_name_high"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                android:text="@string/more_than_team" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/stat_high"
+                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
+                android:textSize="28sp"
+                android:paddingTop="8dp"
+                android:textColor="@color/darkSkyBlue"
+                tools:text="3.6"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

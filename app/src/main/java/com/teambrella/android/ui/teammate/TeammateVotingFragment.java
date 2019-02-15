@@ -40,7 +40,7 @@ import io.reactivex.Observable;
  */
 public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> implements VoterBar.VoterBarListener {
 
-
+    private float mTeamVote;
     private TextView mTeamVoteRisk;
     private TextView mMyVoteRisk;
     private VoterBar mVoterBar;
@@ -156,16 +156,16 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
                 if (voting != null && mCount == 0 && !mVoterBar.isUserActive()) {
-                    double teamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RISK_VOTED, -1f);
+                    mTeamVote = voting.getFloat(TeambrellaModel.ATTR_DATA_RISK_VOTED, -1f);
                     double myVote = voting.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE, -1f);
                     String proxyName = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
                     String proxyAvatar = voting.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR);
                     boolean canVote = voting.getBoolean(TeambrellaModel.ATTR_DATA_CAN_VOTE, true);
 
-                    if (teamVote > 0) {
-                        mTeamVoteRisk.setText(String.format(Locale.US, "%.2f", teamVote));
+                    if (mTeamVote > 0) {
+                        mTeamVoteRisk.setText(String.format(Locale.US, "%.2f", mTeamVote));
                         mAVGDifferenceTeamVote.setVisibility(View.VISIBLE);
-                        setAVGDifference(teamVote, mAVGRisk, mAVGDifferenceTeamVote);
+                        setAVGDifference(mTeamVote, mAVGRisk, mAVGDifferenceTeamVote);
                     } else {
                         mTeamVoteRisk.setText(R.string.no_teammate_vote_value);
                         mAVGDifferenceTeamVote.setVisibility(View.INVISIBLE);
@@ -228,7 +228,7 @@ public class TeammateVotingFragment extends ADataFragment<ITeammateActivity> imp
                 }
 
 
-                mAllVotesView.setOnClickListener(view -> AllVotesActivity.Companion.startTeammateAllVotes(getContext(), getDataHost().getTeamId(), getDataHost().getTeammateId()));
+                mAllVotesView.setOnClickListener(view -> AllVotesActivity.Companion.startTeammateAllVotes(getContext(), getDataHost().getTeamId(), getDataHost().getTeammateId(), mTeamVote));
             }
         } catch (Exception e) {
 

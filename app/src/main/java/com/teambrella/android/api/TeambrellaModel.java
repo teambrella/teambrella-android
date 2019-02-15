@@ -6,8 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 
 /**
@@ -203,6 +201,7 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_TO_USER_ID = "ToUserId";
     public static final String ATTR_REQUEST_IS_MUTED = "IsMuted";
     public static final String ATTR_REQUEST_NEW_POST_ID = "NewPostId";
+    public static final String ATTR_REQUEST_VOTES_OF_TEAMMATE_ID = "VotesOfTeammateId";
 
     /*Response*/
     public static final String ATTR_STATUS = "Status";
@@ -257,6 +256,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_NAME = "Name";
     public static final String ATTR_DATA_WEIGHT_COMBINED = "WeightCombined";
     public static final String ATTR_DATA_WEIGHT = "Weight";
+    public static final String ATTR_DATA_CLAIMS_VOTE_AS_TEAM_OR_BETTER = "ClaimsVoteAsTeamOrBetter";
+    public static final String ATTR_DATA_CLAIMS_VOTE_AS_TEAM = "ClaimsVoteAsTeam";
+    public static final String ATTR_DATA_RISKS_VOTE_AS_TEAM_OR_BETTER = "RisksVoteAsTeamOrBetter";
+    public static final String ATTR_DATA_RISKS_VOTE_AS_TEAM = "RisksVoteAsTeam";
     public static final String ATTR_DATA_FB_NAME = "FBName";
     public static final String ATTR_DATA_SOCIAL_NAME = "SocialName";
     public static final String ATTR_DATA_MODEL = "Model";
@@ -320,6 +323,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CRYPTO_CONTRACT = "CryptoContracts";
     public static final String ATTR_DATA_TOPIC_ID = "TopicId";
     public static final String ATTR_DATA_VOTERS = "Voters";
+    public static final String ATTR_DATA_VOTES = "Votes";
     public static final String ATTR_DATA_ME = "Me";
     public static final String ATTR_DATA_CRYPTO_BALANCE = "CryptoBalance";
     public static final String ATTR_DATA_CRYPTO_RESERVED = "CryptoReserved";

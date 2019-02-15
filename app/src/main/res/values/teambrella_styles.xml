@@ -50,6 +50,14 @@
 
     <style name="Teambrella.TextAppearance.ListItem" />
 
+    <style name="Teambrella.TextAppearance.ListItem.SingleTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#2c3948</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
     <style name="Teambrella.TextAppearance.ListItem.Title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -141,6 +149,16 @@
         <item name="android:textColor">@color/blueGrey</item>
     </style>
 
+    <style name="Teambrella.Teammate.Section.TextAppearence.InfoComment">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@color/blueGrey</item>
+        <item name="android:gravity">center</item>
+    </style>
 
     <style name="Teambrella.Teammate.Section.TextAppearence.Amount">
         <item name="android:layout_width">wrap_content</item>

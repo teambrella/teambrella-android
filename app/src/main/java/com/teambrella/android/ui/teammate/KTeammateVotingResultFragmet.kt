@@ -47,9 +47,6 @@ class TeammateVotingResultFragment : ADataFragment<ITeammateActivity>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        allVotes?.setOnClickListener {
-            AllVotesActivity.startTeammateAllVotes(it.context, dataHost.teamId, dataHost.teammateId)
-        }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -64,6 +61,9 @@ class TeammateVotingResultFragment : ADataFragment<ITeammateActivity>() {
                 this.avgRiskValue = it.avgRisk
                 setTeamVote(it.riskVoted)
                 setMyVote(it.myVote?.toDouble())
+                allVotes?.setOnClickListener {
+                    AllVotesActivity.startTeammateAllVotes(it.context, dataHost.teamId, dataHost.teammateId, voted.riskVoted?.toFloat() ?:0f)
+                }
 
                 val proxyName = it.proxyName
                 val proxyAvatar = it.proxyAvatar

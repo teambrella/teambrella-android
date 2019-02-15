@@ -13,6 +13,10 @@ private const val CURRENCY = "currency"
 private const val CLAIM_ID = "claimId"
 private const val TEAMMATE_ID = "teammateId"
 private const val MODEL = "model"
+private const val STAT_AS_TEAM_OR_BETTER = "statAsTeamOrBetter"
+private const val STAT_AS_TEAM = "statAsTeam"
+private const val IS_IT_ME = "isItMe"
+private const val TEAM_VOTE = "team_vote"
 
 var Intent?.teamId: Int
     get() = this?.getIntExtra(TEAM_ID, 0) ?: 0
@@ -68,3 +72,26 @@ var Intent?.model: String?
         this?.putExtra(MODEL, value)
     }
 
+var Intent?.statAsTeamOrBetter: Float
+    get() = this?.getFloatExtra(STAT_AS_TEAM_OR_BETTER,0f) ?: 0f
+    set(value) {
+        this?.putExtra(STAT_AS_TEAM_OR_BETTER, value)
+    }
+
+var Intent?.statAsTeam: Float
+    get() = this?.getFloatExtra(STAT_AS_TEAM,0f) ?: 0f
+    set(value) {
+        this?.putExtra(STAT_AS_TEAM, value)
+    }
+
+var Intent?.isItMe: Boolean
+    get() = this?.getBooleanExtra(IS_IT_ME,false) ?: false
+    set(value) {
+        this?.putExtra(IS_IT_ME, value)
+    }
+
+var Intent?.teamVote: Float
+    get() = this?.getFloatExtra(TEAM_VOTE,0f) ?: 0f
+    set(value) {
+        this?.putExtra(TEAM_VOTE, value)
+    }

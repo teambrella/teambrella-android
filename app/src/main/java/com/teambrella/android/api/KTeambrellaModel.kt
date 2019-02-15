@@ -61,6 +61,7 @@ object ChatItems {
     const val CHAT_ITEM_ADD_PHOTO_TO_JOIN = "add_photo_to_join"
     const val CHAT_ITEM_ADD_MESSAGE_TO_JOIN = "add_message_to_join"
     const val CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN = "another_photo_to_join"
+    const val CHAT_ITEM_VOTING_STATS = "voting_stats"
 }
 
 object ChatSystemMessages {
@@ -163,6 +164,22 @@ val JsonObject?.basic: JsonObject?
 
 val JsonObject?.weight: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_WEIGHT)
+
+var JsonObject?.claimsVoteAsTeamOrBetter: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_CLAIMS_VOTE_AS_TEAM_OR_BETTER)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_CLAIMS_VOTE_AS_TEAM_OR_BETTER, value)
+
+var JsonObject?.claimsVoteAsTeam: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_CLAIMS_VOTE_AS_TEAM)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_CLAIMS_VOTE_AS_TEAM, value)
+
+var JsonObject?.risksVoteAsTeamOrBetter: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_RISKS_VOTE_AS_TEAM_OR_BETTER)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_RISKS_VOTE_AS_TEAM_OR_BETTER, value)
+
+var JsonObject?.risksVoteAsTeam: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_RISKS_VOTE_AS_TEAM)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_RISKS_VOTE_AS_TEAM, value)
 
 val JsonObject?.proxyRank: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_PROXY_RANK)
@@ -291,6 +308,9 @@ val JsonObject?.proxyName: String?
 
 val JsonObject?.proxyAvatar: String?
     get() = getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR)
+
+val JsonObject?.votedByProxy: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_VOTED_BY_PROXY_USER_ID)
 
 val JsonObject?.riskScale: JsonObject?
     get() = getObject(TeambrellaModel.ATTR_DATA_ONE_RISK_SCALE)

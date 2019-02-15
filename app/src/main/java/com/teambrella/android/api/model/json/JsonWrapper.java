@@ -143,4 +143,5 @@ public class JsonWrapper {
   public JsonObject getObject() {
     return mObject;
   }
+  public JsonObject getObj() { return mObject; } // we need something other than 'object' to use in Kotlin
 }

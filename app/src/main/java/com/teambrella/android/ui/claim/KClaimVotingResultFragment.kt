@@ -56,6 +56,7 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
 
     protected var currency: String? = null
     protected var claimAmount: Float? = null
+    protected var teamVote: Float? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,7 +66,7 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         allVotes?.setOnClickListener {
             context?.let {
-                AllVotesActivity.startClaimAllVotes(it, dataHost.teamId, dataHost.claimId)
+                AllVotesActivity.startClaimAllVotes(it, dataHost.teamId, dataHost.claimId, teamVote?:0f)
             }
         }
 
@@ -138,7 +139,7 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
 
 
     private fun setVotes(voteData: JsonObject, voting: Boolean) {
-        val teamVote = voteData.ratioVoted
+        teamVote = voteData.ratioVoted
         val myVote = voteData.myVote
         val proxyName = voteData.proxyName
         val proxyAvatar = voteData.proxyAvatar
@@ -147,7 +148,7 @@ class ClaimVotingResultFragment : ADataFragment<IClaimActivity>() {
         setMyVote(myVote, currency ?: "", claimAmount)
 
         val vote: Float = myVote
-                ?: if (teamVote != null) (if (teamVote == 1f) teamVote * 0.90f else teamVote) else 0f
+                ?: if (teamVote != null) (if (teamVote!! == 1f) teamVote!! * 0.90f else teamVote!!) else 0f
         this.votingControl?.progress = Math.round(vote * 100)
 
         if (proxyName != null && proxyAvatar != null) {

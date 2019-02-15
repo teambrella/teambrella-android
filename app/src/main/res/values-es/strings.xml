@@ -358,5 +358,25 @@
     <string name="upvote_message_desciption">Upvote the message</string>
     <string name="downvote_message">Dislike</string>
     <string name="continue_joining">Continue with Joining the Team</string>
+    <string name="how_i_vote">How I vote</string>
+    <string name="how_x_votes">How %s votes</string>
+    <string name="for_risks">for risks</string>
+    <string name="for_payouts">For payouts</string>
+    <string name="times_as_team_or_lower">times - as team or lower</string>
+    <string name="times_as_team_or_more">times - as team or more</string>
+    <string name="as_team">as team</string>
+    <string name="vote_team_difference_bigger_format_string">TEAM\n+%d%%</string>
+    <string name="vote_team_difference_smaller_format_string">TEAM\n%d%%</string>
+    <string name="higher_than_team">HIGHER THAN TEAM</string>
+    <string name="lower_than_team">LOWER THAN TEAM</string>
+    <string name="less_than_team">LESS THAN TEAM</string>
+    <string name="more_than_team">MORE THAN TEAM</string>
+    <string name="votes_for_claims">Votes for claims</string>
+    <string name="votes_for_risks">Votes for risks</string>
+    <string name="all_risks">All risks</string>
+    <string name="all_claims">All claims</string>
+    <string name="i_vote_for_claims">I vote for claims</string>
+    <string name="i_vote_for_risks">I vote for risks</string>
+    <string name="x_votes">%s votes</string>
 
 </resources>

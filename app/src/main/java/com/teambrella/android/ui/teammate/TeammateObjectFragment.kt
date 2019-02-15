@@ -24,7 +24,6 @@ class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
     private val objectModel: TextView? by ViewHolder(R.id.model)
     private val objectPicture: ImageView? by ViewHolder(R.id.object_picture)
     private val limit: TextView? by ViewHolder(R.id.limit)
-    private val net: TextView? by ViewHolder(R.id.net)
     private val risk: TextView? by ViewHolder(R.id.risk)
     private val seeClaims: TextView? by ViewHolder(R.id.see_claims)
     private val coverageType: TextView? by ViewHolder(R.id.coverage_type)
@@ -81,7 +80,6 @@ class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
         }
 
         data.basic?.let { _basic ->
-            AmountCurrencyUtil.setAmount(net, Math.round(_basic.totallyPaidAmount ?: 0f), currency)
             risk?.text = String.format(Locale.US, "%.2f", _basic.risk ?: 0f)
             avgDifference?.setAVGDifference(_basic.risk ?: 0.2f, _basic.averageRisk ?: 1f)
             teamId = _basic.teamId ?: teamId

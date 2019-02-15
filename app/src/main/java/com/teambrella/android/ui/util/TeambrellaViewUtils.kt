@@ -74,12 +74,27 @@ fun TextView.setUnreadCount(count: Int) {
   this.visibility = if (count > 0) View.VISIBLE else View.INVISIBLE
 }
 
+fun TextView.setTeamVoteDifference(value: Float, teamVote: Float) : Int {
+  val percent = when {
+    teamVote < 0.001 && value > 0.001 -> 999
+    teamVote < 0.001 && value < 0.001 -> 0
+    Math.abs((value - teamVote) / teamVote) <= 0.01 -> 0
+    else -> Math.round((value - teamVote) / teamVote * 100)
+  }
+  this.text = when {
+    percent > 0 -> this.context.resources.getString(R.string.vote_team_difference_bigger_format_string, percent)
+    percent < 0 -> this.context.resources.getString(R.string.vote_team_difference_smaller_format_string, percent)
+    else -> this.context.resources.getString(R.string.as_team)
+  }
+  return percent
+}
+
 fun TextView.setAVGDifference(value: Float, avg: Float) {
   val percent = Math.round((value - avg) / avg * 100)
-  when {
-    percent > 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_bigger_format_string, percent)
-    percent < 0 -> this.text = this.context.resources.getString(R.string.vote_avg_difference_smaller_format_string, percent)
-    else -> this.setText(R.string.vote_avg_difference_same)
+  this.text = when {
+    percent > 0 -> this.context.resources.getString(R.string.vote_avg_difference_bigger_format_string, percent)
+    percent < 0 -> this.context.resources.getString(R.string.vote_avg_difference_smaller_format_string, percent)
+    else -> this.context.resources.getString(R.string.vote_avg_difference_same)
   }
 }
 

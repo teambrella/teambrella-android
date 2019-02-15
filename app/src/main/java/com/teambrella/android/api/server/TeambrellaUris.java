@@ -47,6 +47,7 @@ public class TeambrellaUris {
     private static final String SEGMENT_GET_COVERAGE_FOR_DATE = "getCoverageForDate";
     private static final String SEGMENT_PRIVATE_MESSAGE = "privateMessage";
     private static final String SEGMENT_VOTES = "votes";
+    private static final String SEGMENT_TEAMMATE_VOTES = "teammateVotes";
     private static final String SEGMENT_WALLET = "wallet";
     private static final String SEGMENT_DEMO = "demo";
     private static final String SEGMENT_DEBUG_DB = "debugDb";
@@ -151,6 +152,8 @@ public class TeambrellaUris {
     public static final int DELETE_POST = 48;
     public static final int SET_POST_LIKE = 49;
     public static final int NEW_FILE_CONVERSATION = 50;
+    public static final int TEAMMATE_RISKS_VOTES = 51;
+    public static final int TEAMMATE_CLAIMS_VOTES = 52;
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
@@ -185,6 +188,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_PRIVATE_MESSAGE + "/" + SEGMENT_NEW_FILE_CONVERSATION, NEW_FILE_CONVERSATION);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTES, APPLICATION_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTES, CLAIMS_VOTES);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_TEAMMATE_VOTES, TEAMMATE_RISKS_VOTES);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_TEAMMATE_VOTES, TEAMMATE_CLAIMS_VOTES);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_WALLET + "/" + SEGMENT_ONE, WALLET);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS, DEMO_TEAMS);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_DEMO + "/" + SEGMENT_TEAMS_SUR, GET_DEMO_TEAMS_SUR);
@@ -651,6 +656,26 @@ public class TeambrellaUris {
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_TEAMMATE)
                 .appendEncodedPath(SEGMENT_VOTES)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
+                .build();
+    }
+
+    public static Uri getTeammateRisksVotesUri(int teamId, int teammateId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_TEAMMATE)
+                .appendEncodedPath(SEGMENT_TEAMMATE_VOTES)
+                .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
+                .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
+                .build();
+    }
+
+    public static Uri getTeammateClaimsVotesUri(int teamId, int teammateId) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CLAIMS)
+                .appendEncodedPath(SEGMENT_TEAMMATE_VOTES)
                 .appendQueryParameter(KEY_TEAM_ID, Integer.toString(teamId))
                 .appendQueryParameter(KEY_TEAMMATE_ID, Integer.toString(teammateId))
                 .build();

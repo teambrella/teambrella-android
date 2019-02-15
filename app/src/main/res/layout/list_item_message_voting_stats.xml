@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginStart="16dp">
+
+
+    <ImageView
+        android:id="@+id/user_picture"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bubble"
+        android:layout_width="@dimen/chat_image_width"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp"
+        android:layout_toEndOf="@id/user_picture"
+        android:background="@drawable/chat_bubble_them_img"
+        app:layout_constrainedWidth="true">
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/header"
+            style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
+            android:textSize="12sp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/voting_stats" />
+
+        <LinearLayout
+            android:id="@+id/stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:divider="@drawable/vertical_divider"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+            <LinearLayout
+                android:id="@+id/stats_risks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:dividerPadding="1dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                    android:text="@string/for_risks" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/risks_votes"
+                    style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
+                    android:paddingTop="8dp"
+                    android:textSize="28sp" />
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.InfoComment"
+                    android:text="@string/times_as_team_or_lower" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stats_claims"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
+                    android:text="@string/for_payouts" />
+
+                <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                    android:id="@+id/claims_votes"
+                    style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
+                    android:textSize="28sp"
+                    android:paddingTop="8dp" />
+
+                <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                    style="@style/Teambrella.Teammate.Section.TextAppearence.InfoComment"
+                    android:text="@string/times_as_team_or_more" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

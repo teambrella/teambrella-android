@@ -22,6 +22,8 @@ public interface IChatActivity extends IDataHost, ITeambrellaDaggerActivity {
 
     int getTeamId();
 
+    int getTeammateId();
+
     Uri getChatUri();
 
     int getClaimId();

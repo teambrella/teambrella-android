@@ -377,5 +377,25 @@
     <string name="upvote_message_desciption">Upvote the message</string>
     <string name="downvote_message">Не нравится</string>
     <string name="continue_joining">Продолжить вступление в команду</string>
+    <string name="how_i_vote">Как я голосую</string>
+    <string name="how_x_votes">Как %s голосует</string>
+    <string name="for_risks">За риски</string>
+    <string name="for_payouts">За выплаты</string>
+    <string name="times_as_team_or_lower">случаев - как команда или ниже</string>
+    <string name="times_as_team_or_more">случаев - как команда или больше</string>
+    <string name="as_team">КАК КОМАНДА</string>
+    <string name="vote_team_difference_bigger_format_string">КОМАНДА\n+%d%%</string>
+    <string name="vote_team_difference_smaller_format_string">КОМАНДА\n%d%%</string>
+    <string name="higher_than_team">ВЫШЕ КОМАНДЫ</string>
+    <string name="lower_than_team">НИЖЕ КОМАНДЫ</string>
+    <string name="less_than_team">МЕНЬШЕ КОМАНДЫ</string>
+    <string name="more_than_team">БОЛЬШЕ КОМАНДЫ</string>
+    <string name="votes_for_claims">Голосует за выплаты</string>
+    <string name="votes_for_risks">Голосует за риски</string>
+    <string name="all_risks">Все риски</string>
+    <string name="all_claims">Все заявки</string>
+    <string name="i_vote_for_claims">Я голосую за выплаты</string>
+    <string name="i_vote_for_risks">Я голосую за риски</string>
+    <string name="x_votes">%s голосует</string>
 
 </resources>

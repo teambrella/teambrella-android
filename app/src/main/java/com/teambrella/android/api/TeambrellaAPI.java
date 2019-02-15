@@ -188,6 +188,12 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> getClaimVotes(@Body JsonElement body);
 
 
+    @SuppressWarnings("SpellCheckingInspection")
+    @Headers("Content-Type: application/json")
+    @POST("teammate/getTeammateRisksVotesList")
+    Observable<Response<JsonObject>> getTeammateRisksVotes(@Body JsonElement body);
+
+
     @Headers("Content-Type: application/json")
     @POST("wallet/getOne")
     Observable<Response<JsonObject>> getWallet(@Body JsonElement body);

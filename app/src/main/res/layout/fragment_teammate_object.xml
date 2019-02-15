@@ -69,12 +69,11 @@
         app:layout_constraintTop_toBottomOf="@+id/object_picture">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:dividerPadding="1dp"
             android:gravity="center"
-            android:paddingStart="@dimen/stats_cell_padding"
-            android:paddingEnd="@dimen/stats_cell_padding"
             android:orientation="vertical">
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
@@ -84,7 +83,6 @@
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/limit"
                 style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -101,29 +99,6 @@
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
-                android:text="@string/net" />
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/net"
-                style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:includeFontPadding="false" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingStart="@dimen/stats_cell_padding"
-            android:paddingEnd="@dimen/stats_cell_padding"
-            android:orientation="vertical">
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                style="@style/Teambrella.Teammate.Section.TextAppearence.Info"
                 android:text="@string/risk" />
 
             <LinearLayout
@@ -135,8 +110,7 @@
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/risk"
-                    style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue"
-                    android:textSize="18sp" />
+                    style="@style/Teambrella.Teammate.HeaderView.TextAppearence.CoverValue" />
 
                 <com.teambrella.android.ui.widget.AkkuratBoldTextView
                     android:id="@+id/avg_difference"

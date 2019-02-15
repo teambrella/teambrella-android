@@ -1,14 +1,8 @@
 package com.teambrella.android.ui.chat
 
-import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.text.method.LinkMovementMethod
@@ -35,11 +29,13 @@ import com.teambrella.android.ui.image.ImageViewerActivity
 import com.teambrella.android.ui.teammate.startTeammateActivity
 import com.teambrella.android.ui.util.setAvatar
 import com.teambrella.android.ui.util.setImage
+import com.teambrella.android.ui.votes.AllVotesActivity
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.TimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
 
 const val MODE_CLAIM = 1
 const val MODE_APPLICATION = 2
@@ -60,6 +56,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private const val VIEW_TYPE_SYSTEM_MESSAGE = VIEW_TYPE_REGULAR + 8
         private const val VIEW_TYPE_ADD_PHOTO_TO_JOIN = VIEW_TYPE_REGULAR + 9
         private const val VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN = VIEW_TYPE_REGULAR + 10
+        private const val VIEW_TYPE_VOTING_STATS = VIEW_TYPE_REGULAR + 11
         private const val FILE_PREFIX = "file:"
     }
 
@@ -90,6 +87,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                     if (item?.stringId == "00000800-0800-0800-0800-000000000001") VIEW_TYPE_ADD_PHOTO_TO_JOIN else VIEW_TYPE_SYSTEM_MESSAGE
                 ChatItems.CHAT_ITEM_ANOTHER_PHOTO_TO_JOIN -> VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN
                 ChatItems.CHAT_ITEM_ADD_MESSAGE_TO_JOIN -> VIEW_TYPE_SYSTEM_MESSAGE
+                ChatItems.CHAT_ITEM_VOTING_STATS -> VIEW_TYPE_VOTING_STATS
                 else -> VIEW_TYPE_REGULAR
             }
         }
@@ -112,6 +110,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             VIEW_TYPE_ANOTHER_PHOTO_TO_JOIN -> AnotherPhotoToJoinHolder(inflater.inflate(R.layout.list_item_message_another_photo, parent, false))
 //            VIEW_TYPE_ADD_PHOTO_TO_JOIN -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
             VIEW_TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder(inflater.inflate(R.layout.list_item_message_system, parent, false))
+            VIEW_TYPE_VOTING_STATS -> ChatVotingStatsViewHolder(inflater.inflate(R.layout.list_item_message_voting_stats, parent, false))
             else -> super.onCreateViewHolder(parent, viewType)
         }
     }
@@ -158,6 +157,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         }
 
         if (holder is SystemMessageViewHolder) {
+            mPager.loadedData[position]?.asJsonObject?.let {
+                holder.onBind(it)
+            }
+        }
+
+        if (holder is ChatVotingStatsViewHolder) {
             mPager.loadedData[position]?.asJsonObject?.let {
                 holder.onBind(it)
             }
@@ -230,6 +235,30 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             date?.text = when (item.messageStatus) {
                 TeambrellaModel.PostStatus.POST_PENDING -> dateFormat.format(Date(item.added ?: 0L))
                 else -> dateFormat.format(TimeUtils.getDateFromTicks(item.created ?: 0L))
+            }
+        }
+    }
+
+    private inner class ChatVotingStatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val header: TextView? = itemView.findViewById(R.id.header)
+        private val risksVotes: TextView? = itemView.findViewById(R.id.risks_votes)
+        private val claimsVotes: TextView? = itemView.findViewById(R.id.claims_votes)
+
+        fun onBind(item: JsonObject) {
+
+            val shortName = item?.name?.substringBefore(' ')
+            header?.text = context?.getString(R.string.how_x_votes, shortName)
+            item?.risksVoteAsTeamOrBetter?.let {
+                risksVotes?.text = if (it < 0) "-" else String.format(Locale.US, "%d%%", (it*100).roundToInt())
+                itemView.findViewById<View>(R.id.stats_risks)?.setOnClickListener {
+                    AllVotesActivity.startTeammateRisksVotes(it.context, teamId, chatContext.teammateId, chatContext.userName, false, item?.risksVoteAsTeam?:0f, item?.risksVoteAsTeamOrBetter?:0f)
+                }
+            }
+            item?.claimsVoteAsTeamOrBetter?.let {
+                claimsVotes?.text = if (it < 0) "-" else String.format(Locale.US, "%d%%", (it*100).roundToInt())
+                itemView.findViewById<View>(R.id.stats_claims)?.setOnClickListener {
+                    AllVotesActivity.startTeammateClaimsVotes(it.context, teamId, chatContext.teammateId, chatContext.userName, false, item?.claimsVoteAsTeam?:0f, item?.claimsVoteAsTeamOrBetter?:0f)
+                }
             }
         }
     }

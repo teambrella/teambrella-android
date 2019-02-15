@@ -1,18 +1,14 @@
 package com.teambrella.android.ui.team.claims;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,12 +20,7 @@ import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter;
-import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.claim.ReportClaimActivity;
-import com.teambrella.android.util.AmountCurrencyUtil;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * Claims Adapter
@@ -57,7 +48,6 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     private String mObjectImageUri;
     private String mObjectName;
     private String mLocation;
-    private NumberFormat mDecimalFormat = DecimalFormat.getInstance();
 
 
     /**
@@ -169,14 +159,14 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
                             ? R.drawable.list_item_header_background_top : R.drawable.list_item_header_background_middle);
                     break;
                 case VIEW_TYPE_VOTING:
-                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voting, parent, false));
+                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voting, parent, false), mTeamId, mCurrency);
                     break;
                 case VIEW_TYPE_VOTED:
-                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voted, parent, false));
+                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_voted, parent, false), mTeamId, mCurrency);
                     break;
                 case VIEW_TYPE_IN_PAYMENT:
                 case VIEW_TYPE_PROCESSED:
-                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_iten_claim_being_paid, parent, false));
+                    viewHolder = new ClaimViewHolder(inflater.inflate(R.layout.list_item_claim_being_paid, parent, false), mTeamId, mCurrency);
                     break;
 
             }
@@ -198,118 +188,6 @@ public class ClaimsAdapter extends TeambrellaDataPagerAdapter {
     @Override
     protected int getHeadersCount() {
         return mSubmitClaim ? 1 : 0;
-    }
-
-    private class ClaimViewHolder extends RecyclerView.ViewHolder {
-        ImageView mIcon;
-        TextView mObject;
-        TextView mClaimAmount;
-        TextView mTeammateName;
-        ImageView mTeammateIcon;
-        TextView mVote;
-        ImageView mProxyAvatar;
-        TextView mProxyName;
-        ProgressBar mPaymentProgress;
-        View mViewToVote;
-        TextView mResultView;
-
-        private final RequestOptions imageOptions;
-
-        ClaimViewHolder(View itemView) {
-            super(itemView);
-            mIcon = itemView.findViewById(R.id.icon);
-            mObject = itemView.findViewById(R.id.object);
-            mClaimAmount = itemView.findViewById(R.id.value);
-            mTeammateName = itemView.findViewById(R.id.teammate);
-            mTeammateIcon = itemView.findViewById(R.id.teammate_picture);
-            mVote = itemView.findViewById(R.id.vote);
-            mProxyAvatar = itemView.findViewById(R.id.proxy_picture);
-            mProxyName = itemView.findViewById(R.id.proxy);
-            mPaymentProgress = itemView.findViewById(R.id.payment_progress);
-            mViewToVote = itemView.findViewById(R.id.view_to_vote);
-            mResultView = itemView.findViewById(R.id.result);
-            imageOptions = new RequestOptions().transforms(new CenterCrop()
-                    , new RoundedCorners(itemView.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)));
-        }
-
-
-        void onBind(JsonWrapper item) {
-            final Context context = itemView.getContext();
-            final GlideUrl objectPictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
-            final GlideUrl teammatePictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
-            final GlideUrl proxyAvatarUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
-
-            RequestManager manager = GlideApp.with(itemView);
-            if (mIcon != null) {
-                manager.load(objectPictureUri)
-                        .apply(imageOptions)
-                        .into(mIcon);
-            }
-
-            if (teammatePictureUri != null) {
-                manager.load(teammatePictureUri).into(mTeammateIcon);
-            }
-
-            if (mProxyAvatar != null) {
-                if (proxyAvatarUri != null) {
-                    manager.load(proxyAvatarUri).into(mProxyAvatar);
-                } else {
-                    mProxyAvatar.setImageBitmap(null);
-                }
-            }
-
-            if (mProxyName != null) {
-                String proxyName = item.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
-                if (proxyName != null) {
-                    proxyName = proxyName.trim().split(" ")[0];
-                }
-                mProxyName.setText(proxyName);
-            }
-
-            mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
-            mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), mDecimalFormat.format(Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)))));
-
-
-            if (mVote != null) {
-                mVote.setText(itemView.getContext().getString(R.string.claim_vote_format_string, Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) * 100)));
-            }
-
-            if (mPaymentProgress != null) {
-                float voting = item.getFloat(TeambrellaModel.ATTR_DATA_VOTING_RES_CRYPTO);
-                float payment = item.getFloat(TeambrellaModel.ATTR_DATA_PAYMENT_RES_CRYPTO);
-                mPaymentProgress.setProgress(Math.round((payment * 100) / voting));
-            }
-
-
-            if (mViewToVote != null) {
-                mViewToVote.setOnClickListener(v -> startActivity(
-                        ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
-            } else {
-                itemView.setOnClickListener(v -> startActivity(
-                        ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
-                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
-            }
-
-            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
-                case TeambrellaModel.ClaimStates.VOTING:
-                case TeambrellaModel.ClaimStates.VOTED:
-                    break;
-                case TeambrellaModel.ClaimStates.IN_PAYMENT:
-                case TeambrellaModel.ClaimStates.PROCESSEED:
-                    mResultView.setText(R.string.claim_reimbursed);
-                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
-                    mPaymentProgress.setVisibility(View.VISIBLE);
-                    break;
-                case TeambrellaModel.ClaimStates.DECLINED:
-                    mResultView.setText(R.string.declined);
-                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
-                    mPaymentProgress.setVisibility(View.INVISIBLE);
-                    break;
-            }
-
-        }
     }
 
 

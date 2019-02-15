@@ -317,6 +317,18 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_ID, Integer.parseInt(claimIdString));
                 break;
+            case TeambrellaUris.TEAMMATE_RISKS_VOTES:
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                teammateIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAMMATE_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAMMATE_ID, Integer.parseInt(teammateIdString));
+                break;
+            case TeambrellaUris.TEAMMATE_CLAIMS_VOTES:
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                teammateIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAMMATE_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_VOTES_OF_TEAMMATE_ID, Integer.parseInt(teammateIdString));
+                break;
             case TeambrellaUris.WALLET: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
@@ -478,6 +490,10 @@ public class TeambrellaServer {
                 return mAPI.getApplicationVotes(requestBody);
             case TeambrellaUris.CLAIMS_VOTES:
                 return mAPI.getClaimVotes(requestBody);
+            case TeambrellaUris.TEAMMATE_RISKS_VOTES:
+                return mAPI.getTeammateRisksVotes(requestBody);
+            case TeambrellaUris.TEAMMATE_CLAIMS_VOTES:
+                return mAPI.getClaimsList(requestBody);
             case TeambrellaUris.WALLET:
                 return mAPI.getWallet(requestBody);
             case TeambrellaUris.DEMO_TEAMS:

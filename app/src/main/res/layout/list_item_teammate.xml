@@ -31,25 +31,55 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/vote_value"
+        android:visibility="gone"
+        android:text="100%"
+        style="@style/Teambrella.TextAppearance.ListItem.Value"
+        android:textColor="@color/darkSkyBlue"
+        android:layout_marginEnd="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/teammate"
+        android:layout_alignParentEnd="true" />
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAllCaps="true"
+        android:textColor="@color/blueGrey"
+        android:textSize="10sp"
+        android:layout_alignBaseline="@id/object"
+        android:layout_alignParentEnd="true"/>
+
+    <com.teambrella.android.ui.widget.AkkuratBoldTextView
+        android:id="@+id/teammate"
+        android:text="John Smith"
+        style="@style/Teambrella.TextAppearance.ListItem.Title"
+        android:layout_width="0dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:layout_height="wrap_content"
         android:layout_toEndOf="@id/icon"
         android:layout_toStartOf="@id/net"
-        android:gravity="center_vertical|start"
-        android:orientation="vertical"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="start|center_vertical" />
+
+    <com.teambrella.android.ui.widget.AkkuratRegularTextView
+        android:id="@+id/object"
+        style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
+        android:text="Car name"
         android:paddingEnd="16dp"
-        android:paddingStart="16dp">
-
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/teammate"
-            style="@style/Teambrella.TextAppearance.ListItem.Title"
-            android:gravity="start|center_vertical" />
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/object"
-            style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
-            android:layout_marginTop="4dp" />
-    </LinearLayout>
+        android:paddingStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/teammate"
+        android:layout_toEndOf="@id/icon"
+        android:layout_toStartOf="@id/net"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_marginTop="4dp" />
 </RelativeLayout>

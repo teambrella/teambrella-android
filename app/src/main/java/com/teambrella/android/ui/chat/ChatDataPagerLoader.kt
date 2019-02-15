@@ -2,17 +2,14 @@ package com.teambrella.android.ui.chat
 
 import android.net.Uri
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
 import com.teambrella.android.data.base.KTeambrellaChatDataPagerLoader
-import com.teambrella.android.ui.chat.KChatDataPagerLoader.Companion.separate
 import com.teambrella.android.util.TeambrellaDateUtils
 import com.teambrella.android.util.TimeUtils
 import com.teambrella.android.util.log.Log
 import io.reactivex.Notification
-import io.reactivex.Observable
 import java.util.*
 
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
@@ -205,6 +202,25 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             return false
         }
 
+        var containsTextItems = array.indexOfFirst { it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_MY_MESSAGE
+                && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_MESSAGE } >= 0
+
+        fun appendVotingStatsItem(item: JsonObject): Boolean {
+            if (claimId != null && !containsTextItems && (basic?.risksVoteAsTeamOrBetter?:-1f) >= 0f) {
+                containsTextItems = true
+                newMessages.add(item.deepCopy().apply {
+                    chatItemType = ChatItems.CHAT_ITEM_VOTING_STATS
+                    risksVoteAsTeamOrBetter = basic?.risksVoteAsTeamOrBetter?:-1f
+                    risksVoteAsTeam = basic?.risksVoteAsTeam?:-1f
+                    claimsVoteAsTeamOrBetter = basic?.claimsVoteAsTeamOrBetter?:-1f
+                    claimsVoteAsTeam = basic?.claimsVoteAsTeam?:-1f
+                    name = basic?.name
+                })
+                return true
+            }
+            return false
+        }
+
         fun getMyLastImageMessage(): JsonObject {
             var myImageMessage = JsonObject()
             val iterator = messages.iterator()
@@ -290,6 +306,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                                         if (userId == newMessage.userId) ChatItems.CHAT_ITEM_MY_MESSAGE
                                         else ChatItems.CHAT_ITEM_MESSAGE
                                 newMessage.text = slice
+                                appendVotingStatsItem(message)
                             }
 
                             newMessage.messageStatus = TeambrellaModel.PostStatus.POST_SYNCED
@@ -316,6 +333,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                                     else ChatItems.CHAT_ITEM_MESSAGE
                                 }
                             }
+                    appendVotingStatsItem(message)
                     appendDateItem(message)
                     newMessages.add(newMessage)
                 }

@@ -11,12 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -25,7 +29,12 @@ import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
 import com.teambrella.android.data.base.IDataPager;
 import com.teambrella.android.image.glide.GlideApp;
+import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivityKt;
+import com.teambrella.android.util.AmountCurrencyUtil;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import io.reactivex.Notification;
 import io.reactivex.Observable;
@@ -260,4 +269,126 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
             }
         }
     }
+
+    protected class ClaimViewHolder extends RecyclerView.ViewHolder {
+
+        protected final int mTeamId;
+        protected final String mCurrency;
+        protected ImageView mIcon;
+        protected TextView mObject;
+        protected TextView mClaimAmount;
+        protected TextView mTeammateName;
+        protected ImageView mTeammateIcon;
+        protected TextView mVote;
+        protected ImageView mProxyAvatar;
+        protected TextView mProxyName;
+        protected ProgressBar mPaymentProgress;
+        protected View mViewToVote;
+        protected TextView mResultView;
+        private NumberFormat mDecimalFormat = DecimalFormat.getInstance();
+
+        private final RequestOptions imageOptions;
+
+        public ClaimViewHolder(View itemView, int teamId, String currency) {
+            super(itemView);
+            mTeamId = teamId;
+            mCurrency = currency;
+            mIcon = itemView.findViewById(R.id.icon);
+            mObject = itemView.findViewById(R.id.object);
+            mClaimAmount = itemView.findViewById(R.id.value);
+            mTeammateName = itemView.findViewById(R.id.teammate);
+            mTeammateIcon = itemView.findViewById(R.id.teammate_picture);
+            mVote = itemView.findViewById(R.id.vote);
+            mProxyAvatar = itemView.findViewById(R.id.proxy_picture);
+            mProxyName = itemView.findViewById(R.id.proxy);
+            mPaymentProgress = itemView.findViewById(R.id.payment_progress);
+            mViewToVote = itemView.findViewById(R.id.view_to_vote);
+            mResultView = itemView.findViewById(R.id.result);
+            imageOptions = new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(itemView.getResources().getDimensionPixelOffset(R.dimen.rounded_corners_4dp)));
+        }
+
+
+        public void onBind(JsonWrapper item) {
+            final Context context = itemView.getContext();
+            final GlideUrl objectPictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO));
+            final GlideUrl teammatePictureUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_AVATAR));
+            final GlideUrl proxyAvatarUri = getImageLoader().getImageUrl(item.getString(TeambrellaModel.ATTR_DATA_PROXY_AVATAR));
+
+            RequestManager manager = GlideApp.with(itemView);
+            if (mIcon != null) {
+                manager.load(objectPictureUri)
+                        .apply(imageOptions)
+                        .into(mIcon);
+            }
+
+            if (teammatePictureUri != null) {
+                manager.load(teammatePictureUri).into(mTeammateIcon);
+            }
+
+            if (mProxyAvatar != null) {
+                if (proxyAvatarUri != null) {
+                    manager.load(proxyAvatarUri).into(mProxyAvatar);
+                } else {
+                    mProxyAvatar.setImageBitmap(null);
+                }
+            }
+
+            if (mProxyName != null) {
+                String proxyName = item.getString(TeambrellaModel.ATTR_DATA_PROXY_NAME);
+                if (proxyName != null) {
+                    proxyName = proxyName.trim().split(" ")[0];
+                }
+                mProxyName.setText(proxyName);
+            }
+
+            mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
+            mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
+            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), mDecimalFormat.format(Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)))));
+
+
+            if (mVote != null) {
+                mVote.setText(itemView.getContext().getString(R.string.claim_vote_format_string, Math.round(item.getFloat(TeambrellaModel.ATTR_DATA_MY_VOTE) * 100)));
+            }
+
+            if (mPaymentProgress != null) {
+                float voting = item.getFloat(TeambrellaModel.ATTR_DATA_VOTING_RES_CRYPTO);
+                float payment = item.getFloat(TeambrellaModel.ATTR_DATA_PAYMENT_RES_CRYPTO);
+                mPaymentProgress.setProgress(Math.round((payment * 100) / voting));
+            }
+
+
+            if (mViewToVote != null) {
+                mViewToVote.setOnClickListener(v -> startActivity(
+                        ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                                item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId)));
+            } else {
+                itemView.setOnClickListener(v -> {
+                    Intent intent = ClaimActivity.Companion.getLaunchIntent(context, item.getInt(TeambrellaModel.ATTR_DATA_ID),
+                            item.getString(TeambrellaModel.ATTR_DATA_MODEL), mTeamId);
+                    if (!startActivity(intent)) {
+                        itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+
+            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
+                case TeambrellaModel.ClaimStates.VOTING:
+                case TeambrellaModel.ClaimStates.VOTED:
+                    break;
+                case TeambrellaModel.ClaimStates.IN_PAYMENT:
+                case TeambrellaModel.ClaimStates.PROCESSEED:
+                    mResultView.setText(R.string.claim_reimbursed);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.VISIBLE);
+                    break;
+                case TeambrellaModel.ClaimStates.DECLINED:
+                    mResultView.setText(R.string.declined);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.INVISIBLE);
+                    break;
+            }
+
+        }
+    }
+
 }

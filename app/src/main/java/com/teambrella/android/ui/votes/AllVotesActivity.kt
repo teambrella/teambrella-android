@@ -24,6 +24,26 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
         intent.teamId
     }
 
+    override val statAsTeam: Float by lazy(LazyThreadSafetyMode.NONE) {
+        intent.statAsTeam
+    }
+
+    override val teamVote: Float by lazy(LazyThreadSafetyMode.NONE) {
+        intent.teamVote
+    }
+
+    override val statAsTeamOrBetter: Float by lazy(LazyThreadSafetyMode.NONE) {
+        intent.statAsTeamOrBetter
+    }
+
+    override val isItMe: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+        intent.isItMe
+    }
+
+    override val userName: String? by lazy(LazyThreadSafetyMode.NONE) {
+        intent.userName
+    }
+
     override val dataPagerTags: Array<String>
         get() = arrayOf(ALL_VOTES_DATA_TAG)
 
@@ -41,7 +61,12 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
             }
         }
 
-        setTitle(R.string.all_votes)
+        val shortName = userName?.substringBefore(' ')
+        when (TeambrellaUris.sUriMatcher.match(uri)) {
+            TeambrellaUris.TEAMMATE_CLAIMS_VOTES -> if (isItMe) setTitle(R.string.i_vote_for_claims) else setTitle(R.string.votes_for_claims)
+            TeambrellaUris.TEAMMATE_RISKS_VOTES -> if (isItMe) setTitle(R.string.i_vote_for_risks) else setTitle(R.string.votes_for_risks)
+            else -> setTitle(R.string.all_votes)
+        }
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -60,7 +85,11 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
 
 
     override fun getDataPagerConfig(tag: String) = when (tag) {
-        ALL_VOTES_DATA_TAG -> getPagerConfig(uri, TeambrellaModel.ATTR_DATA_VOTERS)
+        ALL_VOTES_DATA_TAG -> getPagerConfig(uri,  when (TeambrellaUris.sUriMatcher.match(uri)) {
+            TeambrellaUris.TEAMMATE_CLAIMS_VOTES -> null
+            TeambrellaUris.TEAMMATE_RISKS_VOTES -> TeambrellaModel.ATTR_DATA_VOTES
+            else -> TeambrellaModel.ATTR_DATA_VOTERS
+        })
         else -> super.getDataPagerConfig(tag)
     }
 
@@ -68,21 +97,49 @@ class AllVotesActivity : ATeambrellaActivity(), IAllVoteActivity {
     companion object {
 
         private const val ALL_VOTES_DATA_TAG = "data_tag"
+        private const val ALL_RISKS_DATA_TAG = "risks_tag"
+        private const val ALL_CLAIMS_DATA_TAG = "claims_tag"
         private const val ALL_VOTES_UI_TAG = "ui_tag"
 
-        fun startClaimAllVotes(context: Context, teamId: Int, claimId: Int) {
+        fun startClaimAllVotes(context: Context, teamId: Int, claimId: Int, teamVote: Float) {
             context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
                 this.teamId = teamId
                 this.claimId = claimId
+                this.teamVote = teamVote
                 this.uri = TeambrellaUris.getAllVotesForClaimUri(teamId, claimId)
             })
         }
 
-        fun startTeammateAllVotes(context: Context, teamId: Int, teammateId: Int) {
+        fun startTeammateAllVotes(context: Context, teamId: Int, teammateId: Int, teamVote: Float) {
             context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
                 this.teamId = teamId
                 this.teammateId = teammateId
+                this.teamVote = teamVote
                 this.uri = TeambrellaUris.getAllVotesForTeammateUri(teamId, teammateId)
+            })
+        }
+
+        fun startTeammateRisksVotes(context: Context, teamId: Int, teammateId: Int, userName: String?, isItMe: Boolean, statAsTeam: Float, statAsTeamOrBetter: Float) {
+            context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
+                this.teamId = teamId
+                this.teammateId = teammateId
+                this.uri = TeambrellaUris.getTeammateRisksVotesUri(teamId, teammateId)
+                this.statAsTeamOrBetter = statAsTeamOrBetter
+                this.statAsTeam = statAsTeam
+                this.isItMe = isItMe
+                this.userName = userName
+            })
+        }
+
+        fun startTeammateClaimsVotes(context: Context, teamId: Int, teammateId: Int, userName: String?, isItMe: Boolean, statAsTeam: Float, statAsTeamOrBetter: Float) {
+            context.startActivity(Intent(context, AllVotesActivity::class.java).apply {
+                this.teamId = teamId
+                this.teammateId = teammateId
+                this.uri = TeambrellaUris.getTeammateClaimsVotesUri(teamId, teammateId)
+                this.statAsTeamOrBetter = statAsTeamOrBetter
+                this.statAsTeam = statAsTeam
+                this.isItMe = isItMe
+                this.userName = userName
             })
         }
     }

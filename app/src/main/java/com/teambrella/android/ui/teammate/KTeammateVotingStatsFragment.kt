@@ -15,9 +15,10 @@ import com.teambrella.android.api.server.TeambrellaUris
 import com.teambrella.android.ui.base.ADataFragment
 import com.teambrella.android.ui.base.TeambrellaBroadcastManager
 import com.teambrella.android.ui.base.createDataFragment
-import com.teambrella.android.ui.widget.PercentageWidget
+import com.teambrella.android.ui.votes.AllVotesActivity
 import io.reactivex.Notification
 import java.util.*
+import kotlin.math.roundToInt
 
 fun getFragmentInstance(tags: Array<String>) = createDataFragment(tags, KTeammateVotingStatsFragment::class.java)
 
@@ -26,13 +27,15 @@ fun getFragmentInstance(tags: Array<String>) = createDataFragment(tags, KTeammat
  */
 class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
 
-    private val weight: TextView? by ViewHolder(R.id.weight)
-    private val proxyRank: TextView? by ViewHolder(R.id.proxy_rank)
+    private val risksVotes: TextView? by ViewHolder(R.id.risks_votes)
+    private val claimsVotes: TextView? by ViewHolder(R.id.claims_votes)
     private val setProxy: TextView? by ViewHolder(R.id.add_to_proxies)
-    private val decisionView: PercentageWidget? by ViewHolder(R.id.decision_stats)
-    private val discussionView: PercentageWidget? by ViewHolder(R.id.discussion_stats)
-    private val votingView: PercentageWidget? by ViewHolder(R.id.voting_stats)
+    private val header: TextView? by ViewHolder(R.id.header)
 
+    private var risksVoteAsTeamOrBetter: Float = 0f
+    private var risksVoteAsTeam: Float = 0f
+    private var claimsVoteAsTeamOrBetter: Float = 0f
+    private var claimsVoteAsTeam: Float = 0f
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_teammate_voting_stats, container, false)
@@ -41,6 +44,14 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setProxy?.setOnClickListener { v -> dataHost.setAsProxy(!(v?.tag as Boolean)) }
         setProxy?.tag = true
+
+        view.findViewById<View>(R.id.stats_risks)?.setOnClickListener {
+            AllVotesActivity.startTeammateRisksVotes(it.context, dataHost.teamId, dataHost.teammateId, dataHost.teammateName, dataHost.isItMe, risksVoteAsTeam, risksVoteAsTeamOrBetter)
+        }
+        view.findViewById<View>(R.id.stats_claims)?.setOnClickListener {
+            AllVotesActivity.startTeammateClaimsVotes(it.context, dataHost.teamId, dataHost.teammateId,dataHost.teammateName, dataHost.isItMe, claimsVoteAsTeam, claimsVoteAsTeamOrBetter)
+        }
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -63,37 +74,22 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
                     val stats = value.data?.stats
                     stats?.let {
 
-                        val votingFreq = stats.votingFreq
-                        votingFreq?.let {
-                            this.votingView?.setPercentage(votingFreq)
-                            this.votingView?.setDescription(getString(getVotingStatsString(votingFreq)))
+                        stats.risksVoteAsTeamOrBetter?.let {
+                            risksVoteAsTeamOrBetter = it
+                            this.risksVotes?.text = if (it < 0) "-" else String.format(Locale.US, "%d%%", (it*100).roundToInt())
                         }
 
-                        val decisionFreq = stats.decisionFreq
-                        decisionFreq?.let {
-                            this.decisionView?.setPercentage(decisionFreq)
-                            this.decisionView?.setDescription(getString(getDecisionStatsString(decisionFreq)))
+                        stats.risksVoteAsTeam?.let {
+                            risksVoteAsTeam = it
                         }
 
-                        val discussionFreq = stats.discussionFreq
-                        discussionFreq?.let {
-                            this.discussionView?.setPercentage(discussionFreq)
-                            this.discussionView?.setDescription(getString(getDiscussionStatsString(discussionFreq)))
+                        stats.claimsVoteAsTeamOrBetter?.let {
+                            claimsVoteAsTeamOrBetter = it
+                            this.claimsVotes?.text = if (it < 0) "-" else String.format(Locale.US, "%d%%", (it*100).roundToInt())
                         }
 
-                        val weightValue = stats.weight
-                        weightValue?.let {
-                            this.weight?.text = String.format(Locale.US, if (it >= 0.1) "%.1f" else "%.2f", it)
-                        }
-
-                        val proxyRankValue = stats.proxyRank
-                        proxyRankValue?.let {
-                            val rank = when {
-                                it < 0.005 -> 0f
-                                it >= 0.005 && it < 0.01 -> 0.1f
-                                else -> it
-                            }
-                            this.proxyRank?.text = String.format(Locale.US, if (rank >= 0.1 || rank == 0f) "%.1f" else "%.2f", rank)
+                        stats.claimsVoteAsTeam?.let {
+                            claimsVoteAsTeam = it
                         }
                     }
                     val basic = value.data?.basic
@@ -102,40 +98,10 @@ class KTeammateVotingStatsFragment : ADataFragment<ITeammateActivity>() {
                         this.setProxy?.text = getString(if (isMyProxy) R.string.remove_from_my_proxies else R.string.add_to_my_proxies)
                         this.setProxy?.tag = isMyProxy
                     }
+                    val shortName = dataHost.teammateName?.substringBefore(' ')
+                    this.header?.text = if (dataHost.isItMe) context?.getString(R.string.how_i_vote) else context?.getString(R.string.how_x_votes, shortName)
                 }
             }
-        }
-    }
-
-    private fun getVotingStatsString(value: Float): Int {
-        return when {
-            value >= 0.95f -> R.string.voting_always
-            value >= 0.6f -> R.string.voting_regularly
-            value >= 0.3f -> R.string.voting_often
-            value >= 0.15f -> R.string.voting_frequently
-            value >= 0.05f -> R.string.voting_rarely
-            else -> R.string.voting_never
-        }
-    }
-
-    private fun getDecisionStatsString(value: Float): Int {
-        return when {
-            value >= 0.7f -> R.string.decision_harsh
-            value >= 0.55f -> R.string.decision_severe
-            value >= 0.45f -> R.string.decision_moderate
-            value >= 0.3f -> R.string.decision_mild
-            else -> R.string.decision_generous
-        }
-    }
-
-
-    private fun getDiscussionStatsString(value: Float): Int {
-        return when {
-            value >= 0.5f -> R.string.discussion_chatty
-            value >= 0.25f -> R.string.discussion_sociable
-            value >= 0.1f -> R.string.discussion_moderate
-            value >= 0.03f -> R.string.discussion_reserved
-            else -> R.string.discussion_quite
         }
     }
 

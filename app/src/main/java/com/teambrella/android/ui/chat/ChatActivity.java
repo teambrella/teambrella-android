@@ -122,7 +122,9 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
     private String mTopicId;
     private String mAction;
     private String mUserId;
+    private String mUserName;
     private int mTeamId;
+    private int mTeammateId;
     private boolean restoredUris;
 
     private TextView mMessageView;
@@ -210,6 +212,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         mUri = intent.getParcelableExtra(EXTRA_URI);
         mTopicId = intent.getStringExtra(EXTRA_TOPIC_ID);
         mUserId = intent.getStringExtra(EXTRA_USER_ID);
+        mUserName = intent.getStringExtra(EXTRA_USER_NAME);
         mTeamId = intent.getIntExtra(EXTRA_TEAM_ID, 0);
         int mClaimId = intent.getIntExtra(EXTRA_CLAIM_ID, 0);
         mAction = intent.getStringExtra(EXTRA_ACTION);
@@ -684,6 +687,8 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
                                     setClaimTitle(incidentDate);
                                 }
                             }
+                            mTeammateId = basic.getInt(TeambrellaModel.ATTR_DATA_TEAMMATE_ID, mTeammateId);
+                            mUserName = basic.getString(TeambrellaModel.ATTR_DATA_NAME, mUserName);
                         }
                     })
                     .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA_ONE_DISCUSSION))
@@ -831,6 +836,11 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         return mTeamId;
     }
 
+    @Override
+    public int getTeammateId() {
+        return mTeammateId;
+    }
+
     @NonNull
     @Override
     protected String[] getDataTags() {
@@ -924,7 +934,7 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
 
     @Override
     public String getUserName() {
-        return getIntent().getStringExtra(EXTRA_USER_NAME);
+        return mUserName;
     }
 
     @Override

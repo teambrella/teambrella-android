@@ -21,11 +21,14 @@ import io.reactivex.Notification
 class AllVotesFragment : ADataPagerProgressFragment<IAllVoteActivity>() {
 
     override fun createAdapter(): ATeambrellaDataPagerAdapter {
-        var mode = AllVotesAdapter.MODE_CLAIM
-        when (TeambrellaUris.sUriMatcher.match(dataHost.uri)) {
-            TeambrellaUris.APPLICATION_VOTES -> mode = AllVotesAdapter.MODE_APPLICATION
+        var mode = when (TeambrellaUris.sUriMatcher.match(dataHost.uri)) {
+            TeambrellaUris.CLAIMS_VOTES -> AllVotesAdapter.MODE_CLAIM
+            TeambrellaUris.APPLICATION_VOTES -> AllVotesAdapter.MODE_APPLICATION
+            TeambrellaUris.TEAMMATE_CLAIMS_VOTES -> AllVotesAdapter.MODE_TEAMMATE_CLAIMS
+            TeambrellaUris.TEAMMATE_RISKS_VOTES -> AllVotesAdapter.MODE_TEAMMATE_RISKS
+            else -> -1
         }
-        return AllVotesAdapter(dataHost.getPager(tags[0]), dataHost.teamId, mode)
+        return AllVotesAdapter(dataHost.getPager(tags[0]), dataHost, mode)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
