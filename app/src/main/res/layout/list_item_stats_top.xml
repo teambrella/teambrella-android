@@ -45,6 +45,10 @@
                 android:textColor="@color/perrywinkle"
                 tools:text="3.6"/>
 
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                style="@style/Teambrella.Teammate.Section.TextAppearence.InfoComment"
+                android:text="@string/of_the_time" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -70,6 +74,10 @@
                 android:paddingTop="8dp"
                 android:textColor="@color/blueGrey"
                 tools:text="3.6"/>
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                style="@style/Teambrella.Teammate.Section.TextAppearence.InfoComment"
+                android:text="@string/of_the_time" />
 
         </LinearLayout>
 
@@ -97,6 +105,10 @@
                 android:paddingTop="8dp"
                 android:textColor="@color/darkSkyBlue"
                 tools:text="3.6"/>
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                style="@style/Teambrella.Teammate.Section.TextAppearence.InfoComment"
+                android:text="@string/of_the_time" />
 
         </LinearLayout>
     </LinearLayout>

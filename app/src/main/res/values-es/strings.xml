@@ -378,5 +378,6 @@
     <string name="i_vote_for_claims">I vote for claims</string>
     <string name="i_vote_for_risks">I vote for risks</string>
     <string name="x_votes">%s votes</string>
+    <string name="of_the_time">of the time</string>
 
 </resources>

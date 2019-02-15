@@ -397,5 +397,6 @@
     <string name="i_vote_for_claims">Я голосую за выплаты</string>
     <string name="i_vote_for_risks">Я голосую за риски</string>
     <string name="x_votes">%s голосует</string>
+    <string name="of_the_time">случаев</string>
 
 </resources>
