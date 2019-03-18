@@ -200,7 +200,6 @@ var JsonObject?.avatar: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AVATAR)
     set(value) = setString(TeambrellaModel.ATTR_DATA_AVATAR, value)
 
-
 var JsonObject?.name: String?
     get() = getString(TeambrellaModel.ATTR_DATA_NAME)
     set(value) = setString(TeambrellaModel.ATTR_DATA_NAME, value)
@@ -271,6 +270,18 @@ var JsonObject?.amount: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_AMOUNT)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_AMOUNT, value)
 
+var JsonObject?.amountFiat: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT, value)
+
+var JsonObject?.amountFiatMonth: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT_MONTH)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT_MONTH, value)
+
+var JsonObject?.amountFiatYear: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT_YEAR)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_AMOUNT_FIAT_YEAR, value)
+
 val JsonObject?.teamVote: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_TEAM_VOTE)
 
@@ -339,11 +350,13 @@ val JsonObject?.vkUrl: String?
 val JsonObject?.claimAmount: Float?
     get() = getFloat(CLAIM_AMOUNT)
 
-val JsonObject?.itemType: Int?
+var JsonObject?.itemType: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_ITEM_TYPE, value)
 
-val JsonObject?.smallPhoto: String?
+var JsonObject?.smallPhoto: String?
     get() = getString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO)
+    set(value) = setString(TeambrellaModel.ATTR_DATA_SMALL_PHOTO, value)
 
 val JsonObject?.coverage: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_COVERAGE)
@@ -381,6 +394,13 @@ val JsonObject?.itemIdInt: Int?
 
 val JsonObject?.itemDate: String?
     get() = getString(TeambrellaModel.ATTR_DATA_ITEM_DATE)
+
+var JsonObject?.itemMonth: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_ITEM_MONTH)
+    set(value) = setValue(TeambrellaModel.ATTR_DATA_ITEM_MONTH, value)
+
+val JsonObject?.dateCreated: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_DATE_CREATED)
 
 val JsonObject?.itemUserId: String?
     get() = getString(TeambrellaModel.ATTR_DATA_ITEM_USER_ID)

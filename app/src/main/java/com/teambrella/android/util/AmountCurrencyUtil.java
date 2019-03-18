@@ -15,7 +15,6 @@ import com.teambrella.android.R;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
@@ -84,16 +83,8 @@ public class AmountCurrencyUtil {
 
     public static void setCryptoAmount(TextView textView, float amount) {
         final Context context = textView.getContext();
-        int stringId = amount > 1 ? R.string.ethereum : R.string.milli_ethereum;
-        String cryptoCurrency = context.getString(stringId);
-        switch (stringId) {
-            case R.string.ethereum:
-                setAmount(textView, amount, cryptoCurrency);
-                break;
-            case R.string.milli_ethereum:
-                setAmount(textView, Math.round(amount * 1000), cryptoCurrency);
-                break;
-        }
+        String cryptoCurrency = context.getString(R.string.milli_ethereum);
+        setAmount(textView, Math.round(amount * 1000), cryptoCurrency);
     }
 
     public static String getCurrencySign(String currency) {

@@ -426,5 +426,10 @@
   <string name="i_vote_for_risks">I vote for risks</string>
   <string name="x_votes">%s votes</string>
   <string name="of_the_time">of the time</string>
+    <string name="payout_for_claim">Payout for claim</string>
+    <string name="expenses_for_period">Expenses in %s</string>
+    <string name="expenses_for_year">expenses for %d year</string>
+  <string name="income_for_period">Income in %s</string>
+  <string name="income_for_year">Income in %d</string>
 
 </resources>

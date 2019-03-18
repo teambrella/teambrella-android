@@ -58,7 +58,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
                 when (jsonObject.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE).asInt) {
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS -> VIEW_TYPE_HEADER_NEW_MEMBERS
                     TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES -> VIEW_TYPE_HEADER_TEAMMATES
-                    TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE -> {
+                    TeambrellaModel.ATTR_DATA_ITEM_TYPE_ENTRY -> {
                         if (jsonObject.get(TeambrellaModel.ATTR_DATA_IS_VOTING).asBoolean) VIEW_TYPE_NEW_MEMBER
                         else VIEW_TYPE_TEAMMATE
                     }

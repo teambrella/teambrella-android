@@ -224,7 +224,7 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> setChatMuted(@Body JsonElement body);
 
     @Headers("Content-Type: application/json")
-    @POST("wallet/getMyTxList")
+    @POST("wallet/getMyTxList2")
     Observable<Response<JsonObject>> getWalletTransactions(@Body JsonElement body);
 
     @Headers("Content-Type: application/json")

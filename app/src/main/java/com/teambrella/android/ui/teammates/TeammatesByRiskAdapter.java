@@ -53,7 +53,7 @@ class TeammatesByRiskAdapter extends TeambrellaDataPagerAdapter {
             switch (item.getInt(TeambrellaModel.ATTR_DATA_ITEM_TYPE)) {
                 case TeambrellaModel.ATTR_DATA_ITEM_TYPE_SECTION_RISK:
                     return VIEW_TYPE_HEADER;
-                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE:
+                case TeambrellaModel.ATTR_DATA_ITEM_TYPE_ENTRY:
                     return VIEW_TYPE_TEAMMATE;
             }
         }

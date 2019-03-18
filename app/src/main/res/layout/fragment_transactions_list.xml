@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:clipChildren="false"
+    android:clickable="true"
+    android:focusable="true">
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_container">
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/paleGreyFour"
+            android:clipToPadding="false"
+            android:overScrollMode="never"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/top_container"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/report_claim_background"
+        android:clipToPadding="false"
+        android:elevation="2dp"
+        tools:targetApi="lollipop">
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/perYear"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:lines="1"
+            android:paddingStart="16dp"
+            android:text="@string/expenses_for_year"
+            android:textAlignment="textStart"
+            android:textColor="@color/dark"
+            android:textSize="16sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@+id/perYearValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Total in 2018" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/perYearValue"
+            style="@style/Teambrella.TextAppearance.ListItem.Value"
+            android:layout_width="140dp"
+            android:layout_height="52dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical|end"
+            android:lines="1"
+            android:paddingEnd="@dimen/padding_16dp"
+            android:text="@string/expenses_for_year"
+            android:textAlignment="textEnd"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/perYear"
+            tools:text="1000$" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/perMonth"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical|start"
+            android:paddingStart="@dimen/padding_16dp"
+            android:text="@string/expenses_for_period"
+            android:textAlignment="textStart"
+            android:textColor="@color/dark"
+            android:textSize="16sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@+id/perMonthValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/perYear"
+            tools:text="Total in March" />
+
+        <com.teambrella.android.ui.widget.AkkuratBoldTextView
+            android:id="@+id/perMonthValue"
+            style="@style/Teambrella.TextAppearance.ListItem.Value"
+            android:layout_width="140dp"
+            android:layout_height="52dp"
+            android:gravity="center_vertical|end"
+            android:paddingEnd="@dimen/padding_16dp"
+            android:text="@string/expenses_for_period"
+            android:textAlignment="textEnd"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/perYear"
+            tools:text="100$" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</RelativeLayout>

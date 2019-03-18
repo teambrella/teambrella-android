@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemWrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selectable_item_background"
@@ -55,13 +56,21 @@
         <com.teambrella.android.ui.widget.AkkuratBoldTextView
             android:id="@+id/amount"
             style="@style/Teambrella.TextAppearance.ListItem.Value"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            tools:text="100$" />
 
-        <com.teambrella.android.ui.widget.AkkuratBoldTextView
-            android:id="@+id/status"
-            style="@style/Teambrella.TextAppearance.ListItem.Subtitle"
-            android:visibility="gone"
-            tools:text="@string/transaction_pending" />
+        <com.teambrella.android.ui.widget.AkkuratRegularTextView
+            android:id="@+id/amount_crypto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/transaction_pending"
+            android:textAlignment="textEnd"
+            android:textColor="#7b8d9a"
+            android:textSize="10sp"
+            android:visibility="visible"
+            tools:text="50 mETH" />
 
     </LinearLayout>
 

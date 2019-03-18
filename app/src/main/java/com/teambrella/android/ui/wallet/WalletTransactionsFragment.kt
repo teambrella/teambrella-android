@@ -1,25 +1,46 @@
 package com.teambrella.android.ui.wallet
 
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.view.View
+import android.widget.TextView
+import com.google.gson.JsonObject
 import com.teambrella.android.R
+import com.teambrella.android.api.amountFiatMonth
+import com.teambrella.android.api.amountFiatYear
+import com.teambrella.android.api.itemMonth
+import com.teambrella.android.api.lastUpdated
 import com.teambrella.android.ui.base.ADataPagerProgressFragment
 import com.teambrella.android.ui.base.ATeambrellaDataPagerAdapter
 import com.teambrella.android.ui.base.TeambrellaDataPagerAdapter
 import com.teambrella.android.ui.widget.DividerItemDecoration
+import com.teambrella.android.util.AmountCurrencyUtil
+import com.teambrella.android.util.TimeUtils
+import io.reactivex.Notification
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Wallet Transactions Fragment
  */
 class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransactionActivity>() {
 
+    private val perMonth: TextView? by ViewHolder(R.id.perMonth)
+    private val perMonthValue: TextView? by ViewHolder(R.id.perMonthValue)
+    private val perYear: TextView? by ViewHolder(R.id.perYear)
+    private val perYearValue: TextView? by ViewHolder(R.id.perYearValue)
+
     override fun createAdapter(): ATeambrellaDataPagerAdapter {
-        return WalletTransactionsAdapter(dataHost.getPager(tags[0]), dataHost.teamId, dataHost.currency, dataHost.cryptoRate,
+        return WalletTransactionsAdapter(dataHost.getPager(tags[0]), dataHost.teamId, dataHost.currency, dataHost.cryptoRate, this,
                 ATeambrellaDataPagerAdapter.OnStartActivityListener {
                     startActivity(it)
                 })
     }
+
+    override val contentLayout = R.layout.fragment_transactions_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,6 +66,70 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
             }
         }
 
+        list?.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                updateHeaderStats()
+            }
+        })
+
         list?.addItemDecoration(dividerItemDecoration)
+    }
+
+    override fun onDataUpdated(notification: Notification<JsonObject>) {
+        super.onDataUpdated(notification)
+        if (notification.isOnNext) {
+            updateHeaderStats()
+        }
+    }
+
+    private fun getPositiveNetString(net: Float, currencySign: String): String {
+        return view!!.context.getString(R.string.teammate_net_format_string_plus, currencySign, DecimalFormat("0.##").format(Math.abs(net)))
+    }
+
+    private fun getNegativeNetString(net: Float, currencySign: String): String {
+        return view!!.context.getString(R.string.teammate_net_format_string_minus, currencySign, DecimalFormat("0.##").format(Math.abs(net)))
+    }
+
+    private fun updateHeaderStats() {
+        val currencySign: String = AmountCurrencyUtil.getCurrencySign(dataHost.currency)
+        val firstVisibleItemPos = (list?.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+        val items = dataHost.getPager(tags[0]).loadedData
+        require(firstVisibleItemPos != null && firstVisibleItemPos >= 0 && firstVisibleItemPos < items.count()) {return}
+
+        val dateFormatMonth = SimpleDateFormat("LLLL", Locale.getDefault())
+        var item = items[firstVisibleItemPos!!].asJsonObject
+        item?.amountFiatMonth?.let {
+            val amount = it
+            this.perMonthValue?.text = when {
+                amount > 0 -> Html.fromHtml(getPositiveNetString(amount, currencySign))
+                amount < 0 -> Html.fromHtml(getNegativeNetString(amount, currencySign))
+                else -> view!!.context.getString(R.string.teammate_net_format_string_zero, currencySign)
+            }
+            item?.itemMonth?.let {
+                val date = TimeUtils.getDateFromTicks(item.lastUpdated ?: 0L)
+                this.perMonth?.text = view!!.context.getString(if (amount > 0) R.string.income_for_period else R.string.expenses_for_period, dateFormatMonth.format(date).capitalize())
+            }
+        }
+
+        item?.amountFiatYear?.let {
+            val amount = it
+            this.perYearValue?.text = when {
+                amount > 0 -> Html.fromHtml(getPositiveNetString(amount, currencySign))
+                amount < 0 -> Html.fromHtml(getNegativeNetString(amount, currencySign))
+                else -> view!!.context.getString(R.string.teammate_net_format_string_zero, currencySign)
+            }
+            item?.itemMonth?.let {
+                this.perYear?.text = view!!.context.getString(if (amount > 0) R.string.income_for_year else R.string.expenses_for_year, it/12 + 1900)
+            }
+        }
+
+//        if (lastItemVisible == (adapter?.itemCount ?: 0) - 2) {
+//            needScrollDown = true
+//        }
+    }
+
+    public fun updatePadding(itemPadding: Int) {
+        list?.setPadding(0,0,0,(list?.height ?: 0) - itemPadding)
     }
 }

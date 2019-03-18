@@ -203,8 +203,10 @@ class AllVotesAdapter(pager: IDataPager<JsonArray>, private val mAllVotesActivit
             objName?.text = itemView.context.getString(R.string.object_format_string, item?.obj.model, item?.obj.year)
 
             itemView.setOnClickListener {
-                startActivity(getTeammateIntent(itemView.context, mTeamId, item?.obj.userId!!,
-                        item?.obj.name, item?.obj.avatar))
+                val intent = getTeammateIntent(itemView.context, mTeamId, item?.obj.userId!!, item?.obj.name, item?.obj.avatar)
+                if (!startActivity(intent)) {
+                    itemView.context.startActivity(intent)
+                }
             }
 
             val titleParams = title?.layoutParams as RelativeLayout.LayoutParams

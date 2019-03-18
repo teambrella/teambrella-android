@@ -14,7 +14,6 @@ import com.teambrella.android.api.cryptoBalance
 import com.teambrella.android.api.currencyRate
 import com.teambrella.android.api.data
 import com.teambrella.android.backup.WalletBackupManager
-import com.teambrella.android.blockchain.EtherAccount
 import com.teambrella.android.ui.CosignersActivity
 import com.teambrella.android.ui.IMainDataHost
 import com.teambrella.android.ui.QRCodeActivity
@@ -139,13 +138,8 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             val data = notification.value?.data
             val cryptoBalance = data?.cryptoBalance ?: 0f
             val currencyRate = data?.currencyRate ?: 0f
-            val stringId = if (cryptoBalance > 1) R.string.ethereum else R.string.milli_ethereum
 
-            cryptoBalanceView?.text = when (stringId) {
-                R.string.ethereum -> String.format(Locale.US, "%.2f", cryptoBalance)
-                R.string.milli_ethereum -> String.format(Locale.US, "%d", Math.round(cryptoBalance * 1000))
-                else -> null
-            }
+            cryptoBalanceView?.text = String.format(Locale.US, "%.0f", cryptoBalance*1000)
 
             balanceView?.text = context?.getString(R.string.amount_format_string
                     , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(Math.round(cryptoBalance * currencyRate)))

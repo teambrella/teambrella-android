@@ -53,7 +53,7 @@ class TeammatesByRiskDataPagerLoader extends TeambrellaDataPagerLoader {
         for (JsonElement element : newData) {
             JsonObject object = element.getAsJsonObject();
             JsonWrapper item = new JsonWrapper(object);
-            object.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE);
+            object.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ATTR_DATA_ITEM_TYPE_ENTRY);
             float risk = item.getFloat(TeambrellaModel.ATTR_DATA_RISK);
             for (int i = 0; i < mRanges.size(); i++) {
                 if (risk >= mRanges.get(i).getLeftRange()

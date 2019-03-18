@@ -56,7 +56,7 @@ public class TeammatesDataPagerLoader extends TeambrellaDataPagerLoader {
 
         for (JsonElement element : newData) {
             JsonObject item = element.getAsJsonObject();
-            item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ATTR_DATA_ITEM_TYPE_TEAMMATE);
+            item.addProperty(TeambrellaModel.ATTR_DATA_ITEM_TYPE, TeambrellaModel.ATTR_DATA_ITEM_TYPE_ENTRY);
             if (item.get(TeambrellaModel.ATTR_DATA_IS_VOTING).getAsBoolean()) {
                 mNewMembers.add(item);
             } else {

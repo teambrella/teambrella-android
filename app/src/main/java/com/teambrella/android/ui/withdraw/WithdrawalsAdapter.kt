@@ -34,8 +34,6 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
 
         private const val MIN_VALUE = 0.00001
         private val HINT_FORMAT_STRING = DecimalFormat("0.00")
-        private val ETHEREUM_FORMAT_STRING = DecimalFormat("0.#####")
-        private val MILLI_ETHEREUM_FORMAT_STRING = DecimalFormat("0.##")
         private const val MILLIS = 1000
     }
 
@@ -176,12 +174,8 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
             submitView?.isEnabled = mAvailableValue > 0
             amountView?.isEnabled = mAvailableValue > 0
 
-            val stringId = if (cryptoBalance > 1.0) R.string.ethereum else R.string.milli_ethereum
-            val cryptoCurrency = itemView.context.getString(stringId)
-            when (stringId) {
-                R.string.ethereum -> cryptoAvailableView?.text = ETHEREUM_FORMAT_STRING.format(available)
-                R.string.milli_ethereum -> cryptoAvailableView?.text = MILLI_ETHEREUM_FORMAT_STRING.format(available.asMillis)
-            }
+            val cryptoCurrency = itemView.context.getString(R.string.milli_ethereum)
+            cryptoAvailableView?.text = DecimalFormat("0.##").format(available.asMillis)
             currencyView?.text = cryptoCurrency
             val currencySign = AmountCurrencyUtil.getCurrencySign(mCurrency)
             availableView?.text = currencySign + DecimalFormat("0.##").format(available * mRate)

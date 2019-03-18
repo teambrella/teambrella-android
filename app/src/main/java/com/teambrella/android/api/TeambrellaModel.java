@@ -393,9 +393,13 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CARDS = "Cards";
     public static final String ATTR_DATA_SMALL_PHOTO_OR_AVATAR = "SmallPhotoOrAvatar";
     public static final String ATTR_DATA_AMOUNT = "Amount";
+    public static final String ATTR_DATA_AMOUNT_FIAT = "AmountFiat";
+    public static final String ATTR_DATA_AMOUNT_FIAT_MONTH = "AmountFiatMonth";
+    public static final String ATTR_DATA_AMOUNT_FIAT_YEAR = "AmountFiatYear";
     public static final String ATTR_DATA_TEAM_VOTE = "TeamVote";
     public static final String ATTR_DATA_ITEM_ID = "ItemId";
     public static final String ATTR_DATA_ITEM_DATE = "ItemDate";
+    public static final String ATTR_DATA_ITEM_MONTH = "ItemMonth";
     public static final String ATTR_DATA_CHAT_TITLE = "ChatTitle";
     public static final String ATTR_DATA_TOP_POSTER_AVATARS = "TopPosterAvatars";
     public static final String ATTR_DATA_POSTER_COUNT = "PosterCount";
@@ -460,8 +464,9 @@ public class TeambrellaModel {
 
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_NEW_MEMBERS = 10;
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_TEAMMATES = 20;
-    public static final int ATTR_DATA_ITEM_TYPE_TEAMMATE = 30;
+    public static final int ATTR_DATA_ITEM_TYPE_ENTRY = 30;
     public static final int ATTR_DATA_ITEM_TYPE_SECTION_RISK = 40;
+    public static final int ATTR_DATA_ITEM_TYPE_SECTION_MONTH = 50;
 
 
     /**

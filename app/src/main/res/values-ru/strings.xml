@@ -252,18 +252,18 @@
     <string name="new_demo_session_description">Мы создали демо команду для тебя. В ней есть все новые фишки.</string>
     <string name="back">Назад</string>
 
-    <string name="withdraw_details">Детали снятия</string>
-    <string name="withdraw_information">Информация для снятия</string>
+    <string name="withdraw_details">Детали вывода</string>
+    <string name="withdraw_information">Информация для вывода</string>
     <string name="to_address">Куда</string>
     <string name="withdraw_amount_title">СУММА</string>
     <string name="balance">Баланс</string>
     <string name="withdraw_info_description_reserved">\nТы можешь запросить до %1$dmETH на снятие.\n\nУ тебя зарезервировано %2$dmETH, если часть зарезервированных средств станет доступна, они будут автоматически поставлены на снятие.\n</string>
-    <string name="withdraw_info_description">\nТы можешь запросить до %1$dmETH на снятие.\n\n</string>
-    <string name="withdrawals_in_progress">Снятие в процессе</string>
+    <string name="withdraw_info_description">\nТы можешь запросить до %1$dmETH на вывод.\n\n</string>
+    <string name="withdrawals_in_progress">Вывод в процессе</string>
     <string name="deferred_withdrawals">В очереди</string>
     <string name="history_withdrawals">История</string>
     <string name="invalid_ethereum_address_error">Неверный адрес Ethereum</string>
-    <string name="invalid_withdraw_amount_error">Сумма снятия не должна быть больше %.2f mETH</string>
+    <string name="invalid_withdraw_amount_error">Сумма для вывода не должна быть больше %.2f mETH</string>
 
     <string name="vote">Голосовать</string>
     <string name="vote_chat">Голос</string>
@@ -289,7 +289,7 @@
     <string name="rating">Рейтинг</string>
     <string name="invite_friends">Пригласить Друга</string>
     <string name="transactions">Транзакции</string>
-    <string name="withdrawal">Снятие</string>
+    <string name="withdrawal">Вывод</string>
     <string name="transaction_pending">В Ожидании</string>
     <string name="transaction_cancelled">Отменена</string>
     <string name="no_transactions_yet">Нет транзакций.</string>
@@ -306,7 +306,7 @@
     <string name="contacts">Контакты</string>
     <string name="ended_ago">Зак. %s назад</string>
 
-    <string name="available_to_withdraw">Доступно для снятия</string>
+    <string name="available_to_withdraw">Доступно для вывода</string>
 
 
     <string name="notification_channel_private_chats">Приватные чаты</string>
@@ -398,5 +398,10 @@
     <string name="i_vote_for_risks">Я голосую за риски</string>
     <string name="x_votes">%s голосует</string>
     <string name="of_the_time">случаев</string>
+    <string name="payout_for_claim">Выплата по заявке</string>
+    <string name="expenses_for_period">Потрачено за %s</string>
+    <string name="expenses_for_year">Потрачено за %d год</string>
+    <string name="income_for_period">Заработано за %s</string>
+    <string name="income_for_year">Заработано за %d год</string>
 
 </resources>
