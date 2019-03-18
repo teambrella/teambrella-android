@@ -43,7 +43,7 @@ class WalletTransactionsActivity : ATeambrellaActivity(), IWalletTransactionActi
         actionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setTitle(R.string.transactions)
-            it.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
+            it.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector)
         }
 
         val fragmentManager = supportFragmentManager
