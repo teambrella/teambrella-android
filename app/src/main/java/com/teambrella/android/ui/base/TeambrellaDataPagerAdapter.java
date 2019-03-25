@@ -341,9 +341,29 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                 mProxyName.setText(proxyName);
             }
 
+            double claimAmount = item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT);
+            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
+                case TeambrellaModel.ClaimStates.VOTING:
+                case TeambrellaModel.ClaimStates.VOTED:
+                    break;
+                case TeambrellaModel.ClaimStates.IN_PAYMENT:
+                case TeambrellaModel.ClaimStates.PROCESSEED:
+                    mResultView.setText(R.string.claim_reimbursed);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.VISIBLE);
+                    claimAmount *= item.getDouble(TeambrellaModel.ATTR_DATA_REIMBURSEMENT);
+                    break;
+                case TeambrellaModel.ClaimStates.DECLINED:
+                    mResultView.setText(R.string.declined);
+                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
+                    mPaymentProgress.setVisibility(View.INVISIBLE);
+                    break;
+            }
+
             mObject.setText(item.getString(TeambrellaModel.ATTR_DATA_MODEL));
             mTeammateName.setText(item.getString(TeambrellaModel.ATTR_DATA_NAME));
-            mClaimAmount.setText(context.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(mCurrency), mDecimalFormat.format(Math.round(item.getDouble(TeambrellaModel.ATTR_DATA_CLAIM_AMOUNT)))));
+            mClaimAmount.setText(context.getString(R.string.amount_format_string,
+                    AmountCurrencyUtil.getCurrencySign(mCurrency), mDecimalFormat.format(Math.round(claimAmount))));
 
 
             if (mVote != null) {
@@ -369,23 +389,6 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                         itemView.getContext().startActivity(intent);
                     }
                 });
-            }
-
-            switch (item.getInt(TeambrellaModel.ATTR_DATA_STATE, -1)) {
-                case TeambrellaModel.ClaimStates.VOTING:
-                case TeambrellaModel.ClaimStates.VOTED:
-                    break;
-                case TeambrellaModel.ClaimStates.IN_PAYMENT:
-                case TeambrellaModel.ClaimStates.PROCESSEED:
-                    mResultView.setText(R.string.claim_reimbursed);
-                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
-                    mPaymentProgress.setVisibility(View.VISIBLE);
-                    break;
-                case TeambrellaModel.ClaimStates.DECLINED:
-                    mResultView.setText(R.string.declined);
-                    mResultView.setTextColor(itemView.getContext().getResources().getColor(R.color.blueGrey));
-                    mPaymentProgress.setVisibility(View.INVISIBLE);
-                    break;
             }
 
         }
