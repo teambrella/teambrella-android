@@ -1,18 +1,16 @@
 package com.teambrella.android.ui.user.wallet
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.JsonObject
 import com.teambrella.android.R
-import com.teambrella.android.api.TeambrellaModel
-import com.teambrella.android.api.cryptoBalance
-import com.teambrella.android.api.currencyRate
-import com.teambrella.android.api.data
+import com.teambrella.android.api.*
 import com.teambrella.android.backup.WalletBackupManager
 import com.teambrella.android.ui.CosignersActivity
 import com.teambrella.android.ui.IMainDataHost
@@ -24,14 +22,12 @@ import com.teambrella.android.ui.widget.TeambrellaAvatarsWidgets
 import com.teambrella.android.ui.withdraw.WithdrawActivity
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.ConnectivityUtils
-import com.teambrella.android.util.QRCodeUtils
 import com.teambrella.android.util.StatisticHelper
 import com.teambrella.android.util.log.Log
 import io.reactivex.Notification
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -50,13 +46,16 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
     private val cosignersView: View? by ViewHolder(R.id.cosigners)
     private val cosignersAvatarView: TeambrellaAvatarsWidgets? by ViewHolder(R.id.cosigners_avatar)
     private val cosignersCountView: TextView? by ViewHolder(R.id.cosigners_count)
-    private val qrCodeView: ImageView? by ViewHolder(R.id.qr_code)
     private val fundWalletView: TextView? by ViewHolder(R.id.fund_wallet)
-    private val uninterruptedCoverageCryptoValue: TextView? by ViewHolder(R.id.for_uninterrupted_coverage_crypto_value)
-    private val uninterruptedCoverageCurrencyValue: TextView? by ViewHolder(R.id.for_uninterrupted_coverage_currency_value)
     private val backupWalletButton: View? by ViewHolder(R.id.backup_wallet)
     private val backupWalletMessage: View? by ViewHolder(R.id.wallet_not_backed_up_message)
     private val showPrivateKeyButton: View? by ViewHolder(R.id.show_private_key)
+    private val spentThisYearView: TextView? by ViewHolder(R.id.spentThisYear)
+    private val spentThisMonthView: TextView? by ViewHolder(R.id.spentThisMonth)
+    private val spentThisYearLabel: TextView? by ViewHolder(R.id.spentThisYearLabel)
+    private val spentThisMonthLabel: TextView? by ViewHolder(R.id.spentThisMonthLabel)
+    private val etherScanView: View? by ViewHolder(R.id.imageEtherScan)
+    private val fundWalletCommentView: TextView? by ViewHolder(R.id.fundWalletComment)
     private val decimalFormat = DecimalFormat.getInstance()
     private var showBackupInfoOnShow: Boolean = false
     private var isWalletBackedUp: Boolean? = null
@@ -82,21 +81,13 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
                 , decimalFormat.format(0))
 
         dataHost.fundAddress?.let {
-            Observable.just(it).map { QRCodeUtils.createBitmap(it) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ qrCodeView?.setImageBitmap(it) }, {})
-
             fundWalletView?.isEnabled = true
             fundWalletView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it, QRCodeActivity.QRTYPE_ADDRESS) }
-            qrCodeView?.visibility = View.VISIBLE
-            qrCodeView?.setOnClickListener { _ -> QRCodeActivity.startQRCode(context, it, QRCodeActivity.QRTYPE_ADDRESS) }
-
         }
 
-        AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, 0f)
-        uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string
-                , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(0))
+//        AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, 0f)
+//        uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string
+//                , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(0))
 
         dataHost.addWalletBackupListener(this)
 
@@ -140,16 +131,22 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             val currencyRate = data?.currencyRate ?: 0f
 
             cryptoBalanceView?.text = String.format(Locale.US, "%.0f", cryptoBalance*1000)
-
             balanceView?.text = context?.getString(R.string.amount_format_string
                     , AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(Math.round(cryptoBalance * currencyRate)))
 
-            val forUninterruptedCoverage = Math.abs(data?.get(TeambrellaModel.ATTR_DATA_RECOMMENDED_CRYPTO)?.asFloat
-                    ?: 0f)
-
-            AmountCurrencyUtil.setCryptoAmount(uninterruptedCoverageCryptoValue, forUninterruptedCoverage)
-            uninterruptedCoverageCurrencyValue?.text = context?.getString(R.string.amount_format_string, AmountCurrencyUtil.getCurrencySign(dataHost.currency), decimalFormat.format(Math.round(forUninterruptedCoverage
-                    * (data?.currencyRate ?: 0f))))
+            spentThisYearLabel?.text =  view!!.context.getString(R.string.in_year, Date().year + 1900).capitalize()
+            spentThisMonthLabel?.text = view!!.context.getString(R.string.in_month, SimpleDateFormat("LLLL", Locale.getDefault()).format(Date())).capitalize()
+            data?.amountFiatYear?.let {
+                AmountCurrencyUtil.setSignedAmountWithBadge(spentThisYearView, Math.round(it), dataHost.currency)
+            }
+            data?.amountFiatMonth?.let {
+                AmountCurrencyUtil.setSignedAmountWithBadge(spentThisMonthView, Math.round(it), dataHost.currency)
+            }
+            val hasFundWalletComment = !data?.fundWalletComment.isNullOrEmpty()
+            fundWalletCommentView?.visibility = if (hasFundWalletComment) View.VISIBLE else View.GONE
+            if (hasFundWalletComment) {
+                fundWalletCommentView?.text = data?.fundWalletComment
+            }
 
             Observable.just(data)
                     .flatMap { Observable.fromIterable(data?.get(TeambrellaModel.ATTR_DATA_COSIGNERS)?.asJsonArray) }
@@ -172,6 +169,12 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, currencyRate)) }
             withdrawView?.isEnabled = true
             withdrawView?.setOnClickListener { WithdrawActivity.start(context, dataHost.teamId, dataHost.currency, currencyRate) }
+            if (!data?.contractAdress.isNullOrEmpty()) {
+                etherScanView?.setOnClickListener {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://etherscan.com/address/" + data?.contractAdress))
+                    startActivity(browserIntent)
+                }
+            }
         } else {
             cryptoBalanceView?.text = String.format(Locale.US, "%d", 0)
             balanceView?.text = context?.getString(R.string.amount_format_string

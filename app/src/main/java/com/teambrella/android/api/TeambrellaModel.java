@@ -329,8 +329,12 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_CRYPTO_RESERVED = "CryptoReserved";
     public static final String ATTR_DATA_CURRENCY_RATE = "CurrencyRate";
     public static final String ATTR_DATA_FUND_ADDRESS = "FundAddress";
+    public static final String ATTR_DATA_CONTRACT_ADDRESS = "ContractAddress";
     public static final String ATTR_DATA_NEED_CRYPTO = "NeedCrypto";
     public static final String ATTR_DATA_RECOMMENDED_CRYPTO = "RecommendedCrypto";
+    public static final String ATTR_DATA_AMOUNT_FIAT_MONTH = "AmountFiatMonth";
+    public static final String ATTR_DATA_AMOUNT_FIAT_YEAR = "AmountFiatYear";
+    public static final String ATTR_DATA_FUND_WALLET_COMMENT = "FundWalletComment";
     public static final String ATTR_DATA_GENDER = "Gender";
     public static final String ATTR_DATA_REIMBURSEMENT = "Reimbursement";
     public static final String ATTR_DATA_LIKES = "Likes";
@@ -394,8 +398,6 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_SMALL_PHOTO_OR_AVATAR = "SmallPhotoOrAvatar";
     public static final String ATTR_DATA_AMOUNT = "Amount";
     public static final String ATTR_DATA_AMOUNT_FIAT = "AmountFiat";
-    public static final String ATTR_DATA_AMOUNT_FIAT_MONTH = "AmountFiatMonth";
-    public static final String ATTR_DATA_AMOUNT_FIAT_YEAR = "AmountFiatYear";
     public static final String ATTR_DATA_TEAM_VOTE = "TeamVote";
     public static final String ATTR_DATA_ITEM_ID = "ItemId";
     public static final String ATTR_DATA_ITEM_DATE = "ItemDate";

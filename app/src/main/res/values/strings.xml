@@ -201,7 +201,7 @@
   <string name="withdraw">Withdraw</string>
   <string name="reserved">Reserved</string>
   <string name="available">Available</string>
-  <string name="fund_wallet">Fund wallet</string>
+  <string name="fund_wallet">Top up</string>
   <string name="recommended_funding">Recommended Funding</string>
   <string name="recommended">Recommended</string>
   <string name="copy_address">Copy</string>
@@ -431,5 +431,10 @@
     <string name="expenses_for_year">expenses for %d year</string>
   <string name="income_for_period">Income in %s</string>
   <string name="income_for_year">Income in %d</string>
+    <string name="all_transactions">All transactions</string>
+  <string name="payouts">Payouts</string>
+  <string name="in_year">In %d</string>
+  <string name="in_month">In %s</string>
+    <string name="funding">Funding</string>
 
 </resources>

@@ -2,10 +2,12 @@ package com.teambrella.android.util;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.Html;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.MetricAffectingSpan;
@@ -40,6 +42,48 @@ public class AmountCurrencyUtil {
         sDecimalFormat.setDecimalFormatSymbols(symbols);
     }
 
+    public static String getPositiveNetString(TextView textView, double net, String currencySign) {
+        final Context context = textView.getContext();
+        return context.getResources().getString(R.string.teammate_net_format_string_plus, currencySign, new DecimalFormat("0.##").format(Math.abs(net)));
+    }
+
+    public static String getNegativeNetString(TextView textView, double net, String currencySign) {
+        final Context context = textView.getContext();
+        return context.getResources().getString(R.string.teammate_net_format_string_minus, currencySign, new DecimalFormat("0.##").format(Math.abs(net)));
+    }
+
+    public static void setSignedAmount(TextView textView, int amount, String currencySign) {
+        final Context context = textView.getContext();
+        if (amount > 0) {
+            textView.setText(Html.fromHtml(AmountCurrencyUtil.getPositiveNetString(textView, amount, currencySign)));
+        }
+        else if (amount < 0) {
+            textView.setText(Html.fromHtml(AmountCurrencyUtil.getNegativeNetString(textView, amount, currencySign)));
+        }
+        else {
+            textView.setText(context.getString(R.string.teammate_net_format_string_zero, currencySign));
+        }
+    }
+
+    public static void setSignedAmountWithBadge(TextView textView, int amount, String currency) {
+        final Context context = textView.getContext();
+        currency = getLocalizedCurrency(context, currency);
+        final SpannableStringBuilder text = new SpannableStringBuilder(String.valueOf(Math.abs(amount)) + " " + currency);
+        int start = text.length() - currency.length() - 1;
+        int end = text.length();
+        text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.darkSkyBlue)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new CurrencyRelativeSizeSpan("1234567890"/*Integer.toString(amount).substring(start - 1)*/), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (amount > 0) {
+            text.insert(0, "+ ");
+            text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.tealish)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        else if (amount < 0) {
+            text.insert(0, "- ");
+            text.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.lipstick)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        textView.setText(text);
+
+    }
 
     public static void setAmount(TextView textView, int amount, String currency) {
         final Context context = textView.getContext();

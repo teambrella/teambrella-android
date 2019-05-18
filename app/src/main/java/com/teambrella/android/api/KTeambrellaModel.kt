@@ -623,6 +623,12 @@ val JsonObject?.withdrawalDate: String?
 val JsonObject?.toAddress: String?
     get() = getString(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS)
 
+val JsonObject?.contractAdress: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_CONTRACT_ADDRESS)
+
+val JsonObject?.fundWalletComment: String?
+    get() = getString(TeambrellaModel.ATTR_DATA_FUND_WALLET_COMMENT)
+
 val JsonObject?.isNew: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_NEW)
 

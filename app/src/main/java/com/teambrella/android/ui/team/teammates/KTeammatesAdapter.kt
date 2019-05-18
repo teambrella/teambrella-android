@@ -2,7 +2,6 @@ package com.teambrella.android.ui.team.teammates
 
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -128,22 +127,10 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
         override fun onBind(item: JsonObject?) {
             super.onBind(item)
             item.totallyPaid?.let {
-                val net = Math.round(item.totallyPaid as Double)
-                when {
-                    net > 0 -> this.net?.text = Html.fromHtml(getPositiveNetString(net))
-                    net < 0 -> this.net?.text = Html.fromHtml(getNegativeNetString(net))
-                    else -> this.net?.text = itemView.context.getString(R.string.teammate_net_format_string_zero, currencySign)
-                }
+                val net = Math.round(item.totallyPaid as Double).toInt()
+                AmountCurrencyUtil.setSignedAmount(this.net, net, currencySign)
             }
             this.risk?.text = String.format(Locale.US, "%.1f", item.risk)
-        }
-
-        private fun getPositiveNetString(net: Long): String {
-            return itemView.context.getString(R.string.teammate_net_format_string_plus, currencySign, decimalFormat.format(Math.abs(net)))
-        }
-
-        private fun getNegativeNetString(net: Long): String {
-            return itemView.context.getString(R.string.teammate_net_format_string_minus, currencySign, decimalFormat.format(Math.abs(net)))
         }
     }
 

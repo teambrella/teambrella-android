@@ -181,7 +181,7 @@
     <string name="withdraw">Retirar</string>
     <string name="reserved">Reservado</string>
     <string name="available">Disponible</string>
-    <string name="fund_wallet">Financiar monedero</string>
+    <string name="fund_wallet">Financiar</string>
     <string name="recommended_funding">Financiamiento Recomendado </string>
     <string name="recommended">Recomendado</string>
     <string name="copy_address">Copiar</string>
@@ -384,5 +384,10 @@
     <string name="expenses_for_year">Expenses in %d year</string>
     <string name="income_for_period">Income in %s</string>
     <string name="income_for_year">Income in %d</string>
+    <string name="all_transactions">All Transactions</string>
+    <string name="payouts">Payouts</string>
+    <string name="in_year">In %d</string>
+    <string name="in_month">In %s</string>
+    <string name="funding">Funding</string>
 
 </resources>

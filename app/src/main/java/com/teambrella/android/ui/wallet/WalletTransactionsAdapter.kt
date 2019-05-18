@@ -139,7 +139,7 @@ class WalletTransactionsAdapter(val pager: IDataPager<JsonArray>,
                 this.to?.text = itemView.resources.getString(R.string.object_format_string, item.modelOrName, item.year)
                 icon?.setImage(imageLoader.getImageUrl(item.smallPhoto), R.dimen.rounded_corners_2dp)
             } else {
-                this.type?.text = itemView.resources.getString(R.string.withdrawal)
+                this.type?.text = itemView.resources.getString(if ((item.amountFiat ?: 0f) < 0f) R.string.funding else R.string.withdrawal)
                 itemView.setOnClickListener {
                     startActivity(WithdrawActivity.getIntent(itemView.context, teamId, currency, cryptoRate))
                 }

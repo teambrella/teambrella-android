@@ -49,7 +49,7 @@
     <color name="perrywinkleTwo">#7882e5</color>
     <color name="veryLightBlueThree">#dceaff</color>
     <color name="paleGreyTwo">#f2f4f7</color>
-    <color name="activity_background">#F6F9FC</color>
+    <color name="activity_background">#f6f9fc</color>
     <color name="battleshipGreyTwo">#6c7280</color>
     <color name="lightBlueGreyThree">#d8e4f5</color>
 </resources>

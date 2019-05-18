@@ -3,7 +3,6 @@ package com.teambrella.android.ui.wallet
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.Html
 import android.view.View
 import android.widget.TextView
 import com.google.gson.JsonObject
@@ -19,7 +18,6 @@ import com.teambrella.android.ui.widget.DividerItemDecoration
 import com.teambrella.android.util.AmountCurrencyUtil
 import com.teambrella.android.util.TimeUtils
 import io.reactivex.Notification
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,6 +30,7 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
     private val perMonthValue: TextView? by ViewHolder(R.id.perMonthValue)
     private val perYear: TextView? by ViewHolder(R.id.perYear)
     private val perYearValue: TextView? by ViewHolder(R.id.perYearValue)
+    private val topContainer: View? by ViewHolder(R.id.top_container)
 
     override fun createAdapter(): ATeambrellaDataPagerAdapter {
         return WalletTransactionsAdapter(dataHost.getPager(tags[0]), dataHost.teamId, dataHost.currency, dataHost.cryptoRate, this,
@@ -74,6 +73,7 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
         })
 
         list?.addItemDecoration(dividerItemDecoration)
+        topContainer?.visibility = View.GONE
     }
 
     override fun onDataUpdated(notification: Notification<JsonObject>) {
@@ -81,14 +81,6 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
         if (notification.isOnNext) {
             updateHeaderStats()
         }
-    }
-
-    private fun getPositiveNetString(net: Float, currencySign: String): String {
-        return view!!.context.getString(R.string.teammate_net_format_string_plus, currencySign, DecimalFormat("0.##").format(Math.abs(net)))
-    }
-
-    private fun getNegativeNetString(net: Float, currencySign: String): String {
-        return view!!.context.getString(R.string.teammate_net_format_string_minus, currencySign, DecimalFormat("0.##").format(Math.abs(net)))
     }
 
     private fun updateHeaderStats() {
@@ -100,27 +92,18 @@ class WalletTransactionsFragment : ADataPagerProgressFragment<IWalletTransaction
         val dateFormatMonth = SimpleDateFormat("LLLL", Locale.getDefault())
         var item = items[firstVisibleItemPos!!].asJsonObject
         item?.amountFiatMonth?.let {
-            val amount = it
-            this.perMonthValue?.text = when {
-                amount > 0 -> Html.fromHtml(getPositiveNetString(amount, currencySign))
-                amount < 0 -> Html.fromHtml(getNegativeNetString(amount, currencySign))
-                else -> view!!.context.getString(R.string.teammate_net_format_string_zero, currencySign)
-            }
+            topContainer?.visibility = View.VISIBLE
+            AmountCurrencyUtil.setSignedAmount(this.perMonthValue, it.toInt(), currencySign)
             item?.itemMonth?.let {
                 val date = TimeUtils.getDateFromTicks(item.lastUpdated ?: 0L)
-                this.perMonth?.text = view!!.context.getString(if (amount > 0) R.string.income_for_period else R.string.expenses_for_period, dateFormatMonth.format(date).capitalize())
+                this.perMonth?.text = view!!.context.getString(if (it > 0) R.string.income_for_period else R.string.expenses_for_period, dateFormatMonth.format(date).capitalize())
             }
         }
 
         item?.amountFiatYear?.let {
-            val amount = it
-            this.perYearValue?.text = when {
-                amount > 0 -> Html.fromHtml(getPositiveNetString(amount, currencySign))
-                amount < 0 -> Html.fromHtml(getNegativeNetString(amount, currencySign))
-                else -> view!!.context.getString(R.string.teammate_net_format_string_zero, currencySign)
-            }
+            AmountCurrencyUtil.setSignedAmount(this.perYearValue, it.toInt(), currencySign)
             item?.itemMonth?.let {
-                this.perYear?.text = view!!.context.getString(if (amount > 0) R.string.income_for_year else R.string.expenses_for_year, it/12 + 1900)
+                this.perYear?.text = view!!.context.getString(if (it > 0) R.string.income_for_year else R.string.expenses_for_year, it/12 + 1900)
             }
         }
 

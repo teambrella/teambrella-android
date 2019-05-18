@@ -132,7 +132,7 @@ public class WelcomeActivity extends AppCompatRequestActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        setContentView(R.layout.acivity_welcome);
+        setContentView(R.layout.activity_welcome);
 
         mInvitationOnlyView = findViewById(R.id.invitation_only);
         mTryDemoButton = findViewById(R.id.try_demo);

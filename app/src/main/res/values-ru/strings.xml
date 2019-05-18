@@ -179,7 +179,7 @@
     <string name="withdraw">Вывести</string>
     <string name="reserved">Зарезервировано</string>
     <string name="available">Доступно</string>
-    <string name="fund_wallet">Пополнить кошелек</string>
+    <string name="fund_wallet">Пополнить</string>
     <string name="recommended_funding">Рекомендовано пополнить</string>
     <string name="recommended">Рекомендовано</string>
     <string name="copy_address">Скопировать</string>
@@ -399,9 +399,14 @@
     <string name="x_votes">%s голосует</string>
     <string name="of_the_time">случаев</string>
     <string name="payout_for_claim">Выплата по заявке</string>
-    <string name="expenses_for_period">Потрачено за %s</string>
-    <string name="expenses_for_year">Потрачено за %d год</string>
-    <string name="income_for_period">Заработано за %s</string>
-    <string name="income_for_year">Заработано за %d год</string>
+    <string name="expenses_for_period">Выплаты за %s</string>
+    <string name="expenses_for_year">Выплаты за %d год</string>
+    <string name="income_for_period">Выплаты за %s</string>
+    <string name="income_for_year">Выплаты за %d год</string>
+    <string name="all_transactions">Все транзакции</string>
+    <string name="payouts">Выплаты</string>
+    <string name="in_year">За %d год</string>
+    <string name="in_month">За %s</string>
+    <string name="funding">Пополнение</string>
 
 </resources>

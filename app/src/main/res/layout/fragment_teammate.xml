@@ -123,10 +123,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/header_view"
                 android:background="@drawable/block_discussion_top"
-                android:paddingBottom="24dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:paddingTop="16dp">
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="24dp">
 
                 <ImageView
                     android:id="@+id/teammate_icon"

@@ -75,7 +75,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
         teambrellaBroadcastManager = TeambrellaBroadcastManager(this)
         teambrellaBroadcastManager.registerReceiver(chatBroadCastReceiver)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activiity_teammate)
+        setContentView(R.layout.activity_teammate)
 
         supportFragmentManager?.apply {
             if (findFragmentByTag(UI) == null) {

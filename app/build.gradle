@@ -14,9 +14,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 repositories {
+    google()
+    jcenter()
     maven { url 'https://maven.fabric.io/public' }
-    maven { url "https://maven.google.com" }
-    mavenCentral()
 }
 
 apply plugin: 'kotlin-android'
