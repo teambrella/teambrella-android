@@ -9,8 +9,6 @@ import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.FontRequestEmojiCompatConfig;
 import android.support.v4.provider.FontRequest;
 
-import com.appsflyer.AppsFlyerConversionListener;
-import com.appsflyer.AppsFlyerLib;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -24,7 +22,6 @@ import com.teambrella.android.util.log.Log;
 import org.bitcoinj.crypto.MnemonicCode;
 
 import java.util.HashSet;
-import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -47,29 +44,6 @@ public class TeambrellaApplication extends MultiDexApplication implements Applic
     @Override
     public void onCreate() {
         super.onCreate();
-
-        AppsFlyerConversionListener conversionDataListener =
-                new AppsFlyerConversionListener() {
-                    @Override
-                    public void onInstallConversionDataLoaded(Map<String, String> map) {
-                    }
-
-                    @Override
-                    public void onInstallConversionFailure(String s) {
-                    }
-
-                    @Override
-                    public void onAppOpenAttribution(Map<String,String> attributionData) {
-                    }
-
-                    @Override
-                    public void onAttributionFailure(String s) {
-                    }
-                };
-
-        AppsFlyerLib.getInstance().init(AF_DEV_KEY, conversionDataListener, getApplicationContext());
-        AppsFlyerLib.getInstance().startTracking(this);
-        AppsFlyerLib.getInstance().setCustomerUserId(TeambrellaUser.get(this).getUserId());
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
 

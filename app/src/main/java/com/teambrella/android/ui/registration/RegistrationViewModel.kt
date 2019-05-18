@@ -6,9 +6,6 @@ import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
-import com.appsflyer.AFInAppEventParameterName
-import com.appsflyer.AFInAppEventType
-import com.appsflyer.AppsFlyerLib
 import com.google.gson.JsonObject
 import com.teambrella.android.api.*
 import com.teambrella.android.api.server.TeambrellaServer
@@ -145,11 +142,6 @@ class RegistrationViewModel : ViewModel() {
             this.location = location
             this.email = email
             this.carModelString = model
-
-            val eventValue = HashMap<String, Any>()
-            eventValue[AFInAppEventParameterName.EVENT_START] = 1
-            AppsFlyerLib.getInstance().trackEvent(context, AFInAppEventType.SUBSCRIBE, eventValue)
-
         }).subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeAutoDispose(::onSuccess, ::onError) {}
