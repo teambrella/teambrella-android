@@ -169,7 +169,10 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, currencyRate)) }
             withdrawView?.isEnabled = true
             withdrawView?.setOnClickListener { WithdrawActivity.start(context, dataHost.teamId, dataHost.currency, currencyRate) }
-            if (!data?.contractAdress.isNullOrEmpty()) {
+
+            val hasContract = !data?.contractAdress.isNullOrEmpty()
+            etherScanView?.visibility = if (hasContract) View.VISIBLE else View.GONE
+            if (hasContract) {
                 etherScanView?.setOnClickListener {
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://etherscan.com/address/" + data?.contractAdress))
                     startActivity(browserIntent)
@@ -182,6 +185,7 @@ class KWalletFragment : ADataProgressFragment<IMainDataHost>(), WalletBackupMana
             cosignersView?.visibility = View.GONE
             withdrawView?.isEnabled = false
             transactionsView?.setOnClickListener { startActivity(getLaunchIntent(context!!, dataHost.teamId, dataHost.currency, 0f)) }
+            etherScanView?.visibility = View.GONE
         }
 
         if (!user.isDemoUser) {
