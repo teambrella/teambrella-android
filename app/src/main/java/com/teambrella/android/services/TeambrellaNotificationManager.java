@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -481,15 +482,21 @@ public class TeambrellaNotificationManager {
 
 
     private void notifyUser(final int id, final String title, final String subtitle, GlideRequest<Bitmap> imageRequest, final NotificationCompat.Builder builder) {
-        notifyUser(id, title, subtitle, (Bitmap) null, builder);
         if (imageRequest != null) {
             imageRequest.into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     notifyUser(id, title, subtitle, resource, builder);
                 }
-            });
+                @Override
+                public void onLoadFailed(Drawable errorDrawable) {
+                    notifyUser(id, title, subtitle, (Bitmap) null, builder);
+                }
 
+            });
+        }
+        else {
+            notifyUser(id, title, subtitle, (Bitmap) null, builder);
         }
 
     }
