@@ -65,6 +65,11 @@ public class AmountCurrencyUtil {
         }
     }
 
+    public static void setSimpleAmount(TextView textView, int amount, String currencySign) {
+        final Context context = textView.getContext();
+        textView.setText(context.getString(R.string.teammate_net_format_string_zero, currencySign));
+    }
+
     public static void setSignedAmountWithBadge(TextView textView, int amount, String currency) {
         final Context context = textView.getContext();
         currency = getLocalizedCurrency(context, currency);

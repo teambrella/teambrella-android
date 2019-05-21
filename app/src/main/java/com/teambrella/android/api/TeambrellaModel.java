@@ -276,6 +276,7 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_RISK_VOTED = "RiskVoted";
     public static final String ATTR_DATA_TOTALLY_PAID = "TotallyPaid";
     public static final String ATTR_DATA_TOTALLY_PAID_AMOUNT = "TotallyPaidAmount";
+    public static final String ATTR_DATA_COVERS_ME = "CoversMe";
     public static final String ATTR_DATA_IS_JOINING = "IsJoining";
     public static final String ATTR_DATA_IS_VOTING = "IsVoting";
     public static final String ATTR_DATA_CLAIMS_COUNT = "ClaimsCount";

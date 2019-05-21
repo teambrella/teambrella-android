@@ -78,8 +78,11 @@ public class MembersFragment extends AMainDataPagerProgressFragment {
 
     @Override
     protected ATeambrellaDataPagerAdapter createAdapter() {
-        return new KTeammateAdapter(getDataHost().getPager(getTags()[0]), getArguments().getInt(EXTRA_TEAM_ID), getDataHost().getCurrency()
-                , getDataHost().getInviteFriendsText()
-                , getDataHost()::launchActivity);
+        return new KTeammateAdapter(getDataHost().getPager(getTags()[0]),
+                getArguments().getInt(EXTRA_TEAM_ID),
+                getDataHost().getCurrency(),
+                getDataHost().getCoverage(),
+                getDataHost().getInviteFriendsText(),
+                getDataHost()::launchActivity);
     }
 }

@@ -224,6 +224,9 @@ var JsonObject?.userId: String?
 val JsonObject?.totallyPaid: Double?
     get() = getDouble(TeambrellaModel.ATTR_DATA_TOTALLY_PAID)
 
+val JsonObject?.coversMe: Double?
+    get() = getDouble(TeambrellaModel.ATTR_DATA_COVERS_ME)
+
 val JsonObject?.risk: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_RISK)
 

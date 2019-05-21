@@ -408,5 +408,7 @@
     <string name="in_year">За %d год</string>
     <string name="in_month">За %s</string>
     <string name="funding">Пополнение</string>
+    <string name="to_cover_for">будет защищать</string>
+    <string name="covering">защищает</string>
 
 </resources>

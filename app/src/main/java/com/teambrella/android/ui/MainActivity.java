@@ -595,6 +595,11 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     @Override
+    public double getCoverage() {
+        return mTeam.getAsJsonPrimitive(TeambrellaModel.ATTR_DATA_OBJECT_COVERAGE).getAsDouble();
+    }
+
+    @Override
     public String getUserName() {
         return mUserName;
     }

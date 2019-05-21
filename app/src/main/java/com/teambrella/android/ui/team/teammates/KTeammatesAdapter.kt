@@ -29,14 +29,16 @@ const val VIEW_TYPE_HEADER_NEW_MEMBERS = TeambrellaDataPagerAdapter.VIEW_TYPE_RE
 const val VIEW_TYPE_INVITES_FRIENDS = TeambrellaDataPagerAdapter.VIEW_TYPE_REGULAR + 4
 
 
-class KTeammateAdapter(pager: IDataPager<JsonArray>
-                       , teamId: Int
-                       , currency: String
-                       , inviteText: String?
-                       , listener: OnStartActivityListener) : TeambrellaDataPagerAdapter(pager, listener) {
+class KTeammateAdapter(pager: IDataPager<JsonArray>,
+                       teamId: Int,
+                       currency: String,
+                       coverage: Double,
+                       inviteText: String?,
+                       listener: OnStartActivityListener) : TeambrellaDataPagerAdapter(pager, listener) {
     val mTeamId = teamId
     val mCurrency = currency
     val mInviteText = inviteText
+    val mCoverage = coverage
 
 
     companion object {
@@ -75,7 +77,7 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
             viewHolder = when (viewType) {
                 VIEW_TYPE_INVITES_FRIENDS -> InviteFriendsViewHolder(inflater.inflate(R.layout.list_item_invite_friends, parent, false))
                 VIEW_TYPE_TEAMMATE -> TeammateViewHolder(inflater.inflate(R.layout.list_item_teammate, parent, false))
-                VIEW_TYPE_HEADER_TEAMMATES -> Header(parent, R.string.teammates, R.string.net, R.drawable.list_item_header_background_middle)
+                VIEW_TYPE_HEADER_TEAMMATES -> Header(parent, R.string.teammates, if (mCoverage < 0.0001) R.string.to_cover_for else R.string.covering, R.drawable.list_item_header_background_middle)
                 VIEW_TYPE_HEADER_NEW_MEMBERS -> Header(parent, R.string.new_teammates, R.string.voting_ends_title, R.drawable.list_item_header_background_middle)
                 VIEW_TYPE_NEW_MEMBER -> NewMemberViewHolder(inflater.inflate(R.layout.list_item_new_teamate, parent, false))
                 else -> null
@@ -120,15 +122,20 @@ class KTeammateAdapter(pager: IDataPager<JsonArray>
 
     inner class TeammateViewHolder(view: View) : ATeammateViewHolder(view) {
 
-        private val net: TextView? = view.findViewById(R.id.net)
+        private val coversMe: TextView? = view.findViewById(R.id.net)
         private val risk: TextView? = view.findViewById(R.id.indicator)
         private val currencySign: String = AmountCurrencyUtil.getCurrencySign(mCurrency)
 
         override fun onBind(item: JsonObject?) {
             super.onBind(item)
-            item.totallyPaid?.let {
-                val net = Math.round(item.totallyPaid as Double).toInt()
-                AmountCurrencyUtil.setSignedAmount(this.net, net, currencySign)
+            item.coversMe?.let { _coversMe ->
+                val net = Math.round(_coversMe as Double).toInt()
+                if (net > 0) {
+                    AmountCurrencyUtil.setSignedAmount(this.coversMe, net, currencySign)
+                }
+                else {
+                    this.coversMe?.text = "-"
+                }
             }
             this.risk?.text = String.format(Locale.US, "%.1f", item.risk)
         }
