@@ -81,6 +81,7 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
         private val avatars: TeambrellaAvatarsWidgets? = itemView.findViewById(R.id.avatars)
         private val unread: TextView? = itemView.findViewById(R.id.unread)
         private val type: TextView? = itemView.findViewById(R.id.type)
+        private val pinned: ImageView? = itemView.findViewById(R.id.pinned)
 
         fun onBind(item: JsonObject) {
             if (item.text == null) {
@@ -91,6 +92,7 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
             setTitle(item)
             message?.text = Html.fromHtml(item.text?.replace("<p>", "")?.replace("</p>", ""))
             unread?.setUnreadCount(item.unreadCount ?: 0)
+            pinned?.visibility = if ((item.unreadCount ?:0) <= 0 && (item.teamPin ?:0F) > 0F) View.VISIBLE else View.INVISIBLE
 
             item.itemDate?.let {
                 `when`?.setRelativeTimeSpan(it)
