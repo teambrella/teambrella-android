@@ -74,6 +74,10 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
     override fun getItemViewType(position: Int): Int {
         var type = super.getItemViewType(position)
         if (type == VIEW_TYPE_REGULAR) {
+            if (mPager.loadedData.size() <= position) {
+                return VIEW_TYPE_ERROR;
+            }
+
             val item = mPager.loadedData[position]?.asJsonObject
             type = when (item?.chatItemType) {
                 ChatItems.CHAT_ITEM_MESSAGE -> VIEW_TYPE_MESSAGE_THEM

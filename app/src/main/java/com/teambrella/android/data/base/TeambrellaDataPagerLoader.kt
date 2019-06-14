@@ -235,6 +235,14 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         array.addAll(newData)
         _hasNext = size == LIMIT
         _nextIndex += size
+
+        // TODO: remove this code when paging is fixed
+//        if (since == -1L) {
+//            since = response.data?.discussionPart?.lastRead ?: 0L
+//        }
+        _observable.postValue(Notification.createOnNext(response))
+
+        /* TODO: use this code when paging is fixed
         if (since == -1L) {
             since = response.data?.discussionPart?.lastRead ?: 0L
             loadPrevious(true)
@@ -242,6 +250,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         } else {
             _observable.postValue(Notification.createOnNext(response))
         }
+        */
     }
 
     private fun onPrevious(response: JsonObject) {
