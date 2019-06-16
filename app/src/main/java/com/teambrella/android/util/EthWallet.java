@@ -329,7 +329,7 @@ public class EthWallet {
 
         Multisig myMultisig = tx.getFromMultisig();
         long myNonce = getMyNonce();
-        long gasLimit = 200_000L;
+        long gasLimit = 300_000L;
         long gasPrice = getGasPrice();
         String multisigAddress = myMultisig.address;
         String methodId = METHOD_ID_CHANGEALLCOSIGNERS;
