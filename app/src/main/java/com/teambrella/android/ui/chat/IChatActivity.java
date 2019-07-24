@@ -21,32 +21,25 @@ public interface IChatActivity extends IDataHost, ITeambrellaDaggerActivity {
 
 
     int getTeamId();
-
     int getTeammateId();
-
     Uri getChatUri();
-
     int getClaimId();
-
     String getObjectName();
-
     String getUserId();
-
     String getUserName();
-
     String getImageUri();
 
     MuteStatus getMuteStatus();
-
     void setChatMuted(boolean muted);
 
     LiveData<Notification<JsonObject>> getPinTopicObservable();
-
     void pinTopic();
-
     void unpinTopic();
-
     void resetPin();
 
     void setMyMessageVote(String postId, int vote);
+    void setMarkedPost(String postId, Boolean isMarked);
+    void setMainProxy(String userId);
+    void addProxy(String userId);
+    void removeProxy(String userId);
 }

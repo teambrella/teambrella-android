@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginEnd="16dp"
@@ -26,13 +28,15 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/chat_bubble_them"
         android:maxWidth="@dimen/chat_bubble_max_width"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/user_picture"
-        app:layout_constraintTop_toTopOf="@id/date">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -63,14 +67,34 @@
             android:gravity="end"
             android:includeFontPadding="false"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
             android:paddingTop="8dp"
+            android:paddingRight="8dp"
             app:layout_constraintBaseline_toBaselineOf="@id/teammate_name"
+            app:layout_constraintBottom_toTopOf="@id/message"
+            app:layout_constraintEnd_toStartOf="@id/frameMarkIcon"
             app:layout_constraintStart_toEndOf="@id/teammate_name"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/message" />
+            app:layout_constraintTop_toTopOf="parent" />
 
+
+        <FrameLayout
+            android:id="@+id/frameMarkIcon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/markIcon"
+                android:layout_width="12dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="-3.5dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_mark" />
+        </FrameLayout>
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/message"

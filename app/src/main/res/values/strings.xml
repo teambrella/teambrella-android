@@ -438,5 +438,12 @@
     <string name="funding">Funding</string>
     <string name="to_cover_for">to cover for</string>
   <string name="covering">covering</string>
+    <string name="my_summary_message">This is my summary</string>
+    <string name="make_main_proxy_title">Make %1$s my top proxy</string>
+  <string name="make_main_proxy_text">%1$s will always be selected to vote you</string>
+  <string name="add_proxy_title">Add %1$s to my proxies</string>
+  <string name="add_proxy_text">%1$s will vote for you when you can\'t vote</string>
+  <string name="remove_proxy_title">Remove %1$s from my proxies</string>
+  <string name="remove_proxy_text">%1$s will no longer for you</string>
 
 </resources>

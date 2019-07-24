@@ -376,6 +376,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val vote: TextView? = itemView.findViewById(R.id.vote)
         private val header: View? = itemView.findViewById(R.id.header)
         private val bubble: View? = itemView.findViewById(R.id.bubble)
+        private val mark: View? = itemView.findViewById(R.id.frameMarkIcon)
 
         init {
             message?.movementMethod = LinkMovementMethod.getInstance()
@@ -387,6 +388,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
             message?.text = item.text
             teammateName?.text = item.teammatePart?.name
             val voteValue = item.teammatePart?.vote ?: -1f
+            mark?.visibility = if (item.marked ?: false) View.VISIBLE else View.GONE
             when (mode) {
                 MODE_DISCUSSION -> {
                     vote?.visibility = View.INVISIBLE
@@ -410,10 +412,10 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 
             if (mode != MODE_CONVERSATION && (chatContext.isFullAccess || chatContext.isMyChat)) {
                 bubble?.setOnClickListener {
-                    chatContext.showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                    chatContext.showMessageMenuDialog(item)
                 }
                 message?.setOnClickListener {
-                    chatContext.showMessageMenuDialog(item.stringId, item.myLike ?: 0)
+                    chatContext.showMessageMenuDialog(item)
                 }
             }
         }
@@ -427,10 +429,12 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
         private val width = itemView.context.resources.getDimensionPixelSize(R.dimen.chat_image_width)
         private val closeButton: View? = itemView.findViewById(R.id.close)
         private val bubble: View? = itemView.findViewById(R.id.bubble)
+        private val mark: View? = itemView.findViewById(R.id.frameMarkIcon)
 
         override fun onBind(item: JsonObject) {
             super.onBind(item)
 
+            mark?.visibility = if (item.marked ?: false) View.VISIBLE else View.GONE
 //            image?.setLongClickable(true)
 //            image?.setOnLongClickListener {
 //                // itemView.visibility = View.GONE
@@ -470,12 +474,10 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                             }
                             if (mode != MODE_CONVERSATION && (chatContext.isFullAccess || chatContext.isMyChat)) {
                                 bubble?.setOnClickListener {
-                                    chatContext.showMessageMenuDialog(item.stringId, item.myLike
-                                            ?: 0)
+                                    chatContext.showMessageMenuDialog(item)
                                 }
                                 image?.setOnLongClickListener {
-                                    chatContext.showMessageMenuDialog(item.stringId, item.myLike
-                                            ?: 0)
+                                    chatContext.showMessageMenuDialog(item)
                                     true
                                 }
                             }

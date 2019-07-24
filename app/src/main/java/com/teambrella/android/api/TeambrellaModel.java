@@ -187,6 +187,8 @@ public class TeambrellaModel {
     public static final String ATTR_REQUEST_NEW_TEAMMATES_NOTIFICATION = "NewTeammatesNotification";
     public static final String ATTR_REQUEST_MY_PIN = "MyPin";
     public static final String ATTR_REQUEST_MY_LIKE = "MyLike";
+    public static final String ATTR_REQUEST_MARKED = "marked";
+    public static final String ATTR_REQUEST_USE_MARKS_MODE = "useMarksMode";
 
 
     public static final String ATTR_REQUEST_TOPIC_ID = "TopicId";
@@ -341,6 +343,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_LIKES = "Likes";
     public static final String ATTR_DATA_MY_LIKE = "MyLike";
     public static final String ATTR_DATA_GRAYED = "Grayed";
+    public static final String ATTR_DATA_IS_MARKED = "IsMarked";
+    public static final String ATTR_DATA_SUGGEST_ADD_PROXY = "SuggestAddingProxy";
+    public static final String ATTR_DATA_SUGGEST_REMOVE_PROXY = "SuggestRemovingProxy";
+    public static final String ATTR_DATA_IS_MARKS_ONLY = "IsMarksOnly";
 
 
     public static final String ATTR_DATA_ONE_VOTING = "VotingPart";
@@ -356,8 +362,10 @@ public class TeambrellaModel {
     public static final String ATTR_DATA_ESTIMATED_EXPENSES = "EstimatedExpenses";
     public static final String ATTR_DATA_DEDUCTIBLE = "Deductible";
     public static final String ATTR_DATA_COVERAGE = "Coverage";
+    public static final String ATTR_DATA_WARNING = "Warning";
     public static final String ATTR_DATA_INCIDENT_DATE = "IncidentDate";
     public static final String ATTR_DATA_CHAT = "Chat";
+    public static final String ATTR_DATA_MARKED_POSTS = "MarkedPosts";
     public static final String ATTR_DATA_TEXT = "Text";
     public static final String ATTR_DATA_TEAMMATE_PART = "TeammatePart";
     public static final String ATTR_DATA_CREATED = "Created";

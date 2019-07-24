@@ -819,7 +819,6 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         queuedRequest(TeambrellaUris.getDeletePostUri(postId));
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mImagePicker.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -958,10 +957,10 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         }
     }
 
-    public void showMessageMenuDialog(String postId, int myLike) {
+    public void showMessageMenuDialog(JsonObject item) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(MESSAGE_MENU_FRAGMENT_TAG) == null) {
-            MessageMenuDialogFragment.Companion.getInstance(postId, myLike).show(fragmentManager, MESSAGE_MENU_FRAGMENT_TAG);
+            MessageMenuDialogFragment.Companion.getInstance(item).show(fragmentManager, MESSAGE_MENU_FRAGMENT_TAG);
         }
     }
 
@@ -1055,7 +1054,29 @@ public class ChatActivity extends ATeambrellaActivity implements IChatActivity, 
         queuedRequest(TeambrellaUris.getSetPostLikeUri(postId, vote));
     }
 
+    @Override
+    public void setMarkedPost(String postId, Boolean isMarked) {
+        ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setMarked(postId, isMarked);
+        queuedRequest(TeambrellaUris.getSetMarkedUri(postId, isMarked));
+    }
 
+    @Override
+    public void setMainProxy(String userId) {
+        ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setProxy(userId, true, true);
+        queuedRequest(TeambrellaUris.getSetProxyPositionUri(0, userId, getTeamId()));
+    }
+
+    @Override
+    public void addProxy(String userId) {
+        ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setProxy(userId, true, false);
+        queuedRequest(TeambrellaUris.getSetMyProxyUri(userId, true));
+    }
+
+    @Override
+    public void removeProxy(String userId) {
+        ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel.class).setProxy(userId, false, false);
+        queuedRequest(TeambrellaUris.getSetMyProxyUri(userId, false));
+    }
 
     @Override
     public void setTitle(String title) {

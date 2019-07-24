@@ -23,6 +23,9 @@ const val IS_MY_TOPIC = "MyTopic"
 const val USER_GENDER = "UserGender"
 const val IMAGE_INDEX = "ImageIndex"
 const val DATE_PAYMENT_FINISHED = "DatePaymentFinished"
+const val REIMBURSEMENT = "Reimbursement"
+const val VOTING_RES = "VotingRes_Crypto"
+const val PAYMENT_RES = "PaymentRes_Crypto"
 const val SHARED_URL = "SharedUrl"
 const val VOTING_RES_CRYPTO = "VotingRes_Crypto"
 const val PAYMENT_RES_CRYPTO = "PaymentRes_Crypto"
@@ -193,8 +196,9 @@ val JsonObject?.discussionFreq: Float?
 val JsonObject?.votingFreq: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_VOTING_FREQUENCY)
 
-val JsonObject?.isMyProxy: Boolean?
+var JsonObject?.isMyProxy: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY, value)
 
 var JsonObject?.avatar: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AVATAR)
@@ -452,6 +456,16 @@ var JsonObject?.likes: Int?
 var JsonObject?.myLike: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_MY_LIKE)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_MY_LIKE, value)
+
+var JsonObject?.marked: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MARKED)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MARKED, value)
+
+val JsonObject?.suggestAddingToProxies: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_SUGGEST_ADD_PROXY)
+
+val JsonObject?.suggestRemovingFromProxies: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_SUGGEST_REMOVE_PROXY)
 
 var JsonObject?.grayed: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_GRAYED)

@@ -120,6 +120,18 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         }
     }
 
+    private fun notifyUpdate() {
+        val response = JsonObject().apply {
+            metadata = JsonObject().apply {
+                itemDeleted = true
+            }
+            data = JsonObject().apply {
+                discussionPart = JsonObject()
+            }
+        }
+        _observable.postValue(Notification.createOnNext(response))
+    }
+
     public fun updateLikes(postId: String, myLike: Int) {
         val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == postId
                 && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
@@ -132,17 +144,49 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             newMessage.likes = (it.likes?:0) + likesDiff
             array.set(posOfOldItem, newMessage)
             Log.v(LOG_TAG, "(updateLikes) Updating: $postId at $posOfOldItem")
+            notifyUpdate()
+        }
+    }
 
-            val response = JsonObject().apply {
-                metadata = JsonObject().apply {
-                    itemDeleted = true
-                }
-                data = JsonObject().apply {
-                    discussionPart = JsonObject()
+    public fun setMarked(postId: String, isMarked: Boolean) {
+        val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == postId
+                && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
+
+        val oldItem = array[posOfOldItem]?.asJsonObject
+        oldItem?.let {
+            val newMessage = it.deepCopy()
+            newMessage.marked = isMarked
+            array.set(posOfOldItem, newMessage)
+            Log.v(LOG_TAG, "(setMarked) Updating: $postId at $posOfOldItem")
+
+            val posOfPreviousMarked = array.indexOfFirst { it.asJsonObject.stringId != postId
+                    && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE
+                    && (it.asJsonObject.marked ?: false)}
+            if (posOfPreviousMarked >= 0) {
+                array[posOfPreviousMarked]?.asJsonObject?.let { prevMarked ->
+                    val newPrevMessage = prevMarked.deepCopy()
+                    newPrevMessage.marked = false
+                    array.set(posOfPreviousMarked, newPrevMessage)
+                    Log.v(LOG_TAG, "(setMarked) Removing: $postId at $posOfOldItem")
                 }
             }
-            _observable.postValue(Notification.createOnNext(response))
+
+            notifyUpdate()
         }
+    }
+
+    public fun setProxy(userId: String, add: Boolean, reorder: Boolean) {
+        for (pos in 0..array.count()-1) {
+            val item = array[pos].asJsonObject
+            if (item.userId != userId) {
+                continue
+            }
+            var newMessage = item.deepCopy()
+            newMessage.teammatePart?.isMyProxy = add
+            array.set(pos, newMessage)
+            Log.v(LOG_TAG, "(setMarked) Updating: ${item.stringId} at $pos")
+        }
+        notifyUpdate()
     }
 
 

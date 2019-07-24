@@ -115,6 +115,228 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/mark"
+            android:background="@drawable/selectable_item_background">
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/mark_icon"
+                android:layout_width="12dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="19dp"
+                android:layout_marginEnd="4dp"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/mark_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_mark_btn" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/mark_title"
+                style="@style/Teambrella.TextAppearance.MessageTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/my_summary_message"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/is_mark_selected"
+                app:layout_constraintStart_toEndOf="@id/mark_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/is_mark_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/checkmark_team" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/remove_proxy"
+            android:background="@drawable/selectable_item_background">
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/remove_proxy_icon"
+                android:layout_width="@dimen/padding_20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_stop" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/remove_proxy_title"
+                style="@style/Teambrella.TextAppearance.MessageTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/remove_proxy_text"
+                app:layout_constraintEnd_toStartOf="@+id/remove_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/remove_proxy_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/remove_proxy_text"
+                style="@style/Teambrella.TextAppearance.MessageText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/remove_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/remove_proxy_icon"
+                app:layout_constraintTop_toBottomOf="@id/remove_proxy_title" />
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/remove_proxy_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/checkmark_team" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/add_proxy"
+            android:background="@drawable/selectable_item_background">
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/add_proxy_icon"
+                android:layout_width="@dimen/padding_20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_proxies_vote" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/add_proxy_title"
+                style="@style/Teambrella.TextAppearance.MessageTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/add_proxy_text"
+                app:layout_constraintEnd_toStartOf="@+id/add_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/add_proxy_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/add_proxy_text"
+                style="@style/Teambrella.TextAppearance.MessageText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/add_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/add_proxy_icon"
+                app:layout_constraintTop_toBottomOf="@id/add_proxy_title" />
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/add_proxy_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/checkmark_team" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/main_proxy"
+            android:background="@drawable/selectable_item_background">
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/main_proxy_icon"
+                android:layout_width="@dimen/padding_20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_proxies_vote" />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/main_proxy_title"
+                style="@style/Teambrella.TextAppearance.MessageTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/main_proxy_text"
+                app:layout_constraintEnd_toStartOf="@+id/main_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/main_proxy_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <com.teambrella.android.ui.widget.AkkuratRegularTextView
+                android:id="@+id/main_proxy_text"
+                style="@style/Teambrella.TextAppearance.MessageText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_proxy_selected"
+                app:layout_constraintStart_toEndOf="@id/main_proxy_icon"
+                app:layout_constraintTop_toBottomOf="@id/main_proxy_title" />
+
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/main_proxy_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/checkmark_team" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
     </LinearLayout>
 
 

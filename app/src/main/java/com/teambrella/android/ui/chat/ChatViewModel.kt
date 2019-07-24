@@ -98,4 +98,13 @@ class ChatViewModel : TeambrellaPagerViewModel() {
         loader.updateLikes(postId, vote)
     }
 
+    fun setMarked(postId: String, isMarked: Boolean) {
+        val loader = dataPager as KChatDataPagerLoader
+        loader.setMarked(postId, isMarked)
+    }
+
+    fun setProxy(userId: String, add: Boolean, reorder: Boolean) {
+        val loader = dataPager as KChatDataPagerLoader
+        loader.setProxy(userId, add, reorder)
+    }
 }
