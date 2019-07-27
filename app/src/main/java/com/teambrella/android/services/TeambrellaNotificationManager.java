@@ -210,7 +210,7 @@ public class TeambrellaNotificationManager {
                 getAvatarRequest(avatar),
                 getBuilder(TEAM_UPDATES_ID).setContentIntent(PendingIntent.getActivity(mContext
                         , 1
-                        , ChatActivity.getTeammateChat(mContext
+                        , ChatActivity.Companion.getTeammateChat(mContext
                                 , teamId
                                 , userId
                                 , userName
@@ -274,7 +274,7 @@ public class TeambrellaNotificationManager {
                 , getAvatarRequest(avatar)
                 , getBuilder(null).setContentIntent(PendingIntent.getActivities(mContext
                         , 1
-                        , new Intent[]{new Intent(mContext, MainActivity.class), ChatActivity.getFeedChat(mContext, topicName,
+                        , new Intent[]{new Intent(mContext, MainActivity.class), ChatActivity.Companion.getFeedChat(mContext, topicName,
                                 topicId, teamId, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)}
                         , PendingIntent.FLAG_UPDATE_CURRENT))
         );
@@ -317,7 +317,7 @@ public class TeambrellaNotificationManager {
             case NEW_CLAIM:
                 showNewClaimNotification(message.getClaimId(), message.getSenderUserName()
                         , message.getAmount(), message.getSenderAvatar(), message.getTeamId(), message.getTeamName()
-                        , ChatActivity.getClaimChat(mContext
+                        , ChatActivity.Companion.getClaimChat(mContext
                                 , message.getTeamId()
                                 , message.getClaimId()
                                 , message.getClaimObjectName()
@@ -375,7 +375,7 @@ public class TeambrellaNotificationManager {
                             , message.isMyTopic()
                             , message.getTeamId()
                             , message.getTopicId()
-                            , ChatActivity.getTeammateChat(mContext
+                            , ChatActivity.Companion.getTeammateChat(mContext
                                     , message.getTeamId()
                                     , message.getTeammateUserId()
                                     , message.getTeammateUserName()
@@ -393,7 +393,7 @@ public class TeambrellaNotificationManager {
                             , message.isMyTopic()
                             , message.getTeamId()
                             , message.getTopicId()
-                            , ChatActivity.getClaimChat(mContext
+                            , ChatActivity.Companion.getClaimChat(mContext
                                     , message.getTeamId()
                                     , message.getClaimId()
                                     , message.getClaimObjectName()
@@ -412,7 +412,7 @@ public class TeambrellaNotificationManager {
                             , message.isMyTopic()
                             , message.getTeamId()
                             , message.getTopicId()
-                            , ChatActivity.getFeedChat(mContext
+                            , ChatActivity.Companion.getFeedChat(mContext
                                     , message.getDiscussionTopicName()
                                     , message.getTopicId()
                                     , message.getTeamId()
@@ -476,7 +476,7 @@ public class TeambrellaNotificationManager {
         return PendingIntent.getActivities(mContext, requestCode, new Intent[]
                 {new Intent(mContext, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         , new Intent(mContext, InboxActivity.class)
-                        , ChatActivity.getConversationChat(mContext, userId, userName, avatar)
+                        , ChatActivity.Companion.getConversationChat(mContext, userId, userName, avatar)
                 }, 0);
     }
 

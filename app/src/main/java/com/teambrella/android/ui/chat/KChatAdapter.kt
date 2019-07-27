@@ -443,7 +443,7 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
 //            }
             closeButton?.visibility = if (chatContext.isFullAccess) View.GONE else View.VISIBLE
             closeButton?.setOnClickListener {
-                chatContext.deletePost(item.stringId)
+                chatContext.deletePost(item.stringId!!)
             }
 
             var smallImages = item.localImages?.mapTo(ArrayList()) { FILE_PREFIX + it.asString }

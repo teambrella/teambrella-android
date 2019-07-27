@@ -33,7 +33,6 @@ const val RECOMMENDING_VERSION = "RecommendedVersion"
 const val ME = "Me"
 const val ESTIMATED_EXPENSES = "EstimatedExpenses"
 const val DEDUCTIBLE = "Deductible"
-const val INCIDENT_DATE = "IncidentDate"
 const val DATE_PAY_TO_JOIN = "DatePayToJoin"
 const val SUBTITLE = "SubTitle"
 const val SYSTEM_TYPE = "SystemType"
@@ -299,6 +298,10 @@ var JsonObject?.unreadCount: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, value)
 
+var JsonObject?.isMarksOnly: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MARKS_ONLY)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MARKS_ONLY, value)
+
 val JsonObject?.amountStr: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AMOUNT)
 
@@ -501,12 +504,19 @@ val JsonObject?.balanceFiat: String?
 val JsonObject?.teammate: JsonObject?
     get() = getObject(TEAMMATE)
 
+val JsonObject?.teammateId: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_TEAMMATE_ID)
+
 val JsonObject?.claim: JsonObject?
     get() = getObject(CLAIM)
 
 var JsonObject?.chat: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_CHAT)
     set(value) = setObject(TeambrellaModel.ATTR_DATA_CHAT, value)
+
+var JsonObject?.markedPosts: JsonArray?
+    get() = getJsonArray(TeambrellaModel.ATTR_DATA_MARKED_POSTS)
+    set(value) = setObject(TeambrellaModel.ATTR_DATA_MARKED_POSTS, value)
 
 val JsonObject?.teamAccessLevel: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL)
@@ -630,6 +640,8 @@ var JsonObject?.messageStatus: String?
 val JsonObject?.lastRead: Long?
     get() = getLong(TeambrellaModel.ATTR_DATA_LAST_READ)
 
+val JsonObject?.muted: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MUTED)
 
 val JsonObject?.reimbursement: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_REIMBURSEMENT)
@@ -665,7 +677,7 @@ val JsonObject?.deductible: Double?
     get() = getDouble(DEDUCTIBLE)
 
 val JsonObject?.incidentDate: String?
-    get() = getString(INCIDENT_DATE)
+    get() = getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE)
 
 val JsonObject?.subTitle: String?
     get() = getString(SUBTITLE)

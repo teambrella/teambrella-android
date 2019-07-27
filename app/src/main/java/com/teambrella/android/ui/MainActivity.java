@@ -764,7 +764,7 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     }
 
     private void showMyTopic() {
-        startActivity(ChatActivity.getTeammateChat(this, getTeamId()
+        startActivity(ChatActivity.Companion.getTeammateChat(this, getTeamId()
                 , getUserId()
                 , getUserName()
                 , getUserPicture() != null ? getUserPicture().toString() : ""

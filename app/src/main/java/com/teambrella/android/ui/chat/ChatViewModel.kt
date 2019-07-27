@@ -39,7 +39,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
                 add(TeambrellaModel.ATTR_DATA_ONE_TEAMMATE, teammate)
             }
 
-            val lastDate = loader.getLastDate(true)
+            val lastDate = loader.getLastDate(false,true)
             isNextDay = KChatDataPagerLoader.isNextDay(lastDate, currentDate)
         }
 
@@ -70,7 +70,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
             val ratios = JsonArray()
             ratios.add(ratio)
             add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios)
-            val lastDate = loader.getLastDate(true)
+            val lastDate = loader.getLastDate(false,true)
             isNextDay = KChatDataPagerLoader.isNextDay(lastDate, currentDate)
 
         }
@@ -85,7 +85,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
         loader.updateAnotherImageButton(true)
     }
 
-    fun deleteMyImage(postId: String) {
+    fun deleteMyImage(postId: String?) {
         val loader = dataPager as KChatDataPagerLoader
         loader.remove({
             it.asJsonObject.stringId  == postId

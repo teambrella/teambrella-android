@@ -86,7 +86,7 @@ class InboxAdapter extends TeambrellaDataPagerAdapter {
             mUnreadCount.setVisibility(item.getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT) > 0 ? View.VISIBLE : View.INVISIBLE);
             mWhen.setText(TeambrellaDateUtils.getRelativeTime(-item.getLong(TeambrellaModel.ATTR_DATA_SINCE_LAST_MESSAGE_MINUTES, 0)));
 
-            itemView.setOnClickListener(v -> startActivity(ChatActivity.getConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
+            itemView.setOnClickListener(v -> startActivity(ChatActivity.Companion.getConversationChat(itemView.getContext(), item.getString(TeambrellaModel.ATTR_DATA_USER_ID)
                     , item.getString(TeambrellaModel.ATTR_DATA_NAME)
                     , item.getString(TeambrellaModel.ATTR_DATA_AVATAR))));
         }

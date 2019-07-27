@@ -92,13 +92,13 @@ class MessageMenuDialogFragment : BottomSheetDialogFragment() {
         if (!isMy) {
             upvoteMessageView.visibility = View.VISIBLE
             upvoteMessageView.setOnClickListener {
-                chatActivity?.setMyMessageVote(item.stringId, if (vote > 0) 0 else 1)
+                chatActivity?.setMyMessageVote(item.stringId!!, if (vote > 0) 0 else 1)
                 dismiss()
             }
 
             downvoteMessageView.visibility = View.VISIBLE
             downvoteMessageView.setOnClickListener {
-                chatActivity?.setMyMessageVote(item.stringId, if (vote < 0) 0 else -1)
+                chatActivity?.setMyMessageVote(item.stringId!!, if (vote < 0) 0 else -1)
                 dismiss()
             }
 
@@ -110,7 +110,7 @@ class MessageMenuDialogFragment : BottomSheetDialogFragment() {
                     (view.findViewById(R.id.main_proxy_title) as? TextView) ?.text = getString(R.string.make_main_proxy_title, name ?: "")
                     (view.findViewById(R.id.main_proxy_text) as? TextView) ?.text = getString(R.string.make_main_proxy_text, name ?: "")
                     mainProxyView.setOnClickListener {
-                        chatActivity?.setMainProxy(item.userId)
+                        chatActivity?.setMainProxy(item.userId!!)
                         dismiss()
                     }
                 } else {
@@ -118,7 +118,7 @@ class MessageMenuDialogFragment : BottomSheetDialogFragment() {
                     (view.findViewById(R.id.add_proxy_title) as? TextView) ?.text = getString(R.string.add_proxy_title, name ?: "")
                     (view.findViewById(R.id.add_proxy_text) as? TextView) ?.text = getString(R.string.add_proxy_text, name ?: "")
                     addProxyView.setOnClickListener {
-                        chatActivity?.addProxy(item.userId)
+                        chatActivity?.addProxy(item.userId!!)
                         dismiss()
                     }
                 }
@@ -132,7 +132,7 @@ class MessageMenuDialogFragment : BottomSheetDialogFragment() {
                     (view.findViewById(R.id.remove_proxy_text) as? TextView)?.text = getString(R.string.remove_proxy_text, name
                             ?: "")
                     removeProxyView.setOnClickListener {
-                        chatActivity?.removeProxy(item.userId)
+                        chatActivity?.removeProxy(item.userId!!)
                         dismiss()
                     }
                 }
@@ -142,7 +142,7 @@ class MessageMenuDialogFragment : BottomSheetDialogFragment() {
             markView.visibility = View.VISIBLE
             (view.findViewById(R.id.is_mark_selected) as? View)?.visibility = if (item?.marked ?: false) View.VISIBLE else View.GONE
             markView.setOnClickListener {
-                chatActivity?.setMarkedPost(item.stringId, !(item.marked ?: false))
+                chatActivity?.setMarkedPost(item.stringId!!, !(item.marked ?: false))
                 dismiss()
             }
         }
