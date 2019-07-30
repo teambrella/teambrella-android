@@ -615,6 +615,14 @@ var JsonObject?.size: Int?
     get() = getInt(TeambrellaModel.ATTR_METADATA_SIZE)
     set(value) = setValue(TeambrellaModel.ATTR_METADATA_SIZE, value)
 
+var JsonObject?.scroll: Int?
+    get() = getInt(TeambrellaModel.ATTR_METADATA_SCROLL)
+    set(value) = setValue(TeambrellaModel.ATTR_METADATA_SCROLL, value)
+
+var JsonObject?.scrollOffset: Int?
+    get() = getInt(TeambrellaModel.ATTR_METADATA_SCROLL_OFFSET)
+    set(value) = setValue(TeambrellaModel.ATTR_METADATA_SCROLL_OFFSET, value)
+
 var JsonObject?.itemsUpdated: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED)
     set(value) = setBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, value)

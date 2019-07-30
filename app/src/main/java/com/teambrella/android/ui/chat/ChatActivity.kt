@@ -1,7 +1,6 @@
 package com.teambrella.android.ui.chat
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -12,8 +11,6 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import android.text.Editable
@@ -35,13 +32,11 @@ import android.widget.TextView
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.teambrella.android.R
 import com.teambrella.android.api.*
 import com.teambrella.android.api.model.json.JsonWrapper
 import com.teambrella.android.api.server.TeambrellaUris
-import com.teambrella.android.data.base.IDataPager
 import com.teambrella.android.data.base.*
 import com.teambrella.android.image.glide.GlideApp
 import com.teambrella.android.services.TeambrellaNotificationManager
@@ -79,6 +74,11 @@ import com.teambrella.android.services.push.TOPIC_MESSAGE_NOTIFICATION
  */
 class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	
+	private val chatViewModel; get() = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java)
+	private val pinUnpinViewModel; get() = ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel::class.java)
+	private val fragmentChat; get() = supportFragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) as KChatFragment?
+	private val pager; get() = getPager(DATA_FRAGMENT_TAG)
+
 	private var mUri: Uri? = null
 	private var mTopicId: String? = null
 	private var mAction: String? = null
@@ -103,6 +103,12 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		private set
 	var isMyChat = false
 		private set
+
+	private val isClaim; get() = mAction == SHOW_CLAIM_CHAT_ACTION
+	private val isTeammate; get() = mAction == SHOW_TEAMMATE_CHAT_ACTION
+	private val isDiscussion; get() = mAction == SHOW_FEED_CHAT_ACTION
+	private val isPrivate; get() = mAction == SHOW_CONVERSATION_CHAT
+	private val isPinnable; get() = isDiscussion && isFullAccess
 	
 	private var mContainer: View? = null
 	private var mSnackBar: Snackbar? = null
@@ -121,31 +127,19 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	override val imageUri; get() = intent.getStringExtra(EXTRA_IMAGE_URI)
 	override val chatUri: Uri; get() = intent.getParcelableExtra(EXTRA_URI)
 	
-	
-	private val chatViewModel
-		get() = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java)
-	
-	private val pinUnpinViewModel
-		get() = ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel::class.java)
-	
-	
 	override val dataTags: Array<String>
 		get() {
-			if (mAction != null) {
-				when (mAction) {
-					SHOW_CLAIM_CHAT_ACTION -> return arrayOf(CLAIM_DATA_TAG, VOTE_DATA_TAG, PIN_UNPIN_DATA)
-					SHOW_FEED_CHAT_ACTION -> return arrayOf(PIN_UNPIN_DATA)
-					SHOW_TEAMMATE_CHAT_ACTION -> return arrayOf(PIN_UNPIN_DATA)
-				}
+			when (mAction) {
+				SHOW_CLAIM_CHAT_ACTION -> return arrayOf(CLAIM_DATA_TAG, VOTE_DATA_TAG, PIN_UNPIN_DATA)
+				SHOW_FEED_CHAT_ACTION -> return arrayOf(PIN_UNPIN_DATA)
+				SHOW_TEAMMATE_CHAT_ACTION -> return arrayOf(PIN_UNPIN_DATA)
 			}
 			return arrayOf()
 		}
 	
-	override val dataPagerTags: Array<String>
-		get() = arrayOf(DATA_FRAGMENT_TAG)
+	override val dataPagerTags; get() = arrayOf(DATA_FRAGMENT_TAG)
 	
-	override val isRequestable: Boolean
-		get() = true
+	override val isRequestable; get() = true
 	
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,7 +168,8 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true)
 			actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_vector)
-			if (mAction != null && mAction == SHOW_CONVERSATION_CHAT) {
+			
+			if (isPrivate) {
 				actionBar.displayOptions = actionBar.displayOptions or ActionBar.DISPLAY_SHOW_CUSTOM
 				actionBar.setCustomView(R.layout.chat_toolbar_view)
 				val view = actionBar.customView
@@ -189,11 +184,9 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		}
 		
 		mImagePicker = ImagePicker(this)
-		val fragmentManager = supportFragmentManager
 		
-		val transaction = fragmentManager.beginTransaction()
-		
-		if (fragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) == null) {
+		val transaction = supportFragmentManager.beginTransaction()
+		if (fragmentChat == null) {
 			transaction.add(R.id.container, createDataFragment(arrayOf(DATA_FRAGMENT_TAG), KChatFragment::class.java), UI_FRAGMENT_TAG)
 		}
 		
@@ -211,42 +204,37 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		
 		var needHideSendImage: Boolean? = false
 		var needShowContinueJoining = false
-		if (mAction != null) {
-			when (mAction) {
-				SHOW_TEAMMATE_CHAT_ACTION -> setTitle(R.string.application)
-				
-				SHOW_CLAIM_CHAT_ACTION -> {
-					val incidentDate = intent.getStringExtra(EXTRA_DATE)
-					if (incidentDate != null) {
-						setClaimTitle(incidentDate)
-					} else {
-						setTitle(R.string.claim)
-					}
-					
-				}
-				SHOW_CONVERSATION_CHAT -> {
-					setTitle(R.string.private_conversation)
-					needHideSendImage = false
-					if (mTitle != null) {
-						mTitle!!.setText(R.string.private_conversation)
-					}
-					
-					if (mSubtitle != null) {
-						mSubtitle!!.text = intent.getStringExtra(EXTRA_USER_NAME)
-					}
-					
-					val mImageUri = intent.getStringExtra(EXTRA_IMAGE_URI)
-					if (mImageUri != null && mIcon != null) {
-						GlideApp.with(this).load(getImageLoader()!!.getImageUrl(mImageUri))
-								.apply(RequestOptions().transforms(CenterCrop(), CircleCrop())
-										.placeholder(R.drawable.picture_background_circle))
-								.into(mIcon!!)
-						//mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
-					}
-				}
-				
-				SHOW_FEED_CHAT_ACTION -> setTitle(intent.getStringExtra(EXTRA_TITLE))
+		if (isTeammate) {
+			setTitle(R.string.application)
+		}
+		
+		if (isClaim) {
+			val incidentDate = intent.getStringExtra(EXTRA_DATE)
+			if (incidentDate != null) {
+				setClaimTitle(incidentDate)
+			} else {
+				setTitle(R.string.claim)
 			}
+		}
+
+		if (isPrivate) {
+			setTitle(R.string.private_conversation)
+			needHideSendImage = false
+			mTitle?.setText(R.string.private_conversation)
+			mSubtitle?.text = intent.getStringExtra(EXTRA_USER_NAME)
+			
+			val mImageUri = intent.getStringExtra(EXTRA_IMAGE_URI)
+			if (mImageUri != null && mIcon != null) {
+				GlideApp.with(this).load(getImageLoader()!!.getImageUrl(mImageUri))
+						.apply(RequestOptions().transforms(CenterCrop(), CircleCrop())
+								.placeholder(R.drawable.picture_background_circle))
+						.into(mIcon!!)
+				//mIcon.setOnClickListener(v -> TeammateActivity.start(this, mTeamId, mUserId, intent.getStringExtra(EXTRA_USER_NAME), mImageUri));
+			}
+		}
+
+		if (isDiscussion) {
+			setTitle(intent.getStringExtra(EXTRA_TITLE))
 		}
 		
 		when (intent.getIntExtra(EXTRA_TEAM_ACCESS_LEVEL, TeambrellaModel.TeamAccessLevel.FULL_ACCESS)) {
@@ -302,6 +290,7 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		setResult(RESULT_OK)
 	}
 	
+	
 	protected fun setAnimation(fadeIn: Boolean, view: View) {
 		val anim = AlphaAnimation((if (fadeIn) 0 else 1).toFloat(), (if (fadeIn) 1 else 0).toFloat())
 		anim.interpolator = if (fadeIn) DecelerateInterpolator() else AccelerateInterpolator()
@@ -330,10 +319,10 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		}
 	}
 	
+	
 	override fun onPostCreate(savedInstanceState: Bundle?) {
 		super.onPostCreate(savedInstanceState)
-		getPager(DATA_FRAGMENT_TAG).dataObservable
-				.observe(this, Observer { it?.let { this.onDataUpdated(it) }})
+		pager.dataObservable.observe(this, Observer { it?.let { this.onDataUpdated(it) }})
 	}
 	
 	override fun onDestroy() {
@@ -343,21 +332,26 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	
 	
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
-		if (mAction == null || mAction != SHOW_CONVERSATION_CHAT) {
-			if (mMuteStatus != null) {
-				
-//				if (canBeInMarksOnlyMode) {
-//
-//				} else
-				if (isFullAccess) {
-					menu.add(0, R.id.pin, 0, null)
-							.setIcon(R.drawable.ic_pin_grey).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-				}
-				
-				when (mMuteStatus) {
-					IChatActivity.MuteStatus.DEFAULT, IChatActivity.MuteStatus.MUTED -> menu.add(0, R.id.unmute, 0, null)
+		if ((isClaim || isTeammate) && chatViewModel.hasEnoughMarks) {
+			menu.add(0, R.id.marks_mode, 0, null)
+					.setIcon(if (chatViewModel.isMarksOnlyMode)  R.drawable.ic_expand else R.drawable.ic_collapse)
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+		}
+	
+		if (isPinnable) {
+			menu.add(0, R.id.pin, 0, null)
+					.setIcon(R.drawable.ic_pin_grey).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+		}
+
+		if (!isPrivate) {
+			when (mMuteStatus) {
+				IChatActivity.MuteStatus.DEFAULT,
+				IChatActivity.MuteStatus.MUTED -> {
+					menu.add(0, R.id.unmute, 0, null)
 							.setIcon(R.drawable.ic_icon_bell_muted).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-					IChatActivity.MuteStatus.UMMUTED -> menu.add(0, R.id.mute, 0, null)
+				}
+				IChatActivity.MuteStatus.UMMUTED -> {
+					menu.add(0, R.id.mute, 0, null)
 							.setIcon(R.drawable.ic_icon_bell).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 				}
 			}
@@ -369,20 +363,16 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	private fun onSendText(v: View) {
 		val text = mMessageView!!.text.toString().trim { it <= ' ' }
 		if (!TextUtils.isEmpty(text)) {
-			val model = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java)
-			when (mAction) {
-				SHOW_CONVERSATION_CHAT -> {
-					val uuid = UUID.randomUUID().toString()
-					model.addPendingMessage(uuid, text, -1f)
-					queuedRequest(TeambrellaUris.getNewConversationMessageUri(mUserId, uuid, text, null))
-					StatisticHelper.onPrivateMessage(this)
-				}
-				else -> {
-					val uuid = UUID.randomUUID().toString()
-					model.addPendingMessage(uuid, text, mVote)
-					queuedRequest(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null))
-					StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT)
-				}
+			val uuid = UUID.randomUUID().toString()
+			if (isPrivate) {
+				chatViewModel.addPendingMessage(uuid, text, -1f)
+				queuedRequest(TeambrellaUris.getNewConversationMessageUri(mUserId, uuid, text, null))
+				StatisticHelper.onPrivateMessage(this)
+			}
+			else {
+				chatViewModel.addPendingMessage(uuid, text, mVote)
+				queuedRequest(TeambrellaUris.getNewPostUri(mTopicId, uuid, text, null))
+				StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_TEXT)
 			}
 		}
 		mMessageView!!.text = null
@@ -456,22 +446,18 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 						val array = Observable.just<JsonObject>(response.value)
 								.map<JsonWrapper>( { JsonWrapper(it) })
 								.map { jsonWrapper -> jsonWrapper.getJsonArray(TeambrellaModel.ATTR_DATA) }.blockingFirst()
-						var uriNew: Uri? = null
-						when (mAction) {
-							SHOW_CONVERSATION_CHAT -> {
-								uriNew = TeambrellaUris.getNewConversationMessageUri(mUserId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString())
-							}
-							else -> {
-								uriNew = TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString())
-							}
-						}
+						var uriNew =
+							if (isPrivate)
+								TeambrellaUris.getNewConversationMessageUri(mUserId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString())
+							else
+								TeambrellaUris.getNewPostUri(mTopicId, uri.getQueryParameter(TeambrellaUris.KEY_ID), null, array.toString())
 						Log.v(LOG_TAG, "(onRequestResult) Adding Uri: " + uriNew!!)
 						urisToProcess.add(uriNew)
 						StatisticHelper.onChatMessage(this, mTeamId, mTopicId, StatisticHelper.MESSAGE_IMAGE)
 					}
 					TeambrellaUris.NEW_POST,
 					TeambrellaUris.NEW_PRIVATE_MESSAGE -> {
-						getPager(DATA_FRAGMENT_TAG).loadNext(true)
+						pager.loadNext(true)
 					}
 					TeambrellaUris.MUTE -> {
 						Observable.fromArray<JsonObject>(response.value)
@@ -558,7 +544,6 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 									queuedRequest(urisToProcess.iterator().next())
 								}
 								else -> {
-									val pager = getPager(DATA_FRAGMENT_TAG)
 									pager.reload(uri)
 								}
 						}
@@ -592,7 +577,11 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 			mUserName = data.basic?.name ?: mUserName
 			mTopicId = discussion.topicId ?: mTopicId
 			
-			if (mAction == SHOW_CLAIM_CHAT_ACTION) {
+			chatViewModel.isPinnable = isPinnable
+			chatViewModel.isPrivateChat = isPrivate
+			
+			
+			if (isClaim) {
 				val incidentDate = data.basic?.incidentDate
 				if (incidentDate != null) {
 					setClaimTitle(incidentDate)
@@ -602,33 +591,30 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 				if (discussion.muted ?: false) {
 					mMuteStatus = IChatActivity.MuteStatus.MUTED
 				} else {
-					if (mAction != null && mAction != SHOW_CONVERSATION_CHAT) {
-						if (mMuteStatus == IChatActivity.MuteStatus.DEFAULT) {
-							showNotificationHelp()
-						}
-					}
 					mMuteStatus = IChatActivity.MuteStatus.UMMUTED
+					if (!isPrivate && mMuteStatus == IChatActivity.MuteStatus.DEFAULT) {
+						showNotificationHelp()
+					}
 				}
-			} else {
-				if (mMuteStatus == null) {
-					mMuteStatus = IChatActivity.MuteStatus.DEFAULT
-				}
+			} else if (mMuteStatus == null) {
+				mMuteStatus = IChatActivity.MuteStatus.DEFAULT
 			}
 			
 			invalidateOptionsMenu()
 			
 			val lastRead = discussion.lastRead ?: -1L
 			if (lastRead > mLastRead && mAction != null) {
-				when (mAction) {
-					SHOW_CONVERSATION_CHAT -> {
-						mChatBroadCastManager!!.notifyPrivateMessageRead(mUserId!!)
-						mNotificationManager!!.cancelPrivateChatNotification(mUserId)
-					}
-					else -> { mChatBroadCastManager!!.notifyTopicRead(mTopicId!!) }
+				if (isPrivate) {
+					mChatBroadCastManager?.notifyPrivateMessageRead(mUserId!!)
+					mNotificationManager?.cancelPrivateChatNotification(mUserId)
+				}
+				else {
+					mChatBroadCastManager?.notifyTopicRead(mTopicId!!)
 				}
 			}
 			mLastRead = lastRead
 		}
+		
 		
 		if (response.isOnNext) {
 			if (mTopicId != null) {
@@ -636,9 +622,8 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 			}
 			Observable.fromArray<JsonObject>(response.value)
 					.map { value -> value.data }
-					.doOnNext { data ->
-						data?.let { processUpdate(data) }
-					}.blockingFirst()
+					.doOnNext { data ->  data?.let { processUpdate(data) } }
+					.blockingFirst()
 			
 			// Let chat load first
 			if (!restoredUris) {
@@ -677,40 +662,43 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 				showPinTopicDialog()
 				return true
 			}
+			R.id.marks_mode -> {
+				changeViewMarksMode()
+				return true
+			}
 		}
 		return super.onOptionsItemSelected(item)
 	}
 	
-	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+	
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		
 		val result = mImagePicker!!.onActivityResult(requestCode, resultCode, data)
 		if (result != null) {
 			result.subscribeAutoDispose({ descriptor ->
 				val uuid = UUID.randomUUID().toString()
-				ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java)
-						.addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio, descriptor.cameraUsed)
-				when (mAction) {
-					SHOW_CONVERSATION_CHAT -> {
-						queuedRequest(TeambrellaUris.getNewConversationFileUri(descriptor.file.getAbsolutePath(), uuid))
-					}
-					else -> {
-						queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed))
-					}
+				chatViewModel.addPendingImage(uuid, descriptor.file.getAbsolutePath(), descriptor.ratio, descriptor.cameraUsed)
+				if (isPrivate) {
+					queuedRequest(TeambrellaUris.getNewConversationFileUri(descriptor.file.getAbsolutePath(), uuid))
 				}
+				else {
+					queuedRequest(TeambrellaUris.getNewFileUri(descriptor.file.getAbsolutePath(), uuid, descriptor.cameraUsed))
+				}
+				
 				null
 			}, { throwable -> null }// SnakBar is shown in onRequestResult
 					, { null })
 		} else {
-			getPager(DATA_FRAGMENT_TAG).loadNext(true)
-			if (mAction == SHOW_CLAIM_CHAT_ACTION) {
+			pager.loadNext(true)
+			if (isClaim) {
 				load(CLAIM_DATA_TAG)
 			}
 		}
 	}
 	
 	fun deletePost(postId: String) {
-		ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java).deleteMyImage(postId)
+		chatViewModel.deleteMyImage(postId)
 		queuedRequest(TeambrellaUris.getDeletePostUri(postId))
 	}
 	
@@ -718,9 +706,9 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		mImagePicker!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
 	}
 	
-	override fun onSaveInstanceState(outState: Bundle) {
+	override fun onSaveInstanceState(outState: Bundle?) {
 		super.onSaveInstanceState(outState)
-		outState.putLong(EXTRA_LAST_READ, mLastRead)
+		outState?.putLong(EXTRA_LAST_READ, mLastRead)
 	}
 	
 	override fun getDataConfig(tag: String): Bundle? {
@@ -781,6 +769,13 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		}
 	}
 	
+	private fun changeViewMarksMode() {
+		mContainer = findViewById(R.id.container)
+		chatViewModel.saveScrollPosition(fragmentChat?.scrollY!!, fragmentChat?.scrollYOffset!!)
+		chatViewModel.userSetMarksOnlyMode = !chatViewModel.isMarksOnlyMode
+		invalidateOptionsMenu()
+		request(TeambrellaUris.getSetViewModeUri(mTopicId, chatViewModel.userSetMarksOnlyMode))
+	}
 	
 	private inner class ChatNotificationClient internal constructor(context: Context) : TeambrellaNotificationServiceClient(context) {
 		
@@ -790,41 +785,36 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		
 		override fun onPushMessage(message: INotificationMessage): Boolean {
 			
-			val messageTopicId = message.topicId
-			val messageUserId = message.senderUserId
+			fun ReloadOrResume(): Boolean {
+				if (mResumed) {
+					pager.loadNext(true)
+				} else {
+					mReloadOnResume = true
+				}
+				return mResumed
+			}
 			
 			when (message.cmd) {
-				CREATED_POST -> when (mAction) { SHOW_CLAIM_CHAT_ACTION, SHOW_FEED_CHAT_ACTION, SHOW_TEAMMATE_CHAT_ACTION ->
-					if (messageTopicId == mTopicId
-						&& messageUserId != null
-						&& messageUserId != TeambrellaUser.get(this@ChatActivity).userId) {
-						if (mResumed) {
-							getPager(DATA_FRAGMENT_TAG).loadNext(true)
-						} else {
-							mReloadOnResume = true
+				CREATED_POST -> {
+					if (isClaim || isTeammate || isDiscussion) {
+						if (message.topicId == mTopicId
+								&& message.senderUserId != null
+								&& message.senderUserId != TeambrellaUser.get(this@ChatActivity).userId) {
+							return ReloadOrResume()
 						}
-						return mResumed
 					}
 				}
 				
-				PRIVATE_MSG -> if (mAction == SHOW_CONVERSATION_CHAT && messageUserId == mUserId) {
-					if (mResumed) {
-						getPager(DATA_FRAGMENT_TAG).loadNext(true)
-					} else {
-						mReloadOnResume = true
+				PRIVATE_MSG -> {
+					if (isPrivate && message.senderUserId == mUserId) {
+						return ReloadOrResume()
 					}
-					return mResumed
 				}
 				
 				TOPIC_MESSAGE_NOTIFICATION -> {
-					if (messageTopicId == mTopicId) {
-						if (!mResumed) {
-							mReloadOnResume = true
-						} else {
-							getPager(DATA_FRAGMENT_TAG).loadNext(true)
-						}
+					if (message.topicId == mTopicId) {
+						return ReloadOrResume()
 					}
-					return mResumed && messageTopicId != null && messageTopicId == mTopicId
 				}
 			}
 			
@@ -834,14 +824,13 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		fun onResume() {
 			mResumed = true
 			if (mReloadOnResume) {
-				getPager(DATA_FRAGMENT_TAG).loadNext(true)
+				pager.loadNext(true)
 				mReloadOnResume = false
 			}
 		}
 		
 		fun onPause() {
 			mResumed = false
-			
 		}
 	}
 	

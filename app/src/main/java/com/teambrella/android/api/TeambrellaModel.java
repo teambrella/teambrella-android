@@ -221,6 +221,8 @@ public class TeambrellaModel {
 	public static final String ATTR_METADATA_NEXT_DIRECTION = "next";
 	public static final String ATTR_METADATA_PREVIOUS_DIRECTION = "previous";
 	public static final String ATTR_METADATA_SIZE = "size";
+	public static final String ATTR_METADATA_SCROLL = "scroll";
+	public static final String ATTR_METADATA_SCROLL_OFFSET = "scrollOffset";
 	
 	/*Status*/
 	public static final String ATTR_STATUS_TIMESTAMP = "Timestamp";

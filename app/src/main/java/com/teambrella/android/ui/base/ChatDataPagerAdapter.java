@@ -136,7 +136,7 @@ public class ChatDataPagerAdapter extends ATeambrellaDataPagerAdapter {
       mPager.loadNext(false);
     }
 
-    if (mPager.getHasPrevious() && !mPager.isNextLoading() && !mPager.getHasNextError() && position < 10) {
+    if (mPager.getHasPrevious() && !mPager.isNextLoading() && !mPager.getHasNextError()  && position < 10) {
       mPager.loadPrevious(false);
     }
 

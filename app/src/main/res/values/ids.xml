@@ -4,4 +4,5 @@
     <item name="mute" type="id" />
     <item name="unmute" type="id" />
     <item name="pin" type="id" />
+    <item name="marks_mode" type="id" />
 </resources>

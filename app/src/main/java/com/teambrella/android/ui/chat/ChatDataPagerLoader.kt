@@ -20,102 +20,44 @@ import java.util.*
 class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPagerLoader(uri) {
 
     private val LOG_TAG = KChatDataPagerLoader::class.java.simpleName
-
-    companion object {
-
-        private const val SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))"
-        private const val IMAGE_FORMAT_STRING = "<img src=\"%d\">"
-
-
-        fun isNextDay(older: Calendar, newer: Calendar): Boolean {
-            val oldYer = older.get(Calendar.YEAR)
-            val newYear = newer.get(Calendar.YEAR)
-            val oldDayOfYear = older.get(Calendar.DAY_OF_YEAR)
-            val newDayOfYear = newer.get(Calendar.DAY_OF_YEAR)
-            return newYear > oldYer || newYear == oldYer && newDayOfYear > oldDayOfYear
-        }
-
-
-        private fun String.separate(position: Int, size: Int): List<String> {
-            val list = LinkedList<String>()
-
-            if (position < size) {
-                val slices = this.trim { it <= ' ' }
-                        .split(String.format(Locale.US, SPLIT_FORMAT_STRING, position, position).toRegex())
-                        .dropLastWhile { it.isEmpty() }
-                        .toTypedArray()
-                if (slices.size == 1) {
-                    if (slices[0].trim { it <= ' ' }.isNotEmpty()) {
-                        list.add(slices[0].trim { it <= ' ' })
-                    }
-                } else {
-                    for (slice in slices) {
-                        list.addAll(slice.separate(position + 1, size))
-                    }
-                }
-            } else {
-                if (this.trim { it <= ' ' }.isNotEmpty()) {
-                    list.add(this.trim { it <= ' ' })
-                }
-            }
-
-
-            return list
-        }
-
-        private fun getDate(item: JsonObject): Calendar {
-            val calendar = Calendar.getInstance()
-            val created = item.created ?: 0L
-            if (created > 0) {
-                calendar.time = TimeUtils.getDateFromTicks(created)
-            } else {
-                val added = item.added ?: 0L
-                if (added > 0) {
-                    calendar.time = Date(added)
-                }
-            }
-            return calendar
-        }
-
-    }
-
-    private val hasEnoughMarks : Boolean
-        get() {
-            return markedPosts.count() > 0
-        }
-
-    private var fullChatModeFromPush: Boolean = false
-    private var readAll: Boolean = false
-    private var userSetMarksOnlyMode: Boolean? = false
+    
+    public var isMarksOnlyMode = false
         set(value) {
-            readAll = true
-//            guard let topicID = chatModel?.discussion.topicID else { return }
-//            service.dao.setViewMode(topicID: topicID, useMarksMode: userSetMarksOnlyMode ?? true).observe { result in
-//                    switch result {
-//                case let .error(error):
-//                log("\(error)", type: [.error, .serverReply])
-//                default:
+            if (field == value) { return }
             field = value
+            notifyUpdateScroll()
+        }
+    
+    var storedScrollPosition: Int?
+        get() = if (isMarksOnlyMode) scrollYMarked else scrollYAll
+        set(value) {
+            if (isMarksOnlyMode) {
+                scrollYMarked = value
+            } else {
+                scrollYAll = value
+            }
+        }
+    var storedScrollOffset: Int?
+        get() = if (isMarksOnlyMode) scrollOffsetMarked else scrollOffsetAll
+        set(value) {
+            if (isMarksOnlyMode) {
+                scrollOffsetMarked = value
+            } else {
+                scrollOffsetAll = value
+            }
         }
 
-    private var isPinnable = false // TODO: init this
-    private var isPrivateChat = false // TODO: init this
-    private var isServerSetMarksOnlyMode : Boolean? = null
-    private var tempMarksOnlyMode: Boolean? = null
-    public val isMarksOnlyMode: Boolean
-        get() {
-            return tempMarksOnlyMode
-                    ?: (userSetMarksOnlyMode
-                            ?: (!isPinnable && !isPrivateChat && (isServerSetMarksOnlyMode ?: true) && hasEnoughMarks && !fullChatModeFromPush))
-        }
 
+    private var scrollYAll: Int? = null
+    private var scrollYMarked: Int? = null
+    private var scrollOffsetAll: Int? = null
+    private var scrollOffsetMarked: Int? = null
+    
+    public val hasEnoughMarks; get() = markedPosts.count() > 0
+    public var isServerSetMarksOnlyMode : Boolean? = null; private set
     protected var markedPosts = JsonArray()
-
-    override val loadedData: JsonArray
-        get() {
-            return if (isMarksOnlyMode) markedPosts else array
-        }
-
+    override val loadedData; get() = if (isMarksOnlyMode) markedPosts else array
+    
     private var cachedVotingPart: JsonObject? = null
 
 
@@ -127,9 +69,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         val discussion = data.discussionPart ?: JsonObject()
         data.discussionPart = discussion
         val chat = discussion.chat ?: JsonArray()
-
         data.voting = cachedVotingPart
-
         chat.add(item)
     }
 
@@ -163,15 +103,23 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
     }
 
     private fun notifyUpdate() {
-        val response = JsonObject().apply {
-            metadata = JsonObject().apply {
-                itemDeleted = true
-            }
-            data = JsonObject().apply {
-                discussionPart = JsonObject()
-            }
-        }
-        _observable.postValue(Notification.createOnNext(response))
+        _observable.postValue(Notification.createOnNext(
+                JsonObject().apply {
+                    metadata = JsonObject().apply { itemDeleted = true }
+                    data = JsonObject().apply { discussionPart = JsonObject() }
+                }))
+    }
+    
+    private fun notifyUpdateScroll() {
+        _observable.postValue(Notification.createOnNext(
+                JsonObject().apply {
+                    metadata = JsonObject().apply { itemDeleted = true }
+                    data = JsonObject().apply {
+                        discussionPart = JsonObject()
+                        scroll = storedScrollPosition ?: -1
+                        scrollOffset = storedScrollOffset ?: -1
+                    }
+                }))
     }
 
     public fun updateLikes(postId: String, myLike: Int) {
@@ -180,6 +128,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             var needUpdate = false
             val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == postId
                     && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
+            if (posOfOldItem < 0) { return false }
 
             val oldItem = array[posOfOldItem]?.asJsonObject
             oldItem?.let {
@@ -208,6 +157,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
             var needUpdate = false
             val posOfOldItem = array.indexOfFirst { it.asJsonObject.stringId == postId
                     && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE}
+            if (posOfOldItem < 0) { return false }
 
             val oldItem = array[posOfOldItem]?.asJsonObject
             oldItem?.let {
@@ -260,7 +210,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
         setProxyInMessages(markedPosts)
         notifyUpdate()
     }
-
+    
 
     override fun postProcess(response: JsonObject, next: Boolean): JsonObject {
 
@@ -560,5 +510,62 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
                 .replace("</p>".toRegex(), "")
                 .trim { it <= ' ' }
     }
-
+    
+    companion object {
+        
+        private const val SPLIT_FORMAT_STRING = "((?<=<img src=\"%1d\">)|(?=<img src=\"%1d\">))"
+        private const val IMAGE_FORMAT_STRING = "<img src=\"%d\">"
+        
+        
+        fun isNextDay(older: Calendar, newer: Calendar): Boolean {
+            val oldYer = older.get(Calendar.YEAR)
+            val newYear = newer.get(Calendar.YEAR)
+            val oldDayOfYear = older.get(Calendar.DAY_OF_YEAR)
+            val newDayOfYear = newer.get(Calendar.DAY_OF_YEAR)
+            return newYear > oldYer || newYear == oldYer && newDayOfYear > oldDayOfYear
+        }
+        
+        
+        private fun String.separate(position: Int, size: Int): List<String> {
+            val list = LinkedList<String>()
+            
+            if (position < size) {
+                val slices = this.trim { it <= ' ' }
+                        .split(String.format(Locale.US, SPLIT_FORMAT_STRING, position, position).toRegex())
+                        .dropLastWhile { it.isEmpty() }
+                        .toTypedArray()
+                if (slices.size == 1) {
+                    if (slices[0].trim { it <= ' ' }.isNotEmpty()) {
+                        list.add(slices[0].trim { it <= ' ' })
+                    }
+                } else {
+                    for (slice in slices) {
+                        list.addAll(slice.separate(position + 1, size))
+                    }
+                }
+            } else {
+                if (this.trim { it <= ' ' }.isNotEmpty()) {
+                    list.add(this.trim { it <= ' ' })
+                }
+            }
+            
+            
+            return list
+        }
+        
+        private fun getDate(item: JsonObject): Calendar {
+            val calendar = Calendar.getInstance()
+            val created = item.created ?: 0L
+            if (created > 0) {
+                calendar.time = TimeUtils.getDateFromTicks(created)
+            } else {
+                val added = item.added ?: 0L
+                if (added > 0) {
+                    calendar.time = Date(added)
+                }
+            }
+            return calendar
+        }
+        
+    }
 }
