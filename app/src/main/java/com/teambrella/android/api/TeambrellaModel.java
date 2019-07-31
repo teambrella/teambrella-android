@@ -270,7 +270,7 @@ public class TeambrellaModel {
 	public static final String ATTR_DATA_OBJECT_NAME = "ObjectName";
 	public static final String ATTR_DATA_ORIGINAL_POST_TEXT = "OriginalPostText";
 	public static final String ATTR_DATA_UNREAD_COUNT = "UnreadCount";
-	public static final String ATTR_DATA_IS_MARKS_ONLY = "IsMarksOnly";
+	public static final String ATTR_DATA_IS_MARKS_ONLY = "MarksMode";
 	public static final String ATTR_DATA_CLAIM_AMOUNT = "ClaimAmount";
 	public static final String ATTR_DATA_YEAR = "Year";
 	public static final String ATTR_DATA_UNREAD = "Unread";

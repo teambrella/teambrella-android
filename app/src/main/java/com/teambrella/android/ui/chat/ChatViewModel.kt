@@ -22,11 +22,9 @@ class ChatViewModel : TeambrellaPagerViewModel() {
             loader.isMarksOnlyMode = isMarksOnlyMode
         }
 
-    var readAll = false
-    var userSetMarksOnlyMode: Boolean? = false
+    var userSetMarksOnlyMode: Boolean? = null
         set(value) {
             field = value
-            readAll = true
             loader.isMarksOnlyMode = isMarksOnlyMode
 
 //            guard let topicID = chatModel?.discussion.topicID else { return }

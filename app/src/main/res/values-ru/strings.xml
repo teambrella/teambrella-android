@@ -417,5 +417,6 @@
     <string name="add_proxy_text">%1$s будет замещать тебя при голосовании</string>
     <string name="remove_proxy_title">Убрать из моих прокси</string>
     <string name="remove_proxy_text">%1$s больше не будет замещать тебя при голосовании</string>
+    <string name="go_to_discussion">Перейти в обсуждение</string>
 
 </resources>

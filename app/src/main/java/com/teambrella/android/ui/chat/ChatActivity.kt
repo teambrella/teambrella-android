@@ -77,6 +77,9 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	private val chatViewModel; get() = ViewModelProviders.of(this).get(DATA_FRAGMENT_TAG, ChatViewModel::class.java)
 	private val pinUnpinViewModel; get() = ViewModelProviders.of(this).get(PIN_UNPIN_DATA, TeambrellaDataViewModel::class.java)
 	private val fragmentChat; get() = supportFragmentManager.findFragmentByTag(UI_FRAGMENT_TAG) as KChatFragment?
+	private val panelContinueJoining; get() = findViewById<View>(R.id.continueJoining)
+	private val panelGoToDiscussion; get() = findViewById<View>(R.id.go_to_discussion)
+	private val panelInput; get() = findViewById<View>(R.id.inputActive)
 	private val pager; get() = getPager(DATA_FRAGMENT_TAG)
 
 	private var mUri: Uri? = null
@@ -109,6 +112,9 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	private val isDiscussion; get() = mAction == SHOW_FEED_CHAT_ACTION
 	private val isPrivate; get() = mAction == SHOW_CONVERSATION_CHAT
 	private val isPinnable; get() = isDiscussion && isFullAccess
+	private val canHaveMarksMode; get() = (isClaim || isTeammate) && chatViewModel.hasEnoughMarks
+	private var mNeedShowContinueJoining = false
+	private var mUnreadCount = 0
 	
 	private var mContainer: View? = null
 	private var mSnackBar: Snackbar? = null
@@ -203,7 +209,6 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		findViewById<View>(R.id.add_photos).setOnClickListener { v -> this.startTakingPhoto() }
 		
 		var needHideSendImage: Boolean? = false
-		var needShowContinueJoining = false
 		if (isTeammate) {
 			setTitle(R.string.application)
 		}
@@ -242,13 +247,15 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 			else -> {
 				needHideSendImage = true
 				if (!isMyChat) {
-					needShowContinueJoining = true
+					mNeedShowContinueJoining = true
 				}
 			}
 		}
 		
-		findViewById<View>(R.id.inputActive).visibility = if (needShowContinueJoining) View.GONE else View.VISIBLE
-		findViewById<View>(R.id.continueJoining).visibility = if (needShowContinueJoining) View.VISIBLE else View.GONE
+		panelInput.visibility = if (mNeedShowContinueJoining) View.GONE else View.VISIBLE
+		panelContinueJoining.visibility = if (mNeedShowContinueJoining && !chatViewModel.isMarksOnlyMode) View.VISIBLE else View.GONE
+		panelGoToDiscussion.visibility = View.GONE
+		
 		
 		if (needHideSendImage!!) {
 			findViewById<View>(R.id.send_image).visibility = View.GONE
@@ -282,7 +289,8 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 			}
 		})
 		
-		findViewById<View>(R.id.continueJoining).setOnClickListener { v -> startActivity(MainActivity.getLaunchIntent(this, MainActivity.ACTION_SHOW_MY_TOPIC, mTeamId)) }
+		panelContinueJoining.setOnClickListener { v -> startActivity(MainActivity.getLaunchIntent(this, MainActivity.ACTION_SHOW_MY_TOPIC, mTeamId)) }
+		panelGoToDiscussion.setOnClickListener { v -> changeViewMarksMode() }
 		
 		mClient = ChatNotificationClient(this)
 		mClient!!.connect()
@@ -332,7 +340,7 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	
 	
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
-		if ((isClaim || isTeammate) && chatViewModel.hasEnoughMarks) {
+		if (canHaveMarksMode) {
 			menu.add(0, R.id.marks_mode, 0, null)
 					.setIcon(if (chatViewModel.isMarksOnlyMode)  R.drawable.ic_expand else R.drawable.ic_collapse)
 					.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -600,6 +608,18 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 				mMuteStatus = IChatActivity.MuteStatus.DEFAULT
 			}
 			
+			val showGoToDiscussion = canHaveMarksMode && chatViewModel.isMarksOnlyMode
+			panelInput.visibility = if (!showGoToDiscussion && !mNeedShowContinueJoining) View.VISIBLE else View.GONE
+			panelContinueJoining.visibility = if (mNeedShowContinueJoining) View.VISIBLE else View.GONE
+			panelGoToDiscussion.visibility = if (showGoToDiscussion) View.VISIBLE else View.GONE
+			
+			if ((discussion.unreadCount ?: 0) > mUnreadCount) {
+				mUnreadCount = discussion.unreadCount!!
+			}
+			val unreadView = findViewById<View>(R.id.unread) as TextView
+			unreadView.visibility = if (mUnreadCount > 0) View.VISIBLE else View.GONE
+			unreadView.setText(Integer.toString(mUnreadCount));
+			
 			invalidateOptionsMenu()
 			
 			val lastRead = discussion.lastRead ?: -1L
@@ -773,6 +793,7 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 		mContainer = findViewById(R.id.container)
 		chatViewModel.saveScrollPosition(fragmentChat?.scrollY!!, fragmentChat?.scrollYOffset!!)
 		chatViewModel.userSetMarksOnlyMode = !chatViewModel.isMarksOnlyMode
+		mUnreadCount = 0
 		invalidateOptionsMenu()
 		request(TeambrellaUris.getSetViewModeUri(mTopicId, chatViewModel.userSetMarksOnlyMode))
 	}
@@ -813,6 +834,7 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 				
 				TOPIC_MESSAGE_NOTIFICATION -> {
 					if (message.topicId == mTopicId) {
+						chatViewModel.fullChatModeFromPush = true
 						return ReloadOrResume()
 					}
 				}
