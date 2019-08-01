@@ -259,6 +259,12 @@ val JsonObject?.me: JsonObject?
 val JsonObject?.remainedMinutes: Long?
     get() = getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
 
+val JsonObject?.votingRes: Double?
+    get() = getDouble(TeambrellaModel.ATTR_DATA_VOTING_RES_CRYPTO)
+
+val JsonObject?.paymentRes: Double?
+    get() = getDouble(TeambrellaModel.ATTR_DATA_PAYMENT_RES_CRYPTO)
+
 var JsonObject?.userName: String?
     get() = getString(USER_NAME)
     set(value) = setString(USER_NAME, value)

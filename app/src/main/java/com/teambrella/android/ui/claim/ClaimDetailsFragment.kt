@@ -22,6 +22,7 @@ class ClaimDetailsFragment : ADataFragment<IClaimActivity>() {
     private val claimAmountView: TextView? by ViewHolder(R.id.claim_amount)
     private val expensesView: TextView? by ViewHolder(R.id.estimated_expenses)
     private val deductibleView: TextView? by ViewHolder(R.id.deductible)
+    private val deductibleBlock: View? by ViewHolder(R.id.deductible_block)
     private val coverageView: TextView? by ViewHolder(R.id.coverage)
     private val incidentDateView: TextView? by ViewHolder(R.id.incident_date)
     private val decimalFormat = DecimalFormat.getInstance()
@@ -44,7 +45,9 @@ class ClaimDetailsFragment : ADataFragment<IClaimActivity>() {
                         , decimalFormat.format(Math.round(basic.deductible ?: 0.0)))
                 coverageView?.text = getString(R.string.percentage_format_string
                         , Math.round((basic.coverage ?: 0f) * 100))
-
+    
+                deductibleBlock?.visibility = if ((basic.deductible ?: 0.0) > 0.001) View.VISIBLE else View.GONE
+                
                 val date = TeambrellaDateUtils.getDatePresentation(context, TeambrellaDateUtils.TEAMBRELLA_UI_DATE, basic.incidentDate)
                 dataHost.setSubtitle(date)
                 incidentDateView?.text = date

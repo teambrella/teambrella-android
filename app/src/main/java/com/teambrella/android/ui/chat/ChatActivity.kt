@@ -610,7 +610,7 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 			
 			val showGoToDiscussion = canHaveMarksMode && chatViewModel.isMarksOnlyMode
 			panelInput.visibility = if (!showGoToDiscussion && !mNeedShowContinueJoining) View.VISIBLE else View.GONE
-			panelContinueJoining.visibility = if (mNeedShowContinueJoining) View.VISIBLE else View.GONE
+			panelContinueJoining.visibility = if (mNeedShowContinueJoining && !showGoToDiscussion) View.VISIBLE else View.GONE
 			panelGoToDiscussion.visibility = if (showGoToDiscussion) View.VISIBLE else View.GONE
 			
 			if ((discussion.unreadCount ?: 0) > mUnreadCount) {
@@ -790,11 +790,14 @@ class ChatActivity : ATeambrellaActivity(), IChatActivity, IClaimActivity {
 	}
 	
 	private fun changeViewMarksMode() {
-		mContainer = findViewById(R.id.container)
-		chatViewModel.saveScrollPosition(fragmentChat?.scrollY!!, fragmentChat?.scrollYOffset!!)
-		chatViewModel.userSetMarksOnlyMode = !chatViewModel.isMarksOnlyMode
-		mUnreadCount = 0
-		invalidateOptionsMenu()
+		runOnUiThread {
+			mContainer = findViewById(R.id.container)
+			chatViewModel.saveScrollPosition(fragmentChat?.scrollY!!, fragmentChat?.scrollYOffset!!)
+			chatViewModel.userSetMarksOnlyMode = !chatViewModel.isMarksOnlyMode
+			mUnreadCount = 0
+			invalidateOptionsMenu()
+			fragmentChat?.forceUpdate()
+		}
 		request(TeambrellaUris.getSetViewModeUri(mTopicId, chatViewModel.userSetMarksOnlyMode))
 	}
 	

@@ -399,5 +399,10 @@
     <string name="remove_proxy_title">Remove %1$s from my proxies</string>
     <string name="remove_proxy_text">%1$s will no longer for you</string>
     <string name="go_to_discussion">Go to discussion</string>
+    <string name="payout">payout</string>
+    <string name="fixed_rate">Fixed rate</string>
+    <string name="to_pay">For payment</string>
+    <string name="paid">paid</string>
+    <string name="rate_format_string">%1$s %2$s/%3$s</string>
 
 </resources>

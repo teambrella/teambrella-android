@@ -76,6 +76,7 @@ public class WithdrawalsFragment extends ADataPagerProgressFragment<IWithdrawAct
                         adapter.setBalanceValue(jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_BALANCE)
                                 , jsonWrapper.getDouble(TeambrellaModel.ATTR_DATA_CRYPTO_RESERVED)
                                 , getDataHost().getCurrency(), getDataHost().getCurrencyRate());
+                        adapter.setWarning(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_WARNING));
                     }).blockingFirst();
         }
     }

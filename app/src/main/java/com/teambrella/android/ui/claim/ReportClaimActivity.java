@@ -51,6 +51,7 @@ import com.teambrella.android.util.ImagePicker;
 import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import io.reactivex.Notification;
@@ -85,6 +86,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private PhotoAdapter mPhotoAdapter;
     private ImagePicker mImagePicker;
     private TextView mSubmitClaimDone;
+    private TextView mWarningView;
 
 
     private Disposable mDisposable;
@@ -115,7 +117,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_report_claim);
-
+    
         setTitle(R.string.report_claim);
 
         ActionBar actionBar = getSupportActionBar();
@@ -136,11 +138,10 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         mIncidentDateView = findViewById(R.id.incident_date);
         mCoverageView = findViewById(R.id.coverage);
         mClaimAmount = findViewById(R.id.claim_amount);
-
-
+        mWarningView = findViewById(R.id.warning);
+        
         TextView locationView = findViewById(R.id.location);
         locationView.setText(getIntent().getStringExtra(EXTRA_LOCAION));
-
 
         RecyclerView mPhotos = findViewById(R.id.photos);
         mExpensesView = findViewById(R.id.expenses);
@@ -226,6 +227,8 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
         if (fragment != null) {
             mDisposable = fragment.getObservable().subscribe(this::onRequestResult);
             fragment.start();
+            
+            request(TeambrellaUris.getCoverageForDate(mTeamId, new Date()));
         }
     }
 
@@ -328,6 +331,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
                                 .map(jsonWrapper -> jsonWrapper.getObject(TeambrellaModel.ATTR_DATA))
                                 .doOnNext(jsonWrapper -> mLimitValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_LIMIT_ANOUNT))
                                 .doOnNext(jsonWrapper -> mCoverageValue = jsonWrapper.getFloat(TeambrellaModel.ATTR_DATA_COVERAGE))
+                                .doOnNext(jsonWrapper -> mWarningView.setText(jsonWrapper.getString(TeambrellaModel.ATTR_DATA_WARNING)))
                                 .doOnNext(jsonWrapper -> mExpensesView.setHint(Integer.toString(Math.round(mLimitValue))))
                                 .doOnNext(jsonWrapper -> mCoverageView.setText(Html.fromHtml(getString(R.string.coverage_format_string, Math.round(mCoverageValue * 100)))))
                                 .blockingFirst(new JsonWrapper(null));

@@ -220,6 +220,13 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
         }
     }
 
+    
+    public fun forceUpdate() {
+        list?.recycledViewPool?.clear();
+        adapter?.notifyDataSetChanged();
+    }
+    
+    
     private fun onChatDataUpdated(notification: Notification<JsonObject>) {
         if (notification.isOnNext) {
             val data = notification.value.data

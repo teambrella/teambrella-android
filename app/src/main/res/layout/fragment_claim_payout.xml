@@ -9,7 +9,7 @@
         style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/claim_details" />
+        android:text="@string/payout" />
 
 
     <LinearLayout
@@ -23,10 +23,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/claim_amount" />
+            android:text="@string/fixed_rate" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/claim_amount"
+            android:id="@+id/claim_crypto_rate"
             style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,33 +45,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/estimated_expenses" />
+            android:text="@string/to_pay" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/estimated_expenses"
-            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/battleshipGrey" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:id="@+id/deductible_block"
-        android:orientation="horizontal">
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/deductible" />
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/deductible"
+            android:id="@+id/to_pay"
             style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,36 +67,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/coverage" />
+            android:text="@string/paid" />
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/coverage"
+            android:id="@+id/paid"
             style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/battleshipGrey" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal">
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/incident_date" />
-
-        <com.teambrella.android.ui.widget.AkkuratRegularTextView
-            android:id="@+id/incident_date"
-            style="@style/Teambrella.Teammate.Section.TextAppearence.Normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="24 June 2016"
             android:textColor="@color/battleshipGrey" />
 
     </LinearLayout>
