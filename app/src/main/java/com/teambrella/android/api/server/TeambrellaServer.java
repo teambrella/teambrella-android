@@ -382,6 +382,16 @@ public class TeambrellaServer {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_LIKE, uri.getQueryParameter(TeambrellaUris.KEY_MY_LIKE));
             }
             break;
+            case TeambrellaUris.SET_MARKED: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MARKED, uri.getQueryParameter(TeambrellaUris.KEY_MARKED));
+            }
+            break;
+            case TeambrellaUris.SET_VIEW_MODE: {
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_TOPIC_ID));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USE_MARKS_MODE, uri.getQueryParameter(TeambrellaUris.KEY_USE_MARKS_MODE));
+            }
+            break;
             case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
@@ -522,6 +532,10 @@ public class TeambrellaServer {
                 return mAPI.setTopicPin(requestBody);
             case TeambrellaUris.SET_POST_LIKE:
                 return mAPI.setPostLike(requestBody);
+            case TeambrellaUris.SET_MARKED:
+                return mAPI.setMarked(requestBody);
+            case TeambrellaUris.SET_VIEW_MODE:
+                return mAPI.setViewMode(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

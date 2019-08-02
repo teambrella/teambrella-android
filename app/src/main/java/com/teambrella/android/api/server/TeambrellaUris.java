@@ -28,6 +28,8 @@ public class TeambrellaUris {
     private static final String SEGMENT_CHAT = "chat";
     private static final String SEGMENT_NEW_POST = "newPost";
     private static final String SEGMENT_DELETE_POST = "delPost";
+    private static final String SEGMENT_SET_MARKED = "setMarked";
+    private static final String SEGMENT_SET_VIEW_MODE = "setViewMode";
     private static final String SEGMENT_TEAMS = "teams";
     private static final String SEGMENT_TEAMS_SUR = "teamsur";
     private static final String SEGMENT_VOTE = "vote";
@@ -72,12 +74,16 @@ public class TeambrellaUris {
     public static final String KEY_SIG_OF_PUBLIC_KEY = "sigOfPublicKey";
     public static final String KEY_OFFSET = "Offset";
     public static final String KEY_LIMIT = "Limit";
+
+    public static final String KEY_ID = "Id";
+    public static final String KEY_TOPIC_ID = "TopicId";
     public static final String KEY_TEAM_ID = "TeamId";
+    public static final String KEY_TEAMMATE_ID = "TeammateId";
+    public static final String KEY_POST_ID = "postId";
+
     public static final String KEY_OPT_IN = "OptIn";
     public static final String KEY_ADD = "add";
-    public static final String KEY_TEAMMATE_ID = "TeammateId";
     public static final String KEY_SINCE = "Since";
-    public static final String KEY_ID = "Id";
     public static final String KEY_TEXT = "Text";
     public static final String KEY_VOTE = "Vote";
     public static final String KEY_POSITION = "Position";
@@ -93,7 +99,8 @@ public class TeambrellaUris {
     public static final String KEY_SORTED_BY_RISK = "sortedByRisk";
     public static final String KEY_AMOUNT = "amount";
     public static final String KEY_MUTED = "muted";
-    public static final String KEY_POST_ID = "postId";
+    public static final String KEY_USE_MARKS_MODE = "useMarksMode";
+    public static final String KEY_MARKED = "marked";
     public static final String KEY_STATUS = "status";
     public static final String KEY_INVITE_CODE = "invitecode";
     public static final String KEY_NOTIFICATION_SETTING = "notificationSetting";
@@ -154,6 +161,8 @@ public class TeambrellaUris {
     public static final int NEW_FILE_CONVERSATION = 50;
     public static final int TEAMMATE_RISKS_VOTES = 51;
     public static final int TEAMMATE_CLAIMS_VOTES = 52;
+    public static final int SET_MARKED = 53;
+    public static final int SET_VIEW_MODE = 54;
 
     static {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAM + "/#/" + SEGMENT_LIST, TEAMMATES_LIST);
@@ -167,6 +176,8 @@ public class TeambrellaUris {
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_CHAT, CLAIMS_CHAT);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_NEW_POST, NEW_POST);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_DELETE_POST, DELETE_POST);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_SET_MARKED, SET_MARKED);
+        sUriMatcher.addURI(AUTHORITY, SEGMENT_CHAT + "/" + SEGMENT_SET_VIEW_MODE, SET_VIEW_MODE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_CLAIMS + "/" + SEGMENT_VOTE, SET_CLAIM_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_TEAMMATE + "/" + SEGMENT_VOTE, SET_TEAMMATE_VOTE);
         sUriMatcher.addURI(AUTHORITY, SEGMENT_FEED + "/" + SEGMENT_HOME, GET_HOME);
@@ -321,6 +332,26 @@ public class TeambrellaUris {
                 .appendEncodedPath(SEGMENT_CHAT)
                 .appendEncodedPath(SEGMENT_DELETE_POST)
                 .appendQueryParameter(KEY_ID, postId)
+                .build();
+    }
+
+    public static Uri getSetMarkedUri(String postId, Boolean marked) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendEncodedPath(SEGMENT_SET_MARKED)
+                .appendQueryParameter(KEY_POST_ID, postId)
+                .appendQueryParameter(KEY_MARKED, Boolean.toString(marked))
+                .build();
+    }
+
+    public static Uri getSetViewModeUri(String topicId, Boolean useMarksMode) {
+        return new Uri.Builder()
+                .authority(AUTHORITY)
+                .appendEncodedPath(SEGMENT_CHAT)
+                .appendEncodedPath(SEGMENT_SET_VIEW_MODE)
+                .appendQueryParameter(KEY_TOPIC_ID, topicId)
+                .appendQueryParameter(KEY_USE_MARKS_MODE, Boolean.toString(useMarksMode))
                 .build();
     }
 
@@ -584,7 +615,7 @@ public class TeambrellaUris {
                 .build();
     }
 
-    public static Uri setMyProxyUri(String userId, boolean add) {
+    public static Uri getSetMyProxyUri(String userId, boolean add) {
         return new Uri.Builder()
                 .authority(AUTHORITY)
                 .appendEncodedPath(SEGMENT_PROXY)

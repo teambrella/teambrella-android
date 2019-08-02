@@ -20,19 +20,6 @@
 
 
             <com.teambrella.android.ui.widget.AkkuratBoldTextView
-                android:id="@+id/submit_claim_done"
-                style="@style/Teambrella.TextAppearance.SectionButton"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/header_button_normal"
-                android:text="@string/report_claim"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/address" />
-
-            <com.teambrella.android.ui.widget.AkkuratBoldTextView
                 android:id="@+id/header"
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Header"
                 android:layout_width="wrap_content"
@@ -79,6 +66,7 @@
                 style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/incident_date"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/object_icon" />
 
 
@@ -103,6 +91,7 @@
                 style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/expenses"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/incident_date" />
 
 
@@ -271,6 +260,7 @@
                 style="@style/Teambrella.TextAppearance.InputTitle"
                 android:layout_marginTop="24dp"
                 android:text="@string/reimburse_to"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/add_photos" />
 
 
@@ -288,6 +278,41 @@
                 android:textColor="@color/charcoalGrey"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/address_title" />
+
+            <ImageView
+                android:id="@+id/warning_img"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/address"
+                app:srcCompat="@drawable/ic_warning" />
+
+            <TextView
+                android:id="@+id/warning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="24dp"
+                android:text=""
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/warning_img"
+                app:layout_constraintTop_toBottomOf="@+id/address"
+                tools:text="WARNING: Do now send funds to exchanges that doesn't support deposits from smart-contracts — they may lose the funds.\n\nInstead, use one of the following walles: MyEtherWallet, Mist, Jaxx, Eidoo, Exodus." />
+
+            <com.teambrella.android.ui.widget.AkkuratBoldTextView
+                android:id="@+id/submit_claim_done"
+                style="@style/Teambrella.TextAppearance.SectionButton"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/header_button_normal"
+                android:text="@string/report_claim"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/warning" />
 
 
         </android.support.constraint.ConstraintLayout>

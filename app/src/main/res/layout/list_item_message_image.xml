@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
     android:layout_marginEnd="16dp"
     android:layout_marginStart="16dp">
 
@@ -21,11 +21,14 @@
         android:id="@+id/bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/date"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_toEndOf="@id/user_picture"
         android:background="@drawable/chat_bubble_them_img"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constrainedWidth="true">
 
         <ImageView
@@ -54,6 +57,26 @@
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/frameMarkIcon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/markIcon"
+                android:layout_width="12dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="-3.5dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_mark" />
+        </FrameLayout>
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/likes"

@@ -13,6 +13,49 @@ import java.util.*
 
 class ChatViewModel : TeambrellaPagerViewModel() {
 
+    val loader; get() = dataPager as KChatDataPagerLoader
+    
+    
+    var fullChatModeFromPush = false
+        set(value) {
+            field = value
+            loader.isMarksOnlyMode = isMarksOnlyMode
+        }
+
+    var userSetMarksOnlyMode: Boolean? = null
+        set(value) {
+            field = value
+            loader.isMarksOnlyMode = isMarksOnlyMode
+
+//            guard let topicID = chatModel?.discussion.topicID else { return }
+//            service.dao.setViewMode(topicID: topicID, useMarksMode: userSetMarksOnlyMode ?? true).observe { result in
+//                    switch result {
+//                case let .error(error):
+//                log("\(error)", type: [.error, .serverReply])
+//                default:
+        }
+    
+    val hasEnoughMarks; get() = loader.hasEnoughMarks
+    
+    var isPinnable = false
+        set(value) {
+            field = value
+            loader.isMarksOnlyMode = isMarksOnlyMode
+        }
+    
+    var isPrivateChat = false
+        set(value) {
+            field = value
+            loader.isMarksOnlyMode = isMarksOnlyMode
+        }
+
+    val isMarksOnlyMode: Boolean
+        get() {
+            return userSetMarksOnlyMode
+                    ?: (!isPinnable && !isPrivateChat && (loader.isServerSetMarksOnlyMode ?: true) && hasEnoughMarks && !fullChatModeFromPush)
+        }
+    
+    
     override fun init(context: Context, config: Bundle?) {
         dataPager = KChatDataPagerLoader(config?.uri!!, TeambrellaUser.get(context).userId)
         (context as ATeambrellaDaggerActivity<*>).component.inject(dataPager as KChatDataPagerLoader)
@@ -21,8 +64,6 @@ class ChatViewModel : TeambrellaPagerViewModel() {
 
 
     fun addPendingMessage(postId: String, message: String, vote: Float) {
-
-        val loader = dataPager as KChatDataPagerLoader
 
         val post = JsonObject().apply {
             userId = loader.userId
@@ -39,7 +80,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
                 add(TeambrellaModel.ATTR_DATA_ONE_TEAMMATE, teammate)
             }
 
-            val lastDate = loader.getLastDate(true)
+            val lastDate = loader.getLastDate(false,true)
             isNextDay = KChatDataPagerLoader.isNextDay(lastDate, currentDate)
         }
 
@@ -53,7 +94,6 @@ class ChatViewModel : TeambrellaPagerViewModel() {
     }
 
     fun addPendingImage(postId: String, fileUri: String, ratio: Float, wasCameraUsed: Boolean) {
-        val loader = dataPager as KChatDataPagerLoader
         val post = JsonObject().apply {
             userId = loader.userId
             stringId = postId
@@ -70,9 +110,8 @@ class ChatViewModel : TeambrellaPagerViewModel() {
             val ratios = JsonArray()
             ratios.add(ratio)
             add(TeambrellaModel.ATTR_DATA_IMAGE_RATIOS, ratios)
-            val lastDate = loader.getLastDate(true)
+            val lastDate = loader.getLastDate(false,true)
             isNextDay = KChatDataPagerLoader.isNextDay(lastDate, currentDate)
-
         }
 
         if (post.isNextDay == true) {
@@ -85,8 +124,7 @@ class ChatViewModel : TeambrellaPagerViewModel() {
         loader.updateAnotherImageButton(true)
     }
 
-    fun deleteMyImage(postId: String) {
-        val loader = dataPager as KChatDataPagerLoader
+    fun deleteMyImage(postId: String?) {
         loader.remove({
             it.asJsonObject.stringId  == postId
         })
@@ -94,8 +132,18 @@ class ChatViewModel : TeambrellaPagerViewModel() {
     }
 
     fun setMyMessageVote(postId: String, vote: Int) {
-        val loader = dataPager as KChatDataPagerLoader
         loader.updateLikes(postId, vote)
     }
 
+    fun setMarked(postId: String, isMarked: Boolean) {
+        loader.setMarked(postId, isMarked)
+    }
+
+    fun setProxy(userId: String, add: Boolean, reorder: Boolean) {
+        loader.setProxy(userId, add, reorder)
+    }
+    
+    fun saveScrollPosition(position: Int, offset: Int) {
+        loader.storedScrollPosition = position
+    }
 }

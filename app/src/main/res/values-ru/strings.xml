@@ -47,7 +47,7 @@
     <string name="claim_title_format_string">Обсуждение заявки</string>
     <string name="claim_title_date_format_string">Заявка - %s</string>
     <string name="claim_details">Детали заявки</string>
-    <string name="claim_amount">Сумма выплаты</string>
+    <string name="claim_amount">На сумму</string>
     <string name="voting">Голосование</string>
     <string name="voting_risk">Голосование: Риск</string>
     <string name="estimated_expenses">Предполагаемые расходы</string>
@@ -410,5 +410,18 @@
     <string name="funding">Пополнение</string>
     <string name="to_cover_for">будет защищать тебя</string>
     <string name="covering">защищает тебя</string>
+    <string name="my_summary_message">Это мое резюме</string>
+    <string name="make_main_proxy_title">Поднять в списке прокси</string>
+    <string name="make_main_proxy_text">Если %1$s голосует, то остальные прокси будут игнорироваться</string>
+    <string name="add_proxy_title">Сделать моим прокси</string>
+    <string name="add_proxy_text">%1$s будет замещать тебя при голосовании</string>
+    <string name="remove_proxy_title">Убрать из моих прокси</string>
+    <string name="remove_proxy_text">%1$s больше не будет замещать тебя при голосовании</string>
+    <string name="go_to_discussion">Перейти в обсуждение</string>
+    <string name="payout">выплата</string>
+    <string name="fixed_rate">Зафиксированный курс</string>
+    <string name="to_pay">К выплате</string>
+    <string name="paid">Выплачено</string>
+    <string name="rate_format_string">%1$s %2$s/%3$s</string>
 
 </resources>

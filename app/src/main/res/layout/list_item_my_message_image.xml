@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:ignore="RtlHardcoded">
 
     <android.support.constraint.ConstraintLayout
@@ -16,6 +18,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/chat_bubble_me_img"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constrainedWidth="true"
         tools:ignore="RtlHardcoded">
 
@@ -67,6 +71,26 @@
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/frameMarkIcon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/markIcon"
+                android:layout_width="12dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="-3.5dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_mark" />
+        </FrameLayout>
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/status"

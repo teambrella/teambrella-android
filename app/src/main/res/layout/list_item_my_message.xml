@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -17,6 +19,8 @@
         android:layout_marginBottom="8dp"
         android:maxWidth="@dimen/chat_bubble_max_width"
         android:background="@drawable/chat_bubble_me"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         tools:ignore="RtlHardcoded">
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
@@ -51,9 +55,28 @@
             app:layout_constraintBaseline_toBaselineOf="@id/you"
             app:layout_constraintStart_toEndOf="@id/you"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/frameMarkIcon"
             app:layout_constraintBottom_toTopOf="@id/message" />
 
+        <FrameLayout
+            android:id="@+id/frameMarkIcon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/markIcon"
+                android:layout_width="12dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="-3.5dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_mark" />
+        </FrameLayout>
 
         <com.teambrella.android.ui.widget.AkkuratRegularTextView
             android:id="@+id/message"

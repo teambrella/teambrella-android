@@ -139,6 +139,12 @@
                     android:id="@+id/details_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/block" />
+
+                <FrameLayout
+                    android:id="@+id/payout_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/block_last" />
 
                 <View

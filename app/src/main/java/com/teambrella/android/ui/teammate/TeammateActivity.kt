@@ -230,7 +230,7 @@ class TeammateActivity : ATeambrellaActivity(), ITeammateActivity {
     override fun setAsProxy(set: Boolean) {
         userId?.let {
             ViewModelProviders.of(this).get(PROXY, TeambrellaDataViewModel::class.java)
-                    .load(TeambrellaUris.setMyProxyUri(it, set))
+                    .load(TeambrellaUris.getSetMyProxyUri(it, set))
         }
     }
 

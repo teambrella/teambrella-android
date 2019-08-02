@@ -27,6 +27,7 @@ class ClaimFragment : ADataProgressFragment<IClaimActivity>() {
 
     companion object {
         private const val DETAILS_FRAGMENT_TAG = "details"
+        private const val PAYOUT_FRAGMENT_TAG = "payout"
         private const val VOTING_FRAGMENT_TAG = "voting"
     }
 
@@ -37,6 +38,8 @@ class ClaimFragment : ADataProgressFragment<IClaimActivity>() {
     private val unreadCountView: TextView? by ViewHolder(R.id.unread)
     private val whenView: TextView? by ViewHolder(R.id.`when`)
     private val discussionForeground: View? by ViewHolder(R.id.discussion_foreground)
+    private val detailsContainer: View? by ViewHolder(R.id.details_container)
+    private val payoutContainer: View? by ViewHolder(R.id.payout_container)
 
     private var isShown: Boolean = false
     private var teamAccessLevel = TeambrellaModel.TeamAccessLevel.FULL_ACCESS
@@ -56,6 +59,12 @@ class ClaimFragment : ADataProgressFragment<IClaimActivity>() {
                 transaction.add(R.id.details_container
                         , createDataFragment(tags, ClaimDetailsFragment::class.java)
                         , DETAILS_FRAGMENT_TAG)
+            }
+    
+            if (findFragmentByTag(PAYOUT_FRAGMENT_TAG) == null) {
+                transaction.add(R.id.payout_container
+                                , createDataFragment(tags, ClaimPayoutFragment::class.java)
+                                , PAYOUT_FRAGMENT_TAG)
             }
 
             if (findFragmentByTag(VOTING_FRAGMENT_TAG) == null) {
@@ -112,6 +121,10 @@ class ClaimFragment : ADataProgressFragment<IClaimActivity>() {
                                 , smallPhoto, discussion?.topicId, teamAccessLevel, basic.incidentDate))
                     }
                 }
+                
+                val showPayout = (basic.votingRes ?: 0.0) > 0.0001
+                payoutContainer?.visibility = if (showPayout) View.VISIBLE else View.GONE
+                detailsContainer?.setBackgroundResource(if (showPayout) R.drawable.block else R.drawable.block_last)
             }
             setContentShown(true)
             isShown = true

@@ -100,6 +100,14 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
     private var userName: String? = null
     private var lastRead: Long? = null
 
+    val layoutManager; get() = list?.layoutManager as LinearLayoutManager
+    val scrollY; get() = layoutManager.findFirstVisibleItemPosition()
+    val scrollYOffset: Int
+        get() {
+            val v = layoutManager.getChildAt(0)
+            val top = if (v == null) 0 else (v.top - layoutManager.paddingTop)
+            return top
+        }
 
     override fun createAdapter(): ATeambrellaDataPagerAdapter {
         return KChatAdapter(dataHost.getPager(tags[0]), context!!, dataHost.teamId,
@@ -123,7 +131,7 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
         super.onViewCreated(view, savedInstanceState)
         isRefreshable = false
         list?.setBackgroundColor(Color.TRANSPARENT)
-        (list?.layoutManager as LinearLayoutManager).stackFromEnd = true
+        layoutManager.stackFromEnd = true
 
 
         when (TeambrellaUris.sUriMatcher.match(dataHost.chatUri)) {
@@ -199,16 +207,33 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                     TeambrellaUris.SET_CLAIM_VOTE -> onVoteDataUpdated(notification)
                 }
             }
+            val scroll = notification.value.data?.scroll
+            if (scroll != null) {
+                if (scroll >= 0) {
+                    layoutManager.scrollToPositionWithOffset(scroll, notification.value.data?.scrollOffset!!)
+                } else {
+                    if (!scrollToLastRead()) {
+                        layoutManager.scrollToPosition((adapter?.itemCount ?: 0) - 1)
+                    }
+                }
+            }
         }
     }
 
+    
+    public fun forceUpdate() {
+        list?.recycledViewPool?.clear();
+        adapter?.notifyDataSetChanged();
+    }
+    
+    
     private fun onChatDataUpdated(notification: Notification<JsonObject>) {
         if (notification.isOnNext) {
             val data = notification.value.data
             val metadata = notification.value.metadata
             var needScrollDown = metadata?.reload == true && metadata.size ?: 0 > 0
             if (metadata?.forced == true && metadata.size ?: 0 > 0) {
-                val lastItemVisible = (list?.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition()
+                val lastItemVisible = (list?.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
                 if (lastItemVisible == (adapter?.itemCount ?: 0) - 2) {
                     needScrollDown = true
                 }
@@ -295,11 +320,15 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                 voteAction?.visibility = View.GONE
             }
         }
+    
+        scrollToLastRead()
+    }
 
-
+    
+    private fun scrollToLastRead(): Boolean {
         if (lastRead != null && lastRead!! >= 0L) {
             val pager = dataHost.getPager(tags[0])
-
+        
             var moveTo = pager.loadedData.size() - 1
             for (i in 0 until pager.loadedData.size()) {
                 val item = pager.loadedData.get(i).asJsonObject
@@ -309,12 +338,13 @@ class KChatFragment : ADataPagerProgressFragment<IChatActivity>() {
                     break
                 }
             }
-            val manager = list?.layoutManager as LinearLayoutManager
-            manager.scrollToPositionWithOffset(moveTo, 0)
+            layoutManager.scrollToPositionWithOffset(moveTo, 0)
             lastRead = -1L
+            return true
         }
+        return false
     }
-
+    
     private fun onVoteDataUpdated(notification: Notification<JsonObject>) {
         setClaimVoteValue(notification.value?.data?.voting?.myVote ?: -1f)
     }

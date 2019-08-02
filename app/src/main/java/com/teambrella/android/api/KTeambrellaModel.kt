@@ -23,6 +23,9 @@ const val IS_MY_TOPIC = "MyTopic"
 const val USER_GENDER = "UserGender"
 const val IMAGE_INDEX = "ImageIndex"
 const val DATE_PAYMENT_FINISHED = "DatePaymentFinished"
+const val REIMBURSEMENT = "Reimbursement"
+const val VOTING_RES = "VotingRes_Crypto"
+const val PAYMENT_RES = "PaymentRes_Crypto"
 const val SHARED_URL = "SharedUrl"
 const val VOTING_RES_CRYPTO = "VotingRes_Crypto"
 const val PAYMENT_RES_CRYPTO = "PaymentRes_Crypto"
@@ -30,7 +33,6 @@ const val RECOMMENDING_VERSION = "RecommendedVersion"
 const val ME = "Me"
 const val ESTIMATED_EXPENSES = "EstimatedExpenses"
 const val DEDUCTIBLE = "Deductible"
-const val INCIDENT_DATE = "IncidentDate"
 const val DATE_PAY_TO_JOIN = "DatePayToJoin"
 const val SUBTITLE = "SubTitle"
 const val SYSTEM_TYPE = "SystemType"
@@ -193,8 +195,9 @@ val JsonObject?.discussionFreq: Float?
 val JsonObject?.votingFreq: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_VOTING_FREQUENCY)
 
-val JsonObject?.isMyProxy: Boolean?
+var JsonObject?.isMyProxy: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MY_PROXY, value)
 
 var JsonObject?.avatar: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AVATAR)
@@ -256,6 +259,12 @@ val JsonObject?.me: JsonObject?
 val JsonObject?.remainedMinutes: Long?
     get() = getLong(TeambrellaModel.ATTR_DATA_REMAINED_MINUTES)
 
+val JsonObject?.votingRes: Double?
+    get() = getDouble(TeambrellaModel.ATTR_DATA_VOTING_RES_CRYPTO)
+
+val JsonObject?.paymentRes: Double?
+    get() = getDouble(TeambrellaModel.ATTR_DATA_PAYMENT_RES_CRYPTO)
+
 var JsonObject?.userName: String?
     get() = getString(USER_NAME)
     set(value) = setString(USER_NAME, value)
@@ -294,6 +303,10 @@ val JsonObject?.cards: JsonArray?
 var JsonObject?.unreadCount: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_UNREAD_COUNT)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_UNREAD_COUNT, value)
+
+var JsonObject?.isMarksOnly: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MARKS_ONLY)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MARKS_ONLY, value)
 
 val JsonObject?.amountStr: String?
     get() = getString(TeambrellaModel.ATTR_DATA_AMOUNT)
@@ -453,6 +466,16 @@ var JsonObject?.myLike: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_MY_LIKE)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_MY_LIKE, value)
 
+var JsonObject?.marked: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MARKED)
+    set(value) = setBoolean(TeambrellaModel.ATTR_DATA_IS_MARKED, value)
+
+val JsonObject?.suggestAddingToProxies: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_SUGGEST_ADD_PROXY)
+
+val JsonObject?.suggestRemovingFromProxies: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_SUGGEST_REMOVE_PROXY)
+
 var JsonObject?.grayed: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_GRAYED)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_GRAYED, value)
@@ -487,12 +510,19 @@ val JsonObject?.balanceFiat: String?
 val JsonObject?.teammate: JsonObject?
     get() = getObject(TEAMMATE)
 
+val JsonObject?.teammateId: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_TEAMMATE_ID)
+
 val JsonObject?.claim: JsonObject?
     get() = getObject(CLAIM)
 
 var JsonObject?.chat: JsonArray?
     get() = getJsonArray(TeambrellaModel.ATTR_DATA_CHAT)
     set(value) = setObject(TeambrellaModel.ATTR_DATA_CHAT, value)
+
+var JsonObject?.markedPosts: JsonArray?
+    get() = getJsonArray(TeambrellaModel.ATTR_DATA_MARKED_POSTS)
+    set(value) = setObject(TeambrellaModel.ATTR_DATA_MARKED_POSTS, value)
 
 val JsonObject?.teamAccessLevel: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_ACCESS_LEVEL)
@@ -591,6 +621,14 @@ var JsonObject?.size: Int?
     get() = getInt(TeambrellaModel.ATTR_METADATA_SIZE)
     set(value) = setValue(TeambrellaModel.ATTR_METADATA_SIZE, value)
 
+var JsonObject?.scroll: Int?
+    get() = getInt(TeambrellaModel.ATTR_METADATA_SCROLL)
+    set(value) = setValue(TeambrellaModel.ATTR_METADATA_SCROLL, value)
+
+var JsonObject?.scrollOffset: Int?
+    get() = getInt(TeambrellaModel.ATTR_METADATA_SCROLL_OFFSET)
+    set(value) = setValue(TeambrellaModel.ATTR_METADATA_SCROLL_OFFSET, value)
+
 var JsonObject?.itemsUpdated: Boolean?
     get() = getBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED)
     set(value) = setBoolean(TeambrellaModel.ATTR_METADATA_ITEMS_UPDATED, value)
@@ -616,6 +654,8 @@ var JsonObject?.messageStatus: String?
 val JsonObject?.lastRead: Long?
     get() = getLong(TeambrellaModel.ATTR_DATA_LAST_READ)
 
+val JsonObject?.muted: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_IS_MUTED)
 
 val JsonObject?.reimbursement: Float?
     get() = getFloat(TeambrellaModel.ATTR_DATA_REIMBURSEMENT)
@@ -651,7 +691,7 @@ val JsonObject?.deductible: Double?
     get() = getDouble(DEDUCTIBLE)
 
 val JsonObject?.incidentDate: String?
-    get() = getString(INCIDENT_DATE)
+    get() = getString(TeambrellaModel.ATTR_DATA_INCIDENT_DATE)
 
 val JsonObject?.subTitle: String?
     get() = getString(SUBTITLE)

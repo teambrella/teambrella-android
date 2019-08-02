@@ -44,6 +44,7 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
     private var mReservedValue: Double = 0.0
     private var mCurrency: String? = null
     private var mRate: Double = 0.0
+    private var mWarning: String? = null
 
 
     fun setDefaultWithdrawAddress(address: String) {
@@ -63,7 +64,10 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
         notifyItemChanged(0)
     }
 
-
+    fun setWarning(text: String) {
+        mWarning = text
+    }
+    
     override fun getItemViewType(position: Int): Int {
         var viewType: Int
         if (position == 0) {
@@ -102,6 +106,7 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
         super.onBindViewHolder(holder, position)
         if (holder is SubmitWithdrawViewHolder) {
             holder.setAddress(mDefaultWithdrawAddress)
+            holder.setWarning(mWarning)
             holder.setBalance(mBalanceValue, mReservedValue, mAvailableValue, mCurrency)
         } else if (holder is WithdrawalViewHolder) {
             holder.onBind(mPager.loadedData.get(position - headersCount).asJsonObject)
@@ -132,6 +137,7 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
         private val currencyView: TextView? = itemView.findViewById(R.id.currency)
         private val availableView: TextView? = itemView.findViewById(R.id.currency_available)
         private val infoView: View? = itemView.findViewById(R.id.info)
+        private val warningView: TextView? = itemView.findViewById(R.id.warning)
 
         init {
             submitView?.setOnClickListener { v ->
@@ -157,7 +163,6 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
                 }
                 mWithdrawActivity.requestWithdraw(address, amount)
                 amountView?.text = null
-
             }
             infoView?.setOnClickListener { mWithdrawActivity.showWithdrawInfo() }
         }
@@ -167,7 +172,10 @@ class WithdrawalsAdapter(pager: IDataPager<JsonArray>
                 addressView?.text = address
             }
         }
-
+    
+        fun setWarning(warning: String?) {
+            warningView?.text = warning
+        }
         @SuppressLint("SetTextI18n")
         fun setBalance(cryptoBalance: Double, reserved: Double, available: Double, currency: String?) {
             amountView?.hint = HINT_FORMAT_STRING.format(available.asMillis)

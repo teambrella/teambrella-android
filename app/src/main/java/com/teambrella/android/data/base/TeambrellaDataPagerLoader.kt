@@ -192,7 +192,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                     }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
+                    .subscribeAutoDispose({ onNext(it) }, this::onError, this::onComplete)
             _isNextLoading = true
             _hasNextError = false
         }
@@ -221,19 +221,22 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
                     }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeAutoDispose(this::onPrevious, this::onError, this::onComplete)
+                    .subscribeAutoDispose({ onPrevious(it) }, this::onError, this::onComplete)
             _isPreviousLoading = true
             _hasPreviousError = false
         }
 
     }
 
-    private fun onNext(response: JsonObject) {
+    open fun onNext(response: JsonObject) {
         _isNextLoading = false
         val size = response.metadata?.originalSize ?: 0
         val newData = getPageableData(response)
         array.addAll(newData)
         _hasNext = size == LIMIT
+        if (array.count() < LIMIT) {
+            _hasPrevious = false
+        }
         _nextIndex += size
 
         // TODO: remove this code when paging is fixed
@@ -253,7 +256,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
         */
     }
 
-    private fun onPrevious(response: JsonObject) {
+    open fun onPrevious(response: JsonObject) {
         val newData = getPageableData(response)
         val size = response.metadata?.originalSize ?: 0
         newData.addAll(array)
@@ -346,7 +349,7 @@ open class KTeambrellaChatDataPagerLoader(private val chatUri: Uri) : ATeambrell
 //                    _nextIndex = 0
 //                    array = JsonArray()
                 }
-                .subscribeAutoDispose(this::onNext, this::onError, this::onComplete)
+                .subscribeAutoDispose({ onNext(it) }, this::onError, this::onComplete)
         _isNextLoading = true
         _hasNextError = false
     }

@@ -78,6 +78,14 @@ public interface TeambrellaAPI {
     Observable<Response<JsonObject>> deletePost(@Body JsonElement body);
 
     @Headers("Content-Type: application/json")
+    @POST("post/setMarked")
+    Observable<Response<JsonObject>> setMarked(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
+    @POST("post/setViewMode")
+    Observable<Response<JsonObject>> setViewMode(@Body JsonElement body);
+
+    @Headers("Content-Type: application/json")
     @POST("me/getTeams")
     Observable<Response<JsonObject>> getTeams();
 
