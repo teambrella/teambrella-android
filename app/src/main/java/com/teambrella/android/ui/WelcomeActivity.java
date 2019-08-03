@@ -383,6 +383,11 @@ public class WelcomeActivity extends AppCompatRequestActivity {
             mVkLoginButton.postDelayed(mVkLoginTimeOut, 3000);
         }
     }
+    
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
     private void loginByFacebook() {
         LoginManager loginManager = LoginManager.getInstance();
