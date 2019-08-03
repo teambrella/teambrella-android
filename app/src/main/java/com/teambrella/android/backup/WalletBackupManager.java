@@ -17,6 +17,7 @@ import com.google.android.gms.common.api.Status;
 import com.teambrella.android.util.log.Log;
 
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Wallet backup manager
@@ -61,6 +62,7 @@ public class WalletBackupManager {
     private FragmentActivity mActivity;
 
     private Boolean mForceReadOnConnected = null;
+    private AtomicBoolean mWalletRead = new AtomicBoolean(false);
 
     /**
      * Constructor
@@ -96,6 +98,9 @@ public class WalletBackupManager {
 
     public void readOnConnected(@SuppressWarnings("SameParameterValue") boolean force) {
         mForceReadOnConnected = force;
+        if (mGoogleApiClient.isConnected() && mWalletRead.compareAndSet(false, true)) {
+            readWallet(mForceReadOnConnected);
+        }
     }
 
     public void saveWallet(String id, String name, Uri picture, String password, final boolean force) {
@@ -220,7 +225,7 @@ public class WalletBackupManager {
     private final GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-            if (mForceReadOnConnected != null) {
+            if (mForceReadOnConnected != null && mWalletRead.compareAndSet(false, true)) {
                 readWallet(mForceReadOnConnected);
                 mForceReadOnConnected = null;
             }
