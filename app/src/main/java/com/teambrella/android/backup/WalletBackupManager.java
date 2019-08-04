@@ -95,14 +95,7 @@ public class WalletBackupManager {
         mListeners.remove(listener);
     }
 
-
-    public void readOnConnected(@SuppressWarnings("SameParameterValue") boolean force) {
-        mForceReadOnConnected = force;
-        if (mGoogleApiClient.isConnected() && mWalletRead.compareAndSet(false, true)) {
-            readWallet(mForceReadOnConnected);
-        }
-    }
-
+    
     public void saveWallet(String id, String name, Uri picture, String password, final boolean force) {
 
         if (!mGoogleApiClient.isConnected()) {
@@ -217,6 +210,13 @@ public class WalletBackupManager {
     private void notifyOnWalletReadError(int code, boolean force) {
         for (IWalletBackupListener listener : mListeners) {
             listener.onWalletReadError(code, force);
+        }
+    }
+    
+    public void readOnConnected(@SuppressWarnings("SameParameterValue") boolean force) {
+        mForceReadOnConnected = force;
+        if (mGoogleApiClient.isConnected() && mWalletRead.compareAndSet(false, true)) {
+            readWallet(mForceReadOnConnected);
         }
     }
 
