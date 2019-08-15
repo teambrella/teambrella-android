@@ -168,6 +168,7 @@ class KChatDataPagerLoader(uri: Uri, val userId: String) : KTeambrellaChatDataPa
 
                 val posOfPreviousMarked = array.indexOfFirst { it.asJsonObject.stringId != postId
                         && it.asJsonObject.chatItemType != ChatItems.CHAT_ITEM_DATE
+                        && it.asJsonObject.userId == userId
                         && (it.asJsonObject.marked ?: false)}
                 if (posOfPreviousMarked >= 0) {
                     array[posOfPreviousMarked]?.asJsonObject?.let { prevMarked ->

@@ -2,6 +2,8 @@ package com.teambrella.android.ui.image;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,7 +16,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.teambrella.android.R;
 import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.base.TeambrellaDaggerActivity;
@@ -97,6 +107,7 @@ public class ImageViewerActivity extends TeambrellaDaggerActivity {
     public static class ImageFragment extends TeambrellaFragment {
 
         public static final String EXTRA_URI = "uri";
+        protected com.ortiz.touch.TouchImageView _imageView;
 
         public static ImageFragment getInstance(String uri) {
             ImageFragment fragment = new ImageFragment();
@@ -109,11 +120,37 @@ public class ImageViewerActivity extends TeambrellaDaggerActivity {
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
-            GlideApp.with(this).load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI)))
-                    .apply(RequestOptions.overrideOf(1024)).into(imageView);
-
-            return imageView;
+            _imageView = (com.ortiz.touch.TouchImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
+    
+//            val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
+//            fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
+//                RequestOptions().transform(RoundedCorners(radiusPx))
+//
+//            GlideApp.with(this).load(it)
+//                    .apply(getRequestOptions())
+//                    .transition(DrawableTransitionOptions.withCrossFade())
+//                    .into(this)
+            
+            return _imageView;
+        }
+    
+        @Override
+        public void onStart() {
+            super.onStart();
+            GlideApp.with(this)
+                    .asBitmap()
+                    .load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI)))
+                    .apply(new RequestOptions().override(1600, 1600))
+                    //.placeholder(R.drawable.picture_background_circle)
+                    //.transition(DrawableTransitionOptions.withCrossFade())
+                    .into(new BitmapImageViewTarget(_imageView) {
+                        @Override
+                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            super.onResourceReady(resource, transition);
+                            _imageView.setImageBitmap(resource);
+                            _imageView.setZoom(1);
+                        }
+                    });
         }
     }
 
