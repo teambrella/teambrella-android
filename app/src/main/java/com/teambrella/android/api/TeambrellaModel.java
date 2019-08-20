@@ -347,8 +347,8 @@ public class TeambrellaModel {
 	public static final String ATTR_DATA_MY_LIKE = "MyLike";
 	public static final String ATTR_DATA_GRAYED = "Grayed";
 	public static final String ATTR_DATA_IS_MARKED = "IsMarked";
-	public static final String ATTR_DATA_SUGGEST_ADD_PROXY = "SuggestAddingProxy";
-	public static final String ATTR_DATA_SUGGEST_REMOVE_PROXY = "SuggestRemovingProxy";
+	public static final String ATTR_DATA_SUGGEST_ADD_PROXY = "SuggestAddingToProxy";
+	public static final String ATTR_DATA_SUGGEST_REMOVE_PROXY = "SuggestRemovingFromProxy";
 	
 	
 	public static final String ATTR_DATA_ONE_VOTING = "VotingPart";

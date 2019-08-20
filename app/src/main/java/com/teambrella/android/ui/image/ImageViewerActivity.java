@@ -122,21 +122,6 @@ public class ImageViewerActivity extends TeambrellaDaggerActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             _imageView = (com.ortiz.touch.TouchImageView) inflater.inflate(R.layout.fragment_image_fullscreen, container, false);
     
-//            val radiusPx = this.context.resources.getDimensionPixelOffset(radius)
-//            fun getRequestOptions() = if (crop) RequestOptions().transforms(CenterCrop(), RoundedCorners(radiusPx)) else
-//                RequestOptions().transform(RoundedCorners(radiusPx))
-//
-//            GlideApp.with(this).load(it)
-//                    .apply(getRequestOptions())
-//                    .transition(DrawableTransitionOptions.withCrossFade())
-//                    .into(this)
-            
-            return _imageView;
-        }
-    
-        @Override
-        public void onStart() {
-            super.onStart();
             GlideApp.with(this)
                     .asBitmap()
                     .load(getImageLoader().getImageUrl(getArguments().getString(EXTRA_URI)))
@@ -151,6 +136,8 @@ public class ImageViewerActivity extends TeambrellaDaggerActivity {
                             _imageView.setZoom(1);
                         }
                     });
+            
+            return _imageView;
         }
     }
 
