@@ -30,7 +30,7 @@ public class EtherNode {
 
     private final List<EtherAPI> mEtherAPIs = new LinkedList<>();
     private static final String[] TEST_AUTHORITIES = new String[]{"https://ropsten.etherscan.io"};
-    private static final String[] MAIN_AUTHORITIES = new String[]{"http://api.etherscan.io"};
+    private static final String[] MAIN_AUTHORITIES = new String[]{"https://api.etherscan.io"};
 
     public EtherNode(boolean testNet) {
 
