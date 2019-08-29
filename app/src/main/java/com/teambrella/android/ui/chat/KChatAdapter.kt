@@ -349,7 +349,10 @@ class KChatAdapter(pager: IDataPager<JsonArray>, private val context: Context, p
                 }
             }
 
-            val cameraUsed = item.images?.firstOrNull().toString().contains("@cam") || item.cameraUsed == true
+            var cameraUsed = item.cameraUsed == true
+            if (item.imageIndex != null && item.images!![item.imageIndex!!].toString().contains("@cam")) {
+                cameraUsed = true
+            }
             val timeString = timeFormat.format(TimeUtils.getDateFromTicks(item.created ?: 0L))
             if (cameraUsed) {
                 time?.text = "\uD83D\uDCF7 " + timeString

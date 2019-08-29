@@ -52,6 +52,7 @@ import com.teambrella.android.util.TeambrellaDateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import io.reactivex.Notification;
@@ -299,7 +300,7 @@ public class ReportClaimActivity extends TeambrellaDaggerActivity implements Dat
     private void onImagePickerResult(ImagePicker.ImageDescriptor descriptor) {
         String path = descriptor.file.getAbsolutePath();
         mPhotoAdapter.addPhoto(path);
-        request(TeambrellaUris.getNewFileUri(path));
+        request(TeambrellaUris.getNewFileUri(path, UUID.randomUUID().toString(), descriptor.cameraUsed));
     }
 
     private void onImagePickerError(Throwable throwable) {
