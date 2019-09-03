@@ -87,9 +87,9 @@ class HomeCardsFragment : ADataFragment<IMainDataHost>() {
 
         override fun getItem(position: Int): Fragment =
                 when (cards?.get(position)?.asJsonObject.itemType) {
-                    TeambrellaModel.FEED_ITEM_PAY_TO_JOIN -> createCardFragment(PayToJoinCardFragment::class.java, position
-                            , cards?.get(position)?.asJsonObject?.itemType ?: 0
-                            , tags)
+                    TeambrellaModel.FEED_ITEM_FUND_WALLET -> createCardFragment(PayToJoinCardFragment::class.java, position
+                                                                                , cards?.get(position)?.asJsonObject?.itemType ?: 0
+                                                                                , tags)
 
                     TeambrellaModel.FEED_ITEM_UPDATE_PROFILE -> createCardFragment(UpdateProfileCardFragment::class.java, position
                             , cards?.get(position)?.asJsonObject?.itemType ?: 0

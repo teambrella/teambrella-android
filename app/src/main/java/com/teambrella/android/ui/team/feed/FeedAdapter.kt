@@ -1,5 +1,6 @@
 package com.teambrella.android.ui.team.feed
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
@@ -74,9 +75,10 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
     }
 
     private inner class FeedItemViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val pane: View? = itemView.findViewById(R.id.pane)
         private val icon: ImageView? = itemView.findViewById(R.id.icon)
         private val title: TextView? = itemView.findViewById(R.id.title)
-        private val `when`: TextView? = itemView.findViewById(R.id.`when`)
+        private val date: TextView? = itemView.findViewById(R.id.`when`)
         private val message: TextView? = itemView.findViewById(R.id.message)
         private val avatars: TeambrellaAvatarsWidgets? = itemView.findViewById(R.id.avatars)
         private val unread: TextView? = itemView.findViewById(R.id.unread)
@@ -95,7 +97,7 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
             pinned?.visibility = if ((item.unreadCount ?:0) <= 0 && (item.teamPin ?:0F) > 0F) View.VISIBLE else View.INVISIBLE
 
             item.itemDate?.let {
-                `when`?.setRelativeTimeSpan(it)
+                date?.setRelativeTimeSpan(it)
             }
 
             item.topPosterAvatars?.map { it.asString }?.let {
@@ -121,15 +123,33 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
         }
 
         private fun setType(item: JsonObject) {
+            date?.visibility = View.VISIBLE
+            avatars?.visibility = View.VISIBLE
+            unread?.visibility = View.VISIBLE
+            type?.visibility = View.VISIBLE
+            message?.maxLines = 2
+            pane?.setBackgroundColor(Color.WHITE)
+
             when (item.itemType) {
                 TeambrellaModel.FEED_ITEM_CLAIM -> {
                     type?.setText(R.string.claim)
                     type?.setRightCompoundDrawable(R.drawable.ic_claim)
                 }
+                
                 TeambrellaModel.FEED_ITEM_TEAM_CHAT -> {
                     type?.setRightCompoundDrawable(R.drawable.ic_discussion)
                     type?.setText(R.string.discussion)
                 }
+    
+                TeambrellaModel.FEED_ITEM_FUND_WALLET -> {
+                    date?.visibility = View.GONE
+                    avatars?.visibility = View.GONE
+                    unread?.visibility = View.GONE
+                    type?.visibility = View.GONE
+                    message?.maxLines = 4
+                    pane?.setBackgroundColor(itemView.context.getResources().getColor(R.color.veryLightBlueTwo))
+                }
+                
                 else -> {
                     //type?.setRightCompoundDrawable(R.drawable.ic_application)
                     //type?.setText(R.string.application)
@@ -143,6 +163,7 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
             when (item.itemType) {
                 TeambrellaModel.FEED_ITEM_TEAM_CHAT -> title?.text = item.chatTitle
                 TeambrellaModel.FEED_ITEM_TEAMMATE -> title?.text = item.itemUserName
+                TeambrellaModel.FEED_ITEM_FUND_WALLET -> title?.text = item.chatTitle
                 else -> title?.text = item.modelOrName
             }
         }
@@ -151,30 +172,38 @@ class KFeedAdapter(val dataHost: IMainDataHost, val teamId: Int
             itemView.setOnClickListener {
                 when (item.itemType) {
                     TeambrellaModel.FEED_ITEM_CLAIM -> {
-                        startActivity(ChatActivity.getClaimChat(itemView.context
-                                , teamId
-                                , item.itemIdInt ?: 0
-                                , item.modelOrName
-                                , item.smallPhotoOrAvatar
-                                , item.topicId
-                                , dataHost.teamAccessLevel
-                                , item.itemDate))
+                        startActivity(ChatActivity.getClaimChat(
+                                itemView.context,
+                                teamId,
+                                item.itemIdInt ?: 0,
+                                item.modelOrName,
+                                item.smallPhotoOrAvatar,
+                                item.topicId,
+                                dataHost.teamAccessLevel,
+                                item.itemDate))
                     }
 
                     TeambrellaModel.FEED_ITEM_TEAM_CHAT -> {
-                        startActivity(ChatActivity.getFeedChat(itemView.context
-                                , item.chatTitle
-                                , item.topicId
-                                , teamId
-                                , dataHost.teamAccessLevel))
+                        startActivity(ChatActivity.getFeedChat(
+                                itemView.context,
+                                item.chatTitle,
+                                item.topicId,
+                                teamId,
+                                dataHost.teamAccessLevel))
                     }
+    
+                    TeambrellaModel.FEED_ITEM_FUND_WALLET -> {
+                        dataHost.showWallet()
+                    }
+                    
                     else -> {
-                        startActivity(ChatActivity.getTeammateChat(itemView.context, teamId
-                                , item.itemUserId
-                                , item.itemUserName
-                                , item.smallPhotoOrAvatar
-                                , item.topicId
-                                , dataHost.teamAccessLevel))
+                        startActivity(ChatActivity.getTeammateChat(
+                                itemView.context, teamId,
+                                item.itemUserId,
+                                item.itemUserName,
+                                item.smallPhotoOrAvatar,
+                                item.topicId,
+                                dataHost.teamAccessLevel))
                     }
                 }
             }

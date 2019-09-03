@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.teambrella.android.R;
 import com.teambrella.android.api.TeambrellaModel;
 import com.teambrella.android.api.model.json.JsonWrapper;
@@ -32,6 +33,8 @@ import com.teambrella.android.image.glide.GlideApp;
 import com.teambrella.android.ui.claim.ClaimActivity;
 import com.teambrella.android.ui.teammate.TeammateActivityKt;
 import com.teambrella.android.util.AmountCurrencyUtil;
+
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -46,14 +49,11 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
 
 
     public static final int VIEW_TYPE_LOADING = 1;
-
     public static final int VIEW_TYPE_ERROR = 2;
-
     public static final int VIEW_TYPE_BOTTOM = 3;
-
     public static final int VIEW_TYPE_EMPTY = 4;
-
     public static final int VIEW_TYPE_REGULAR = 5;
+    public static final int VIEW_TYPE_ADD_FUNDS = 6;
 
     public TeambrellaDataPagerAdapter(IDataPager<JsonArray> pager) {
         super(pager);
@@ -78,6 +78,9 @@ public class TeambrellaDataPagerAdapter extends ATeambrellaDataPagerAdapter {
                     return VIEW_TYPE_BOTTOM;
                 }
             }
+//            JsonArray data = mPager.getLoadedData();
+//            JsonObject item = data.get(position).getAsJsonObject();
+//            if (item.get(TeambrellaModel.ATTR_DATA_ITEM_TYPE))
             return VIEW_TYPE_REGULAR;
         } else {
             return VIEW_TYPE_EMPTY;
