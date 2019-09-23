@@ -205,8 +205,11 @@ public interface TeambrellaAPI {
     @Headers("Content-Type: application/json")
     @POST("wallet/getOne")
     Observable<Response<JsonObject>> getWallet(@Body JsonElement body);
-
-
+    
+    @Headers("Content-Type: application/json")
+    @POST("wallet/setLimit")
+    Observable<Response<JsonObject>> setCoverageLimit(@Body JsonElement body);
+    
     @Headers("Content-Type: application/json")
     @POST("demo/getTeams/{language}")
     Observable<Response<JsonObject>> getDemoTeams(@Path("language") String language);

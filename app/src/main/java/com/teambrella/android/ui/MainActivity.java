@@ -452,13 +452,18 @@ public class MainActivity extends ATeambrellaActivity implements IMainDataHost, 
     public void optInToRating(boolean optIn) {
         TeambrellaPagerViewModel model = ViewModelProviders.of(this).get(USER_RATING_DATA, TeambrellaPagerViewModel.class);
         model.dataPager.reload(TeambrellaUris.getUserRatingUri(getTeamId(), optIn));
-
     }
 
     @Override
     public void postVote(double vote) {
         TeambrellaDataViewModel model = ViewModelProviders.of(this).get(VOTE_DATA, TeambrellaDataViewModel.class);
         model.load(TeambrellaUris.getTeammateVoteUri(getTeammateId(), vote));
+    }
+    
+    @Override
+    public void setClaimLimit(int limit) {
+        TeambrellaDataViewModel model = ViewModelProviders.of(this).get(WALLET_DATA, TeambrellaDataViewModel.class);
+        model.load(TeambrellaUris.getSetClaimLimitUri(getTeamId(), limit));
     }
 
     @Override

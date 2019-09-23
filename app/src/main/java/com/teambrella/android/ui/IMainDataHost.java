@@ -53,6 +53,8 @@ public interface IMainDataHost extends IDataHost {
     void launchActivity(Intent intent);
 
     void showCoverage();
+    
+    void setClaimLimit(int limit);
 
     void showWallet();
 

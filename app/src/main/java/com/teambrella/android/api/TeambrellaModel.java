@@ -204,6 +204,7 @@ public class TeambrellaModel {
 	public static final String ATTR_REQUEST_IS_MUTED = "IsMuted";
 	public static final String ATTR_REQUEST_NEW_POST_ID = "NewPostId";
 	public static final String ATTR_REQUEST_VOTES_OF_TEAMMATE_ID = "VotesOfTeammateId";
+	public static final String ATTR_REQUEST_CLAIM_LIMIT = "ClaimLimit";
 	
 	/*Response*/
 	public static final String ATTR_STATUS = "Status";
@@ -275,6 +276,13 @@ public class TeambrellaModel {
 	public static final String ATTR_DATA_YEAR = "Year";
 	public static final String ATTR_DATA_UNREAD = "Unread";
 	public static final String ATTR_DATA_CLAIM_LIMIT = "ClaimLimit";
+	public static final String ATTR_DATA_MAX_PAYMENT = "MaxPayment";
+	public static final String ATTR_DATA_DESIRED_LIMIT = "DesiredLimit";
+	public static final String ATTR_DATA_NEXT_LIMIT = "NextLimit";
+	public static final String ATTR_DATA_TEAMMATES_AT_EFF_LIMIT = "TeammatesAtEffLimit";
+	public static final String ATTR_DATA_WAS_COVERAGE_SUPPRESSED = "WasCoverageSuppressed";
+	public static final String ATTR_DATA_TEAMMATES_AT_LIMIT = "TeammatesAtLimit";
+	public static final String ATTR_DATA_TEAM_CLAIM_LIMIT = "TeamClaimLimit";
 	public static final String ATTR_DATA_LIMIT_ANOUNT = "LimitAmount";
 	public static final String ATTR_DATA_RISK = "Risk";
 	public static final String ATTR_DATA_PROXY_RANK = "ProxyRank";

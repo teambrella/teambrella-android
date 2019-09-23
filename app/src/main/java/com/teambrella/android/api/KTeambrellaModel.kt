@@ -50,6 +50,7 @@ const val PIN_TITLE = "PinTitle"
 const val PIN_TEXT = "PinText"
 const val UNPIN_TITLE = "UnpinTitle"
 const val UNPIN_TEXT = "UnpinText"
+const val SETTINGS_URL = "SettingsUrl"
 
 
 object ChatItems {
@@ -146,8 +147,29 @@ var JsonObject?.coverageType: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE)
     set(value) = setValue(TeambrellaModel.ATTR_DATA_COVERAGE_TYPE, value)
 
-val JsonObject?.claimLimit: Float?
-    get() = getFloat(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)
+val JsonObject?.claimLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_CLAIM_LIMIT)
+
+val JsonObject?.desiredLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_DESIRED_LIMIT)
+
+val JsonObject?.nextLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_NEXT_LIMIT)
+
+val JsonObject?.teammatesAtLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_TEAMMATES_AT_LIMIT)
+
+val JsonObject?.teamClaimLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_TEAM_CLAIM_LIMIT)
+
+val JsonObject?.teammatesAtEffLimit: Int?
+    get() = getInt(TeambrellaModel.ATTR_DATA_TEAMMATES_AT_EFF_LIMIT)
+
+val JsonObject?.wasCoverageSuppressed: Boolean?
+    get() = getBoolean(TeambrellaModel.ATTR_DATA_WAS_COVERAGE_SUPPRESSED)
+
+val JsonObject?.maxPayment: Float?
+    get() = getFloat(TeambrellaModel.ATTR_DATA_MAX_PAYMENT)
 
 val JsonObject?.oneClaimId: Int?
     get() = getInt(TeambrellaModel.ATTR_DATA_ONE_CLAIM_ID)
@@ -362,6 +384,9 @@ val JsonObject?.facebookUrl: String?
 
 val JsonObject?.vkUrl: String?
     get() = getString(VK_URL)
+
+val JsonObject?.settingsUrl: String?
+    get() = getString(SETTINGS_URL)
 
 val JsonObject?.claimAmount: Float?
     get() = getFloat(CLAIM_AMOUNT)

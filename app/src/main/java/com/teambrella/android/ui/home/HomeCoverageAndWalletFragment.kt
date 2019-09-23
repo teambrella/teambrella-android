@@ -50,9 +50,12 @@ class HomeCoverageAndWalletFragment : ADataFragment<IMainDataHost>() {
                         , dataHost.userTopicID
                         , dataHost.teamAccessLevel))
             }
-
-            coverage?.text = Html.fromHtml(getString(R.string.coverage_format_string
-                    , Math.round((data.coverage ?: 0f) * 100)))
+    
+            if ((data.claimLimit?:0) == 0) {
+                coverage?.text = Html.fromHtml(getString(R.string.coverage_suspended))
+            } else {
+                AmountCurrencyUtil.setAmount(coverage, data.claimLimit?:0, dataHost.currency)
+            }
 
             submitClaim?.visibility = View.VISIBLE
             submitClaim?.isEnabled = dataHost.isFullTeamAccess

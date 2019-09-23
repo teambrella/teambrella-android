@@ -123,6 +123,7 @@
                 android:id="@+id/coverage_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:padding="4dp"
                 android:src="@drawable/ic_icon_coverage" />
@@ -139,9 +140,14 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
                 android:layout_below="@id/coverage_header"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="12dp"
                 android:layout_toEndOf="@id/coverage_icon"
                 android:includeFontPadding="false"
-                android:text="@string/unknown_value" />
+                android:lines="1"
+                android:text="@string/unknown_value"
+                app:autoSizeMinTextSize="12sp"
+                app:autoSizeTextType="uniform"
+                tools:text="200 000 usd" />
 
         </RelativeLayout>
 
@@ -164,6 +170,7 @@
                 android:id="@+id/wallet_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:layout_marginEnd="16dp"
                 android:padding="4dp"
                 android:src="@drawable/ic_icon_wallet" />
@@ -180,9 +187,14 @@
                 style="@style/Teambrella.Teammate.Section.TextAppearence.Amount"
                 android:layout_below="@id/wallet_header"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="16dp"
                 android:layout_toEndOf="@id/wallet_icon"
                 android:includeFontPadding="false"
-                android:text="@string/unknown_value" />
+                android:lines="1"
+                android:text="@string/unknown_value"
+                app:autoSizeMinTextSize="12sp"
+                app:autoSizeTextType="uniform"
+                tools:text="1 700 meth" />
 
         </RelativeLayout>
 

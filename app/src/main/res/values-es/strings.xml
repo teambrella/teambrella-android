@@ -24,7 +24,7 @@
     <string name="coverage_type">Está cubierto</string>
     <string name="collision_deductible_insurance">Deducible por Colisión</string>
 
-    <string name="limit">Límite</string>
+    <string name="limit">Cobertura</string>
     <string name="see_claims_format_string">Ver las Reclamaciones (%d)</string>
     <string name="voting_stats">Estadísticas de votación</string>
     <string name="weight">Peso</string>
@@ -164,10 +164,10 @@
     <string name="notification_messages_since">%d nuevos mensajes</string>
     <string name="notification_funded_header">Tu monedero está financiado</string>
     <string name="coverage_explanation_title">Cómo funciona</string>
-    <string name="coverage_explanation_description">Utilice el control deslizante para ver cómo los gastos afectan su reembolso máximo.</string>
-    <string name="coverage_explanation_max_expenses_covered">Cantidad máxima de los gastos cubiertos</string>
-    <string name="coverage_explanation_possible_expenses">Si tus gastos son</string>
-    <string name="coverage_explanation_team_would_pay">El equipo te pagaría hasta</string>
+    <string name="coverage_explanation_description">Every teammate covers you directly.</string>
+    <string name="coverage_explanation_desirable_limit">Desirable coverage</string>
+    <string name="coverage_explanation_possible_payment">Si tus gastos son</string>
+    <string name="coverage_explanation_teammates_would_pay">Teammates with at least the same coverage</string>
     <string name="inbox">Mensajes privados</string>
     <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Todavía no tienes los Proxies.</font><br><br><font color=\'#95a5b1\'>Por favor, considera a alguien en quien confías para nombrar a tu primero Proxy.</font>]]></string>
     <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>No estas Proxy de cualquier compañero del equipo.</font><br><br><font color=\'#95a5b1\'>Tu puedes estar Proxy por ganar la confianza de otros compañeros del equipo - publica tus ideas, opiniones e votos.</font>]]></string>
@@ -404,5 +404,15 @@
     <string name="to_pay">For payment</string>
     <string name="paid">paid</string>
     <string name="rate_format_string">%1$s %2$s/%3$s</string>
+    <string name="coverage_explanation_current_coverage">Current coverage</string>
+    <string name="fund_wallet_verbose">Financiar</string>
+    <string name="check_settings">Check settings</string>
+    <string name="coverage_explanation_need_more_teammates">Not enough teammates (%d) with coverage equal or greater than desirable.</string>
+    <string name="coverage_explanation_settings">Please make ure that Teambrella application is allowed to work in background.\n\nCoverage will restore in 24 hours.</string>
+    <string name="coverage_explanation_fund">Not enough funds for desired coverage.</string>
+    <string name="coverage_explanation_increase">Coverage increses to %d %s in 24 hours</string>
+    <string name="coverage_suspended"><![CDATA[<font color=\"#dc2459\">suspended</font>]]></string>
+    <string name="coverage_reduction_warning">WARNING: You\'re going to reduce the coverage. It takes 24 hours to increase coverage after that.</string>
+    <string name="confirm_coverage_reduction_button">Confirm reduction</string>
 
 </resources>

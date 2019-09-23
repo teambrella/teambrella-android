@@ -49,7 +49,7 @@
   <string name="coverage_type">Covered</string>
   <string name="collision_deductible_insurance">Collision Deductible</string>
 
-  <string name="limit">Limit</string>
+  <string name="limit">Coverage</string>
   <string name="see_claims_format_string">See Claims (%d)</string>
   <string name="voting_stats">Voting Stats</string>
   <string name="weight">Weight</string>
@@ -157,7 +157,7 @@
   <string name="take_another_photo">Take Another Photo</string>
   <string name="reimburse_to">reimburse to</string>
   <string name="submit_claim">Submit</string>
-  <string name="no_incident_date_error"> No incident date</string>
+  <string name="no_incident_date_error">No incident date</string>
   <string name="big_expenses_error">The expenses must not be greater than %1$s%2$.2f.</string>
   <string name="no_description_provided_error">No description provided.</string>
   <string name="no_expenses_provided_error">No expenses provided.</string>
@@ -180,10 +180,9 @@
   <string name="chat_voted">Voted</string>
   <string name="slogan">Not insurance. A lot better.</string>
   <string name="coverage_explanation_title">How it works</string>
-  <string name="coverage_explanation_description">Use the slider to understand how expenses impact your maximum reimbursement.</string>
-  <string name="coverage_explanation_max_expenses_covered">Max Expenses covered</string>
-  <string name="coverage_explanation_possible_expenses">In case your expenses are</string>
-  <string name="coverage_explanation_team_would_pay">The team would pay you up to</string>
+  <string name="coverage_explanation_description">1. Submit a claim\n2. The team discusses and votes\n3. Teammates pay their shares of reimbursement</string>
+    <string name="coverage_explanation_possible_payment">Your maximum payment</string>
+  <string name="coverage_explanation_teammates_would_pay">Teammates with at least the same coverage</string>
   <string name="notification_claim_header">New claim in %1$s</string>
   <string name="notification_claim_text">%1$s for %2$s</string>
   <string name="notification_messages_since">%d new messages</string>
@@ -451,5 +450,16 @@
   <string name="to_pay">For payment</string>
   <string name="paid">paid</string>
   <string name="rate_format_string">%1$s %2$s/%3$s</string>
+    <string name="coverage_explanation_desirable_limit">Desirable coverage</string>
+    <string name="coverage_explanation_current_coverage">Current coverage</string>
+  <string name="fund_wallet_verbose">Fund wallet</string>
+  <string name="check_settings">Check settings</string>
+    <string name="coverage_explanation_need_more_teammates">Not enough teammates (%d) with coverage equal or greater than desirable.</string>
+    <string name="coverage_explanation_settings">Please make ure that Teambrella application is allowed to work in background.\n\nCoverage will restore in 24 hours.</string>
+    <string name="coverage_explanation_fund">Not enough funds for desired coverage.</string>
+  <string name="coverage_explanation_increase">Coverage increses to %d %s in 24 hours</string>
+  <string name="coverage_suspended"><![CDATA[<font color=\"#dc2459\">suspended</font>]]></string>
+    <string name="coverage_reduction_warning">WARNING: You\'re going to reduce the coverage. It takes 24 hours to increase coverage after that.</string>
+  <string name="confirm_coverage_reduction_button">Confirm reduction</string>
 
 </resources>

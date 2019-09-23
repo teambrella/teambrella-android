@@ -332,36 +332,42 @@ public class TeambrellaServer {
             case TeambrellaUris.WALLET: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                break;
             }
-            break;
+            case TeambrellaUris.SET_COVERAGE_LIMIT: {
+                teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_CLAIM_LIMIT, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_LIMIT)));
+                break;
+            }
             case TeambrellaUris.WITHDRAWALS: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                break;
             }
-            break;
             case TeambrellaUris.NEW_WITHDRAW: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TO_ADDRESS, uri.getQueryParameter(TeambrellaUris.KEY_ADDRESS));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_AMOUNT, Double.parseDouble(uri.getQueryParameter(TeambrellaUris.KEY_AMOUNT)));
+                break;
             }
-            break;
             case TeambrellaUris.MUTE: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_IS_MUTED, Boolean.parseBoolean(uri.getQueryParameter(TeambrellaUris.KEY_MUTED)));
+                break;
             }
-            break;
             case TeambrellaUris.WALLET_TRANSACTIONS: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                break;
             }
-            break;
 
             case TeambrellaUris.GET_TEAM_NOTIFICATION_SETTINGS: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TEAM_ID, Integer.parseInt(teamIdString));
+                break;
             }
-            break;
             case TeambrellaUris.SET_TEAM_NOTIFICATION_SETTINGS: {
                 teamIdString = uri.getQueryParameter(TeambrellaUris.KEY_TEAM_ID);
                 String notificationString = uri.getQueryParameter(TeambrellaUris.KEY_NOTIFICATION_SETTING);
@@ -370,28 +376,28 @@ public class TeambrellaServer {
             }
             case TeambrellaUris.GET_TOPIC_PIN: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
+                break;
             }
-            break;
             case TeambrellaUris.SET_TOPIC_PIN: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_PIN, Integer.parseInt(uri.getQueryParameter(TeambrellaUris.KEY_MY_PIN)));
+                break;
             }
-            break;
             case TeambrellaUris.SET_POST_LIKE: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MY_LIKE, uri.getQueryParameter(TeambrellaUris.KEY_MY_LIKE));
+                break;
             }
-            break;
             case TeambrellaUris.SET_MARKED: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_POST_ID, uri.getQueryParameter(TeambrellaUris.KEY_POST_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_MARKED, uri.getQueryParameter(TeambrellaUris.KEY_MARKED));
+                break;
             }
-            break;
             case TeambrellaUris.SET_VIEW_MODE: {
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_TOPIC_ID, uri.getQueryParameter(TeambrellaUris.KEY_TOPIC_ID));
                 requestBody.addProperty(TeambrellaModel.ATTR_REQUEST_USE_MARKS_MODE, uri.getQueryParameter(TeambrellaUris.KEY_USE_MARKS_MODE));
+                break;
             }
-            break;
             case TeambrellaUris.ME_REGISTER_USER:
             case TeambrellaUris.ME_UPDATES:
             case TeambrellaUris.ME_REGISTER_FACEBOOK_KEY:
@@ -536,6 +542,8 @@ public class TeambrellaServer {
                 return mAPI.setMarked(requestBody);
             case TeambrellaUris.SET_VIEW_MODE:
                 return mAPI.setViewMode(requestBody);
+            case TeambrellaUris.SET_COVERAGE_LIMIT:
+                return mAPI.setCoverageLimit(requestBody);
             default:
                 throw new RuntimeException("unknown uri:" + uri);
         }

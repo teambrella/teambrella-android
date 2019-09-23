@@ -21,6 +21,7 @@
     <color name="dark">#2c3948</color>
     <color name="bluishGrey">#7b8d9a</color>
     <color name="lightGold">#ffd152</color>
+    <color name="lighterGold">#30ffd152</color>
     <color name="lightBlueGrey">#dee6f3</color>
     <color name="charcoalGrey">#3c4753</color>
     <color name="divider">#d3d3d3</color>

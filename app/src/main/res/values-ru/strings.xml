@@ -22,10 +22,10 @@
     <string name="voting_ends_title">Голосование: осталось</string>
 
     <string name="object">Объект</string>
-    <string name="coverage_type">Защита</string>
-    <string name="collision_deductible_insurance">Ущерб</string>
+    <string name="coverage_type">Защита от</string>
+    <string name="collision_deductible_insurance">Ущерба</string>
 
-    <string name="limit">Лимит</string>
+    <string name="limit">Защита</string>
     <string name="see_claims_format_string">Заявки на Выплату (%d)</string>
     <string name="voting_stats">Статистика</string>
     <string name="weight">Вес</string>
@@ -60,7 +60,7 @@
 
 
     <string name="team_vote">Голос команды</string>
-    <string name="your_vote">Твой голос</string>
+    <string name="your_vote">Ваш голос</string>
     <string name="vote_in_percent_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
 
     <string name="vote_avg_difference_bigger_format_string">"СРЕДН.\n+%d%%"</string>
@@ -73,7 +73,7 @@
     <string name="submit_another_claim">Заявка на Выплату</string>
     <string name="coverage_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#35abd9">%%</font>]]></string>
     <string name="home_team_vote_format_string"><![CDATA[<font color="#2c3948">%d</font><font color="#1fc0b6">%%</font>]]></string>
-    <string name="your_claim">Твоя заявка</string>
+    <string name="your_claim">Ваша заявка</string>
     <string name="claimed">Заявлено</string>
     <string name="welcome_user_format_string">Привет, %s! </string>
     <string name="application">Вступление в команду</string>
@@ -81,7 +81,7 @@
     <string name="pet_insurance">Здоровье Питомца</string>
     <string name="claim">Заявка</string>
     <string name="application_discussion">Обсуждение</string>
-    <string name="here_whats_new">Вот новости для тебя:</string>
+    <string name="here_whats_new">Вот новости для Вас:</string>
     <string name="try_demo">Попробовать Демо</string>
     <string name="continue_with_facebook">Продолжить с Facebook</string>
     <string name="continue_with_vk">Продолжить с VK</string>
@@ -92,9 +92,9 @@
     <string name="remove_from_my_proxies">Убрать из моих прокси</string>
     <string name="total_commission">Общая комиссия</string>
     <string name="commission_format_string">%1$s%2$.2f</string>
-    <string name="i_am_proxy_for">Для кого ты прокси</string>
+    <string name="i_am_proxy_for">Для кого Вы прокси</string>
     <string name="last_voted_format_string">Последний голос: %s</string>
-    <string name="you">Ты</string>
+    <string name="you">Вы</string>
     <string name="opt_into_rating">Вступить в рейтинг</string>
     <string name="opt_out_of_rating">Выйти из рейтинга</string>
     <string name="profile">Профиль</string>
@@ -127,7 +127,7 @@
     <string name="report_claim">Подать заявку</string>
     <string name="report">Заявка</string>
     <string name="expenses">Расходы</string>
-    <string name="describe_your_case">Опиши свою ситуацию</string>
+    <string name="describe_your_case">Опишите свою ситуацию</string>
     <string name="photos">Фото</string>
     <string name="add_photos">Добавить фото</string>
     <string name="add_photos_to_chat">Добавить в чат</string>
@@ -140,7 +140,7 @@
     <string name="no_description_provided_error">Нет описания.</string>
     <string name="no_expenses_provided_error">Введите расходы.</string>
     <string name="no_address_provided">Нет адреса.</string>
-    <string name="please_wait">Пожалуйста подождите</string>
+    <string name="please_wait">Пожалуйста, подождите</string>
     <string name="post">Текст</string>
     <string name="title">Заголовок</string>
     <string name="new_discussion">Новое обсуждение</string>
@@ -157,18 +157,18 @@
     <string name="chat_not_voted_yet">Еще нет голоса</string>
     <string name="chat_voted">Голос</string>
     <string name="slogan">Не страховка. Намного лучше.</string>
-    <string name="coverage_explanation_title">Как это работает</string>
-    <string name="coverage_explanation_description">Используй бегунок, чтобы увидеть, как расходы влияют на максимальное возмещение.</string>
-    <string name="coverage_explanation_max_expenses_covered">Максимальное возмещение</string>
-    <string name="coverage_explanation_possible_expenses">В случае, когда твои расходы составляют</string>
-    <string name="coverage_explanation_team_would_pay">Команда выплатит тебе</string>
+    <string name="coverage_explanation_title">Как работает защита</string>
+    <string name="coverage_explanation_description">1. Вы подаете заявку.\n2. Команда голосует за размер выплаты.\n3. Участники платят Вам напрямую.</string>
+    <string name="coverage_explanation_desirable_limit">Желаемая защита</string>
+    <string name="coverage_explanation_possible_payment">Ваш максимальный платеж</string>
+    <string name="coverage_explanation_teammates_would_pay">Участников с такой же или большей защитой</string>
     <string name="notification_claim_header">Новая заявка в %1$s</string>
     <string name="notification_claim_text">%1$s на %2$s</string>
     <string name="notification_messages_since">%d new messages</string>
     <string name="notification_funded_header">Кошелек пополнен</string>
     <string name="inbox">Приватные сообщения</string>
-    <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У тебя ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выбери кого-то, кому доверяешь, чтобы он стал твоим прокси.</font]]></string>
-    <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Ты не являешься прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Ты можешь стать прокси зарабатывая доверие других участников. Публикуй свои идеи, мнения и голоса.</font]]></string>
+    <string name="my_proxies_empty_prompt"><![CDATA[<font color=\'#3c4753\'>У Вас ещё нет прокси.</font><br><br><font color=\'#95a5b1\'>Пожалуйста, выберите кого-то, кому Вы доверяете, чтобы он стал вашим прокси.</font]]></string>
+    <string name="proxies_for_empty_prompt"><![CDATA[<font color=\'#3c4753\'>Вы не являетесь прокси ни для кого в команде.</font><br><br><font color=\'#95a5b1\'>Вы можешь стать прокси зарабатывая доверие других участников. Публикуйте свои идеи, мнения и голоса.</font]]></string>
     <string name="private_conversation">Приватный чат</string>
     <string name="ends_in">Осталось %s</string>
     <string name="declined">Отказано</string>
@@ -187,7 +187,7 @@
     <string name="qr_code_address_title">Адрес Ethereum кошелька</string>
     <string name="cosigners">Со-подписчики</string>
     <string name="now">Сейчас</string>
-    <string name="unable_to_connect_try_later">Ой, невозможно связаться с Teambrella. Сохраняй спокойствие и попробуй позже.</string>
+    <string name="unable_to_connect_try_later">Ой, невозможно связаться с Teambrella. Сохраняйте спокойствие и попробуйте позже.</string>
     <string name="object_cat">Кошка</string>
     <string name="object_bike">Велосипед</string>
     <string name="object_pet">Питомец</string>
@@ -195,10 +195,10 @@
     <string name="team_avg">СРЕДН.\nКоманды</string>
     <string name="no_coverage_for_the_date">0% защиты на этот день</string>
     <string name="we_are_invite_only_title">"Только про приглашениям!"</string>
-    <string name="we_are_invite_only_description"><![CDATA[Привет, пока мы принимаем только по приглашениям.<br> Хочешь присоединиться? <br><a href="http://teambrella.com/join/team">Получить приглашение!</a>]]></string>
+    <string name="we_are_invite_only_description"><![CDATA[Привет, пока мы принимаем только по приглашениям.<br> Хотите присоединиться? <br><a href="http://teambrella.com/join/team">Получить приглашение!</a>]]></string>
     <string name="almost_ready_title">Привет!</string>
     <string name="almost_ready_description">Мы работаем не покладая рук, чтобы запустить команду. Скоро она будет готова!</string>
-    <string name="your_teams">Твои команды</string>
+    <string name="your_teams">Вашт команды</string>
     <string name="exit_demo">Выйти из Демо</string>
     <string name="would_cover_me">Защищал бы меня</string>
     <string name="would_cover_them">Защищал бы его</string>
@@ -234,7 +234,7 @@
     <string name="risk_from_to_format_string">"Риск:%1$.2f до %2$.2f"</string>
 
     <string name="access_denied_title">Сожалеем</string>
-    <string name="access_denied_description"><![CDATA[В данный момент ты не можешь войти в Тимбреллу. Пожалуйста, свяжись с нашей поддержкой <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
+    <string name="access_denied_description"><![CDATA[В данный момент Вы не можете войти в Тимбреллу. Пожалуйста, свяжись с нашей поддержкой <a href="mailto:help@teambrella.com">help@teambrella.com</a>]]></string>
 
     <string name="notification_title_your_claim">@string/your_claim</string>
     <string name="notification_title_your_application">Вступление в команду</string>
@@ -244,12 +244,12 @@
     <string name="image_full_screen_indicator_format_string">%1$d из %2$d</string>
 
 
-    <string name="pending_application_title">Твоя заявка не завершена</string>
-    <string name="pending_application_description"><![CDATA[Пожалуйста, заполни все необходимые поля. Мы ждем тебя! Если у тебя есть вопросы, свяжись с нашей поддержкой <a href="mailto:help@teambrella.com">help@teambrella.com</a>.]]></string>
+    <string name="pending_application_title">Ваша заявка не завершена</string>
+    <string name="pending_application_description"><![CDATA[Пожалуйста, заполните все необходимые поля. Мы ждем Вас! Если у Вас есть вопросы, свяжись с нашей поддержкой <a href="mailto:help@teambrella.com">help@teambrella.com</a>.]]></string>
     <string name="retry">Повторить</string>
 
     <string name="new_demo_session_title">Новая демо</string>
-    <string name="new_demo_session_description">Мы создали демо команду для тебя. В ней есть все новые фишки.</string>
+    <string name="new_demo_session_description">Мы создали демо команду для Вас. В ней есть все новые фишки.</string>
     <string name="back">Назад</string>
 
     <string name="withdraw_details">Детали вывода</string>
@@ -270,24 +270,24 @@
     <string name="card_voting_label">Активно</string>
     <string name="notification_settings">Настройки уведомлений</string>
     <string name="notification_option_unmuted_title">Включены</string>
-    <string name="notification_option_unmuted_description">Ты будешь получать уведомления о каждом сообщении.</string>
+    <string name="notification_option_unmuted_description">Вы будете получать уведомления о каждом сообщении.</string>
     <string name="notification_option_muted_title">Выключены</string>
     <string name="notification_option_muted_description">Уведомления выключены для чата.</string>
     <string name="claim_amount_format_string"><![CDATA[ЗАЯВКA - %1$s <font color=\'#35abd9\'>%2$s</font>]]></string>
-    <string name="mute_unmute_notification_help">Теперь ты получаешь уведомления о новых сообщениях в чате.</string>
+    <string name="mute_unmute_notification_help">Теперь Вы получаете уведомления о новых сообщениях в чате.</string>
     <string name="message">Сообщение</string>
 
     <string name="backup_wallet">Backup Wallet</string>
     <string name="your_wallet_is_backed_up">Кошелек сохранен</string>
     <string name="your_wallet_not_backed_up">Кошелек не сохранен</string>
     <string name="backup_your_wallet_title">Резервное копирование кошелька</string>
-    <string name="backup_your_wallet_description">Чтобы восстановить доступ к кошельку понадобится приватный ключ. Строго рекомендуется сохранить ключ с помощью Google Smart Lock.</string>
-    <string name="tap_to_backup_wallet">Нажми, чтобы сохранить кошелек с помощью Google Smart Lock</string>
+    <string name="backup_your_wallet_description">Чтобы восстановить доступ к кошельку понадобится приватный ключ. Пожалуйста, сохраните ключ с помощью Google Smart Lock.</string>
+    <string name="tap_to_backup_wallet">Нажмите, чтобы сохранить кошелек с помощью Google Smart Lock</string>
     <string name="save_password">Сохранить Пароль</string>
     <string name="later">Позже</string>
 
     <string name="rating">Рейтинг</string>
-    <string name="invite_friends">Пригласить Друга</string>
+    <string name="invite_friends">Пригласить друга</string>
     <string name="transactions">Транзакции</string>
     <string name="withdrawal">Вывод</string>
     <string name="transaction_pending">В Ожидании</string>
@@ -316,10 +316,10 @@
     <string name="notification_channel_team_updates">Обновления в команде</string>
     <string name="notification_group_chats">Чаты</string>
 
-    <string name="swipe_to_vote">Тяни влево или вправо, чтобы голосовать</string>
+    <string name="swipe_to_vote">Тяните влево или вправо, чтобы голосовать</string>
     <string name="notification_description_new_teammate_joined">%s присоединился</string>
-    <string name="notification_description_your_are_proxy_male">Поздравляем! %s назначил вас прокси.</string>
-    <string name="notification_description_your_are_proxy_female">Поздравляем! %s назначила вас прокси.</string>
+    <string name="notification_description_your_are_proxy_male">Поздравляем! %s назначил Вас прокси.</string>
+    <string name="notification_description_your_are_proxy_female">Поздравляем! %s назначила Вас прокси.</string>
 
     <string name="huawei_protected_app_title">Требуется фоновая работа приложения</string>
     <string name="huawei_protected_app_description">Для непрерывной защиты убедитесь, что Teambrella работает в фоновом режиме</string>
@@ -327,7 +327,7 @@
     <string name="huawei_protected_app_done">Уже сделано</string>
 
     <string name="share_with_friends">Поделиться с друзьями</string>
-    <string name="paid_claim_message">Твоя команда оплатила заявку.\n Неплохо, да? Поделись с друзьями!</string>
+    <string name="paid_claim_message">Ваша команда оплатила заявку.\n Неплохо, да? Поделитесь с друзьями!</string>
     <string name="paid_claim_shareable_collision_deductible">Мы помогли участнику оплатить ремонт машины. Неплохо, да? %s</string>
     <string name="paid_claim_shareable_pet">Мы помогли участнику оплатить лечение питомца.  Неплохо, да? %s</string>
     <string name="paid_claim_shareable_bike">Мы возместили участнику стоимость украденного велосипеда. Неплохо, да? %s</string>
@@ -347,7 +347,7 @@
     <string name="my_name_is_title" translatable="false">Имя Фамилия</string>
     <string name="location_title" translatable="false">Город</string>
     <string name="welcome_to_join_title" translatable="false">Привет!</string>
-    <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подай заявку, и команда возместит ущерб.</string>
+    <string name="welcome_to_join_description" translatable="false">Участники команды защищают друг друга. Если что-то случилось, подайте заявку, и команда возместит ущерб.</string>
     <string name="continue_without_login" translatable="false">Далее</string>
     <string name="registration_error_name" translatable="false">Введите имя</string>
     <string name="registration_error_location" translatable="false">Введите город</string>
@@ -355,11 +355,11 @@
     <string name="registration_error_model" translatable="false">Введите марку, модель и год автомобиля</string>
 
     <string name="notification_daily_title">Каждый день</string>
-    <string name="notification_daily_description">Ты будешь оперативно получать все новости о команде.</string>
+    <string name="notification_daily_description">Вы будете оперативно получать все новости о команде.</string>
     <string name="notification_every_3_days_title">Раз в 3 дня</string>
-    <string name="notification_every_3_days_description">Ни одно голосование не пройдет мимо тебя.</string>
+    <string name="notification_every_3_days_description">Ни одно голосование не пройдет мимо Вас.</string>
     <string name="notification_once_a_month_title">Раз в месяц</string>
-    <string name="notification_once_a_month_description">Ты будешь получать сводку о том, что произошло в команде за месяц.</string>
+    <string name="notification_once_a_month_description">Вы будете получать сводку о том, что произошло в команде за месяц.</string>
     <string name="notification_every_never_title">Выключены</string>
     <string name="notification_every_never_description">Уведомления о новостях команды выключены.</string>
     <string name="select_profile_photo">Выберете фото для aватара</string>
@@ -408,20 +408,30 @@
     <string name="in_year">За %d год</string>
     <string name="in_month">За %s</string>
     <string name="funding">Пополнение</string>
-    <string name="to_cover_for">будет защищать тебя</string>
-    <string name="covering">защищает тебя</string>
+    <string name="to_cover_for">будет защищать Вас</string>
+    <string name="covering">защищает вас</string>
     <string name="my_summary_message">Это мое резюме</string>
     <string name="make_main_proxy_title">Поднять в списке прокси</string>
     <string name="make_main_proxy_text">Если %1$s голосует, то остальные прокси будут игнорироваться</string>
     <string name="add_proxy_title">Сделать моим прокси</string>
-    <string name="add_proxy_text">%1$s будет замещать тебя при голосовании</string>
+    <string name="add_proxy_text">%1$s будет замещать Вас при голосовании</string>
     <string name="remove_proxy_title">Убрать из моих прокси</string>
-    <string name="remove_proxy_text">%1$s больше не будет замещать тебя при голосовании</string>
+    <string name="remove_proxy_text">%1$s больше не будет замещать Вас при голосовании</string>
     <string name="go_to_discussion">Перейти в обсуждение</string>
     <string name="payout">выплата</string>
     <string name="fixed_rate">Зафиксированный курс</string>
     <string name="to_pay">К выплате</string>
     <string name="paid">Выплачено</string>
     <string name="rate_format_string">%1$s %2$s/%3$s</string>
+    <string name="coverage_explanation_current_coverage">Текущая защита</string>
+    <string name="fund_wallet_verbose">Пополнить кошелек</string>
+    <string name="check_settings">Проверить настройки</string>
+    <string name="coverage_explanation_need_more_teammates">Недостаточно участников (%d) с такой же или большей защитой.</string>
+    <string name="coverage_explanation_settings">Пожалуйста, убедитесь, что приложению Teambrella разрешена работа в фоновом режиме.\n\nЗащита включится в течении 24 часов.</string>
+    <string name="coverage_explanation_fund">Недостаточно средств в кошельке для желаемой защиты.</string>
+    <string name="coverage_explanation_increase">Защита вырастет до %d %s в течении 24 часов.</string>
+    <string name="coverage_suspended"><![CDATA[<font color=\"#dc2459\">отключена</font>]]></string>
+    <string name="coverage_reduction_warning">ВНИМАНИЕ: Защита будет уменьшена. Увеличении защиты в будущем займет 24 часа.</string>
+    <string name="confirm_coverage_reduction_button">Подтвердить уменьшение</string>
 
 </resources>

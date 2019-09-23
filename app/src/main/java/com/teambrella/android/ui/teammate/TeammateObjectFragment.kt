@@ -63,7 +63,7 @@ class TeammateObjectFragment : ADataFragment<ITeammateActivity>() {
         data.objectPart?.let { _object ->
             model = _object.model ?: model
             objectModel?.text = model
-            AmountCurrencyUtil.setAmount(limit, Math.round(_object.claimLimit ?: 0f), currency)
+            AmountCurrencyUtil.setAmount(limit, _object.claimLimit ?: 0, currency)
             claimId = _object.oneClaimId ?: claimId
             claimCount = _object.claimCount ?: claimCount
 
